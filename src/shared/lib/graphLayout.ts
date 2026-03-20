@@ -80,4 +80,10 @@ export function getGraphLayout(input: GraphLayoutInput): GraphLayoutOutput {
 	};
 }
 
-export type { GraphLayoutInput, GraphLayoutOutput, LayoutEdgeInput, LayoutNodeInput, PositionedLayoutNode };
+export type {
+	GraphLayoutInput,
+	GraphLayoutOutput,
+	LayoutEdgeInput,
+	LayoutNodeInput,
+	PositionedLayoutNode,
+};
