@@ -45,7 +45,7 @@
 		"@convex-dev/react-query": "latest",
 		"@dagrejs/dagre": "^1.1.0",
 		"@fontsource-variable/geist": "^5.2.8",
-		"@react-three/drei": "^9.0.0",
+		"@react-three/drei": "^10.7.7",
 		"@react-three/fiber": "^9.5.0",
 		"@react-three/postprocessing": "^3.0.0",
 		"@react-three/rapier": "^2.0.0",
