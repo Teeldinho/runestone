@@ -39,4 +39,30 @@ describe("useGameMachine", () => {
 			ROOM_IDS.ENTRANCE,
 		]);
 	});
+
+	it("exposes action button state derived from the machine snapshot", () => {
+		const { result } = renderHook(() => useGameMachine());
+
+		const defaultLibraryAction = result.current.actionButtons.find(
+			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+		);
+		const defaultGuardRoomAction = result.current.actionButtons.find(
+			(actionButton) =>
+				actionButton.eventType === DUNGEON_EVENTS.ENTER_GUARD_ROOM,
+		);
+
+		expect(defaultLibraryAction?.isDisabled).toBe(false);
+		expect(defaultGuardRoomAction?.isDisabled).toBe(true);
+
+		act(() => {
+			result.current.sendDungeonEvent(DUNGEON_EVENTS.ENTER_LIBRARY);
+		});
+
+		const libraryGuardRoomAction = result.current.actionButtons.find(
+			(actionButton) =>
+				actionButton.eventType === DUNGEON_EVENTS.ENTER_GUARD_ROOM,
+		);
+
+		expect(libraryGuardRoomAction?.isDisabled).toBe(false);
+	});
 });
