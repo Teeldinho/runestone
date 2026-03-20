@@ -1,1 +1,5 @@
-export type { CombatActionResult, CombatSnapshot, CombatState } from "./model/types";
+export type {
+	CombatActionResult,
+	CombatSnapshot,
+	CombatState,
+} from "./model/types";

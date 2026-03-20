@@ -1,1 +1,5 @@
-export type { AuthActorContext, AuthStatus, UsernameFormInput } from "./model/types";
+export type {
+	AuthActorContext,
+	AuthStatus,
+	UsernameFormInput,
+} from "./model/types";

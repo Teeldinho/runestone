@@ -1,4 +1,7 @@
-export type AuthStatus = "checkingSession" | "requiresUsername" | "authenticated";
+export type AuthStatus =
+	| "checkingSession"
+	| "requiresUsername"
+	| "authenticated";
 
 export type AuthActorContext = {
 	uuid: string;

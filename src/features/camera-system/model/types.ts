@@ -1,4 +1,8 @@
-import type { CameraEventObject, CameraHotkey, CameraMode } from "@/features/camera-system/config";
+import type {
+	CameraEventObject,
+	CameraHotkey,
+	CameraMode,
+} from "@/features/camera-system/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 export type CameraStateSnapshot = {
