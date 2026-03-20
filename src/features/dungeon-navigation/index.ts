@@ -1,4 +1,4 @@
-export { createGameMachine } from "./model";
+export { createGameMachine, useGameMachine } from "./model";
 export type {
 	NavigationIntent,
 	NavigationPrompt,

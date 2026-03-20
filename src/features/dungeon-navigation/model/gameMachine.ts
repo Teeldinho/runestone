@@ -9,6 +9,16 @@ import {
 	type RoomId,
 } from "@/entities/dungeon";
 
+export const DUNGEON_MACHINE_SYSTEM_EVENTS = {
+	RESET_DUNGEON_RUN: "RESET_DUNGEON_RUN",
+} as const;
+
+type DungeonMachineSystemEvent = {
+	type: (typeof DUNGEON_MACHINE_SYSTEM_EVENTS)[keyof typeof DUNGEON_MACHINE_SYSTEM_EVENTS];
+};
+
+type GameMachineEvent = DungeonMachineEvent | DungeonMachineSystemEvent;
+
 const INITIAL_CONTEXT: DungeonContext = {
 	currentFloorId: FLOOR_IDS.FLOOR_ONE,
 	currentRoomId: ROOM_IDS.ENTRANCE,
@@ -50,12 +60,18 @@ export const createGameMachine = (options?: {
 	setup({
 		types: {
 			context: {} as DungeonContext,
-			events: {} as DungeonMachineEvent,
+			events: {} as GameMachineEvent,
 		},
 	}).createMachine({
 		id: "dungeonNavigationMachine",
 		initial: ROOM_IDS.ENTRANCE,
 		context: createInitialContext(options?.context),
+		on: {
+			[DUNGEON_MACHINE_SYSTEM_EVENTS.RESET_DUNGEON_RUN]: {
+				target: `.${ROOM_IDS.ENTRANCE}`,
+				actions: assign(() => createInitialContext(options?.context)),
+			},
+		},
 		states: {
 			[ROOM_IDS.ENTRANCE]: {
 				on: {
