@@ -1,0 +1,73 @@
+export const ROOM_CONFIG = {
+	WIDTH: 12,
+	HEIGHT: 6,
+	DEPTH: 12,
+	WALL_THICKNESS: 0.35,
+} as const;
+
+export const CORRIDOR_CONFIG = {
+	WIDTH: 4,
+	HEIGHT: 4,
+	DEPTH: 8,
+} as const;
+
+export const DAGRE_CONFIG = {
+	DIRECTION: "TB",
+	NODE_SEPARATION: 70,
+	RANK_SEPARATION: 120,
+	MARGIN_X: 32,
+	MARGIN_Y: 32,
+} as const;
+
+export const PLAYER_CONFIG = {
+	MAX_HP: 100,
+	MOVE_SPEED: 4.8,
+	SPRINT_SPEED: 6.8,
+	ROTATION_SPEED: 8,
+	JUMP_FORCE: 5,
+	CAPSULE_RADIUS: 0.32,
+	CAPSULE_HALF_HEIGHT: 0.6,
+} as const;
+
+export const ENEMY_CONFIG = {
+	MAX_HP: 45,
+	DETECTION_RADIUS: 7,
+	ATTACK_RADIUS: 1.5,
+	PATROL_SPEED: 1.5,
+	CHASE_SPEED: 2.8,
+	ATTACK_COOLDOWN_MS: 1200,
+} as const;
+
+export const CAMERA_CONFIG = {
+	THIRD_PERSON: {
+		FOV: 65,
+		OFFSET: [0, 2.5, 4.8],
+		LERP_SPEED: 5,
+	},
+	TOP_DOWN: {
+		FOV: 60,
+		HEIGHT: 16,
+		DISTANCE: 0.1,
+		MIN_ZOOM: 0.7,
+		MAX_ZOOM: 1.6,
+		PAN_SPEED: 1.3,
+		ZOOM_SPEED: 1.2,
+	},
+	FIRST_PERSON: {
+		FOV: 78,
+		HEAD_BOB_AMPLITUDE: 0.04,
+		HEAD_BOB_FREQUENCY: 6,
+	},
+	FREE_ORBITAL: {
+		FOV: 58,
+		INITIAL_POSITION: [10, 10, 10],
+		MIN_DISTANCE: 5,
+		MAX_DISTANCE: 28,
+		ROTATE_SPEED: 0.8,
+		PAN_SPEED: 0.8,
+		ZOOM_SPEED: 1,
+	},
+} as const;
+
+export type DagreDirection = (typeof DAGRE_CONFIG)["DIRECTION"];
+export type CameraConfig = typeof CAMERA_CONFIG;
