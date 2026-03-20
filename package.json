@@ -31,7 +31,7 @@
 		"lint:fix": "biome check --write .",
 		"lint:ci": "biome ci .",
 		"lint:fsd": "steiger ./src",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "npm run routes:generate && tsc --noEmit",
 		"test": "vitest run --passWithNoTests",
 		"test:run": "vitest run --passWithNoTests",
 		"test:coverage": "vitest run --coverage",
