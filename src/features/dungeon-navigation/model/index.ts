@@ -1,1 +1,1 @@
-export {};
+export { createGameMachine } from "./gameMachine";
