@@ -16,22 +16,22 @@ export type FloorId = (typeof FLOOR_IDS)[keyof typeof FLOOR_IDS];
 
 export const DUNGEON_THEME = {
 	STONE: {
-		BASE_COLOR: "#0f1319",
-		DETAIL_COLOR: "#1b2430",
+		BASE_COLOR: "var(--color-dungeon-stone-base)",
+		DETAIL_COLOR: "var(--color-dungeon-stone-detail)",
 	},
 	LIGHTING: {
-		TORCH_COLOR: "#ffb347",
+		TORCH_COLOR: "var(--color-dungeon-torch)",
 		TORCH_INTENSITY: 3.2,
 		AMBIENT_INTENSITY: 0.18,
 	},
 	FOG: {
-		COLOR: "#06090f",
+		COLOR: "var(--color-dungeon-fog)",
 		DENSITY: 0.08,
 	},
 	RUNES: {
-		SEALED: "#ff2ecf",
-		OPEN: "#f5c451",
-		ACTIVE: "#00d7ff",
+		SEALED: "var(--color-dungeon-rune-sealed)",
+		OPEN: "var(--color-dungeon-rune-open)",
+		ACTIVE: "var(--color-dungeon-rune-active)",
 	},
 } as const;
 
