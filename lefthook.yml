@@ -11,13 +11,11 @@ pre-commit:
       run: npm run lint:fix
     fsd:
       run: npm run lint:fsd
-    typecheck:
-      run: npm run typecheck
-    test:
-      run: npm run test:run
 
 pre-push:
   commands:
+    theme:
+      run: npm run theme:check
     lint:
       run: npm run lint:ci
     typecheck:
