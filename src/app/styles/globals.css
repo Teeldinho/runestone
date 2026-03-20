@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+:root {
+	color-scheme: dark;
+	font-family: "JetBrains Mono", "IBM Plex Sans", sans-serif;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100dvh;
+	background: radial-gradient(
+		circle at top,
+		#12203a 0%,
+		#06080f 50%,
+		#020308 100%
+	);
+	color: #f5f1e6;
+}
