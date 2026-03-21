@@ -8,6 +8,14 @@ export const ROOM_IDS = {
 
 export type RoomId = (typeof ROOM_IDS)[keyof typeof ROOM_IDS];
 
+export const ROOM_LABELS: Record<RoomId, string> = {
+	[ROOM_IDS.ENTRANCE]: "Entrance",
+	[ROOM_IDS.LIBRARY]: "Library",
+	[ROOM_IDS.GUARD_ROOM]: "Guard Room",
+	[ROOM_IDS.TREASURY]: "Treasury",
+	[ROOM_IDS.EXIT]: "Exit",
+};
+
 export const FLOOR_IDS = {
 	FLOOR_ONE: "floor-one",
 } as const;

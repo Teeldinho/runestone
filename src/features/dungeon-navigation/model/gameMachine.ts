@@ -3,56 +3,16 @@ import { assign, setup } from "xstate";
 import {
 	DUNGEON_EVENTS,
 	type DungeonContext,
-	type DungeonMachineEvent,
-	FLOOR_IDS,
 	ROOM_IDS,
-	type RoomId,
 } from "@/entities/dungeon";
-
-export const DUNGEON_MACHINE_SYSTEM_EVENTS = {
-	RESET_DUNGEON_RUN: "RESET_DUNGEON_RUN",
-} as const;
-
-type DungeonMachineSystemEvent = {
-	type: (typeof DUNGEON_MACHINE_SYSTEM_EVENTS)[keyof typeof DUNGEON_MACHINE_SYSTEM_EVENTS];
-};
-
-type GameMachineEvent = DungeonMachineEvent | DungeonMachineSystemEvent;
-
-const INITIAL_CONTEXT: DungeonContext = {
-	currentFloorId: FLOOR_IDS.FLOOR_ONE,
-	currentRoomId: ROOM_IDS.ENTRANCE,
-	discoveredRooms: [ROOM_IDS.ENTRANCE],
-	hasTreasureKey: false,
-	enemiesRemaining: 1,
-};
-
-const addDiscoveredRoom = (
-	discoveredRooms: RoomId[],
-	nextRoomId: RoomId,
-): RoomId[] => {
-	if (discoveredRooms.includes(nextRoomId)) {
-		return discoveredRooms;
-	}
-
-	return [...discoveredRooms, nextRoomId];
-};
-
-const updateRoomContext = (
-	context: DungeonContext,
-	nextRoomId: RoomId,
-): DungeonContext => ({
-	...context,
-	currentRoomId: nextRoomId,
-	discoveredRooms: addDiscoveredRoom(context.discoveredRooms, nextRoomId),
-});
-
-const createInitialContext = (
-	contextOverrides?: Partial<DungeonContext>,
-): DungeonContext => ({
-	...INITIAL_CONTEXT,
-	...contextOverrides,
-});
+import {
+	DUNGEON_MACHINE_SYSTEM_EVENTS,
+	type GameMachineEvent,
+} from "../config";
+import {
+	createInitialDungeonContext,
+	updateDungeonContextRoom,
+} from "../lib/dungeonContext";
 
 export const createGameMachine = (options?: {
 	context?: Partial<DungeonContext>;
@@ -65,11 +25,11 @@ export const createGameMachine = (options?: {
 	}).createMachine({
 		id: "dungeonNavigationMachine",
 		initial: ROOM_IDS.ENTRANCE,
-		context: createInitialContext(options?.context),
+		context: createInitialDungeonContext(options?.context),
 		on: {
 			[DUNGEON_MACHINE_SYSTEM_EVENTS.RESET_DUNGEON_RUN]: {
 				target: `.${ROOM_IDS.ENTRANCE}`,
-				actions: assign(() => createInitialContext(options?.context)),
+				actions: assign(() => createInitialDungeonContext(options?.context)),
 			},
 		},
 		states: {
@@ -78,7 +38,7 @@ export const createGameMachine = (options?: {
 					[DUNGEON_EVENTS.ENTER_LIBRARY]: {
 						target: ROOM_IDS.LIBRARY,
 						actions: assign(({ context }) =>
-							updateRoomContext(context, ROOM_IDS.LIBRARY),
+							updateDungeonContextRoom(context, ROOM_IDS.LIBRARY),
 						),
 					},
 				},
@@ -88,13 +48,13 @@ export const createGameMachine = (options?: {
 					[DUNGEON_EVENTS.ENTER_GUARD_ROOM]: {
 						target: ROOM_IDS.GUARD_ROOM,
 						actions: assign(({ context }) =>
-							updateRoomContext(context, ROOM_IDS.GUARD_ROOM),
+							updateDungeonContextRoom(context, ROOM_IDS.GUARD_ROOM),
 						),
 					},
 					[DUNGEON_EVENTS.RETURN_TO_ENTRANCE]: {
 						target: ROOM_IDS.ENTRANCE,
 						actions: assign(({ context }) =>
-							updateRoomContext(context, ROOM_IDS.ENTRANCE),
+							updateDungeonContextRoom(context, ROOM_IDS.ENTRANCE),
 						),
 					},
 				},
@@ -118,13 +78,13 @@ export const createGameMachine = (options?: {
 						guard: ({ context }) =>
 							context.hasTreasureKey && context.enemiesRemaining === 0,
 						actions: assign(({ context }) =>
-							updateRoomContext(context, ROOM_IDS.TREASURY),
+							updateDungeonContextRoom(context, ROOM_IDS.TREASURY),
 						),
 					},
 					[DUNGEON_EVENTS.RETURN_TO_ENTRANCE]: {
 						target: ROOM_IDS.ENTRANCE,
 						actions: assign(({ context }) =>
-							updateRoomContext(context, ROOM_IDS.ENTRANCE),
+							updateDungeonContextRoom(context, ROOM_IDS.ENTRANCE),
 						),
 					},
 				},
@@ -135,13 +95,13 @@ export const createGameMachine = (options?: {
 						target: ROOM_IDS.EXIT,
 						guard: ({ context }) => context.hasTreasureKey,
 						actions: assign(({ context }) =>
-							updateRoomContext(context, ROOM_IDS.EXIT),
+							updateDungeonContextRoom(context, ROOM_IDS.EXIT),
 						),
 					},
 					[DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM]: {
 						target: ROOM_IDS.GUARD_ROOM,
 						actions: assign(({ context }) =>
-							updateRoomContext(context, ROOM_IDS.GUARD_ROOM),
+							updateDungeonContextRoom(context, ROOM_IDS.GUARD_ROOM),
 						),
 					},
 				},
@@ -151,7 +111,7 @@ export const createGameMachine = (options?: {
 					[DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM]: {
 						target: ROOM_IDS.GUARD_ROOM,
 						actions: assign(({ context }) =>
-							updateRoomContext(context, ROOM_IDS.GUARD_ROOM),
+							updateDungeonContextRoom(context, ROOM_IDS.GUARD_ROOM),
 						),
 					},
 				},

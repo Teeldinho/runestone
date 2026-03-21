@@ -1,1 +1,1 @@
-export {};
+export { XStateInspectorPanel } from "./ui";
