@@ -3,8 +3,8 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import {
 	assertSaveSlotRange,
-	createProgressSaveResult,
-	createProgressSnapshot,
+	createGameProgressSaveResult,
+	createGameProgressSnapshot,
 } from "./lib/gameProgressRules";
 
 export const getByUserAndSlot = query({
@@ -26,7 +26,7 @@ export const getByUserAndSlot = query({
 			return null;
 		}
 
-		return createProgressSnapshot(progress);
+		return createGameProgressSnapshot(progress);
 	},
 });
 
@@ -54,7 +54,7 @@ export const saveGameProgressByUserAndSlot = mutation({
 				savedAt,
 			});
 
-			return createProgressSaveResult(existingProgress._id, savedAt);
+			return createGameProgressSaveResult(existingProgress._id, savedAt);
 		}
 
 		const progressId = await ctx.db.insert("game_progress", {
@@ -64,6 +64,6 @@ export const saveGameProgressByUserAndSlot = mutation({
 			savedAt,
 		});
 
-		return createProgressSaveResult(progressId, savedAt);
+		return createGameProgressSaveResult(progressId, savedAt);
 	},
 });

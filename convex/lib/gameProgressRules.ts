@@ -6,16 +6,19 @@ type PersistedGameProgress = Pick<
 	"_id" | "userId" | "slot" | "snapshot" | "savedAt"
 >;
 
+type GameProgressId = Id<"game_progress">;
+type UserId = Id<"users">;
+
 type GameProgressSnapshot = {
-	id: Id<"game_progress">;
-	userId: Id<"users">;
+	id: GameProgressId;
+	userId: UserId;
 	slot: number;
 	snapshot: string;
 	savedAt: number;
 };
 
 type ProgressSaveResult = {
-	id: Id<"game_progress">;
+	id: GameProgressId;
 	savedAt: number;
 };
 
@@ -28,7 +31,7 @@ export const assertSaveSlotRange = (slot: number): void => {
 	}
 };
 
-export const createProgressSnapshot = (
+export const createGameProgressSnapshot = (
 	progress: PersistedGameProgress,
 ): GameProgressSnapshot => ({
 	id: progress._id,
@@ -38,12 +41,18 @@ export const createProgressSnapshot = (
 	savedAt: progress.savedAt,
 });
 
-export const createProgressSaveResult = (
-	id: Id<"game_progress">,
+export const createGameProgressSaveResult = (
+	id: GameProgressId,
 	savedAt: number,
 ): ProgressSaveResult => ({
 	id,
 	savedAt,
 });
 
-export type { GameProgressSnapshot, PersistedGameProgress, ProgressSaveResult };
+export type {
+	GameProgressId,
+	GameProgressSnapshot,
+	PersistedGameProgress,
+	ProgressSaveResult,
+	UserId,
+};
