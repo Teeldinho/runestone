@@ -18,7 +18,6 @@ import type * as gameProgress from "../gameProgress.js";
 import type * as lib_gameProgressRules from "../lib/gameProgressRules.js";
 import type * as lib_scoreRules from "../lib/scoreRules.js";
 import type * as lib_userRules from "../lib/userRules.js";
-import type * as model_backendRuleFixtures from "../model/backendRuleFixtures.js";
 import type * as model_gameProgressTypes from "../model/gameProgressTypes.js";
 import type * as model_scoreTypes from "../model/scoreTypes.js";
 import type * as model_userTypes from "../model/userTypes.js";
@@ -42,7 +41,6 @@ declare const fullApi: ApiFromModules<{
   "lib/gameProgressRules": typeof lib_gameProgressRules;
   "lib/scoreRules": typeof lib_scoreRules;
   "lib/userRules": typeof lib_userRules;
-  "model/backendRuleFixtures": typeof model_backendRuleFixtures;
   "model/gameProgressTypes": typeof model_gameProgressTypes;
   "model/scoreTypes": typeof model_scoreTypes;
   "model/userTypes": typeof model_userTypes;

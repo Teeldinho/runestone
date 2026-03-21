@@ -3,7 +3,7 @@ import {
 	DUNGEON_RUN_RULE_FIXTURE,
 	GAME_PROGRESS_ID,
 	GAME_PROGRESS_RULE_FIXTURE,
-} from "../model/backendRuleFixtures";
+} from "../../tests/convex/backendRuleFixtures";
 
 import {
 	assertSaveSlotRange,

@@ -1,6 +1,6 @@
-import type { Id } from "../_generated/dataModel";
-import type { PersistedGameProgress } from "./gameProgressTypes";
-import type { PersistedDungeonRun } from "./scoreTypes";
+import type { Id } from "../../convex/_generated/dataModel";
+import type { PersistedGameProgress } from "../../convex/model/gameProgressTypes";
+import type { PersistedDungeonRun } from "../../convex/model/scoreTypes";
 
 const GAME_PROGRESS_ID = "progress-id" as Id<"game_progress">;
 const USER_ID = "user-id" as Id<"users">;
