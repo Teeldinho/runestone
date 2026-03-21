@@ -20,7 +20,7 @@ export function GamePage() {
 		graphEdges,
 		graphNodes,
 		hasTreasureKeyLabel,
-		resetDungeonRun,
+		handleDungeonRunReset,
 	} = useGamePage();
 
 	return (
@@ -114,7 +114,7 @@ export function GamePage() {
 											<Button
 												key={actionButton.eventType}
 												variant="outline"
-												onClick={actionButton.handleAction}
+												onClick={actionButton.handleDungeonActionTrigger}
 												disabled={actionButton.isDisabled}
 											>
 												{actionButton.label}
@@ -122,7 +122,7 @@ export function GamePage() {
 										))}
 									</div>
 
-									<Button variant="secondary" onClick={resetDungeonRun}>
+									<Button variant="secondary" onClick={handleDungeonRunReset}>
 										Reset Run
 									</Button>
 								</CardContent>

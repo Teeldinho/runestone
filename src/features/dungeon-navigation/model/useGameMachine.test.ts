@@ -16,11 +16,11 @@ describe("useGameMachine", () => {
 		);
 	});
 
-	it("moves machine state through sendDungeonEvent", () => {
+	it("moves machine state through handleDungeonEventSend", () => {
 		const { result } = renderHook(() => useGameMachine());
 
 		act(() => {
-			result.current.sendDungeonEvent(DUNGEON_EVENTS.ENTER_LIBRARY);
+			result.current.handleDungeonEventSend(DUNGEON_EVENTS.ENTER_LIBRARY);
 		});
 
 		expect(result.current.snapshot.value).toBe(ROOM_IDS.LIBRARY);
@@ -30,8 +30,8 @@ describe("useGameMachine", () => {
 		const { result } = renderHook(() => useGameMachine());
 
 		act(() => {
-			result.current.sendDungeonEvent(DUNGEON_EVENTS.ENTER_LIBRARY);
-			result.current.resetDungeonRun();
+			result.current.handleDungeonEventSend(DUNGEON_EVENTS.ENTER_LIBRARY);
+			result.current.handleDungeonRunReset();
 		});
 
 		expect(result.current.snapshot.value).toBe(ROOM_IDS.ENTRANCE);
@@ -55,7 +55,7 @@ describe("useGameMachine", () => {
 		expect(defaultGuardRoomAction?.isDisabled).toBe(true);
 
 		act(() => {
-			result.current.sendDungeonEvent(DUNGEON_EVENTS.ENTER_LIBRARY);
+			result.current.handleDungeonEventSend(DUNGEON_EVENTS.ENTER_LIBRARY);
 		});
 
 		const libraryGuardRoomAction = result.current.actionButtons.find(

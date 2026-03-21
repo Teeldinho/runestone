@@ -18,7 +18,7 @@ type GameActionButton = {
 	eventType: NavigationActionEvent;
 	label: string;
 	isDisabled: boolean;
-	handleAction: () => void;
+	handleDungeonActionTrigger: () => void;
 };
 
 export const useGameMachine = () => {
@@ -44,7 +44,7 @@ export const useGameMachine = () => {
 				eventType,
 				label: NAVIGATION_ACTION_LABELS[eventType],
 				isDisabled: getNavigationActionDisabled(eventType, snapshot.context),
-				handleAction: () => handleDungeonEventSend(eventType),
+				handleDungeonActionTrigger: () => handleDungeonEventSend(eventType),
 			})),
 		[snapshot.context, handleDungeonEventSend],
 	);
@@ -59,7 +59,7 @@ export const useGameMachine = () => {
 		currentRoomLabel,
 		discoveredRoomLabels,
 		actionButtons,
-		sendDungeonEvent: handleDungeonEventSend,
-		resetDungeonRun: handleDungeonRunReset,
+		handleDungeonEventSend,
+		handleDungeonRunReset,
 	};
 };

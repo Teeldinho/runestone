@@ -8,8 +8,19 @@
  * @module
  */
 
+import type * as api_gameProgressApi from "../api/gameProgressApi.js";
+import type * as api_scoresApi from "../api/scoresApi.js";
+import type * as api_usersApi from "../api/usersApi.js";
+import type * as config_constants from "../config/constants.js";
+import type * as config_index from "../config/index.js";
 import type * as crons from "../crons.js";
 import type * as gameProgress from "../gameProgress.js";
+import type * as lib_gameProgressRules from "../lib/gameProgressRules.js";
+import type * as lib_scoreRules from "../lib/scoreRules.js";
+import type * as lib_userRules from "../lib/userRules.js";
+import type * as model_gameProgressTypes from "../model/gameProgressTypes.js";
+import type * as model_scoreTypes from "../model/scoreTypes.js";
+import type * as model_userTypes from "../model/userTypes.js";
 import type * as scores from "../scores.js";
 import type * as users from "../users.js";
 
@@ -20,8 +31,19 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "api/gameProgressApi": typeof api_gameProgressApi;
+  "api/scoresApi": typeof api_scoresApi;
+  "api/usersApi": typeof api_usersApi;
+  "config/constants": typeof config_constants;
+  "config/index": typeof config_index;
   crons: typeof crons;
   gameProgress: typeof gameProgress;
+  "lib/gameProgressRules": typeof lib_gameProgressRules;
+  "lib/scoreRules": typeof lib_scoreRules;
+  "lib/userRules": typeof lib_userRules;
+  "model/gameProgressTypes": typeof model_gameProgressTypes;
+  "model/scoreTypes": typeof model_scoreTypes;
+  "model/userTypes": typeof model_userTypes;
   scores: typeof scores;
   users: typeof users;
 }>;
