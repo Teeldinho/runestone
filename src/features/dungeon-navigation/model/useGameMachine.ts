@@ -1,69 +1,24 @@
 import { useMachine } from "@xstate/react";
 import { useCallback, useMemo } from "react";
 
-import type { DungeonContext, DungeonEvent } from "@/entities/dungeon";
-import { DUNGEON_EVENTS, ROOM_IDS } from "@/entities/dungeon";
+import type { DungeonEvent } from "@/entities/dungeon";
+import { ROOM_LABELS } from "@/entities/dungeon";
 
 import {
+	DUNGEON_MACHINE_SYSTEM_EVENTS,
 	NAVIGATION_ACTION_EVENTS,
 	NAVIGATION_ACTION_LABELS,
 	type NavigationActionEvent,
-	ROOM_LABELS,
 } from "../config";
+import { getNavigationActionDisabled } from "../lib/navigationActionAvailability";
 
-import {
-	createGameMachine,
-	DUNGEON_MACHINE_SYSTEM_EVENTS,
-} from "./gameMachine";
+import { createGameMachine } from "./gameMachine";
 
 type GameActionButton = {
 	eventType: NavigationActionEvent;
 	label: string;
 	isDisabled: boolean;
 	handleAction: () => void;
-};
-
-const isActionDisabled = (
-	eventType: NavigationActionEvent,
-	context: DungeonContext,
-): boolean => {
-	switch (eventType) {
-		case DUNGEON_EVENTS.ENTER_LIBRARY:
-			return context.currentRoomId !== ROOM_IDS.ENTRANCE;
-		case DUNGEON_EVENTS.ENTER_GUARD_ROOM:
-			return context.currentRoomId !== ROOM_IDS.LIBRARY;
-		case DUNGEON_EVENTS.PICK_UP_KEY:
-			return (
-				context.currentRoomId !== ROOM_IDS.GUARD_ROOM || context.hasTreasureKey
-			);
-		case DUNGEON_EVENTS.ENEMY_DIED:
-			return (
-				context.currentRoomId !== ROOM_IDS.GUARD_ROOM ||
-				context.enemiesRemaining === 0
-			);
-		case DUNGEON_EVENTS.ENTER_TREASURY:
-			return (
-				context.currentRoomId !== ROOM_IDS.GUARD_ROOM ||
-				!context.hasTreasureKey ||
-				context.enemiesRemaining > 0
-			);
-		case DUNGEON_EVENTS.ENTER_EXIT:
-			return (
-				context.currentRoomId !== ROOM_IDS.TREASURY || !context.hasTreasureKey
-			);
-		case DUNGEON_EVENTS.RETURN_TO_ENTRANCE:
-			return (
-				context.currentRoomId !== ROOM_IDS.LIBRARY &&
-				context.currentRoomId !== ROOM_IDS.GUARD_ROOM
-			);
-		case DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM:
-			return (
-				context.currentRoomId !== ROOM_IDS.TREASURY &&
-				context.currentRoomId !== ROOM_IDS.EXIT
-			);
-		default:
-			return true;
-	}
 };
 
 export const useGameMachine = () => {
@@ -88,7 +43,7 @@ export const useGameMachine = () => {
 			NAVIGATION_ACTION_EVENTS.map((eventType) => ({
 				eventType,
 				label: NAVIGATION_ACTION_LABELS[eventType],
-				isDisabled: isActionDisabled(eventType, snapshot.context),
+				isDisabled: getNavigationActionDisabled(eventType, snapshot.context),
 				handleAction: () => handleDungeonEventSend(eventType),
 			})),
 		[snapshot.context, handleDungeonEventSend],

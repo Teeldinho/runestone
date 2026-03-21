@@ -1,4 +1,4 @@
-import { DUNGEON_EVENTS, ROOM_IDS, type RoomId } from "@/entities/dungeon";
+import { DUNGEON_EVENTS } from "@/entities/dungeon";
 
 export const NAVIGATION_ACTION_EVENTS = [
 	DUNGEON_EVENTS.ENTER_LIBRARY,
@@ -22,12 +22,4 @@ export const NAVIGATION_ACTION_LABELS: Record<NavigationActionEvent, string> = {
 	[DUNGEON_EVENTS.ENTER_EXIT]: "Enter Exit",
 	[DUNGEON_EVENTS.RETURN_TO_ENTRANCE]: "Return to Entrance",
 	[DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM]: "Return to Guard Room",
-};
-
-export const ROOM_LABELS: Record<RoomId, string> = {
-	[ROOM_IDS.ENTRANCE]: "Entrance",
-	[ROOM_IDS.LIBRARY]: "Library",
-	[ROOM_IDS.GUARD_ROOM]: "Guard Room",
-	[ROOM_IDS.TREASURY]: "Treasury",
-	[ROOM_IDS.EXIT]: "Exit",
 };
