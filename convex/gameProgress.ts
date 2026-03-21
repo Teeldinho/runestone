@@ -1,15 +1,11 @@
 import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
-
-const SAVE_SLOT_MIN = 1;
-const SAVE_SLOT_MAX = 3;
-
-const assertSaveSlotRange = (slot: number): void => {
-	if (slot < SAVE_SLOT_MIN || slot > SAVE_SLOT_MAX) {
-		throw new Error("Save slot is out of accepted bounds.");
-	}
-};
+import {
+	assertSaveSlotRange,
+	createProgressSaveResult,
+	createProgressSnapshot,
+} from "./lib/gameProgressRules";
 
 export const getByUserAndSlot = query({
 	args: {
@@ -30,13 +26,7 @@ export const getByUserAndSlot = query({
 			return null;
 		}
 
-		return {
-			id: progress._id,
-			userId: progress.userId,
-			slot: progress.slot,
-			snapshot: progress.snapshot,
-			savedAt: progress.savedAt,
-		};
+		return createProgressSnapshot(progress);
 	},
 });
 
@@ -64,10 +54,7 @@ export const save = mutation({
 				savedAt,
 			});
 
-			return {
-				id: existingProgress._id,
-				savedAt,
-			};
+			return createProgressSaveResult(existingProgress._id, savedAt);
 		}
 
 		const progressId = await ctx.db.insert("game_progress", {
@@ -77,9 +64,6 @@ export const save = mutation({
 			savedAt,
 		});
 
-		return {
-			id: progressId,
-			savedAt,
-		};
+		return createProgressSaveResult(progressId, savedAt);
 	},
 });

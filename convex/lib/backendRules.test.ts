@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { Id } from "../_generated/dataModel";
 
 import {
 	assertSaveSlotRange,
@@ -13,6 +14,9 @@ import {
 	createScoreEntry,
 } from "./scoreRules";
 import { assertValidUsername, formatDiscriminator } from "./userRules";
+
+const asId = <T extends "game_progress" | "users">(value: string) =>
+	value as Id<T>;
 
 describe("backend rule utilities", () => {
 	it("clamps leaderboard limit and validates scoring bounds", () => {
@@ -40,8 +44,8 @@ describe("backend rule utilities", () => {
 
 		expect(
 			createProgressSnapshot({
-				_id: "progress-id",
-				userId: "user-id",
+				_id: asId<"game_progress">("progress-id"),
+				userId: asId<"users">("user-id"),
 				slot: 1,
 				snapshot: "{}",
 				savedAt: 10,
@@ -54,7 +58,9 @@ describe("backend rule utilities", () => {
 			savedAt: 10,
 		});
 
-		expect(createProgressSaveResult("progress-id", 20)).toEqual({
+		expect(
+			createProgressSaveResult(asId<"game_progress">("progress-id"), 20),
+		).toEqual({
 			id: "progress-id",
 			savedAt: 20,
 		});
@@ -72,7 +78,7 @@ describe("backend rule utilities", () => {
 	it("maps persisted score runs to score entries", () => {
 		expect(
 			createScoreEntry({
-				userId: "user-id",
+				userId: asId<"users">("user-id"),
 				username: "Knight",
 				discriminator: "#0001",
 				dungeonId: "floor-one",

@@ -1,55 +1,14 @@
 import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
-
-const LEADERBOARD_MIN_LIMIT = 1;
-const LEADERBOARD_MAX_LIMIT = 50;
-
-const SCORE_MIN = 0;
-const SCORE_MAX = 200000;
-
-const TIME_MS_MIN = 1;
-const TIME_MS_MAX = 7200000;
-
-const ROOMS_DISCOVERED_MIN = 0;
-const ROOMS_DISCOVERED_MAX = 50;
-
-const USER_NOT_FOUND_ERROR = "Cannot submit score for unknown user.";
-
-const clampLeaderboardLimit = (limit: number): number => {
-	const normalizedLimit = Math.trunc(limit);
-
-	if (normalizedLimit < LEADERBOARD_MIN_LIMIT) {
-		return LEADERBOARD_MIN_LIMIT;
-	}
-
-	if (normalizedLimit > LEADERBOARD_MAX_LIMIT) {
-		return LEADERBOARD_MAX_LIMIT;
-	}
-
-	return normalizedLimit;
-};
-
-const assertScoreRange = (score: number): void => {
-	if (score < SCORE_MIN || score > SCORE_MAX) {
-		throw new Error("Score is out of accepted bounds.");
-	}
-};
-
-const assertRunTimingRange = (timeMs: number): void => {
-	if (timeMs < TIME_MS_MIN || timeMs > TIME_MS_MAX) {
-		throw new Error("Run time is out of accepted bounds.");
-	}
-};
-
-const assertRoomDiscoveryRange = (roomsDiscovered: number): void => {
-	if (
-		roomsDiscovered < ROOMS_DISCOVERED_MIN ||
-		roomsDiscovered > ROOMS_DISCOVERED_MAX
-	) {
-		throw new Error("Rooms discovered is out of accepted bounds.");
-	}
-};
+import { BACKEND_ERROR_MESSAGES } from "./config";
+import {
+	assertRoomDiscoveryRange,
+	assertRunTimingRange,
+	assertScoreRange,
+	clampLeaderboardLimit,
+	createScoreEntry,
+} from "./lib/scoreRules";
 
 export const getLeaderboard = query({
 	args: {
@@ -67,16 +26,7 @@ export const getLeaderboard = query({
 			.order("desc")
 			.take(limit);
 
-		return runs.map((run) => ({
-			userId: run.userId,
-			username: run.username,
-			discriminator: run.discriminator,
-			floorId: run.dungeonId,
-			score: run.score,
-			timeMs: run.timeMs,
-			roomsDiscovered: run.roomsDiscovered,
-			completedAt: run.completedAt,
-		}));
+		return runs.map((run) => createScoreEntry(run));
 	},
 });
 
@@ -96,7 +46,7 @@ export const submit = mutation({
 		const user = await ctx.db.get(args.userId);
 
 		if (!user) {
-			throw new Error(USER_NOT_FOUND_ERROR);
+			throw new Error(BACKEND_ERROR_MESSAGES.USER_NOT_FOUND);
 		}
 
 		const completedAt = Date.now();
