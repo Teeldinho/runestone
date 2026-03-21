@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { AuthProvider } from "@/features/auth";
+
 import { AudioProvider } from "./AudioProvider";
 import { ConvexProvider } from "./ConvexProvider";
 import { GameMachineProvider } from "./GameMachineProvider";
@@ -11,9 +13,11 @@ type AppProvidersProps = {
 export function AppProviders({ children }: AppProvidersProps) {
 	return (
 		<ConvexProvider>
-			<GameMachineProvider>
-				<AudioProvider>{children}</AudioProvider>
-			</GameMachineProvider>
+			<AuthProvider>
+				<GameMachineProvider>
+					<AudioProvider>{children}</AudioProvider>
+				</GameMachineProvider>
+			</AuthProvider>
 		</ConvexProvider>
 	);
 }
