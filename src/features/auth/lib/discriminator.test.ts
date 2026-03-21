@@ -12,7 +12,7 @@ describe("discriminator utilities", () => {
 	});
 
 	it("formats user display tag from username and discriminator", () => {
-		expect(formatUserDisplayTag("Knight", "#0042")).toBe("Knight#0042");
+		expect(formatUserDisplayTag("Knight", "D0042")).toBe("KnightD0042");
 	});
 
 	it("validates username boundaries and allowed characters", () => {

@@ -12,3 +12,4 @@ export {
 	readSessionUuid,
 	writePersistedUsername,
 } from "./sessionStorage";
+export { getUsernameValidationError } from "./usernameValidation";
