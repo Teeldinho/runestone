@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import type { Id } from "../_generated/dataModel";
+import {
+	DUNGEON_RUN_RULE_FIXTURE,
+	GAME_PROGRESS_ID,
+	GAME_PROGRESS_RULE_FIXTURE,
+} from "../model/backendRuleFixtures";
 
 import {
 	assertSaveSlotRange,
@@ -14,9 +18,6 @@ import {
 	createScoreEntry,
 } from "./scoreRules";
 import { assertValidUsername, formatDiscriminator } from "./userRules";
-
-const GAME_PROGRESS_TEST_ID = "progress-id" as Id<"game_progress">;
-const USER_TEST_ID = "user-id" as Id<"users">;
 
 describe("backend rule utilities", () => {
 	it("clamps leaderboard limit and validates scoring bounds", () => {
@@ -42,15 +43,7 @@ describe("backend rule utilities", () => {
 		expect(() => assertSaveSlotRange(4)).toThrow();
 		expect(() => assertSaveSlotRange(2)).not.toThrow();
 
-		expect(
-			createGameProgressSnapshot({
-				_id: GAME_PROGRESS_TEST_ID,
-				userId: USER_TEST_ID,
-				slot: 1,
-				snapshot: "{}",
-				savedAt: 10,
-			}),
-		).toEqual({
+		expect(createGameProgressSnapshot(GAME_PROGRESS_RULE_FIXTURE)).toEqual({
 			id: "progress-id",
 			userId: "user-id",
 			slot: 1,
@@ -58,7 +51,7 @@ describe("backend rule utilities", () => {
 			savedAt: 10,
 		});
 
-		expect(createGameProgressSaveResult(GAME_PROGRESS_TEST_ID, 20)).toEqual({
+		expect(createGameProgressSaveResult(GAME_PROGRESS_ID, 20)).toEqual({
 			id: "progress-id",
 			savedAt: 20,
 		});
@@ -74,18 +67,7 @@ describe("backend rule utilities", () => {
 	});
 
 	it("maps persisted score runs to score entries", () => {
-		expect(
-			createScoreEntry({
-				userId: USER_TEST_ID,
-				username: "Knight",
-				discriminator: "#0001",
-				dungeonId: "floor-one",
-				score: 1200,
-				timeMs: 50000,
-				roomsDiscovered: 5,
-				completedAt: 100,
-			}),
-		).toEqual({
+		expect(createScoreEntry(DUNGEON_RUN_RULE_FIXTURE)).toEqual({
 			userId: "user-id",
 			username: "Knight",
 			discriminator: "#0001",
