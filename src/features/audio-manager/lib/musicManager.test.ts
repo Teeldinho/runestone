@@ -10,26 +10,42 @@ import {
 	stopBackgroundMusicLoop,
 } from "./musicManager";
 
-const mockToneStart = vi.fn();
-const mockTransportStart = vi.fn();
-const mockTransportPause = vi.fn();
-const mockTransportStop = vi.fn();
+const {
+	mockPlayerDispose,
+	mockPlayerInstance,
+	mockPlayerStart,
+	mockPlayerStop,
+	mockTonePlayer,
+	mockToneStart,
+	mockTransportPause,
+	mockTransportStart,
+	mockTransportStop,
+} = vi.hoisted(() => {
+	const playerStart = vi.fn();
+	const playerStop = vi.fn();
+	const playerDispose = vi.fn();
+	const playerInstance = {
+		start: playerStart,
+		stop: playerStop,
+		dispose: playerDispose,
+		toDestination: vi.fn(),
+		volume: {
+			value: 0,
+		},
+	};
 
-const mockPlayerStart = vi.fn();
-const mockPlayerStop = vi.fn();
-const mockPlayerDispose = vi.fn();
-
-const mockPlayerInstance = {
-	start: mockPlayerStart,
-	stop: mockPlayerStop,
-	dispose: mockPlayerDispose,
-	toDestination: vi.fn(),
-	volume: {
-		value: 0,
-	},
-};
-
-const mockTonePlayer = vi.fn(() => mockPlayerInstance);
+	return {
+		mockToneStart: vi.fn(),
+		mockTransportStart: vi.fn(),
+		mockTransportPause: vi.fn(),
+		mockTransportStop: vi.fn(),
+		mockPlayerStart: playerStart,
+		mockPlayerStop: playerStop,
+		mockPlayerDispose: playerDispose,
+		mockPlayerInstance: playerInstance,
+		mockTonePlayer: vi.fn(() => playerInstance),
+	};
+});
 
 vi.mock("tone", () => ({
 	start: mockToneStart,
@@ -43,8 +59,8 @@ vi.mock("tone", () => ({
 
 describe("musicManager", () => {
 	beforeEach(() => {
-		vi.clearAllMocks();
 		disposeMusicManager();
+		vi.clearAllMocks();
 		mockToneStart.mockResolvedValue(undefined);
 	});
 
@@ -74,5 +90,12 @@ describe("musicManager", () => {
 		setBackgroundMusicVolume(0.45);
 
 		expect(mockPlayerInstance.volume.value).toBe(0.45);
+	});
+
+	it("disposes background music player singleton", () => {
+		setBackgroundMusicVolume(0.45);
+		disposeMusicManager();
+
+		expect(mockPlayerDispose).toHaveBeenCalledTimes(1);
 	});
 });
