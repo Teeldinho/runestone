@@ -8,6 +8,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui";
+import { GameCanvas } from "@/widgets/game-canvas";
 import { XStateInspectorPanel } from "@/widgets/xstate-inspector-panel";
 
 export function GamePage() {
@@ -36,6 +37,13 @@ export function GamePage() {
 				</CardHeader>
 
 				<CardContent className="space-y-6">
+					<section aria-labelledby="dungeon-canvas-heading">
+						<h2 id="dungeon-canvas-heading" className="sr-only">
+							Dungeon Canvas
+						</h2>
+						<GameCanvas />
+					</section>
+
 					<div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
 						<section aria-labelledby="machine-snapshot-heading">
 							<Card className="border-border bg-background/70">
