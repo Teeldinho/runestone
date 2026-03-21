@@ -8,7 +8,7 @@ const AUTHENTICATED_PROFILE_FIXTURE = {
 	id: "user_123",
 	uuid: "session-uuid",
 	username: "runestone_hero",
-	discriminator: "#0001",
+	discriminator: "D0001",
 	createdAt: 1,
 	updatedAt: 1,
 } as const;
