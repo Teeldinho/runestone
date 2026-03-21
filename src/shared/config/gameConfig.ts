@@ -69,5 +69,35 @@ export const CAMERA_CONFIG = {
 	},
 } as const;
 
+export const GAME_CANVAS_CONFIG = {
+	CAMERA: {
+		FOV: CAMERA_CONFIG.FREE_ORBITAL.FOV,
+		POSITION: CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION,
+		NEAR: 0.1,
+		FAR: 120,
+	},
+	RENDERER: {
+		DPR_RANGE: [1, 2] as const,
+		SHADOWS_ENABLED: true,
+	},
+	SCENE: {
+		FLOOR_SIZE: [ROOM_CONFIG.WIDTH * 1.8, ROOM_CONFIG.DEPTH * 1.8] as const,
+		FLOOR_OFFSET_Y: -0.2,
+		PILLAR_RADIUS: 0.35,
+		PILLAR_HEIGHT: 2.8,
+		RUNE_ORB_RADIUS: 0.24,
+		RUNE_ORB_HEIGHT: 1.6,
+		TORCH_LIGHT_DISTANCE: 8,
+		TORCH_LIGHT_DECAY: 2,
+		TORCH_POSITIONS: [
+			[-4, 0, -4],
+			[4, 0, -4],
+			[-4, 0, 4],
+			[4, 0, 4],
+		] as const,
+	},
+} as const;
+
 export type DagreDirection = (typeof DAGRE_CONFIG)["DIRECTION"];
 export type CameraConfig = typeof CAMERA_CONFIG;
+export type GameCanvasConfig = typeof GAME_CANVAS_CONFIG;
