@@ -7,3 +7,4 @@ export type {
 	UsernameFormInput,
 } from "./types";
 export { AuthProvider, useAuth, useAuthContext } from "./useAuth";
+export { useUsernameForm } from "./useUsernameForm";

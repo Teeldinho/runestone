@@ -1,4 +1,3 @@
-import { useForm } from "@tanstack/react-form";
 import { useId } from "react";
 import {
 	Button,
@@ -10,23 +9,12 @@ import {
 	Input,
 } from "@/shared/ui";
 import { AUTH_COPY, USERNAME_RULES } from "../config";
-import { getUsernameValidationError } from "../lib";
-import type { UsernameFormInput } from "../model";
+import { type UsernameFormInput, useUsernameForm } from "../model";
 
 type UsernameFormProps = {
 	errorMessage: string | null;
 	isSubmitting: boolean;
 	onSubmit: (input: UsernameFormInput) => Promise<void>;
-};
-
-const getFieldErrorMessage = (errors: unknown[]): string | null => {
-	const firstError = errors[0];
-
-	if (typeof firstError === "string") {
-		return firstError;
-	}
-
-	return null;
 };
 
 export function UsernameForm({
@@ -37,42 +25,31 @@ export function UsernameForm({
 	const usernameInputId = useId();
 	const usernameHelpId = useId();
 	const usernameErrorId = useId();
-
-	const usernameForm = useForm({
-		defaultValues: {
-			username: "",
-		},
-		onSubmit: async ({ value }) => {
-			await onSubmit(value);
-		},
+	const {
+		getUsernameFieldViewModel,
+		handleUsernameFormSubmit,
+		submitButtonLabel,
+		usernameFieldValidators,
+		usernameForm,
+	} = useUsernameForm({
+		errorMessage,
+		isSubmitting,
+		onSubmit,
 	});
 
 	return (
-		<form
-			onSubmit={(event) => {
-				event.preventDefault();
-				event.stopPropagation();
-				void usernameForm.handleSubmit();
-			}}
-			className="space-y-3"
-		>
+		<form onSubmit={handleUsernameFormSubmit} className="space-y-3">
 			<FieldGroup>
 				<usernameForm.Field
 					name="username"
-					validators={{
-						onChange: ({ value }) => getUsernameValidationError(value),
-						onBlur: ({ value }) => getUsernameValidationError(value),
-					}}
+					validators={usernameFieldValidators}
 				>
 					{(field) => {
-						const validationErrorMessage = getFieldErrorMessage(
-							field.state.meta.errors,
-						);
-						const shouldShowValidationError =
-							field.state.meta.isTouched && !field.state.meta.isValid;
-						const activeErrorMessage = shouldShowValidationError
-							? validationErrorMessage
-							: errorMessage;
+						const { activeErrorMessage } = getUsernameFieldViewModel({
+							errors: field.state.meta.errors,
+							isTouched: field.state.meta.isTouched,
+							isValid: field.state.meta.isValid,
+						});
 						const describedBy = activeErrorMessage
 							? `${usernameHelpId} ${usernameErrorId}`
 							: usernameHelpId;
@@ -127,9 +104,7 @@ export function UsernameForm({
 						className="w-full"
 						disabled={isSubmitting || !state.canSubmit}
 					>
-						{isSubmitting
-							? "Summoning profile..."
-							: AUTH_COPY.USERNAME_SUBMIT_LABEL}
+						{submitButtonLabel}
 					</Button>
 				)}
 			</usernameForm.Subscribe>
