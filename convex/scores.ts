@@ -30,7 +30,7 @@ export const getLeaderboard = query({
 	},
 });
 
-export const submit = mutation({
+export const submitDungeonRunScore = mutation({
 	args: {
 		userId: v.id("users"),
 		dungeonId: v.string(),

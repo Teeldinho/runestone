@@ -30,7 +30,7 @@ export const getByUserAndSlot = query({
 	},
 });
 
-export const save = mutation({
+export const saveGameProgressByUserAndSlot = mutation({
 	args: {
 		userId: v.id("users"),
 		slot: v.number(),
