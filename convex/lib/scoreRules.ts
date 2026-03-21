@@ -1,28 +1,5 @@
-import type { Doc, Id } from "../_generated/dataModel";
 import { BACKEND_ERROR_MESSAGES, SCORE_LIMITS } from "../config";
-
-type PersistedDungeonRun = Pick<
-	Doc<"dungeon_runs">,
-	| "userId"
-	| "username"
-	| "discriminator"
-	| "dungeonId"
-	| "score"
-	| "timeMs"
-	| "roomsDiscovered"
-	| "completedAt"
->;
-
-type ScoreEntry = {
-	userId: Id<"users">;
-	username: string;
-	discriminator: string;
-	floorId: string;
-	score: number;
-	timeMs: number;
-	roomsDiscovered: number;
-	completedAt: number;
-};
+import type { PersistedDungeonRun, ScoreEntry } from "../model/scoreTypes";
 
 export const clampLeaderboardLimit = (limit: number): number => {
 	const normalizedLimit = Math.trunc(limit);
@@ -69,5 +46,3 @@ export const createScoreEntry = (run: PersistedDungeonRun): ScoreEntry => ({
 	roomsDiscovered: run.roomsDiscovered,
 	completedAt: run.completedAt,
 });
-
-export type { PersistedDungeonRun, ScoreEntry };

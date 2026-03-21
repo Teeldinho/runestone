@@ -1,26 +1,10 @@
-import type { Doc, Id } from "../_generated/dataModel";
 import { BACKEND_ERROR_MESSAGES, GAME_PROGRESS_LIMITS } from "../config";
-
-type PersistedGameProgress = Pick<
-	Doc<"game_progress">,
-	"_id" | "userId" | "slot" | "snapshot" | "savedAt"
->;
-
-type GameProgressId = Id<"game_progress">;
-type UserId = Id<"users">;
-
-type GameProgressSnapshot = {
-	id: GameProgressId;
-	userId: UserId;
-	slot: number;
-	snapshot: string;
-	savedAt: number;
-};
-
-type ProgressSaveResult = {
-	id: GameProgressId;
-	savedAt: number;
-};
+import type {
+	GameProgressId,
+	GameProgressSnapshot,
+	PersistedGameProgress,
+	ProgressSaveResult,
+} from "../model/gameProgressTypes";
 
 export const assertSaveSlotRange = (slot: number): void => {
 	if (
@@ -48,11 +32,3 @@ export const createGameProgressSaveResult = (
 	id,
 	savedAt,
 });
-
-export type {
-	GameProgressId,
-	GameProgressSnapshot,
-	PersistedGameProgress,
-	ProgressSaveResult,
-	UserId,
-};

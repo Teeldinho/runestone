@@ -7,7 +7,7 @@ import { SCORE_QUERY_KEYS } from "./queryKeys";
 export const scoreQueries = {
 	keys: SCORE_QUERY_KEYS,
 	leaderboard: (dungeonId: string, limit: number) =>
-		convexQuery(api.scores.getLeaderboard, {
+		convexQuery(api.scores.getDungeonLeaderboard, {
 			dungeonId,
 			limit,
 		}),

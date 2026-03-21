@@ -2,32 +2,16 @@ import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
 import {
-	assertSaveSlotRange,
-	createGameProgressSaveResult,
-	createGameProgressSnapshot,
-} from "./lib/gameProgressRules";
+	handleGameProgressByUserAndSlotGet,
+	handleGameProgressByUserAndSlotSave,
+} from "./api/gameProgressApi";
 
-export const getByUserAndSlot = query({
+export const getGameProgressByUserAndSlot = query({
 	args: {
 		userId: v.id("users"),
 		slot: v.number(),
 	},
-	handler: async (ctx, args) => {
-		assertSaveSlotRange(args.slot);
-
-		const progress = await ctx.db
-			.query("game_progress")
-			.withIndex("by_user_and_slot", (indexQuery) =>
-				indexQuery.eq("userId", args.userId).eq("slot", args.slot),
-			)
-			.unique();
-
-		if (!progress) {
-			return null;
-		}
-
-		return createGameProgressSnapshot(progress);
-	},
+	handler: handleGameProgressByUserAndSlotGet,
 });
 
 export const saveGameProgressByUserAndSlot = mutation({
@@ -36,34 +20,5 @@ export const saveGameProgressByUserAndSlot = mutation({
 		slot: v.number(),
 		snapshot: v.string(),
 	},
-	handler: async (ctx, args) => {
-		assertSaveSlotRange(args.slot);
-
-		const existingProgress = await ctx.db
-			.query("game_progress")
-			.withIndex("by_user_and_slot", (indexQuery) =>
-				indexQuery.eq("userId", args.userId).eq("slot", args.slot),
-			)
-			.unique();
-
-		const savedAt = Date.now();
-
-		if (existingProgress) {
-			await ctx.db.patch(existingProgress._id, {
-				snapshot: args.snapshot,
-				savedAt,
-			});
-
-			return createGameProgressSaveResult(existingProgress._id, savedAt);
-		}
-
-		const progressId = await ctx.db.insert("game_progress", {
-			userId: args.userId,
-			slot: args.slot,
-			snapshot: args.snapshot,
-			savedAt,
-		});
-
-		return createGameProgressSaveResult(progressId, savedAt);
-	},
+	handler: handleGameProgressByUserAndSlotSave,
 });
