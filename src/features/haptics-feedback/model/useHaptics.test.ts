@@ -2,17 +2,18 @@
 
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { useWebHaptics } from "web-haptics/react";
 import { HAPTIC_THROTTLE_MS } from "@/shared/config";
 import { HAPTIC_PATTERNS, type HapticPatternKey } from "../config";
 
 import { useHaptics } from "./useHaptics";
 
-vi.mock("web-haptics/react", () => ({
-	useWebHaptics: vi.fn(),
+const { mockUseWebHaptics } = vi.hoisted(() => ({
+	mockUseWebHaptics: vi.fn(),
 }));
 
-const mockUseWebHaptics = vi.mocked(useWebHaptics);
+vi.mock("web-haptics/react", () => ({
+	useWebHaptics: mockUseWebHaptics,
+}));
 
 const mockTrigger = vi.fn();
 const mockCancel = vi.fn();
