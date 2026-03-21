@@ -1,6 +1,10 @@
-import type { AudioSpriteId } from "@/features/audio-manager/config";
+import type {
+	AudioEventType,
+	AudioMachineStateValue,
+	AudioSpriteId,
+} from "@/features/audio-manager/config";
 
-export type AudioMachineState = "muted" | "playing" | "paused";
+export type AudioMachineState = AudioMachineStateValue;
 
 export type AudioSettings = {
 	masterVolume: number;
@@ -12,4 +16,13 @@ export type AudioSettings = {
 export type AudioCue = {
 	id: AudioSpriteId;
 	loop?: boolean;
+};
+
+export type AudioMachineContext = {
+	settings: AudioSettings;
+	lastAudibleState: Exclude<AudioMachineState, "muted">;
+};
+
+export type AudioMachineEvent = {
+	type: AudioEventType;
 };
