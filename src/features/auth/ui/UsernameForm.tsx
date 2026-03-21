@@ -1,6 +1,14 @@
 import { useForm } from "@tanstack/react-form";
 import { useId } from "react";
-import { Button, Input } from "@/shared/ui";
+import {
+	Button,
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+	Input,
+} from "@/shared/ui";
 import { AUTH_COPY, USERNAME_RULES } from "../config";
 import { getUsernameValidationError } from "../lib";
 import type { UsernameFormInput } from "../model";
@@ -48,62 +56,65 @@ export function UsernameForm({
 			}}
 			className="space-y-3"
 		>
-			<usernameForm.Field
-				name="username"
-				validators={{
-					onChange: ({ value }) => getUsernameValidationError(value),
-					onBlur: ({ value }) => getUsernameValidationError(value),
-				}}
-			>
-				{(field) => {
-					const validationErrorMessage = getFieldErrorMessage(
-						field.state.meta.errors,
-					);
-					const activeErrorMessage = validationErrorMessage ?? errorMessage;
-					const describedBy = activeErrorMessage
-						? `${usernameHelpId} ${usernameErrorId}`
-						: usernameHelpId;
+			<FieldGroup>
+				<usernameForm.Field
+					name="username"
+					validators={{
+						onChange: ({ value }) => getUsernameValidationError(value),
+						onBlur: ({ value }) => getUsernameValidationError(value),
+					}}
+				>
+					{(field) => {
+						const validationErrorMessage = getFieldErrorMessage(
+							field.state.meta.errors,
+						);
+						const shouldShowValidationError =
+							field.state.meta.isTouched && !field.state.meta.isValid;
+						const activeErrorMessage = shouldShowValidationError
+							? validationErrorMessage
+							: errorMessage;
+						const describedBy = activeErrorMessage
+							? `${usernameHelpId} ${usernameErrorId}`
+							: usernameHelpId;
 
-					return (
-						<div className="space-y-2">
-							<label
-								htmlFor={usernameInputId}
-								className="text-sm font-medium text-panel-title"
-							>
-								{AUTH_COPY.USERNAME_LABEL}
-							</label>
-							<Input
-								id={usernameInputId}
-								name={field.name}
-								required
-								minLength={USERNAME_RULES.MIN_LENGTH}
-								maxLength={USERNAME_RULES.MAX_LENGTH}
-								pattern={USERNAME_RULES.PATTERN.source}
-								autoComplete="off"
-								placeholder={AUTH_COPY.USERNAME_PLACEHOLDER}
-								value={field.state.value}
-								onBlur={field.handleBlur}
-								onChange={(event) => field.handleChange(event.target.value)}
-								aria-invalid={Boolean(activeErrorMessage)}
-								aria-describedby={describedBy}
-								disabled={isSubmitting}
-							/>
-							<p id={usernameHelpId} className="text-xs text-panel-body">
-								{AUTH_COPY.USERNAME_HELP_TEXT}
-							</p>
-							{activeErrorMessage ? (
-								<p
-									id={usernameErrorId}
-									role="alert"
-									className="text-xs text-red-500"
+						return (
+							<Field data-invalid={Boolean(activeErrorMessage)}>
+								<FieldLabel
+									htmlFor={usernameInputId}
+									className="text-panel-title"
 								>
+									{AUTH_COPY.USERNAME_LABEL}
+								</FieldLabel>
+								<Input
+									id={usernameInputId}
+									name={field.name}
+									required
+									minLength={USERNAME_RULES.MIN_LENGTH}
+									maxLength={USERNAME_RULES.MAX_LENGTH}
+									pattern={USERNAME_RULES.PATTERN.source}
+									autoComplete="username"
+									placeholder={AUTH_COPY.USERNAME_PLACEHOLDER}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(event) => field.handleChange(event.target.value)}
+									aria-invalid={Boolean(activeErrorMessage)}
+									aria-describedby={describedBy}
+									disabled={isSubmitting}
+								/>
+								<FieldDescription
+									id={usernameHelpId}
+									className="text-panel-body"
+								>
+									{AUTH_COPY.USERNAME_HELP_TEXT}
+								</FieldDescription>
+								<FieldError id={usernameErrorId}>
 									{activeErrorMessage}
-								</p>
-							) : null}
-						</div>
-					);
-				}}
-			</usernameForm.Field>
+								</FieldError>
+							</Field>
+						);
+					}}
+				</usernameForm.Field>
+			</FieldGroup>
 
 			<usernameForm.Subscribe
 				selector={(state) => ({
