@@ -32,8 +32,8 @@ describe("useGamePage", () => {
 			actionButtons: [],
 			currentRoomLabel: "Entrance",
 			discoveredRoomLabels: ["Entrance"],
-			resetDungeonRun: vi.fn(),
-			sendDungeonEvent: vi.fn(),
+			handleDungeonRunReset: vi.fn(),
+			handleDungeonEventSend: vi.fn(),
 			snapshot: {
 				context: machineContext,
 				value: ROOM_IDS.ENTRANCE,

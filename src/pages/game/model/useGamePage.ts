@@ -10,7 +10,7 @@ type GamePageViewModel = {
 	graphEdges: ReturnType<typeof useStateVisualizer>["edges"];
 	graphNodes: ReturnType<typeof useStateVisualizer>["positionedNodes"];
 	hasTreasureKeyLabel: string;
-	resetDungeonRun: () => void;
+	handleDungeonRunReset: () => void;
 };
 
 export const useGamePage = (): GamePageViewModel => {
@@ -18,7 +18,7 @@ export const useGamePage = (): GamePageViewModel => {
 		actionButtons,
 		currentRoomLabel,
 		discoveredRoomLabels,
-		resetDungeonRun,
+		handleDungeonRunReset,
 		snapshot,
 	} = useGameMachine();
 
@@ -37,7 +37,7 @@ export const useGamePage = (): GamePageViewModel => {
 		hasTreasureKeyLabel: snapshot.context.hasTreasureKey
 			? "Acquired"
 			: "Missing",
-		resetDungeonRun,
+		handleDungeonRunReset,
 	};
 };
 
