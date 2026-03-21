@@ -2,18 +2,19 @@ import { useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 import { Color, FogExp2 } from "three";
 
+import type { CanvasFogSettings } from "../model";
+
 type SceneFogProps = {
-	fogColor: string;
-	fogDensity: number;
+	fog: CanvasFogSettings;
 };
 
-export function SceneFog({ fogColor, fogDensity }: SceneFogProps) {
+export function SceneFog({ fog }: SceneFogProps) {
 	const scene = useThree((state) => state.scene);
 
 	useEffect(() => {
 		const previousBackground = scene.background;
-		const sceneBackground = new Color(fogColor);
-		const sceneFog = new FogExp2(fogColor, fogDensity);
+		const sceneBackground = new Color(fog.color);
+		const sceneFog = new FogExp2(fog.color, fog.density);
 		scene.background = sceneBackground;
 		scene.fog = sceneFog;
 
@@ -24,7 +25,7 @@ export function SceneFog({ fogColor, fogDensity }: SceneFogProps) {
 				scene.fog = null;
 			}
 		};
-	}, [fogColor, fogDensity, scene]);
+	}, [fog, scene]);
 
 	return null;
 }

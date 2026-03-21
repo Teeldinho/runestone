@@ -2,40 +2,27 @@ import { useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 import { AmbientLight, PointLight } from "three";
 
+import type { CanvasLightingSettings } from "../model";
+
 type SceneLightingProps = {
-	ambientLightColor: string;
-	ambientLightIntensity: number;
-	torchLightColor: string;
-	torchLightDecay: number;
-	torchLightDistance: number;
-	torchLightIntensity: number;
-	torchLightPositions: [number, number, number][];
+	lighting: CanvasLightingSettings;
 };
 
-export function SceneLighting({
-	ambientLightColor,
-	ambientLightIntensity,
-	torchLightColor,
-	torchLightDecay,
-	torchLightDistance,
-	torchLightIntensity,
-	torchLightPositions,
-}: SceneLightingProps) {
+export function SceneLighting({ lighting }: SceneLightingProps) {
 	const scene = useThree((state) => state.scene);
 
 	useEffect(() => {
-		const ambientLight = new AmbientLight(
-			ambientLightColor,
-			ambientLightIntensity,
-		);
+		const { ambient, torch } = lighting;
+
+		const ambientLight = new AmbientLight(ambient.color, ambient.intensity);
 		scene.add(ambientLight);
 
-		const torchLights = torchLightPositions.map((torchLightPosition) => {
+		const torchLights = torch.positions.map((torchLightPosition) => {
 			const torchLight = new PointLight(
-				torchLightColor,
-				torchLightIntensity,
-				torchLightDistance,
-				torchLightDecay,
+				torch.color,
+				torch.intensity,
+				torch.distance,
+				torch.decay,
 			);
 			torchLight.castShadow = true;
 			torchLight.position.set(...torchLightPosition);
@@ -52,16 +39,7 @@ export function SceneLighting({
 
 			scene.remove(ambientLight);
 		};
-	}, [
-		ambientLightColor,
-		ambientLightIntensity,
-		scene,
-		torchLightColor,
-		torchLightDecay,
-		torchLightDistance,
-		torchLightIntensity,
-		torchLightPositions,
-	]);
+	}, [lighting, scene]);
 
 	return null;
 }

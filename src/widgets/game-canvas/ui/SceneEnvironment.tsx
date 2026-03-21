@@ -11,31 +11,10 @@ import {
 	SphereGeometry,
 } from "three";
 
+import type { CanvasEnvironmentSettings } from "../model";
+
 type SceneEnvironmentProps = {
-	detailStoneColor: string;
-	floorColor: string;
-	floorMetalness: number;
-	floorOffsetY: number;
-	floorRoughness: number;
-	floorRotationXRad: number;
-	floorSize: [number, number];
-	gridDivisions: number;
-	gridOffsetY: number;
-	gridSize: number;
-	pillarHeight: number;
-	pillarMetalness: number;
-	pillarPositionY: number;
-	pillarRadius: number;
-	pillarRadialSegments: number;
-	pillarRoughness: number;
-	runeActiveColor: string;
-	runeEmissiveIntensity: number;
-	runeOpenColor: string;
-	runeOrbHeight: number;
-	runeOrbHeightSegments: number;
-	runeOrbRadius: number;
-	runeOrbWidthSegments: number;
-	runeSealedColor: string;
+	environment: CanvasEnvironmentSettings;
 };
 
 const disposeMeshResources = (mesh: Mesh): void => {
@@ -51,129 +30,80 @@ const disposeMeshResources = (mesh: Mesh): void => {
 	mesh.material.dispose();
 };
 
-export function SceneEnvironment({
-	detailStoneColor,
-	floorColor,
-	floorMetalness,
-	floorOffsetY,
-	floorRoughness,
-	floorRotationXRad,
-	floorSize,
-	gridDivisions,
-	gridOffsetY,
-	gridSize,
-	pillarHeight,
-	pillarMetalness,
-	pillarPositionY,
-	pillarRadius,
-	pillarRadialSegments,
-	pillarRoughness,
-	runeActiveColor,
-	runeEmissiveIntensity,
-	runeOpenColor,
-	runeOrbHeight,
-	runeOrbHeightSegments,
-	runeOrbRadius,
-	runeOrbWidthSegments,
-	runeSealedColor,
-}: SceneEnvironmentProps) {
+export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
 	const scene = useThree((state) => state.scene);
 
 	useEffect(() => {
+		const { floor, grid, pillar, rune } = environment;
+
 		const environmentGroup = new Group();
 
-		const floor = new Mesh(
-			new PlaneGeometry(...floorSize),
+		const floorMesh = new Mesh(
+			new PlaneGeometry(...floor.size),
 			new MeshStandardMaterial({
-				color: floorColor,
-				metalness: floorMetalness,
-				roughness: floorRoughness,
+				color: floor.color,
+				metalness: floor.metalness,
+				roughness: floor.roughness,
 				side: DoubleSide,
 			}),
 		);
-		floor.receiveShadow = true;
-		floor.rotation.x = floorRotationXRad;
-		floor.position.y = floorOffsetY;
-		environmentGroup.add(floor);
+		floorMesh.receiveShadow = true;
+		floorMesh.rotation.x = floor.rotationXRad;
+		floorMesh.position.y = floor.offsetY;
+		environmentGroup.add(floorMesh);
 
-		const pillar = new Mesh(
+		const pillarMesh = new Mesh(
 			new CylinderGeometry(
-				pillarRadius,
-				pillarRadius,
-				pillarHeight,
-				pillarRadialSegments,
+				pillar.radius,
+				pillar.radius,
+				pillar.height,
+				pillar.radialSegments,
 			),
 			new MeshStandardMaterial({
-				color: detailStoneColor,
-				metalness: pillarMetalness,
-				roughness: pillarRoughness,
+				color: pillar.color,
+				metalness: pillar.metalness,
+				roughness: pillar.roughness,
 			}),
 		);
-		pillar.castShadow = true;
-		pillar.receiveShadow = true;
-		pillar.position.y = pillarPositionY;
-		environmentGroup.add(pillar);
+		pillarMesh.castShadow = true;
+		pillarMesh.receiveShadow = true;
+		pillarMesh.position.y = pillar.positionY;
+		environmentGroup.add(pillarMesh);
 
 		const runeOrb = new Mesh(
 			new SphereGeometry(
-				runeOrbRadius,
-				runeOrbWidthSegments,
-				runeOrbHeightSegments,
+				rune.orbRadius,
+				rune.orbWidthSegments,
+				rune.orbHeightSegments,
 			),
 			new MeshStandardMaterial({
-				color: runeActiveColor,
-				emissive: runeOpenColor,
-				emissiveIntensity: runeEmissiveIntensity,
+				color: rune.activeColor,
+				emissive: rune.openColor,
+				emissiveIntensity: rune.emissiveIntensity,
 			}),
 		);
 		runeOrb.castShadow = true;
-		runeOrb.position.y = runeOrbHeight;
+		runeOrb.position.y = rune.orbHeight;
 		environmentGroup.add(runeOrb);
 
 		const floorGrid = new GridHelper(
-			gridSize,
-			gridDivisions,
-			runeSealedColor,
-			detailStoneColor,
+			grid.size,
+			grid.divisions,
+			rune.sealedColor,
+			pillar.color,
 		);
-		floorGrid.position.y = floorOffsetY + gridOffsetY;
+		floorGrid.position.y = floor.offsetY + grid.offsetY;
 		environmentGroup.add(floorGrid);
 
 		scene.add(environmentGroup);
 
 		return () => {
 			scene.remove(environmentGroup);
-			disposeMeshResources(floor);
-			disposeMeshResources(pillar);
+			disposeMeshResources(floorMesh);
+			disposeMeshResources(pillarMesh);
 			disposeMeshResources(runeOrb);
 		};
-	}, [
-		detailStoneColor,
-		floorColor,
-		floorMetalness,
-		floorOffsetY,
-		floorRoughness,
-		floorRotationXRad,
-		floorSize,
-		gridDivisions,
-		gridOffsetY,
-		gridSize,
-		pillarHeight,
-		pillarMetalness,
-		pillarPositionY,
-		pillarRadius,
-		pillarRadialSegments,
-		pillarRoughness,
-		runeActiveColor,
-		runeEmissiveIntensity,
-		runeOpenColor,
-		runeOrbHeight,
-		runeOrbHeightSegments,
-		runeOrbRadius,
-		runeOrbWidthSegments,
-		runeSealedColor,
-		scene,
-	]);
+	}, [environment, scene]);
 
 	return null;
 }
