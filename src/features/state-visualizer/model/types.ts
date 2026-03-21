@@ -15,3 +15,12 @@ export type MachineGraphEdge = {
 	target: RoomId;
 	guard: string | null;
 };
+
+export type MachineGraphNodePosition = {
+	x: number;
+	y: number;
+};
+
+export type PositionedMachineGraphNode = MachineGraphNode & {
+	position: MachineGraphNodePosition;
+};

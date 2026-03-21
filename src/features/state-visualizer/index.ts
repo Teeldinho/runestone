@@ -8,8 +8,12 @@ export {
 	createMachineGraphSnapshot,
 	type MachineGraphSnapshot,
 } from "./lib";
+export type { StateVisualizerResult, UseStateVisualizerInput } from "./model";
+export { useStateVisualizer } from "./model";
 export type {
 	MachineGraphEdge,
 	MachineGraphNode,
 	MachineGraphNodeKind,
+	MachineGraphNodePosition,
+	PositionedMachineGraphNode,
 } from "./model/types";
