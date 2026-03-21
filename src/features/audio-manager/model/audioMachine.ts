@@ -1,51 +1,23 @@
 import { assign, setup } from "xstate";
 
 import {
-	AUDIO_DEFAULTS,
+	AUDIO_DEFAULT_LAST_AUDIBLE_STATE,
 	AUDIO_EVENTS,
 	AUDIO_MACHINE_ID,
 	AUDIO_MACHINE_STATES,
+	AUDIO_SETTINGS_DEFAULTS,
 } from "../config";
+import {
+	createMutedAudioContext,
+	createUnmutedAudioContext,
+} from "../lib/audioMachineContext";
 
-import type {
-	AudioMachineContext,
-	AudioMachineEvent,
-	AudioSettings,
-} from "./types";
-
-const DEFAULT_AUDIO_SETTINGS: AudioSettings = {
-	masterVolume: AUDIO_DEFAULTS.MASTER_VOLUME,
-	musicVolume: AUDIO_DEFAULTS.MUSIC_VOLUME,
-	sfxVolume: AUDIO_DEFAULTS.SFX_VOLUME,
-	isMuted: false,
-};
+import type { AudioMachineContext, AudioMachineEvent } from "./types";
 
 const INITIAL_AUDIO_CONTEXT: AudioMachineContext = {
-	settings: DEFAULT_AUDIO_SETTINGS,
-	lastAudibleState: AUDIO_MACHINE_STATES.PAUSED,
+	settings: AUDIO_SETTINGS_DEFAULTS,
+	lastAudibleState: AUDIO_DEFAULT_LAST_AUDIBLE_STATE,
 };
-
-const getMutedAudioContext = (
-	context: AudioMachineContext,
-): AudioMachineContext => ({
-	settings: {
-		...context.settings,
-		isMuted: true,
-	},
-	lastAudibleState:
-		context.lastAudibleState === AUDIO_MACHINE_STATES.PLAYING
-			? AUDIO_MACHINE_STATES.PLAYING
-			: AUDIO_MACHINE_STATES.PAUSED,
-});
-
-const getUnmutedAudioContext = (
-	context: AudioMachineContext,
-): Partial<AudioMachineContext> => ({
-	settings: {
-		...context.settings,
-		isMuted: false,
-	},
-});
 
 export const audioMachine = setup({
 	types: {
@@ -67,11 +39,11 @@ export const audioMachine = setup({
 				},
 				[AUDIO_EVENTS.MUTE_REQUESTED]: {
 					target: AUDIO_MACHINE_STATES.MUTED,
-					actions: assign(({ context }) => getMutedAudioContext(context)),
+					actions: assign(({ context }) => createMutedAudioContext(context)),
 				},
 				[AUDIO_EVENTS.TOGGLE_MUTE_REQUESTED]: {
 					target: AUDIO_MACHINE_STATES.MUTED,
-					actions: assign(({ context }) => getMutedAudioContext(context)),
+					actions: assign(({ context }) => createMutedAudioContext(context)),
 				},
 			},
 		},
@@ -91,11 +63,11 @@ export const audioMachine = setup({
 				},
 				[AUDIO_EVENTS.MUTE_REQUESTED]: {
 					target: AUDIO_MACHINE_STATES.MUTED,
-					actions: assign(({ context }) => getMutedAudioContext(context)),
+					actions: assign(({ context }) => createMutedAudioContext(context)),
 				},
 				[AUDIO_EVENTS.TOGGLE_MUTE_REQUESTED]: {
 					target: AUDIO_MACHINE_STATES.MUTED,
-					actions: assign(({ context }) => getMutedAudioContext(context)),
+					actions: assign(({ context }) => createMutedAudioContext(context)),
 				},
 			},
 		},
@@ -116,11 +88,15 @@ export const audioMachine = setup({
 						target: AUDIO_MACHINE_STATES.PLAYING,
 						guard: ({ context }) =>
 							context.lastAudibleState === AUDIO_MACHINE_STATES.PLAYING,
-						actions: assign(({ context }) => getUnmutedAudioContext(context)),
+						actions: assign(({ context }) =>
+							createUnmutedAudioContext(context),
+						),
 					},
 					{
 						target: AUDIO_MACHINE_STATES.PAUSED,
-						actions: assign(({ context }) => getUnmutedAudioContext(context)),
+						actions: assign(({ context }) =>
+							createUnmutedAudioContext(context),
+						),
 					},
 				],
 				[AUDIO_EVENTS.TOGGLE_MUTE_REQUESTED]: [
@@ -128,11 +104,15 @@ export const audioMachine = setup({
 						target: AUDIO_MACHINE_STATES.PLAYING,
 						guard: ({ context }) =>
 							context.lastAudibleState === AUDIO_MACHINE_STATES.PLAYING,
-						actions: assign(({ context }) => getUnmutedAudioContext(context)),
+						actions: assign(({ context }) =>
+							createUnmutedAudioContext(context),
+						),
 					},
 					{
 						target: AUDIO_MACHINE_STATES.PAUSED,
-						actions: assign(({ context }) => getUnmutedAudioContext(context)),
+						actions: assign(({ context }) =>
+							createUnmutedAudioContext(context),
+						),
 					},
 				],
 			},

@@ -1,4 +1,8 @@
 export {
+	createMutedAudioContext,
+	createUnmutedAudioContext,
+} from "./audioMachineContext";
+export {
 	disposeMusicManager,
 	pauseBackgroundMusicLoop,
 	setBackgroundMusicVolume,
