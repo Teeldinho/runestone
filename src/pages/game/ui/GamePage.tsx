@@ -1,5 +1,4 @@
-import { useGameMachine } from "@/features/dungeon-navigation";
-import { useStateVisualizer } from "@/features/state-visualizer";
+import { useGamePage } from "@/pages/game/model";
 import {
 	Badge,
 	Button,
@@ -14,15 +13,15 @@ import { XStateInspectorPanel } from "@/widgets/xstate-inspector-panel";
 export function GamePage() {
 	const {
 		actionButtons,
+		activeStateLabel,
 		currentRoomLabel,
 		discoveredRoomLabels,
+		enemiesRemaining,
+		graphEdges,
+		graphNodes,
+		hasTreasureKeyLabel,
 		resetDungeonRun,
-		snapshot,
-	} = useGameMachine();
-	const { edges: machineGraphEdges, positionedNodes: machineGraphNodes } =
-		useStateVisualizer({
-			context: snapshot.context,
-		});
+	} = useGamePage();
 
 	return (
 		<main className="mx-auto flex min-h-dvh max-w-5xl items-center justify-center p-8">
@@ -57,25 +56,19 @@ export function GamePage() {
 										</div>
 										<div className="flex items-center justify-between">
 											<dt className="text-muted-foreground">Room State</dt>
-											<dd className="font-medium">{String(snapshot.value)}</dd>
+											<dd className="font-medium">{activeStateLabel}</dd>
 										</div>
 										<div className="flex items-center justify-between">
 											<dt className="text-muted-foreground">Treasure Key</dt>
 											<dd>
-												<Badge variant="outline">
-													{snapshot.context.hasTreasureKey
-														? "Acquired"
-														: "Missing"}
-												</Badge>
+												<Badge variant="outline">{hasTreasureKeyLabel}</Badge>
 											</dd>
 										</div>
 										<div className="flex items-center justify-between">
 											<dt className="text-muted-foreground">
 												Enemies Remaining
 											</dt>
-											<dd className="font-medium">
-												{snapshot.context.enemiesRemaining}
-											</dd>
+											<dd className="font-medium">{enemiesRemaining}</dd>
 										</div>
 									</dl>
 
@@ -139,9 +132,9 @@ export function GamePage() {
 
 					<section aria-labelledby="xstate-inspector-heading">
 						<XStateInspectorPanel
-							activeStateLabel={String(snapshot.value)}
-							graphNodes={machineGraphNodes}
-							graphEdges={machineGraphEdges}
+							activeStateLabel={activeStateLabel}
+							graphNodes={graphNodes}
+							graphEdges={graphEdges}
 						/>
 					</section>
 				</CardContent>
