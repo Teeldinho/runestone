@@ -32,10 +32,26 @@ describe("useGameHud", () => {
 		);
 
 		expect(result.current.machineSnapshotEntries).toEqual([
-			{ label: HUD_COPY.SNAPSHOT_LABELS.CURRENT_ROOM, value: "Entrance" },
-			{ label: HUD_COPY.SNAPSHOT_LABELS.ROOM_STATE, value: "entrance" },
-			{ label: HUD_COPY.SNAPSHOT_LABELS.TREASURE_KEY, value: "Missing" },
-			{ label: HUD_COPY.SNAPSHOT_LABELS.ENEMIES_REMAINING, value: "1" },
+			{
+				displayVariant: "text",
+				label: HUD_COPY.SNAPSHOT_LABELS.CURRENT_ROOM,
+				value: "Entrance",
+			},
+			{
+				displayVariant: "text",
+				label: HUD_COPY.SNAPSHOT_LABELS.ROOM_STATE,
+				value: "entrance",
+			},
+			{
+				displayVariant: "badge",
+				label: HUD_COPY.SNAPSHOT_LABELS.TREASURE_KEY,
+				value: "Missing",
+			},
+			{
+				displayVariant: "text",
+				label: HUD_COPY.SNAPSHOT_LABELS.ENEMIES_REMAINING,
+				value: "1",
+			},
 		]);
 		expect(result.current.actionButtons).toHaveLength(1);
 		expect(result.current.actionButtons[0]?.handleDungeonActionTrigger).toBe(
