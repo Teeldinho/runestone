@@ -32,6 +32,7 @@ describe("useCanvasSettings", () => {
 		expect(result.current.camera.position).toEqual(
 			GAME_CANVAS_CONFIG.CAMERA.POSITION,
 		);
+		expect(result.current.camera.zoom).toBe(1);
 		expect(result.current.renderer.dprRange).toEqual(
 			GAME_CANVAS_CONFIG.RENDERER.DPR_RANGE,
 		);
