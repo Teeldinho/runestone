@@ -5,42 +5,23 @@ import { describe, expect, it, vi } from "vitest";
 
 import { useSettingsForm } from "./useSettingsForm";
 
-const { mockWriteSettings, mockResetSettings } = vi.hoisted(() => ({
-	mockWriteSettings: vi.fn(),
-	mockResetSettings: vi.fn(),
-}));
-
-vi.mock("@/features/settings", () => ({
-	readSettings: () => ({
-		masterVolume: 0.8,
-		musicVolume: 0.55,
-		sfxVolume: 0.9,
-		hapticsEnabled: true,
+const { mockWriteSettings, mockResetSettings, mockReadSettings } = vi.hoisted(
+	() => ({
+		mockWriteSettings: vi.fn(),
+		mockResetSettings: vi.fn(),
+		mockReadSettings: vi.fn(() => ({
+			masterVolume: 0.8,
+			musicVolume: 0.55,
+			sfxVolume: 0.9,
+			hapticsEnabled: true,
+		})),
 	}),
+);
+
+vi.mock("../lib", () => ({
+	readSettings: mockReadSettings,
 	writeSettings: mockWriteSettings,
 	resetSettings: mockResetSettings,
-	SETTINGS_DEFAULTS: {
-		masterVolume: 0.8,
-		musicVolume: 0.55,
-		sfxVolume: 0.9,
-		hapticsEnabled: true,
-	},
-	SETTINGS_COPY: {
-		PAGE_TITLE: "Settings",
-		PAGE_DESCRIPTION: "Adjust audio levels and haptic feedback.",
-		AUDIO_SECTION: "Audio",
-		HAPTICS_SECTION: "Haptics",
-		MASTER_VOLUME_LABEL: "Master Volume",
-		MUSIC_VOLUME_LABEL: "Music Volume",
-		SFX_VOLUME_LABEL: "SFX Volume",
-		HAPTICS_TOGGLE_LABEL: "Haptic Feedback",
-		RESET_BUTTON: "Reset to Defaults",
-	},
-	SETTINGS_VOLUME_RANGE: {
-		MIN: 0,
-		MAX: 1,
-		STEP: 0.05,
-	},
 }));
 
 describe("useSettingsForm", () => {

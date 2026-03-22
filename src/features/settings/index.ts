@@ -6,3 +6,4 @@ export {
 } from "./config";
 export type { SettingsValues } from "./lib";
 export { readSettings, resetSettings, writeSettings } from "./lib";
+export { useSettingsForm } from "./model";
