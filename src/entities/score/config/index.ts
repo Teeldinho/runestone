@@ -1,1 +1,1 @@
-export { SCORE_QUERY_KEYS } from "./queryConfig";
+export { SCORE_QUERY_KEY_ROOT } from "./queryConfig";
