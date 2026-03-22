@@ -1,6 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { type ComponentProps, type ReactNode, useMemo } from "react";
 
+import { deduplicateErrorMessages } from "@/shared/lib";
 import { cn } from "@/shared/lib/utils";
 import { Label } from "@/shared/ui/label";
 import { Separator } from "@/shared/ui/separator";
@@ -186,23 +187,15 @@ function FieldError({
 			return null;
 		}
 
-		const uniqueErrors = [
-			...new Map(
-				errors
-					.filter((error): error is { message?: string } =>
-						Boolean(error?.message),
-					)
-					.map((error) => [error.message as string, error]),
-			).entries(),
-		];
+		const uniqueErrors = deduplicateErrorMessages(errors);
 
 		if (uniqueErrors.length === 1) {
-			return uniqueErrors[0]?.[0];
+			return uniqueErrors[0];
 		}
 
 		return (
 			<ul className="ml-4 flex list-disc flex-col gap-1">
-				{uniqueErrors.map(([message]) => (
+				{uniqueErrors.map((message) => (
 					<li key={message}>{message}</li>
 				))}
 			</ul>
