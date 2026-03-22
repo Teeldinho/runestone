@@ -1,4 +1,12 @@
 export type {
+	DungeonCorridorLayout,
+	DungeonFloorLayout,
+	DungeonRoomLayout,
+	DungeonRoomTransition,
+	MachineDefinition,
+} from "./dungeonGenerator";
+export { createDungeonFloorLayout } from "./dungeonGenerator";
+export type {
 	RoomBounds,
 	RoomBoundsInput,
 	RoomCorridorAnchors,
