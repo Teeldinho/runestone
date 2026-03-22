@@ -1,4 +1,5 @@
 import { DUNGEON_GENERATOR_CONFIG } from "@/entities/room/config";
+import { MACHINE_STATE_TYPES } from "@/shared/config";
 import { getGraphLayout } from "@/shared/lib";
 import type { Vector3Tuple } from "@/shared/types";
 
@@ -324,7 +325,9 @@ export const createDungeonFloorLayout = (
 			label: roomId,
 			position: roomPositionsById[roomId],
 			isInitial: initialRoomId === roomId,
-			isFinal: machineDefinition.config.states?.[roomId]?.type === "final",
+			isFinal:
+				machineDefinition.config.states?.[roomId]?.type ===
+				MACHINE_STATE_TYPES.FINAL,
 		})),
 		transitions,
 		corridors: createCorridorLayouts(transitions, roomPositionsById),
