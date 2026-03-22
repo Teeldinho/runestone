@@ -4,7 +4,10 @@ export {
 	NAVIGATION_ACTION_LABELS,
 	type NavigationActionEvent,
 } from "./navigationActions";
-export { GAME_MACHINE_RUNTIME_ERRORS } from "./runtimeConfig";
+export {
+	GAME_MACHINE_RUNTIME_ERRORS,
+	NAVIGATION_INTENTS,
+} from "./runtimeConfig";
 export {
 	DUNGEON_MACHINE_SYSTEM_EVENTS,
 	type GameMachineEvent,

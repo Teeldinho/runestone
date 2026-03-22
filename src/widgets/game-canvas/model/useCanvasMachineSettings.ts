@@ -5,6 +5,7 @@ import {
 	DUNGEON_THEME,
 	type DungeonContext,
 	type DungeonRuneState,
+	FLOOR_ONE_MACHINE_RULES,
 	ROOM_IDS,
 } from "@/entities/dungeon";
 import type { CameraStateSnapshot } from "@/features/camera-system";
@@ -31,7 +32,11 @@ const getRuneState = (
 		return DUNGEON_RUNE_STATES.ACTIVE;
 	}
 
-	if (machineRuntime.hasTreasureKey && machineRuntime.enemiesRemaining === 0) {
+	if (
+		machineRuntime.hasTreasureKey &&
+		machineRuntime.enemiesRemaining ===
+			FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING
+	) {
 		return DUNGEON_RUNE_STATES.ACTIVE;
 	}
 

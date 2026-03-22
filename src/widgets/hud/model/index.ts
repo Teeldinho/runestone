@@ -1,6 +1,7 @@
 export type {
 	GameHudViewModel,
 	HudActionButton,
+	HudDisplayVariant,
 	HudMachineSnapshotEntry,
-} from "./useGameHud";
+} from "./types";
 export { useGameHud } from "./useGameHud";

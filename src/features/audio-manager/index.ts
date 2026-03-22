@@ -4,6 +4,7 @@ export type {
 	AudioSpriteId,
 } from "./config";
 export {
+	AUDIO_CONTEXT_ERRORS,
 	AUDIO_DEFAULTS,
 	AUDIO_EVENTS,
 	AUDIO_MACHINE_ID,

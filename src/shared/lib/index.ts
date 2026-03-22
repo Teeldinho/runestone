@@ -1,5 +1,6 @@
 export { cn } from "./cn";
 export { easeInOutCubic, lerpNumber } from "./easing";
+export { deduplicateErrorMessages } from "./errorHelpers";
 export type {
 	GraphLayoutInput,
 	GraphLayoutOutput,

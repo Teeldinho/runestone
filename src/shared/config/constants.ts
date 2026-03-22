@@ -23,6 +23,10 @@ export const STORAGE_KEYS = {
 	SETTINGS: "rs_settings",
 } as const;
 
+export const MACHINE_STATE_TYPES = {
+	FINAL: "final",
+} as const;
+
 export type ScoreValueKey = keyof typeof SCORE_VALUES;
 export type ChainMultiplier = (typeof CHAIN_MULTIPLIERS)[number];
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

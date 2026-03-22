@@ -15,14 +15,6 @@ export const AUDIO_SPRITES = {
 
 export type AudioSpriteId = keyof typeof AUDIO_SPRITES;
 
-export const AUDIO_SPRITE_DEFINITIONS: Record<AudioSpriteId, [number, number]> =
-	Object.fromEntries(
-		Object.entries(AUDIO_SPRITES).map(([spriteId, spriteWindow]) => [
-			spriteId,
-			[spriteWindow[0], spriteWindow[1]],
-		]),
-	) as Record<AudioSpriteId, [number, number]>;
-
 export const AUDIO_DEFAULTS = {
 	MASTER_VOLUME: 0.8,
 	MUSIC_VOLUME: 0.55,

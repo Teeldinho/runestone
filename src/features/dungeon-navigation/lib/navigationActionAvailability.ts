@@ -1,5 +1,9 @@
 import type { DungeonContext } from "@/entities/dungeon";
-import { DUNGEON_EVENTS, ROOM_IDS } from "@/entities/dungeon";
+import {
+	DUNGEON_EVENTS,
+	FLOOR_ONE_MACHINE_RULES,
+	ROOM_IDS,
+} from "@/entities/dungeon";
 
 import type { NavigationActionEvent } from "../config";
 
@@ -19,7 +23,8 @@ export const getNavigationActionDisabled = (
 		case DUNGEON_EVENTS.ENEMY_DIED:
 			return (
 				context.currentRoomId !== ROOM_IDS.GUARD_ROOM ||
-				context.enemiesRemaining === 0
+				context.enemiesRemaining ===
+					FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING
 			);
 		case DUNGEON_EVENTS.ENTER_TREASURY:
 			return (

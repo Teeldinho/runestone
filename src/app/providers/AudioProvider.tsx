@@ -1,6 +1,10 @@
 import { createContext, type ReactNode, useContext } from "react";
 
-import { type UseAudioResult, useAudio } from "@/features/audio-manager";
+import {
+	AUDIO_CONTEXT_ERRORS,
+	type UseAudioResult,
+	useAudio,
+} from "@/features/audio-manager";
 
 type AudioProviderProps = {
 	children: ReactNode;
@@ -22,7 +26,7 @@ export const useAudioController = (): UseAudioResult => {
 	const audioContext = useContext(AudioContext);
 
 	if (!audioContext) {
-		throw new Error("useAudioController must be used within AudioProvider");
+		throw new Error(AUDIO_CONTEXT_ERRORS.MISSING_PROVIDER);
 	}
 
 	return audioContext;

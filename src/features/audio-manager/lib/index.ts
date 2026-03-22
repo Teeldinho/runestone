@@ -15,3 +15,4 @@ export {
 	setSoundEffectsVolume,
 	stopAllSoundEffects,
 } from "./soundManager";
+export { AUDIO_SPRITE_DEFINITIONS } from "./spriteDefinitions";
