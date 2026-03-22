@@ -1,4 +1,5 @@
 import { Canvas } from "@react-three/fiber";
+import { GAME_CANVAS_CONFIG } from "@/shared/config";
 import {
 	Card,
 	CardContent,
@@ -32,7 +33,10 @@ export function GameCanvas({ machineRuntime }: GameCanvasProps) {
 			</CardHeader>
 
 			<CardContent className="p-0">
-				<div className="h-[420px] w-full">
+				<div
+					className="w-full"
+					style={{ height: GAME_CANVAS_CONFIG.UI.CANVAS_HEIGHT_PX }}
+				>
 					<Canvas
 						camera={{
 							far: camera.far,
