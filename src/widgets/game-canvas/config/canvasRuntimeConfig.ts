@@ -1,0 +1,54 @@
+import {
+	DUNGEON_THEME,
+	type DungeonRuneState,
+	ROOM_IDS,
+	type RoomId,
+} from "@/entities/dungeon";
+
+const CANVAS_FOG_DENSITY_MULTIPLIERS_BY_ROOM: Record<RoomId, number> = {
+	[ROOM_IDS.ENTRANCE]: 0.9,
+	[ROOM_IDS.LIBRARY]: 1,
+	[ROOM_IDS.GUARD_ROOM]: 1.2,
+	[ROOM_IDS.TREASURY]: 0.8,
+	[ROOM_IDS.EXIT]: 0.65,
+};
+
+const CANVAS_RUNE_EMISSIVE_MULTIPLIERS: Record<DungeonRuneState, number> = {
+	sealed: 0.3,
+	open: 0.75,
+	active: 1.2,
+};
+
+const CANVAS_TORCH_INTENSITY_CONFIG = {
+	ENEMY_STEP: 0.35,
+	MIN: 2.4,
+	MAX: 5,
+} as const;
+
+const CANVAS_RUNE_COLORS_BY_STATE: Record<
+	DungeonRuneState,
+	{
+		activeColor: string;
+		emissiveColor: string;
+	}
+> = {
+	sealed: {
+		activeColor: DUNGEON_THEME.RUNES.SEALED,
+		emissiveColor: DUNGEON_THEME.RUNES.SEALED,
+	},
+	open: {
+		activeColor: DUNGEON_THEME.RUNES.OPEN,
+		emissiveColor: DUNGEON_THEME.RUNES.OPEN,
+	},
+	active: {
+		activeColor: DUNGEON_THEME.RUNES.ACTIVE,
+		emissiveColor: DUNGEON_THEME.RUNES.ACTIVE,
+	},
+};
+
+export {
+	CANVAS_FOG_DENSITY_MULTIPLIERS_BY_ROOM,
+	CANVAS_RUNE_COLORS_BY_STATE,
+	CANVAS_RUNE_EMISSIVE_MULTIPLIERS,
+	CANVAS_TORCH_INTENSITY_CONFIG,
+};

@@ -3,8 +3,9 @@ export type {
 	CanvasEnvironmentSettings,
 	CanvasFogSettings,
 	CanvasLightingSettings,
+	CanvasMachineRuntime,
 	CanvasRendererSettings,
 	CanvasSettingsViewModel,
 } from "./model";
-export { useCanvasSettings } from "./model";
+export { useCanvasMachineSettings, useCanvasSettings } from "./model";
 export { GameCanvas, SceneEnvironment, SceneFog, SceneLighting } from "./ui";
