@@ -11,3 +11,5 @@ export type {
 export { useCanvasSettings } from "./useCanvasSettings";
 export type { SceneEnvironmentSettingsViewModel } from "./useSceneEnvironmentSettings";
 export { useSceneEnvironmentSettings } from "./useSceneEnvironmentSettings";
+export type { SceneLightingViewModel } from "./useSceneLighting";
+export { useSceneLighting } from "./useSceneLighting";

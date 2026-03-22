@@ -1,12 +1,11 @@
 import type { DungeonContext } from "@/entities/dungeon";
 
+import { MACHINE_GRAPH_ROOM_IDS, MACHINE_GRAPH_TRANSITIONS } from "../config";
+import type { MachineGraphEdge, MachineGraphNode } from "../model/types";
 import {
 	getMachineGraphNodeKind,
 	getMachineGraphRoomLabel,
-	MACHINE_GRAPH_ROOM_IDS,
-	MACHINE_GRAPH_TRANSITIONS,
-} from "../config";
-import type { MachineGraphEdge, MachineGraphNode } from "../model/types";
+} from "./machineGraphSelectors";
 
 type MachineGraphSnapshot = {
 	nodes: MachineGraphNode[];

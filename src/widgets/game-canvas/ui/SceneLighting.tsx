@@ -1,26 +1,12 @@
-import { type RoomTorchSettings, TorchLight } from "@/entities/room";
-import type { CanvasLightingSettings } from "../model";
+import { TorchLight } from "@/entities/room";
+import { type CanvasLightingSettings, useSceneLighting } from "../model";
 
 type SceneLightingProps = {
 	lighting: CanvasLightingSettings;
 };
 
-const getTorchSettings = (
-	lighting: CanvasLightingSettings,
-): RoomTorchSettings[] => {
-	return lighting.torch.positions.map((position) => {
-		return {
-			color: lighting.torch.color,
-			decay: lighting.torch.decay,
-			distance: lighting.torch.distance,
-			intensity: lighting.torch.intensity,
-			position,
-		};
-	});
-};
-
 export function SceneLighting({ lighting }: SceneLightingProps) {
-	const torchSettings = getTorchSettings(lighting);
+	const { torchSettings } = useSceneLighting(lighting);
 
 	return (
 		<>

@@ -19,11 +19,6 @@ export const CAMERA_HOTKEY_VALUES = [
 	CAMERA_HOTKEYS.FREE_ORBITAL,
 ] as const;
 
-const cameraHotkeySet: ReadonlySet<string> = new Set(CAMERA_HOTKEY_VALUES);
-
-export const isCameraHotkey = (hotkey: string): hotkey is CameraHotkey =>
-	cameraHotkeySet.has(hotkey);
-
 export const CAMERA_MODES_BY_HOTKEY: Record<CameraHotkey, CameraMode> = {
 	[CAMERA_HOTKEYS.THIRD_PERSON]: CAMERA_MODES.THIRD_PERSON,
 	[CAMERA_HOTKEYS.TOP_DOWN]: CAMERA_MODES.TOP_DOWN,
