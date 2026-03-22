@@ -8,6 +8,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui";
+import { CameraModeSwitcher } from "@/widgets/camera-mode-switcher";
 import { GameCanvas } from "@/widgets/game-canvas";
 import { XStateInspectorPanel } from "@/widgets/xstate-inspector-panel";
 
@@ -15,12 +16,14 @@ export function GamePage() {
 	const {
 		actionButtons,
 		activeStateLabel,
+		cameraStateSnapshot,
 		canvasMachineRuntime,
 		currentRoomLabel,
 		discoveredRoomLabels,
 		enemiesRemaining,
 		graphEdges,
 		graphNodes,
+		handleCameraModeSwitch,
 		hasTreasureKeyLabel,
 		handleDungeonRunReset,
 	} = useGamePage();
@@ -42,7 +45,10 @@ export function GamePage() {
 						<h2 id="dungeon-canvas-heading" className="sr-only">
 							Dungeon Canvas
 						</h2>
-						<GameCanvas machineRuntime={canvasMachineRuntime} />
+						<GameCanvas
+							cameraStateSnapshot={cameraStateSnapshot}
+							machineRuntime={canvasMachineRuntime}
+						/>
 					</section>
 
 					<div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
@@ -138,6 +144,13 @@ export function GamePage() {
 							</Card>
 						</section>
 					</div>
+
+					<section aria-labelledby="camera-mode-switcher-heading">
+						<CameraModeSwitcher
+							activeCameraMode={cameraStateSnapshot.mode}
+							handleCameraModeSwitch={handleCameraModeSwitch}
+						/>
+					</section>
 
 					<section aria-labelledby="xstate-inspector-heading">
 						<XStateInspectorPanel
