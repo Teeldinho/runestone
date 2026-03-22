@@ -15,6 +15,11 @@ export {
 	ROOM_IDS,
 	ROOM_LABELS,
 } from "./config";
+export {
+	createFloorOneContext,
+	createFloorOneMachine,
+	updateFloorOneContextRoom,
+} from "./model";
 export type {
 	DungeonMachineContext as DungeonContext,
 	DungeonMachineEvent,
