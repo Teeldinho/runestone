@@ -1,1 +1,1 @@
-export {};
+export { GameHud } from "./GameHud";
