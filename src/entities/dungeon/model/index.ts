@@ -1,1 +1,1 @@
-export {};
+export { createFloorOneMachine } from "./floorOneMachine";

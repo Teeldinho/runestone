@@ -1,58 +1,47 @@
 import { useMemo } from "react";
-
-import {
-	CORRIDOR_ENTITY_CONFIG,
-	type CorridorMeshSettings,
-	createCorridorMeshSettings,
-} from "@/entities/corridor";
+import type { CorridorMeshSettings } from "@/entities/corridor";
+import { createFloorOneMachine } from "@/entities/dungeon";
 import { type PlayerMeshSettings, usePlayerMesh } from "@/entities/player";
+import { createDungeonFloorLayout } from "@/entities/room";
 import {
-	getRoomCorridorAnchors,
-	getRoomLabelPosition,
-	ROOM_ENTITY_CONFIG,
-	type RoomLabelSettings,
-} from "@/entities/room";
-import type { Vector3Tuple } from "@/shared/types";
+	createSceneCorridorMeshSettings,
+	createSceneRoomMeshSettings,
+	createSceneSpawnPosition,
+	type SceneRoomMeshSettings,
+} from "@/widgets/game-canvas/lib";
 
 type SceneEnvironmentSettingsViewModel = {
 	corridorMeshSettings: CorridorMeshSettings[];
 	playerMeshSettings: PlayerMeshSettings;
-	roomLabelSettings: RoomLabelSettings;
-	roomPosition: Vector3Tuple;
+	roomMeshSettings: SceneRoomMeshSettings[];
 };
 
 export const useSceneEnvironmentSettings =
 	(): SceneEnvironmentSettingsViewModel => {
-		const playerMeshSettings = usePlayerMesh();
+		const defaultPlayerMeshSettings = usePlayerMesh();
 
 		return useMemo(() => {
-			const roomLabelSettings: RoomLabelSettings = {
-				isVisible: true,
-				position: getRoomLabelPosition({
-					center: ROOM_ENTITY_CONFIG.ORIGIN,
-					heightOffset: ROOM_ENTITY_CONFIG.LABEL.HEIGHT_OFFSET,
-				}),
-				text: ROOM_ENTITY_CONFIG.LABEL.TEXT,
+			const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
+			const corridorMeshSettings = createSceneCorridorMeshSettings(
+				floorLayout.corridors,
+			);
+			const roomMeshSettings = createSceneRoomMeshSettings(floorLayout.rooms);
+			const playerPosition = createSceneSpawnPosition(
+				floorLayout.rooms,
+				defaultPlayerMeshSettings.position,
+			);
+
+			const playerMeshSettings: PlayerMeshSettings = {
+				...defaultPlayerMeshSettings,
+				position: playerPosition,
 			};
-
-			const roomCorridorAnchors = getRoomCorridorAnchors({
-				center: ROOM_ENTITY_CONFIG.ORIGIN,
-				dimensions: ROOM_ENTITY_CONFIG.DIMENSIONS,
-			});
-
-			const corridorMeshSettings = createCorridorMeshSettings({
-				anchors: roomCorridorAnchors,
-				depth: CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth,
-				yOffset: CORRIDOR_ENTITY_CONFIG.SURFACE.Y_OFFSET,
-			});
 
 			return {
 				corridorMeshSettings,
 				playerMeshSettings,
-				roomLabelSettings,
-				roomPosition: ROOM_ENTITY_CONFIG.ORIGIN,
+				roomMeshSettings,
 			};
-		}, [playerMeshSettings]);
+		}, [defaultPlayerMeshSettings]);
 	};
 
-export type { SceneEnvironmentSettingsViewModel };
+export type { SceneEnvironmentSettingsViewModel, SceneRoomMeshSettings };

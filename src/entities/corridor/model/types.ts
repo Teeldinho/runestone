@@ -7,7 +7,7 @@ export type CorridorDirection =
 export type CorridorAnchorMap = Record<CorridorDirection, Vector3Tuple>;
 
 export type CorridorMeshSettings = {
-	id: CorridorDirection;
+	id: string;
 	position: Vector3Tuple;
 	rotationYRad: number;
 };

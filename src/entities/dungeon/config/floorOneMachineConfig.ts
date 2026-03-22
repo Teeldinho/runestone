@@ -1,0 +1,4 @@
+export const FLOOR_ONE_MACHINE_RULES = {
+	ENEMY_DECREMENT: 1,
+	NO_ENEMIES_REMAINING: 0,
+} as const;
