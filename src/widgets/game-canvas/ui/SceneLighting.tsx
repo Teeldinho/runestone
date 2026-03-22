@@ -1,45 +1,40 @@
-import { useThree } from "@react-three/fiber";
-import { useEffect } from "react";
-import { AmbientLight, PointLight } from "three";
-
+import { type RoomTorchSettings, TorchLight } from "@/entities/room";
 import type { CanvasLightingSettings } from "../model";
 
 type SceneLightingProps = {
 	lighting: CanvasLightingSettings;
 };
 
-export function SceneLighting({ lighting }: SceneLightingProps) {
-	const scene = useThree((state) => state.scene);
-
-	useEffect(() => {
-		const { ambient, torch } = lighting;
-
-		const ambientLight = new AmbientLight(ambient.color, ambient.intensity);
-		scene.add(ambientLight);
-
-		const torchLights = torch.positions.map((torchLightPosition) => {
-			const torchLight = new PointLight(
-				torch.color,
-				torch.intensity,
-				torch.distance,
-				torch.decay,
-			);
-			torchLight.castShadow = true;
-			torchLight.position.set(...torchLightPosition);
-			scene.add(torchLight);
-
-			return torchLight;
-		});
-
-		return () => {
-			torchLights.forEach((torchLight) => {
-				scene.remove(torchLight);
-				torchLight.dispose();
-			});
-
-			scene.remove(ambientLight);
+const getTorchSettings = (
+	lighting: CanvasLightingSettings,
+): RoomTorchSettings[] => {
+	return lighting.torch.positions.map((position) => {
+		return {
+			color: lighting.torch.color,
+			decay: lighting.torch.decay,
+			distance: lighting.torch.distance,
+			intensity: lighting.torch.intensity,
+			position,
 		};
-	}, [lighting, scene]);
+	});
+};
 
-	return null;
+export function SceneLighting({ lighting }: SceneLightingProps) {
+	const torchSettings = getTorchSettings(lighting);
+
+	return (
+		<>
+			<ambientLight
+				color={lighting.ambient.color}
+				intensity={lighting.ambient.intensity}
+			/>
+
+			{torchSettings.map((torchSetting) => (
+				<TorchLight
+					key={torchSetting.position.join("-")}
+					settings={torchSetting}
+				/>
+			))}
+		</>
+	);
 }
