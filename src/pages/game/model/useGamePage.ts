@@ -1,9 +1,11 @@
 import { useGameMachine } from "@/features/dungeon-navigation";
 import { useStateVisualizer } from "@/features/state-visualizer";
+import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 
 type GamePageViewModel = {
 	actionButtons: ReturnType<typeof useGameMachine>["actionButtons"];
 	activeStateLabel: string;
+	canvasMachineRuntime: CanvasMachineRuntime;
 	currentRoomLabel: string;
 	discoveredRoomLabels: string[];
 	enemiesRemaining: number;
@@ -29,6 +31,11 @@ export const useGamePage = (): GamePageViewModel => {
 	return {
 		actionButtons,
 		activeStateLabel: String(snapshot.value),
+		canvasMachineRuntime: {
+			currentRoomId: snapshot.context.currentRoomId,
+			enemiesRemaining: snapshot.context.enemiesRemaining,
+			hasTreasureKey: snapshot.context.hasTreasureKey,
+		},
 		currentRoomLabel,
 		discoveredRoomLabels,
 		enemiesRemaining: snapshot.context.enemiesRemaining,

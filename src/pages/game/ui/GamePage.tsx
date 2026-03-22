@@ -15,6 +15,7 @@ export function GamePage() {
 	const {
 		actionButtons,
 		activeStateLabel,
+		canvasMachineRuntime,
 		currentRoomLabel,
 		discoveredRoomLabels,
 		enemiesRemaining,
@@ -41,7 +42,7 @@ export function GamePage() {
 						<h2 id="dungeon-canvas-heading" className="sr-only">
 							Dungeon Canvas
 						</h2>
-						<GameCanvas />
+						<GameCanvas machineRuntime={canvasMachineRuntime} />
 					</section>
 
 					<div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">

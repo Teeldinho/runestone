@@ -51,6 +51,11 @@ describe("useGamePage", () => {
 		expect(useStateVisualizer).toHaveBeenCalledWith({
 			context: machineContext,
 		});
+		expect(result.current.canvasMachineRuntime).toEqual({
+			currentRoomId: ROOM_IDS.ENTRANCE,
+			enemiesRemaining: 1,
+			hasTreasureKey: false,
+		});
 		expect(result.current.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
 		expect(result.current.currentRoomLabel).toBe("Entrance");
 	});
