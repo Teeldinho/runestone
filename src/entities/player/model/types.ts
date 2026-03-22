@@ -19,3 +19,18 @@ export type PlayerSnapshot = {
 	healthState: PlayerHealthState;
 	stats: PlayerStats;
 };
+
+export type PlayerMeshInput = {
+	healthState: PlayerHealthState;
+	origin: Vector3Tuple;
+};
+
+export type PlayerMeshSettings = {
+	auraColor: string;
+	auraEmissiveIntensity: number;
+	position: Vector3Tuple;
+};
+
+export type UsePlayerMeshInput = {
+	healthState?: PlayerHealthState;
+};

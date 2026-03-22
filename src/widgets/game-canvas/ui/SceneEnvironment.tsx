@@ -1,4 +1,5 @@
 import { CorridorMesh } from "@/entities/corridor";
+import { PlayerMesh } from "@/entities/player";
 import { RoomLabel, RoomMesh } from "@/entities/room";
 import {
 	type CanvasEnvironmentSettings,
@@ -10,8 +11,12 @@ type SceneEnvironmentProps = {
 };
 
 export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
-	const { corridorMeshSettings, roomLabelSettings, roomPosition } =
-		useSceneEnvironmentSettings();
+	const {
+		corridorMeshSettings,
+		playerMeshSettings,
+		roomLabelSettings,
+		roomPosition,
+	} = useSceneEnvironmentSettings();
 
 	return (
 		<>
@@ -19,6 +24,7 @@ export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
 				<CorridorMesh key={corridorSetting.id} settings={corridorSetting} />
 			))}
 			<RoomMesh position={roomPosition} surface={environment} />
+			<PlayerMesh settings={playerMeshSettings} />
 			<RoomLabel settings={roomLabelSettings} />
 		</>
 	);
