@@ -11,21 +11,25 @@ type SceneEnvironmentProps = {
 };
 
 export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
-	const {
-		corridorMeshSettings,
-		playerMeshSettings,
-		roomLabelSettings,
-		roomPosition,
-	} = useSceneEnvironmentSettings();
+	const { corridorMeshSettings, playerMeshSettings, roomMeshSettings } =
+		useSceneEnvironmentSettings();
 
 	return (
 		<>
 			{corridorMeshSettings.map((corridorSetting) => (
 				<CorridorMesh key={corridorSetting.id} settings={corridorSetting} />
 			))}
-			<RoomMesh position={roomPosition} surface={environment} />
+			{roomMeshSettings.map((room) => (
+				<RoomMesh
+					key={room.roomId}
+					position={room.position}
+					surface={environment}
+				/>
+			))}
 			<PlayerMesh settings={playerMeshSettings} />
-			<RoomLabel settings={roomLabelSettings} />
+			{roomMeshSettings.map((room) => (
+				<RoomLabel key={`${room.roomId}:label`} settings={room.labelSettings} />
+			))}
 		</>
 	);
 }

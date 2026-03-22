@@ -10,16 +10,13 @@ type MachineTransitionConfig = {
 };
 
 type MachineStateConfig = {
-	type?: string;
-	on?: Record<
-		string,
-		MachineTransitionConfig | readonly MachineTransitionConfig[]
-	>;
+	type?: unknown;
+	on?: Record<string, unknown>;
 };
 
 type MachineDefinition = {
 	config: {
-		initial?: string;
+		initial?: unknown;
 		states?: Record<string, MachineStateConfig>;
 	};
 };
@@ -59,15 +56,49 @@ const getRoomIds = (machineDefinition: MachineDefinition): RoomId[] => {
 };
 
 const toTransitionConfigs = (
-	transitionConfig:
-		| MachineTransitionConfig
-		| readonly MachineTransitionConfig[],
+	transitionConfig: unknown,
 ): readonly MachineTransitionConfig[] => {
-	if (Array.isArray(transitionConfig)) {
-		return transitionConfig;
+	if (!transitionConfig) {
+		return [];
 	}
 
-	return [transitionConfig as MachineTransitionConfig];
+	if (typeof transitionConfig === "string") {
+		return [
+			{
+				target: transitionConfig,
+			},
+		];
+	}
+
+	if (Array.isArray(transitionConfig)) {
+		return transitionConfig.flatMap((transition) =>
+			toTransitionConfigs(transition),
+		);
+	}
+
+	if (typeof transitionConfig !== "object") {
+		return [];
+	}
+
+	const transition = transitionConfig as {
+		target?: unknown;
+		guard?: unknown;
+	};
+	const target =
+		typeof transition.target === "string"
+			? transition.target
+			: Array.isArray(transition.target)
+				? transition.target.filter(
+						(item): item is string => typeof item === "string",
+					)
+				: undefined;
+
+	return [
+		{
+			target,
+			guard: transition.guard,
+		},
+	];
 };
 
 const normalizeTargetRoomId = (
@@ -86,6 +117,30 @@ const normalizeTargetRoomId = (
 	}
 
 	return target as RoomId;
+};
+
+const getInitialRoomId = (
+	machineDefinition: MachineDefinition,
+): RoomId | null => {
+	if (!machineDefinition.config.initial) {
+		return null;
+	}
+
+	if (typeof machineDefinition.config.initial === "string") {
+		return machineDefinition.config.initial;
+	}
+
+	if (
+		typeof machineDefinition.config.initial !== "object" ||
+		machineDefinition.config.initial === null ||
+		!("target" in machineDefinition.config.initial)
+	) {
+		return null;
+	}
+
+	return normalizeTargetRoomId(
+		machineDefinition.config.initial.target as string | readonly string[],
+	);
 };
 
 const createTransitionId = (
@@ -261,13 +316,14 @@ export const createDungeonFloorLayout = (
 	const roomIds = getRoomIds(machineDefinition);
 	const transitions = extractMachineTransitions(machineDefinition);
 	const roomPositionsById = createRoomPositions(roomIds, transitions);
+	const initialRoomId = getInitialRoomId(machineDefinition);
 
 	return {
 		rooms: roomIds.map((roomId) => ({
 			roomId,
 			label: roomId,
 			position: roomPositionsById[roomId],
-			isInitial: machineDefinition.config.initial === roomId,
+			isInitial: initialRoomId === roomId,
 			isFinal: machineDefinition.config.states?.[roomId]?.type === "final",
 		})),
 		transitions,
