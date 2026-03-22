@@ -1,20 +1,11 @@
 import type { ScoreEntry } from "@/entities/score";
-
 import {
 	LEADERBOARD_DISPLAY_FORMAT,
 	LEADERBOARD_ERROR_MESSAGES,
 	LEADERBOARD_ROOMS_COPY,
 	LEADERBOARD_TIME_UNITS,
-} from "../config";
-
-type LeaderboardDisplayEntry = {
-	rowId: string;
-	rankLabel: string;
-	playerLabel: string;
-	scoreLabel: string;
-	runTimeLabel: string;
-	roomsDiscoveredLabel: string;
-};
+} from "@/features/leaderboard/config";
+import type { LeaderboardDisplayEntry } from "@/features/leaderboard/model/types";
 
 const getRoomsDiscoveredLabel = (roomsDiscovered: number): string => {
 	const roomWord =
@@ -59,5 +50,3 @@ export const getLeaderboardErrorMessage = (error: unknown): string => {
 
 	return LEADERBOARD_ERROR_MESSAGES.LOAD_FAILED;
 };
-
-export type { LeaderboardDisplayEntry };

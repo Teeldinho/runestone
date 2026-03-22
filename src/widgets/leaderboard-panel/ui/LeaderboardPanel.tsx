@@ -6,8 +6,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui";
-
-import { LEADERBOARD_PANEL_COPY } from "../config";
+import { LEADERBOARD_PANEL_COPY } from "@/widgets/leaderboard-panel/config";
 
 export function LeaderboardPanel() {
 	const leaderboardSnapshot = useLeaderboardSnapshot();

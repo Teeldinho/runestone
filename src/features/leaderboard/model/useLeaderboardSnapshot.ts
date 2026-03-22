@@ -2,10 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import { scoreQueries } from "@/entities/score";
-
-import { LEADERBOARD_QUERY_DEFAULTS } from "../config";
-import { formatLeaderboardEntries, getLeaderboardErrorMessage } from "../lib";
-import type { LeaderboardSnapshot } from "./types";
+import { LEADERBOARD_QUERY_DEFAULTS } from "@/features/leaderboard/config";
+import {
+	formatLeaderboardEntries,
+	getLeaderboardErrorMessage,
+} from "@/features/leaderboard/lib";
+import type { LeaderboardSnapshot } from "@/features/leaderboard/model/types";
 
 export const useLeaderboardSnapshot = (): LeaderboardSnapshot => {
 	const leaderboardQuery = useQuery(
