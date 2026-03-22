@@ -1,11 +1,8 @@
 import { Howl } from "howler";
 
-import {
-	AUDIO_DEFAULTS,
-	AUDIO_PATHS,
-	AUDIO_SPRITE_DEFINITIONS,
-	type AudioSpriteId,
-} from "../config";
+import { AUDIO_DEFAULTS, AUDIO_PATHS, type AudioSpriteId } from "../config";
+
+import { AUDIO_SPRITE_DEFINITIONS } from "./spriteDefinitions";
 
 let soundEffectHowl: Howl | null = null;
 
