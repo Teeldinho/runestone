@@ -15,6 +15,7 @@ export const USERNAME_RULES = {
 
 export const AUTH_ERROR_MESSAGES = {
 	USERNAME_SUBMIT_FAILED: "We could not create your profile. Please try again.",
+	MISSING_CONTEXT: "useAuthContext must be used within AuthProvider",
 } as const;
 
 export const AUTH_COPY = {

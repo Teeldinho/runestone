@@ -153,7 +153,7 @@ export const useAuthContext = (): AuthContextValue => {
 	const authContext = useContext(AuthContext);
 
 	if (!authContext) {
-		throw new Error("useAuthContext must be used within AuthProvider");
+		throw new Error(AUTH_ERROR_MESSAGES.MISSING_CONTEXT);
 	}
 
 	return authContext;
