@@ -13,3 +13,52 @@ export type RoomNode = {
 	worldPosition: Vector3Tuple;
 	doorGuard: RoomDoorGuard;
 };
+
+export type RoomSurfaceSettings = {
+	floor: {
+		color: string;
+		metalness: number;
+		offsetY: number;
+		roughness: number;
+		rotationXRad: number;
+		size: [number, number];
+	};
+	grid: {
+		divisions: number;
+		offsetY: number;
+		size: number;
+	};
+	pillar: {
+		color: string;
+		height: number;
+		metalness: number;
+		positionY: number;
+		radius: number;
+		radialSegments: number;
+		roughness: number;
+	};
+	rune: {
+		activeColor: string;
+		emissiveIntensity: number;
+		openColor: string;
+		orbHeight: number;
+		orbHeightSegments: number;
+		orbRadius: number;
+		orbWidthSegments: number;
+		sealedColor: string;
+	};
+};
+
+export type RoomTorchSettings = {
+	color: string;
+	decay: number;
+	distance: number;
+	intensity: number;
+	position: Vector3Tuple;
+};
+
+export type RoomLabelSettings = {
+	isVisible: boolean;
+	position: Vector3Tuple;
+	text: string;
+};

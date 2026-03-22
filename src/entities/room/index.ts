@@ -5,4 +5,12 @@ export {
 	getRoomLabelPosition,
 	getRoomTorchPositions,
 } from "./lib";
-export type { RoomDoorGuard, RoomKind, RoomNode } from "./model/types";
+export type {
+	RoomDoorGuard,
+	RoomKind,
+	RoomLabelSettings,
+	RoomNode,
+	RoomSurfaceSettings,
+	RoomTorchSettings,
+} from "./model";
+export { RoomLabel, RoomMesh, TorchLight } from "./ui";
