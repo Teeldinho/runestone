@@ -1,5 +1,6 @@
 export type { ChainMultiplier, ScoreValueKey, StorageKey } from "./constants";
 export {
+	CAMERA_DEFAULT_ZOOM,
 	CAMERA_TRANSITION_MS,
 	CHAIN_MULTIPLIER_MAX_INDEX,
 	CHAIN_MULTIPLIERS,
@@ -10,6 +11,8 @@ export {
 	TIME_BONUS_CAP_PERCENT,
 	WORLD_SCALE_FACTOR,
 } from "./constants";
+export { CONVEX_LOCAL_URL, QUERY_CLIENT_DEFAULTS } from "./convexConfig";
+export { EASING_COEFFICIENTS } from "./easingConfig";
 export type {
 	CameraConfig,
 	DagreDirection,
@@ -24,3 +27,4 @@ export {
 	PLAYER_CONFIG,
 	ROOM_CONFIG,
 } from "./gameConfig";
+export { GRAPH_LAYOUT_DEFAULTS } from "./graphLayoutConfig";

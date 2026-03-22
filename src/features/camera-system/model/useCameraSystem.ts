@@ -1,25 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { CameraHotkey } from "@/features/camera-system/config";
 import {
 	CAMERA_DEFAULT_MODE,
 	CAMERA_EVENTS,
-	CAMERA_HOTKEYS,
+	CAMERA_HOTKEY_EVENT_TYPE,
+	isCameraHotkey,
 } from "@/features/camera-system/config";
 
 import { createCameraStateSnapshot, getCameraModeFromEvent } from "../lib";
 import type { CameraMachineEvent } from "./types";
-
-const CAMERA_HOTKEY_SET: ReadonlySet<string> = new Set([
-	CAMERA_HOTKEYS.THIRD_PERSON,
-	CAMERA_HOTKEYS.TOP_DOWN,
-	CAMERA_HOTKEYS.FIRST_PERSON,
-	CAMERA_HOTKEYS.FREE_ORBITAL,
-]);
-
-const isCameraHotkey = (hotkey: string): hotkey is CameraHotkey =>
-	CAMERA_HOTKEY_SET.has(hotkey);
-
-const CAMERA_HOTKEY_EVENT_TYPE = "keydown";
 
 export const useCameraSystem = () => {
 	const [cameraStateSnapshot, setCameraStateSnapshot] = useState(() =>

@@ -1,18 +1,10 @@
 import {
 	CAMERA_EVENTS,
-	CAMERA_HOTKEYS,
 	CAMERA_MODES,
-	type CameraHotkey,
+	CAMERA_MODES_BY_HOTKEY,
 	type CameraMode,
 } from "@/features/camera-system/config";
 import type { CameraMachineEvent } from "@/features/camera-system/model/types";
-
-const CAMERA_MODES_BY_HOTKEY: Record<CameraHotkey, CameraMode> = {
-	[CAMERA_HOTKEYS.THIRD_PERSON]: CAMERA_MODES.THIRD_PERSON,
-	[CAMERA_HOTKEYS.TOP_DOWN]: CAMERA_MODES.TOP_DOWN,
-	[CAMERA_HOTKEYS.FIRST_PERSON]: CAMERA_MODES.FIRST_PERSON,
-	[CAMERA_HOTKEYS.FREE_ORBITAL]: CAMERA_MODES.FREE_ORBITAL,
-};
 
 export const getCameraModeFromEvent = (
 	event: CameraMachineEvent,

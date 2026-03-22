@@ -1,9 +1,5 @@
 import dagre from "@dagrejs/dagre";
-
-const DEFAULT_NODE_WIDTH = 240;
-const DEFAULT_NODE_HEIGHT = 100;
-const DEFAULT_NODE_SEPARATION = 70;
-const DEFAULT_RANK_SEPARATION = 110;
+import { GRAPH_LAYOUT_DEFAULTS } from "@/shared/config";
 
 type LayoutDirection = "TB" | "BT" | "LR" | "RL";
 
@@ -44,15 +40,15 @@ export function getGraphLayout(input: GraphLayoutInput): GraphLayoutOutput {
 
 	graph.setGraph({
 		rankdir: input.direction ?? "TB",
-		nodesep: input.nodeSeparation ?? DEFAULT_NODE_SEPARATION,
-		ranksep: input.rankSeparation ?? DEFAULT_RANK_SEPARATION,
+		nodesep: input.nodeSeparation ?? GRAPH_LAYOUT_DEFAULTS.NODE_SEPARATION,
+		ranksep: input.rankSeparation ?? GRAPH_LAYOUT_DEFAULTS.RANK_SEPARATION,
 	});
 	graph.setDefaultEdgeLabel(() => ({}));
 
 	for (const node of input.nodes) {
 		graph.setNode(node.id, {
-			width: node.width ?? DEFAULT_NODE_WIDTH,
-			height: node.height ?? DEFAULT_NODE_HEIGHT,
+			width: node.width ?? GRAPH_LAYOUT_DEFAULTS.NODE_WIDTH,
+			height: node.height ?? GRAPH_LAYOUT_DEFAULTS.NODE_HEIGHT,
 		});
 	}
 

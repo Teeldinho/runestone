@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import { DUNGEON_THEME } from "@/entities/dungeon";
-import { GAME_CANVAS_CONFIG } from "@/shared/config";
+import { CAMERA_DEFAULT_ZOOM, GAME_CANVAS_CONFIG } from "@/shared/config";
 
 type CanvasCameraSettings = {
 	far: number;
@@ -10,10 +10,6 @@ type CanvasCameraSettings = {
 	position: [number, number, number];
 	zoom: number;
 };
-
-const CAMERA_ZOOM = {
-	DEFAULT: 1,
-} as const;
 
 type CanvasRendererSettings = {
 	dprRange: [number, number];
@@ -90,7 +86,7 @@ export const useCanvasSettings = (): CanvasSettingsViewModel => {
 				fov: GAME_CANVAS_CONFIG.CAMERA.FOV,
 				near: GAME_CANVAS_CONFIG.CAMERA.NEAR,
 				position: [...GAME_CANVAS_CONFIG.CAMERA.POSITION],
-				zoom: CAMERA_ZOOM.DEFAULT,
+				zoom: CAMERA_DEFAULT_ZOOM,
 			},
 			environment: {
 				floor: {

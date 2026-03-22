@@ -1,15 +1,13 @@
 import { assign, setup } from "xstate";
 
-import { AUTH_EVENTS, AUTH_MACHINE_ID, AUTH_STATUS } from "../config";
+import {
+	AUTH_EVENTS,
+	AUTH_INITIAL_CONTEXT,
+	AUTH_MACHINE_ID,
+	AUTH_STATUS,
+} from "../config";
 
 import type { AuthMachineContext, AuthMachineEvent } from "./types";
-
-const INITIAL_AUTH_CONTEXT: AuthMachineContext = {
-	uuid: "",
-	profile: null,
-	pendingUsername: null,
-	errorMessage: null,
-};
 
 export const authMachine = setup({
 	types: {
@@ -19,7 +17,7 @@ export const authMachine = setup({
 }).createMachine({
 	id: AUTH_MACHINE_ID,
 	initial: AUTH_STATUS.CHECKING_SESSION,
-	context: INITIAL_AUTH_CONTEXT,
+	context: AUTH_INITIAL_CONTEXT as AuthMachineContext,
 	on: {
 		[AUTH_EVENTS.SESSION_BOOTSTRAPPED]: [
 			{

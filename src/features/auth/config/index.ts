@@ -9,3 +9,4 @@ export {
 } from "./authConfig";
 export type { AuthEventType } from "./authEvents";
 export { AUTH_EVENTS } from "./authEvents";
+export { AUTH_INITIAL_CONTEXT } from "./authMachineConfig";
