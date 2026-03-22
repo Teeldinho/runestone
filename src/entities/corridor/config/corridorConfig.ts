@@ -20,6 +20,10 @@ export const CORRIDOR_ENTITY_CONFIG = {
 		height: CORRIDOR_CONFIG.HEIGHT,
 		depth: CORRIDOR_CONFIG.DEPTH,
 	},
+	GEOMETRY: {
+		CENTER_OFFSET_DIVISOR: 2,
+		HORIZONTAL_ROTATION_Y_RAD: Math.PI / 2,
+	},
 	SURFACE: {
 		BASE_COLOR: "var(--color-dungeon-stone-detail)",
 		METALNESS: 0.14,

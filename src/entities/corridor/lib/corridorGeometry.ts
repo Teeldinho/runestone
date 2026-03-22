@@ -1,4 +1,8 @@
-import { CORRIDOR_DIRECTION_ORDER, CORRIDOR_DIRECTIONS } from "../config";
+import {
+	CORRIDOR_DIRECTION_ORDER,
+	CORRIDOR_DIRECTIONS,
+	CORRIDOR_ENTITY_CONFIG,
+} from "../config";
 import type {
 	CorridorDirection,
 	CorridorMeshSettings,
@@ -6,16 +10,14 @@ import type {
 	CorridorPositionInput,
 } from "../model";
 
-const CORRIDOR_CENTER_DIVISOR = 2;
-const CORRIDOR_QUARTER_TURN_RAD = Math.PI / 2;
-
 export const getCorridorPosition = ({
 	anchor,
 	depth,
 	direction,
 	yOffset,
 }: CorridorPositionInput): readonly [number, number, number] => {
-	const corridorOffset = depth / CORRIDOR_CENTER_DIVISOR;
+	const corridorOffset =
+		depth / CORRIDOR_ENTITY_CONFIG.GEOMETRY.CENTER_OFFSET_DIVISOR;
 
 	if (direction === CORRIDOR_DIRECTIONS.EAST) {
 		return [anchor[0] + corridorOffset, anchor[1] + yOffset, anchor[2]];
@@ -37,7 +39,7 @@ export const getCorridorRotationY = (direction: CorridorDirection): number => {
 		direction === CORRIDOR_DIRECTIONS.EAST ||
 		direction === CORRIDOR_DIRECTIONS.WEST
 	) {
-		return CORRIDOR_QUARTER_TURN_RAD;
+		return CORRIDOR_ENTITY_CONFIG.GEOMETRY.HORIZONTAL_ROTATION_Y_RAD;
 	}
 
 	return 0;
