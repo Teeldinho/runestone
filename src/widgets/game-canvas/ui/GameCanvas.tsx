@@ -6,14 +6,18 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui";
-import { useCanvasSettings } from "../model";
+import { type CanvasMachineRuntime, useCanvasMachineSettings } from "../model";
 
 import { SceneEnvironment } from "./SceneEnvironment";
 import { SceneFog } from "./SceneFog";
 import { SceneLighting } from "./SceneLighting";
 
-export function GameCanvas() {
-	const canvasSettings = useCanvasSettings();
+type GameCanvasProps = {
+	machineRuntime: CanvasMachineRuntime;
+};
+
+export function GameCanvas({ machineRuntime }: GameCanvasProps) {
+	const canvasSettings = useCanvasMachineSettings(machineRuntime);
 	const { camera, environment, fog, lighting, renderer } = canvasSettings;
 
 	return (

@@ -1,12 +1,14 @@
 export type {
 	DungeonEvent,
 	DungeonEventObject,
+	DungeonRuneState,
 	DungeonTheme,
 	FloorId,
 	RoomId,
 } from "./config";
 export {
 	DUNGEON_EVENTS,
+	DUNGEON_RUNE_STATES,
 	DUNGEON_THEME,
 	FLOOR_IDS,
 	ROOM_IDS,
@@ -15,5 +17,4 @@ export {
 export type {
 	DungeonMachineContext as DungeonContext,
 	DungeonMachineEvent,
-	DungeonRuneState,
 } from "./model/types";

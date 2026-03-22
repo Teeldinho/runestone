@@ -22,6 +22,15 @@ export const FLOOR_IDS = {
 
 export type FloorId = (typeof FLOOR_IDS)[keyof typeof FLOOR_IDS];
 
+export const DUNGEON_RUNE_STATES = {
+	SEALED: "sealed",
+	OPEN: "open",
+	ACTIVE: "active",
+} as const;
+
+export type DungeonRuneState =
+	(typeof DUNGEON_RUNE_STATES)[keyof typeof DUNGEON_RUNE_STATES];
+
 export const DUNGEON_THEME = {
 	STONE: {
 		BASE_COLOR: "var(--color-dungeon-stone-base)",

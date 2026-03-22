@@ -1,3 +1,5 @@
+export type { CanvasMachineRuntime } from "./useCanvasMachineSettings";
+export { useCanvasMachineSettings } from "./useCanvasMachineSettings";
 export type {
 	CanvasCameraSettings,
 	CanvasEnvironmentSettings,
