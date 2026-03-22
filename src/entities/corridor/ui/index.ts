@@ -1,0 +1,1 @@
+export { CorridorMesh } from "./CorridorMesh";

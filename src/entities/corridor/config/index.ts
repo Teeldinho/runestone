@@ -1,0 +1,5 @@
+export {
+	CORRIDOR_DIRECTION_ORDER,
+	CORRIDOR_DIRECTIONS,
+	CORRIDOR_ENTITY_CONFIG,
+} from "./corridorConfig";

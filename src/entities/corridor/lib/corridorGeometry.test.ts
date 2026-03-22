@@ -12,14 +12,14 @@ describe("corridorGeometry", () => {
 	it("derives corridor center from anchor and direction", () => {
 		const eastPosition = getCorridorPosition({
 			anchor: [6, 0, 0],
-			depth: CORRIDOR_ENTITY_CONFIG.DIMENSIONS.DEPTH,
+			depth: CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth,
 			direction: CORRIDOR_DIRECTIONS.EAST,
 			yOffset: CORRIDOR_ENTITY_CONFIG.SURFACE.Y_OFFSET,
 		});
 
 		const northPosition = getCorridorPosition({
 			anchor: [0, 0, -6],
-			depth: CORRIDOR_ENTITY_CONFIG.DIMENSIONS.DEPTH,
+			depth: CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth,
 			direction: CORRIDOR_DIRECTIONS.NORTH,
 			yOffset: CORRIDOR_ENTITY_CONFIG.SURFACE.Y_OFFSET,
 		});
@@ -47,7 +47,7 @@ describe("corridorGeometry", () => {
 				south: [0, 0, 6],
 				west: [-6, 0, 0],
 			},
-			depth: CORRIDOR_ENTITY_CONFIG.DIMENSIONS.DEPTH,
+			depth: CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth,
 			yOffset: CORRIDOR_ENTITY_CONFIG.SURFACE.Y_OFFSET,
 		});
 
