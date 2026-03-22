@@ -5,6 +5,7 @@ import {
 	type CorridorMeshSettings,
 	createCorridorMeshSettings,
 } from "@/entities/corridor";
+import { type PlayerMeshSettings, usePlayerMesh } from "@/entities/player";
 import {
 	getRoomCorridorAnchors,
 	getRoomLabelPosition,
@@ -15,12 +16,15 @@ import type { Vector3Tuple } from "@/shared/types";
 
 type SceneEnvironmentSettingsViewModel = {
 	corridorMeshSettings: CorridorMeshSettings[];
+	playerMeshSettings: PlayerMeshSettings;
 	roomLabelSettings: RoomLabelSettings;
 	roomPosition: Vector3Tuple;
 };
 
 export const useSceneEnvironmentSettings =
 	(): SceneEnvironmentSettingsViewModel => {
+		const playerMeshSettings = usePlayerMesh();
+
 		return useMemo(() => {
 			const roomLabelSettings: RoomLabelSettings = {
 				isVisible: true,
@@ -44,10 +48,11 @@ export const useSceneEnvironmentSettings =
 
 			return {
 				corridorMeshSettings,
+				playerMeshSettings,
 				roomLabelSettings,
 				roomPosition: ROOM_ENTITY_CONFIG.ORIGIN,
 			};
-		}, []);
+		}, [playerMeshSettings]);
 	};
 
 export type { SceneEnvironmentSettingsViewModel };
