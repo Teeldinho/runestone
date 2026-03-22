@@ -31,14 +31,15 @@
 		"lint:fix": "biome check --write .",
 		"lint:ci": "biome ci .",
 		"lint:fsd": "steiger ./src",
+		"lint:purity": "node scripts/check-segment-purity.mjs",
 		"typecheck": "npm run routes:generate && tsc --noEmit",
 		"test": "vitest run --passWithNoTests",
 		"test:run": "vitest run --passWithNoTests",
 		"test:coverage": "vitest run --coverage",
 		"theme:sync": "node scripts/sync-manifest-colors.mjs",
 		"theme:check": "node scripts/check-design-tokens.mjs",
-		"ci:preflight": "npm run theme:check && npm run lint:ci && npm run typecheck && npm run lint:fsd && npm run test:run",
-		"ci:local": "npm run theme:check && npm run lint:ci && npm run typecheck && npm run lint:fsd && npm run test:coverage",
+		"ci:preflight": "npm run theme:check && npm run lint:ci && npm run lint:purity && npm run typecheck && npm run lint:fsd && npm run test:run",
+		"ci:local": "npm run theme:check && npm run lint:ci && npm run lint:purity && npm run typecheck && npm run lint:fsd && npm run test:coverage",
 		"prepare": "node scripts/install-hooks.mjs"
 	},
 	"dependencies": {

@@ -3,10 +3,13 @@ import {
 	CAMERA_DEFAULT_MODE,
 	CAMERA_EVENTS,
 	CAMERA_HOTKEY_EVENT_TYPE,
-	isCameraHotkey,
 } from "@/features/camera-system/config";
 
-import { createCameraStateSnapshot, getCameraModeFromEvent } from "../lib";
+import {
+	createCameraStateSnapshot,
+	getCameraModeFromEvent,
+	isCameraHotkey,
+} from "../lib";
 import type { CameraMachineEvent } from "./types";
 
 export const useCameraSystem = () => {

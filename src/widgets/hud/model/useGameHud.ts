@@ -20,6 +20,7 @@ type UseGameHudParams = {
 };
 
 type HudMachineSnapshotEntry = {
+	displayVariant: "badge" | "text";
 	label: string;
 	value: string;
 };
@@ -47,18 +48,22 @@ export const useGameHud = ({
 			handleDungeonRunReset,
 			machineSnapshotEntries: [
 				{
+					displayVariant: "text",
 					label: HUD_COPY.SNAPSHOT_LABELS.CURRENT_ROOM,
 					value: currentRoomLabel,
 				},
 				{
+					displayVariant: "text",
 					label: HUD_COPY.SNAPSHOT_LABELS.ROOM_STATE,
 					value: activeStateLabel,
 				},
 				{
+					displayVariant: "badge",
 					label: HUD_COPY.SNAPSHOT_LABELS.TREASURE_KEY,
 					value: hasTreasureKeyLabel,
 				},
 				{
+					displayVariant: "text",
 					label: HUD_COPY.SNAPSHOT_LABELS.ENEMIES_REMAINING,
 					value: String(enemiesRemaining),
 				},

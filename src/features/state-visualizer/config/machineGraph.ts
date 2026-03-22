@@ -1,4 +1,4 @@
-import { ROOM_IDS, ROOM_LABELS, type RoomId } from "@/entities/dungeon";
+import { ROOM_IDS, type RoomId } from "@/entities/dungeon";
 
 const MACHINE_GRAPH_NODE_KIND = {
 	[ROOM_IDS.ENTRANCE]: "initial",
@@ -85,10 +85,5 @@ export const MACHINE_GRAPH_LAYOUT = {
 	RANK_SEPARATION: 100,
 } as const;
 
-export const getMachineGraphNodeKind = (roomId: RoomId): MachineGraphNodeKind =>
-	MACHINE_GRAPH_NODE_KIND[roomId];
-
-export const getMachineGraphRoomLabel = (roomId: RoomId): string =>
-	ROOM_LABELS[roomId];
-
 export type { MachineGraphNodeKind, MachineGraphTransition };
+export { MACHINE_GRAPH_NODE_KIND };

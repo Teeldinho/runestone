@@ -19,17 +19,6 @@ type GameHudProps = {
 	hasTreasureKeyLabel: string;
 };
 
-const getMachineSnapshotValue = (
-	snapshotLabel: string,
-	snapshotValue: string,
-) => {
-	if (snapshotLabel === HUD_COPY.SNAPSHOT_LABELS.TREASURE_KEY) {
-		return <Badge variant="outline">{snapshotValue}</Badge>;
-	}
-
-	return <span className="font-medium">{snapshotValue}</span>;
-};
-
 export function GameHud({
 	actionButtons,
 	activeStateLabel,
@@ -73,9 +62,10 @@ export function GameHud({
 										{snapshotEntry.label}
 									</dt>
 									<dd>
-										{getMachineSnapshotValue(
-											snapshotEntry.label,
-											snapshotEntry.value,
+										{snapshotEntry.displayVariant === "badge" ? (
+											<Badge variant="outline">{snapshotEntry.value}</Badge>
+										) : (
+											<span className="font-medium">{snapshotEntry.value}</span>
 										)}
 									</dd>
 								</div>

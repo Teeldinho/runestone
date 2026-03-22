@@ -11,5 +11,4 @@ export {
 	CAMERA_HOTKEY_VALUES,
 	CAMERA_MODES_BY_HOTKEY,
 	CAMERA_STATE_TARGETS,
-	isCameraHotkey,
 } from "./cameraRuntimeConfig";
