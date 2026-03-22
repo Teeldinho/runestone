@@ -1,4 +1,5 @@
 import { Canvas } from "@react-three/fiber";
+import type { CameraStateSnapshot } from "@/features/camera-system";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 import {
 	Card,
@@ -14,11 +15,18 @@ import { SceneFog } from "./SceneFog";
 import { SceneLighting } from "./SceneLighting";
 
 type GameCanvasProps = {
+	cameraStateSnapshot?: CameraStateSnapshot;
 	machineRuntime: CanvasMachineRuntime;
 };
 
-export function GameCanvas({ machineRuntime }: GameCanvasProps) {
-	const canvasSettings = useCanvasMachineSettings(machineRuntime);
+export function GameCanvas({
+	cameraStateSnapshot,
+	machineRuntime,
+}: GameCanvasProps) {
+	const canvasSettings = useCanvasMachineSettings(
+		machineRuntime,
+		cameraStateSnapshot,
+	);
 	const { camera, environment, fog, lighting, renderer } = canvasSettings;
 
 	return (
@@ -43,6 +51,7 @@ export function GameCanvas({ machineRuntime }: GameCanvasProps) {
 							fov: camera.fov,
 							near: camera.near,
 							position: camera.position,
+							zoom: camera.zoom,
 						}}
 						dpr={renderer.dprRange}
 						shadows={renderer.shadowsEnabled}

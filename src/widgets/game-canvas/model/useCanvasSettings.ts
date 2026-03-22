@@ -8,7 +8,12 @@ type CanvasCameraSettings = {
 	fov: number;
 	near: number;
 	position: [number, number, number];
+	zoom: number;
 };
+
+const CAMERA_ZOOM = {
+	DEFAULT: 1,
+} as const;
 
 type CanvasRendererSettings = {
 	dprRange: [number, number];
@@ -85,6 +90,7 @@ export const useCanvasSettings = (): CanvasSettingsViewModel => {
 				fov: GAME_CANVAS_CONFIG.CAMERA.FOV,
 				near: GAME_CANVAS_CONFIG.CAMERA.NEAR,
 				position: [...GAME_CANVAS_CONFIG.CAMERA.POSITION],
+				zoom: CAMERA_ZOOM.DEFAULT,
 			},
 			environment: {
 				floor: {
