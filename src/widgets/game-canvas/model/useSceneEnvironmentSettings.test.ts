@@ -7,6 +7,7 @@ import {
 	CORRIDOR_DIRECTION_ORDER,
 	CORRIDOR_DIRECTIONS,
 } from "@/entities/corridor";
+import { PLAYER_ENTITY_CONFIG } from "@/entities/player";
 import { ROOM_ENTITY_CONFIG } from "@/entities/room";
 
 import { useSceneEnvironmentSettings } from "./useSceneEnvironmentSettings";
@@ -59,5 +60,15 @@ describe("useSceneEnvironmentSettings", () => {
 		expect(result.current.corridorMeshSettings).toHaveLength(
 			CORRIDOR_DIRECTION_ORDER.length,
 		);
+	});
+
+	it("returns default player mesh settings for scene composition", () => {
+		const { result } = renderHook(() => useSceneEnvironmentSettings());
+
+		expect(result.current.playerMeshSettings).toEqual({
+			auraColor: "var(--color-dungeon-rune-active)",
+			auraEmissiveIntensity: 1.25,
+			position: [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0],
+		});
 	});
 });
