@@ -32,7 +32,9 @@ describe("useUsernameForm", () => {
 			isSubmitting: true,
 		});
 
-		expect(result.current.submitButtonLabel).toBe("Summoning profile...");
+		expect(result.current.submitButtonLabel).toBe(
+			AUTH_COPY.USERNAME_SUBMITTING_LABEL,
+		);
 	});
 
 	it("prioritizes validation errors over external submit errors", () => {
@@ -46,15 +48,15 @@ describe("useUsernameForm", () => {
 
 		expect(
 			result.current.getUsernameFieldViewModel({
-				errors: ["Use 3-20 letters, numbers, or underscores."],
+				errors: [AUTH_COPY.USERNAME_VALIDATION_ERROR],
 				isTouched: true,
 				isValid: false,
 			}).activeErrorMessage,
-		).toBe("Use 3-20 letters, numbers, or underscores.");
+		).toBe(AUTH_COPY.USERNAME_VALIDATION_ERROR);
 
 		expect(
 			result.current.getUsernameFieldViewModel({
-				errors: ["Use 3-20 letters, numbers, or underscores."],
+				errors: [AUTH_COPY.USERNAME_VALIDATION_ERROR],
 				isTouched: false,
 				isValid: false,
 			}).activeErrorMessage,

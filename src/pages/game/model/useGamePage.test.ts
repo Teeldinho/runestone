@@ -7,6 +7,7 @@ import type { DungeonContext } from "@/entities/dungeon";
 import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
 import { useGameMachine } from "@/features/dungeon-navigation";
 import { useStateVisualizer } from "@/features/state-visualizer";
+import { GAME_PAGE_COPY } from "@/pages/game/config";
 
 import { useGamePage } from "./useGamePage";
 
@@ -56,6 +57,9 @@ describe("useGamePage", () => {
 			enemiesRemaining: 1,
 			hasTreasureKey: false,
 		});
+		expect(result.current.hasTreasureKeyLabel).toBe(
+			GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
+		);
 		expect(result.current.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
 		expect(result.current.currentRoomLabel).toBe("Entrance");
 	});

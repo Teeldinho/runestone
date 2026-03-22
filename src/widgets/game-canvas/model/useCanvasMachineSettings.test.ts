@@ -3,7 +3,11 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { DUNGEON_THEME, ROOM_IDS } from "@/entities/dungeon";
+import {
+	DUNGEON_RUNE_STATES,
+	DUNGEON_THEME,
+	ROOM_IDS,
+} from "@/entities/dungeon";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 
 import {
@@ -16,6 +20,12 @@ const RUNE_EMISSIVE_MULTIPLIER_SEALED = 0.3;
 const RUNE_EMISSIVE_MULTIPLIER_OPEN = 0.75;
 const RUNE_EMISSIVE_MULTIPLIER_ACTIVE = 1.2;
 const TORCH_INTENSITY_ENEMY_STEP = 0.35;
+
+const RUNE_COLORS_BY_STATE = {
+	[DUNGEON_RUNE_STATES.SEALED]: DUNGEON_THEME.RUNES.SEALED,
+	[DUNGEON_RUNE_STATES.OPEN]: DUNGEON_THEME.RUNES.OPEN,
+	[DUNGEON_RUNE_STATES.ACTIVE]: DUNGEON_THEME.RUNES.ACTIVE,
+} as const;
 
 const createMachineRuntime = (
 	overrides?: Partial<CanvasMachineRuntime>,
@@ -39,10 +49,10 @@ describe("useCanvasMachineSettings", () => {
 		);
 
 		expect(result.current.environment.rune.activeColor).toBe(
-			DUNGEON_THEME.RUNES.SEALED,
+			RUNE_COLORS_BY_STATE[DUNGEON_RUNE_STATES.SEALED],
 		);
 		expect(result.current.environment.rune.openColor).toBe(
-			DUNGEON_THEME.RUNES.SEALED,
+			RUNE_COLORS_BY_STATE[DUNGEON_RUNE_STATES.SEALED],
 		);
 		expect(result.current.environment.rune.emissiveIntensity).toBeCloseTo(
 			GAME_CANVAS_CONFIG.SCENE.RUNE_EMISSIVE_INTENSITY *
@@ -68,10 +78,10 @@ describe("useCanvasMachineSettings", () => {
 		);
 
 		expect(result.current.environment.rune.activeColor).toBe(
-			DUNGEON_THEME.RUNES.OPEN,
+			RUNE_COLORS_BY_STATE[DUNGEON_RUNE_STATES.OPEN],
 		);
 		expect(result.current.environment.rune.openColor).toBe(
-			DUNGEON_THEME.RUNES.OPEN,
+			RUNE_COLORS_BY_STATE[DUNGEON_RUNE_STATES.OPEN],
 		);
 		expect(result.current.environment.rune.emissiveIntensity).toBeCloseTo(
 			GAME_CANVAS_CONFIG.SCENE.RUNE_EMISSIVE_INTENSITY *
@@ -91,10 +101,10 @@ describe("useCanvasMachineSettings", () => {
 		);
 
 		expect(result.current.environment.rune.activeColor).toBe(
-			DUNGEON_THEME.RUNES.ACTIVE,
+			RUNE_COLORS_BY_STATE[DUNGEON_RUNE_STATES.ACTIVE],
 		);
 		expect(result.current.environment.rune.openColor).toBe(
-			DUNGEON_THEME.RUNES.ACTIVE,
+			RUNE_COLORS_BY_STATE[DUNGEON_RUNE_STATES.ACTIVE],
 		);
 		expect(result.current.environment.rune.emissiveIntensity).toBeCloseTo(
 			GAME_CANVAS_CONFIG.SCENE.RUNE_EMISSIVE_INTENSITY *
