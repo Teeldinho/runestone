@@ -4,8 +4,8 @@ import { renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import {
+	CORRIDOR_DIRECTION_ORDER,
 	CORRIDOR_DIRECTIONS,
-	CORRIDOR_ENTITY_CONFIG,
 } from "@/entities/corridor";
 import { ROOM_ENTITY_CONFIG } from "@/entities/room";
 
@@ -49,7 +49,7 @@ describe("useSceneEnvironmentSettings", () => {
 			},
 		]);
 		expect(result.current.corridorMeshSettings).toHaveLength(
-			CORRIDOR_ENTITY_CONFIG.DIMENSIONS.height,
+			CORRIDOR_DIRECTION_ORDER.length,
 		);
 	});
 });

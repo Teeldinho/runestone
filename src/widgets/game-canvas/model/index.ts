@@ -9,3 +9,5 @@ export type {
 	CanvasSettingsViewModel,
 } from "./useCanvasSettings";
 export { useCanvasSettings } from "./useCanvasSettings";
+export type { SceneEnvironmentSettingsViewModel } from "./useSceneEnvironmentSettings";
+export { useSceneEnvironmentSettings } from "./useSceneEnvironmentSettings";
