@@ -3,12 +3,8 @@
 import { renderHook } from "@testing-library/react";
 import { afterAll, describe, expect, it, vi } from "vitest";
 
-import {
-	CORRIDOR_DIRECTION_ORDER,
-	CORRIDOR_DIRECTIONS,
-} from "@/entities/corridor";
+import { ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { PLAYER_ENTITY_CONFIG } from "@/entities/player";
-import { ROOM_ENTITY_CONFIG } from "@/entities/room";
 
 import { useSceneEnvironmentSettings } from "./useSceneEnvironmentSettings";
 
@@ -21,54 +17,58 @@ afterAll(() => {
 });
 
 describe("useSceneEnvironmentSettings", () => {
-	it("returns room label settings from room config constants", () => {
+	it("returns machine-derived room mesh settings for all floor-one rooms", () => {
 		const { result } = renderHook(() => useSceneEnvironmentSettings());
 
-		expect(result.current.roomLabelSettings).toEqual({
-			isVisible: true,
-			position: [0, 7, 0],
-			text: ROOM_ENTITY_CONFIG.LABEL.TEXT,
-		});
-		expect(result.current.roomPosition).toEqual(ROOM_ENTITY_CONFIG.ORIGIN);
-	});
-
-	it("returns four corridor meshes aligned to room edges", () => {
-		const { result } = renderHook(() => useSceneEnvironmentSettings());
-
-		expect(result.current.corridorMeshSettings).toEqual([
-			{
-				id: CORRIDOR_DIRECTIONS.NORTH,
-				position: [0, -0.1, -10],
-				rotationYRad: 0,
-			},
-			{
-				id: CORRIDOR_DIRECTIONS.EAST,
-				position: [10, -0.1, 0],
-				rotationYRad: Math.PI / 2,
-			},
-			{
-				id: CORRIDOR_DIRECTIONS.SOUTH,
-				position: [0, -0.1, 10],
-				rotationYRad: 0,
-			},
-			{
-				id: CORRIDOR_DIRECTIONS.WEST,
-				position: [-10, -0.1, 0],
-				rotationYRad: Math.PI / 2,
-			},
+		expect(result.current.roomMeshSettings.map((room) => room.roomId)).toEqual([
+			ROOM_IDS.ENTRANCE,
+			ROOM_IDS.LIBRARY,
+			ROOM_IDS.GUARD_ROOM,
+			ROOM_IDS.TREASURY,
+			ROOM_IDS.EXIT,
 		]);
-		expect(result.current.corridorMeshSettings).toHaveLength(
-			CORRIDOR_DIRECTION_ORDER.length,
+		expect(result.current.roomMeshSettings).toHaveLength(5);
+		expect(result.current.roomMeshSettings[0].labelSettings.text).toBe(
+			ROOM_LABELS[ROOM_IDS.ENTRANCE],
 		);
+		expect(result.current.roomMeshSettings[4].labelSettings.text).toBe(
+			ROOM_LABELS[ROOM_IDS.EXIT],
+		);
+		expect(
+			new Set(
+				result.current.roomMeshSettings.map((room) => room.position.join(":")),
+			).size,
+		).toBe(5);
 	});
 
-	it("returns default player mesh settings for scene composition", () => {
+	it("returns corridor mesh settings for adjacent generated transitions", () => {
 		const { result } = renderHook(() => useSceneEnvironmentSettings());
 
-		expect(result.current.playerMeshSettings).toEqual({
+		expect(
+			result.current.corridorMeshSettings.map((corridor) => corridor.id),
+		).toEqual([
+			`${ROOM_IDS.ENTRANCE}:${ROOM_IDS.LIBRARY}`,
+			`${ROOM_IDS.LIBRARY}:${ROOM_IDS.GUARD_ROOM}`,
+			`${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.TREASURY}`,
+			`${ROOM_IDS.TREASURY}:${ROOM_IDS.EXIT}`,
+		]);
+		expect(result.current.corridorMeshSettings).toHaveLength(4);
+		expect(result.current.corridorMeshSettings[0].position).toEqual([
+			0, -0.1, -30,
+		]);
+	});
+
+	it("positions the player mesh at the generated entrance room", () => {
+		const { result } = renderHook(() => useSceneEnvironmentSettings());
+
+		expect(result.current.playerMeshSettings).toMatchObject({
 			auraColor: "var(--color-dungeon-rune-active)",
 			auraEmissiveIntensity: 1.25,
-			position: [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0],
 		});
+		expect(result.current.playerMeshSettings.position).toEqual([
+			0,
+			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+			-40,
+		]);
 	});
 });
