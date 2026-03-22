@@ -1,9 +1,9 @@
-import type { ScoreEntry } from "@/entities/score";
+import type { LeaderboardDisplayEntry } from "../lib";
 
 export type LeaderboardState = "idle" | "loading" | "ready" | "error";
 
 export type LeaderboardSnapshot = {
 	state: LeaderboardState;
-	entries: ScoreEntry[];
+	entries: LeaderboardDisplayEntry[];
 	errorMessage: string | null;
 };

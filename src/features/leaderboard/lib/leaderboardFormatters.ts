@@ -2,6 +2,7 @@ import type { ScoreEntry } from "@/entities/score";
 
 import {
 	LEADERBOARD_DISPLAY_FORMAT,
+	LEADERBOARD_ERROR_MESSAGES,
 	LEADERBOARD_ROOMS_COPY,
 	LEADERBOARD_TIME_UNITS,
 } from "../config";
@@ -49,6 +50,14 @@ export const formatLeaderboardEntries = (
 		runTimeLabel: formatRunDurationLabel(entry.timeMs),
 		roomsDiscoveredLabel: getRoomsDiscoveredLabel(entry.roomsDiscovered),
 	}));
+};
+
+export const getLeaderboardErrorMessage = (error: unknown): string => {
+	if (error instanceof Error && error.message.length > 0) {
+		return error.message;
+	}
+
+	return LEADERBOARD_ERROR_MESSAGES.LOAD_FAILED;
 };
 
 export type { LeaderboardDisplayEntry };

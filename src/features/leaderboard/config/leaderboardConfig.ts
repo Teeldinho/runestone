@@ -20,3 +20,7 @@ export const LEADERBOARD_ROOMS_COPY = {
 	SINGULAR: "room",
 	PLURAL: "rooms",
 } as const;
+
+export const LEADERBOARD_ERROR_MESSAGES = {
+	LOAD_FAILED: "Unable to load leaderboard right now.",
+} as const;
