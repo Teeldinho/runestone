@@ -5,6 +5,7 @@ export type {
 	RoomId,
 } from "./dungeonConfig";
 export {
+	DUNGEON_DEFAULTS,
 	DUNGEON_RUNE_STATES,
 	DUNGEON_THEME,
 	FLOOR_IDS,

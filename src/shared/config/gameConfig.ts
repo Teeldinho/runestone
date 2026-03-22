@@ -80,6 +80,9 @@ export const GAME_CANVAS_CONFIG = {
 		DPR_RANGE: [1, 2] as const,
 		SHADOWS_ENABLED: true,
 	},
+	UI: {
+		CANVAS_HEIGHT_PX: 420,
+	},
 	SCENE: {
 		FLOOR_SIZE: [ROOM_CONFIG.WIDTH * 1.8, ROOM_CONFIG.DEPTH * 1.8] as const,
 		FLOOR_OFFSET_Y: -0.2,

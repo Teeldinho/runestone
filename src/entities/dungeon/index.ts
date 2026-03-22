@@ -7,6 +7,7 @@ export type {
 	RoomId,
 } from "./config";
 export {
+	DUNGEON_DEFAULTS,
 	DUNGEON_EVENTS,
 	DUNGEON_RUNE_STATES,
 	DUNGEON_THEME,

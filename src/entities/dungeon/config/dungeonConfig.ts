@@ -22,6 +22,10 @@ export const FLOOR_IDS = {
 
 export type FloorId = (typeof FLOOR_IDS)[keyof typeof FLOOR_IDS];
 
+export const DUNGEON_DEFAULTS = {
+	INITIAL_ENEMIES_REMAINING: 1,
+} as const;
+
 export const DUNGEON_RUNE_STATES = {
 	SEALED: "sealed",
 	OPEN: "open",
