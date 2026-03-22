@@ -2,12 +2,7 @@ import { useMemo } from "react";
 
 import { HUD_COPY, HUD_DISPLAY_VARIANTS } from "../config";
 
-type HudActionButton = {
-	eventType: string;
-	handleDungeonActionTrigger: () => void;
-	isDisabled: boolean;
-	label: string;
-};
+import type { GameHudViewModel, HudActionButton } from "./types";
 
 type UseGameHudParams = {
 	actionButtons: HudActionButton[];
@@ -17,22 +12,6 @@ type UseGameHudParams = {
 	enemiesRemaining: number;
 	handleDungeonRunReset: () => void;
 	hasTreasureKeyLabel: string;
-};
-
-type HudMachineSnapshotEntry = {
-	displayVariant: HudDisplayVariant;
-	label: string;
-	value: string;
-};
-
-type HudDisplayVariant =
-	(typeof HUD_DISPLAY_VARIANTS)[keyof typeof HUD_DISPLAY_VARIANTS];
-
-type GameHudViewModel = {
-	actionButtons: HudActionButton[];
-	discoveredRoomLabels: string[];
-	handleDungeonRunReset: () => void;
-	machineSnapshotEntries: HudMachineSnapshotEntry[];
 };
 
 export const useGameHud = ({
@@ -82,11 +61,4 @@ export const useGameHud = ({
 			hasTreasureKeyLabel,
 		],
 	);
-};
-
-export type {
-	GameHudViewModel,
-	HudActionButton,
-	HudDisplayVariant,
-	HudMachineSnapshotEntry,
 };
