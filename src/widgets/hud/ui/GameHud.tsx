@@ -6,7 +6,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui";
-import { HUD_COPY } from "@/widgets/hud/config";
+import { HUD_COPY, HUD_DISPLAY_VARIANTS } from "@/widgets/hud/config";
 import { type HudActionButton, useGameHud } from "@/widgets/hud/model";
 
 type GameHudProps = {
@@ -62,7 +62,8 @@ export function GameHud({
 										{snapshotEntry.label}
 									</dt>
 									<dd>
-										{snapshotEntry.displayVariant === "badge" ? (
+										{snapshotEntry.displayVariant ===
+										HUD_DISPLAY_VARIANTS.BADGE ? (
 											<Badge variant="outline">{snapshotEntry.value}</Badge>
 										) : (
 											<span className="font-medium">{snapshotEntry.value}</span>

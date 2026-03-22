@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { HUD_COPY } from "@/widgets/hud/config";
+import { HUD_COPY, HUD_DISPLAY_VARIANTS } from "../config";
 
 type HudActionButton = {
 	eventType: string;
@@ -20,10 +20,13 @@ type UseGameHudParams = {
 };
 
 type HudMachineSnapshotEntry = {
-	displayVariant: "badge" | "text";
+	displayVariant: HudDisplayVariant;
 	label: string;
 	value: string;
 };
+
+type HudDisplayVariant =
+	(typeof HUD_DISPLAY_VARIANTS)[keyof typeof HUD_DISPLAY_VARIANTS];
 
 type GameHudViewModel = {
 	actionButtons: HudActionButton[];
@@ -48,22 +51,22 @@ export const useGameHud = ({
 			handleDungeonRunReset,
 			machineSnapshotEntries: [
 				{
-					displayVariant: "text",
+					displayVariant: HUD_DISPLAY_VARIANTS.TEXT,
 					label: HUD_COPY.SNAPSHOT_LABELS.CURRENT_ROOM,
 					value: currentRoomLabel,
 				},
 				{
-					displayVariant: "text",
+					displayVariant: HUD_DISPLAY_VARIANTS.TEXT,
 					label: HUD_COPY.SNAPSHOT_LABELS.ROOM_STATE,
 					value: activeStateLabel,
 				},
 				{
-					displayVariant: "badge",
+					displayVariant: HUD_DISPLAY_VARIANTS.BADGE,
 					label: HUD_COPY.SNAPSHOT_LABELS.TREASURE_KEY,
 					value: hasTreasureKeyLabel,
 				},
 				{
-					displayVariant: "text",
+					displayVariant: HUD_DISPLAY_VARIANTS.TEXT,
 					label: HUD_COPY.SNAPSHOT_LABELS.ENEMIES_REMAINING,
 					value: String(enemiesRemaining),
 				},
@@ -81,4 +84,9 @@ export const useGameHud = ({
 	);
 };
 
-export type { GameHudViewModel, HudActionButton, HudMachineSnapshotEntry };
+export type {
+	GameHudViewModel,
+	HudActionButton,
+	HudDisplayVariant,
+	HudMachineSnapshotEntry,
+};

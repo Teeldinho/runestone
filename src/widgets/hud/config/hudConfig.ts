@@ -1,3 +1,8 @@
+export const HUD_DISPLAY_VARIANTS = {
+	BADGE: "badge",
+	TEXT: "text",
+} as const;
+
 export const HUD_COPY = {
 	ACTIONS: {
 		TITLE: "Actions",
