@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { USERNAME_RULES } from "../config";
+import { AUTH_COPY, USERNAME_RULES } from "../config";
 
 const usernameSchema = z
 	.string()
@@ -18,5 +18,5 @@ export const getUsernameValidationError = (
 		return undefined;
 	}
 
-	return "Use 3-20 letters, numbers, or underscores.";
+	return AUTH_COPY.USERNAME_VALIDATION_ERROR;
 };

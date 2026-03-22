@@ -1,4 +1,5 @@
 import {
+	DUNGEON_RUNE_STATES,
 	DUNGEON_THEME,
 	type DungeonRuneState,
 	ROOM_IDS,
@@ -14,9 +15,9 @@ const CANVAS_FOG_DENSITY_MULTIPLIERS_BY_ROOM: Record<RoomId, number> = {
 };
 
 const CANVAS_RUNE_EMISSIVE_MULTIPLIERS: Record<DungeonRuneState, number> = {
-	sealed: 0.3,
-	open: 0.75,
-	active: 1.2,
+	[DUNGEON_RUNE_STATES.SEALED]: 0.3,
+	[DUNGEON_RUNE_STATES.OPEN]: 0.75,
+	[DUNGEON_RUNE_STATES.ACTIVE]: 1.2,
 };
 
 const CANVAS_TORCH_INTENSITY_CONFIG = {
@@ -32,15 +33,15 @@ const CANVAS_RUNE_COLORS_BY_STATE: Record<
 		emissiveColor: string;
 	}
 > = {
-	sealed: {
+	[DUNGEON_RUNE_STATES.SEALED]: {
 		activeColor: DUNGEON_THEME.RUNES.SEALED,
 		emissiveColor: DUNGEON_THEME.RUNES.SEALED,
 	},
-	open: {
+	[DUNGEON_RUNE_STATES.OPEN]: {
 		activeColor: DUNGEON_THEME.RUNES.OPEN,
 		emissiveColor: DUNGEON_THEME.RUNES.OPEN,
 	},
-	active: {
+	[DUNGEON_RUNE_STATES.ACTIVE]: {
 		activeColor: DUNGEON_THEME.RUNES.ACTIVE,
 		emissiveColor: DUNGEON_THEME.RUNES.ACTIVE,
 	},

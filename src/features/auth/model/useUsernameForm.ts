@@ -83,7 +83,7 @@ export const useUsernameForm = ({
 	);
 
 	const submitButtonLabel = isSubmitting
-		? "Summoning profile..."
+		? AUTH_COPY.USERNAME_SUBMITTING_LABEL
 		: AUTH_COPY.USERNAME_SUBMIT_LABEL;
 
 	return {

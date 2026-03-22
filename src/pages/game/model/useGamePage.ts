@@ -2,6 +2,8 @@ import { useGameMachine } from "@/features/dungeon-navigation";
 import { useStateVisualizer } from "@/features/state-visualizer";
 import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 
+import { GAME_PAGE_COPY } from "../config";
+
 type GamePageViewModel = {
 	actionButtons: ReturnType<typeof useGameMachine>["actionButtons"];
 	activeStateLabel: string;
@@ -42,8 +44,8 @@ export const useGamePage = (): GamePageViewModel => {
 		graphEdges: edges,
 		graphNodes: positionedNodes,
 		hasTreasureKeyLabel: snapshot.context.hasTreasureKey
-			? "Acquired"
-			: "Missing",
+			? GAME_PAGE_COPY.TREASURE_KEY_STATUS.ACQUIRED
+			: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 		handleDungeonRunReset,
 	};
 };

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import {
+	DUNGEON_RUNE_STATES,
 	DUNGEON_THEME,
 	type DungeonContext,
 	type DungeonRuneState,
@@ -26,18 +27,18 @@ const getRuneState = (
 	machineRuntime: CanvasMachineRuntime,
 ): DungeonRuneState => {
 	if (machineRuntime.currentRoomId === ROOM_IDS.EXIT) {
-		return "active";
+		return DUNGEON_RUNE_STATES.ACTIVE;
 	}
 
 	if (machineRuntime.hasTreasureKey && machineRuntime.enemiesRemaining === 0) {
-		return "active";
+		return DUNGEON_RUNE_STATES.ACTIVE;
 	}
 
 	if (machineRuntime.hasTreasureKey) {
-		return "open";
+		return DUNGEON_RUNE_STATES.OPEN;
 	}
 
-	return "sealed";
+	return DUNGEON_RUNE_STATES.SEALED;
 };
 
 const clampNumber = (value: number, min: number, max: number): number =>

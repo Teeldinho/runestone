@@ -24,8 +24,10 @@ export const AUTH_COPY = {
 	USERNAME_LABEL: "Username",
 	USERNAME_PLACEHOLDER: "runestone_hero",
 	USERNAME_SUBMIT_LABEL: "Enter Dungeon",
+	USERNAME_SUBMITTING_LABEL: "Summoning profile...",
 	USERNAME_HELP_TEXT:
 		"3-20 characters. Letters, numbers, and underscores only.",
+	USERNAME_VALIDATION_ERROR: "Use 3-20 letters, numbers, or underscores.",
 	READY_STATUS_PREFIX: "Signed in as",
 } as const;
 

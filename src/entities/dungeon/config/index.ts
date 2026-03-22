@@ -1,5 +1,11 @@
-export type { DungeonTheme, FloorId, RoomId } from "./dungeonConfig";
+export type {
+	DungeonRuneState,
+	DungeonTheme,
+	FloorId,
+	RoomId,
+} from "./dungeonConfig";
 export {
+	DUNGEON_RUNE_STATES,
 	DUNGEON_THEME,
 	FLOOR_IDS,
 	ROOM_IDS,
