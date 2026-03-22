@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { DUNGEON_DEFAULTS, FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
+import {
+	DUNGEON_DEFAULTS,
+	FLOOR_IDS,
+	FLOOR_ONE_MACHINE_RULES,
+	ROOM_IDS,
+} from "@/entities/dungeon";
 
 import {
 	canEnterFloorOneExit,
@@ -46,23 +51,25 @@ describe("floorOneContext", () => {
 
 	it("decrements remaining enemies and clamps at zero", () => {
 		const withOneEnemy = createFloorOneContext({
-			enemiesRemaining: 1,
+			enemiesRemaining: FLOOR_ONE_MACHINE_RULES.ENEMY_DECREMENT,
 		});
 
-		expect(decrementFloorOneEnemies(withOneEnemy).enemiesRemaining).toBe(0);
+		expect(decrementFloorOneEnemies(withOneEnemy).enemiesRemaining).toBe(
+			FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING,
+		);
 		expect(
 			decrementFloorOneEnemies(createFloorOneContext()).enemiesRemaining,
-		).toBe(0);
+		).toBe(FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING);
 	});
 
 	it("derives floor-one treasury and exit guard checks", () => {
 		const blockedContext = createFloorOneContext({
 			hasTreasureKey: false,
-			enemiesRemaining: 1,
+			enemiesRemaining: FLOOR_ONE_MACHINE_RULES.ENEMY_DECREMENT,
 		});
 		const unlockedContext = createFloorOneContext({
 			hasTreasureKey: true,
-			enemiesRemaining: 0,
+			enemiesRemaining: FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING,
 		});
 
 		expect(canEnterFloorOneTreasury(blockedContext)).toBe(false);

@@ -12,14 +12,19 @@ export {
 	DUNGEON_RUNE_STATES,
 	DUNGEON_THEME,
 	FLOOR_IDS,
+	FLOOR_ONE_MACHINE_RULES,
 	ROOM_IDS,
 	ROOM_LABELS,
 } from "./config";
 export {
+	canEnterFloorOneExit,
+	canEnterFloorOneTreasury,
 	createFloorOneContext,
-	createFloorOneMachine,
+	decrementFloorOneEnemies,
+	markFloorOneTreasureKeyCollected,
 	updateFloorOneContextRoom,
-} from "./model";
+} from "./lib";
+export { createFloorOneMachine } from "./model";
 export type {
 	DungeonMachineContext as DungeonContext,
 	DungeonMachineEvent,

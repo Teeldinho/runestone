@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { CORRIDOR_ENTITY_CONFIG } from "@/entities/corridor";
 import { ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import type { DungeonCorridorLayout, DungeonRoomLayout } from "@/entities/room";
 import { ROOM_ENTITY_CONFIG } from "@/entities/room";
@@ -65,7 +66,7 @@ describe("sceneEnvironmentMappers", () => {
 		expect(createSceneCorridorMeshSettings(CORRIDOR_LAYOUT_FIXTURE)).toEqual([
 			{
 				id: `${ROOM_IDS.ENTRANCE}:${ROOM_IDS.LIBRARY}`,
-				position: [0, -0.1, -30],
+				position: [0, CORRIDOR_ENTITY_CONFIG.SURFACE.Y_OFFSET, -30],
 				rotationYRad: 0,
 			},
 		]);
