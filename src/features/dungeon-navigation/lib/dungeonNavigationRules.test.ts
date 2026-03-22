@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import type { DungeonContext } from "@/entities/dungeon";
-import { DUNGEON_EVENTS, FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
+import {
+	DUNGEON_DEFAULTS,
+	DUNGEON_EVENTS,
+	FLOOR_IDS,
+	ROOM_IDS,
+} from "@/entities/dungeon";
 
 import {
 	createInitialDungeonContext,
@@ -16,12 +21,18 @@ const createDungeonContext = (
 	currentRoomId: ROOM_IDS.ENTRANCE,
 	discoveredRooms: [ROOM_IDS.ENTRANCE],
 	hasTreasureKey: false,
-	enemiesRemaining: 1,
+	enemiesRemaining: DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
 	...overrides,
 });
 
 describe("dungeon navigation rules", () => {
 	it("creates default context and applies overrides", () => {
+		const defaultContext = createInitialDungeonContext();
+
+		expect(defaultContext.enemiesRemaining).toBe(
+			DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
+		);
+
 		const context = createInitialDungeonContext({
 			hasTreasureKey: true,
 			enemiesRemaining: 0,
