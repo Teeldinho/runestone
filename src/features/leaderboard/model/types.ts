@@ -1,9 +1,19 @@
-import type { ScoreEntry } from "@/entities/score";
+import type { LEADERBOARD_STATES } from "../config";
 
-export type LeaderboardState = "idle" | "loading" | "ready" | "error";
+export type LeaderboardDisplayEntry = {
+	rowId: string;
+	rankLabel: string;
+	playerLabel: string;
+	scoreLabel: string;
+	runTimeLabel: string;
+	roomsDiscoveredLabel: string;
+};
+
+export type LeaderboardState =
+	(typeof LEADERBOARD_STATES)[keyof typeof LEADERBOARD_STATES];
 
 export type LeaderboardSnapshot = {
 	state: LeaderboardState;
-	entries: ScoreEntry[];
+	entries: LeaderboardDisplayEntry[];
 	errorMessage: string | null;
 };
