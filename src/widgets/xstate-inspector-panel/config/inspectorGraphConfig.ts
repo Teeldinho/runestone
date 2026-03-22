@@ -22,5 +22,5 @@ export const INSPECTOR_REACT_FLOW_DEFAULTS = {
 	FIT_VIEW_PADDING: 0.16,
 	MAX_ZOOM: 1.5,
 	MIN_ZOOM: 0.45,
-	NODE_ORIGIN: [0.5, 0.5] as const,
+	NODE_ORIGIN: [0.5, 0.5] as [number, number],
 } as const;
