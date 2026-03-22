@@ -8,6 +8,7 @@ import {
 	DUNGEON_THEME,
 	ROOM_IDS,
 } from "@/entities/dungeon";
+import { CAMERA_MODES } from "@/features/camera-system";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 
 import {
@@ -113,5 +114,23 @@ describe("useCanvasMachineSettings", () => {
 		expect(result.current.lighting.torch.intensity).toBe(
 			DUNGEON_THEME.LIGHTING.TORCH_INTENSITY,
 		);
+	});
+
+	it("overrides canvas camera from camera-system snapshot", () => {
+		const machineRuntime = createMachineRuntime();
+
+		const { result } = renderHook(() =>
+			useCanvasMachineSettings(machineRuntime, {
+				fov: 90,
+				mode: CAMERA_MODES.THIRD_PERSON,
+				position: [1, 2, 3],
+				target: [0, 0, 0],
+				zoom: 1.25,
+			}),
+		);
+
+		expect(result.current.camera.fov).toBe(90);
+		expect(result.current.camera.position).toEqual([1, 2, 3]);
+		expect(result.current.camera.zoom).toBe(1.25);
 	});
 });

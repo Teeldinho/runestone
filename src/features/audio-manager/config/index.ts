@@ -1,5 +1,10 @@
 export type { AudioSpriteId } from "./audioAssets";
-export { AUDIO_DEFAULTS, AUDIO_PATHS, AUDIO_SPRITES } from "./audioAssets";
+export {
+	AUDIO_DEFAULTS,
+	AUDIO_PATHS,
+	AUDIO_SPRITE_DEFINITIONS,
+	AUDIO_SPRITES,
+} from "./audioAssets";
 export type { AudioEventType, AudioMachineStateValue } from "./audioEvents";
 export {
 	AUDIO_EVENTS,
@@ -8,5 +13,6 @@ export {
 } from "./audioEvents";
 export {
 	AUDIO_DEFAULT_LAST_AUDIBLE_STATE,
+	AUDIO_INITIAL_CONTEXT,
 	AUDIO_SETTINGS_DEFAULTS,
 } from "./audioMachineConfig";

@@ -1,13 +1,5 @@
 import type { DungeonContext, RoomId } from "@/entities/dungeon";
-import { DUNGEON_DEFAULTS, FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
-
-const INITIAL_DUNGEON_CONTEXT: DungeonContext = {
-	currentFloorId: FLOOR_IDS.FLOOR_ONE,
-	currentRoomId: ROOM_IDS.ENTRANCE,
-	discoveredRooms: [ROOM_IDS.ENTRANCE],
-	hasTreasureKey: false,
-	enemiesRemaining: DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
-};
+import { DUNGEON_INITIAL_CONTEXT } from "@/features/dungeon-navigation/config";
 
 const addDiscoveredRoom = (
 	discoveredRooms: RoomId[],
@@ -23,7 +15,7 @@ const addDiscoveredRoom = (
 export const createInitialDungeonContext = (
 	contextOverrides?: Partial<DungeonContext>,
 ): DungeonContext => ({
-	...INITIAL_DUNGEON_CONTEXT,
+	...DUNGEON_INITIAL_CONTEXT,
 	...contextOverrides,
 });
 

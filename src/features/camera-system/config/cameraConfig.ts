@@ -7,6 +7,8 @@ export const CAMERA_MODES = {
 
 export type CameraMode = (typeof CAMERA_MODES)[keyof typeof CAMERA_MODES];
 
+export const CAMERA_DEFAULT_MODE = CAMERA_MODES.FREE_ORBITAL;
+
 export const CAMERA_HOTKEYS = {
 	THIRD_PERSON: "1",
 	TOP_DOWN: "2",

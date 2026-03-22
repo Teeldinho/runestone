@@ -1,3 +1,4 @@
+export { DUNGEON_INITIAL_CONTEXT } from "./dungeonContextConfig";
 export {
 	NAVIGATION_ACTION_EVENTS,
 	NAVIGATION_ACTION_LABELS,

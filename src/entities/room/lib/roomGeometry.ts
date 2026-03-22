@@ -1,3 +1,4 @@
+import { ROOM_ENTITY_CONFIG } from "@/entities/room/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 type RoomDimensions = {
@@ -35,15 +36,14 @@ type RoomCorridorAnchors = {
 	west: Vector3Tuple;
 };
 
-const ROOM_EDGE_DIVISOR = 2;
-
 export const getRoomBounds = ({
 	center,
 	dimensions,
 }: RoomBoundsInput): RoomBounds => {
-	const halfWidth = dimensions.width / ROOM_EDGE_DIVISOR;
-	const halfHeight = dimensions.height / ROOM_EDGE_DIVISOR;
-	const halfDepth = dimensions.depth / ROOM_EDGE_DIVISOR;
+	const halfWidth = dimensions.width / ROOM_ENTITY_CONFIG.GEOMETRY.EDGE_DIVISOR;
+	const halfHeight =
+		dimensions.height / ROOM_ENTITY_CONFIG.GEOMETRY.EDGE_DIVISOR;
+	const halfDepth = dimensions.depth / ROOM_ENTITY_CONFIG.GEOMETRY.EDGE_DIVISOR;
 
 	return {
 		max: [center[0] + halfWidth, center[1] + halfHeight, center[2] + halfDepth],
@@ -55,8 +55,8 @@ export const getRoomCorridorAnchors = ({
 	center,
 	dimensions,
 }: RoomBoundsInput): RoomCorridorAnchors => {
-	const halfWidth = dimensions.width / ROOM_EDGE_DIVISOR;
-	const halfDepth = dimensions.depth / ROOM_EDGE_DIVISOR;
+	const halfWidth = dimensions.width / ROOM_ENTITY_CONFIG.GEOMETRY.EDGE_DIVISOR;
+	const halfDepth = dimensions.depth / ROOM_ENTITY_CONFIG.GEOMETRY.EDGE_DIVISOR;
 
 	return {
 		east: [center[0] + halfWidth, center[1], center[2]],

@@ -1,16 +1,21 @@
-const HALF_PROGRESS = 0.5;
-const DOUBLE_FACTOR = 2;
-const QUADRUPLE_FACTOR = 4;
-const CUBIC_EXPONENT = 3;
-const END_PROGRESS = 1;
+import { EASING_COEFFICIENTS } from "@/shared/config";
 
 export function easeInOutCubic(progress: number) {
-	if (progress < HALF_PROGRESS) {
-		return QUADRUPLE_FACTOR * progress ** CUBIC_EXPONENT;
+	if (progress < EASING_COEFFICIENTS.HALF_PROGRESS) {
+		return (
+			EASING_COEFFICIENTS.QUADRUPLE_FACTOR *
+			progress ** EASING_COEFFICIENTS.CUBIC_EXPONENT
+		);
 	}
 
-	const mirroredProgress = -DOUBLE_FACTOR * progress + DOUBLE_FACTOR;
-	return END_PROGRESS - mirroredProgress ** CUBIC_EXPONENT / DOUBLE_FACTOR;
+	const mirroredProgress =
+		-EASING_COEFFICIENTS.DOUBLE_FACTOR * progress +
+		EASING_COEFFICIENTS.DOUBLE_FACTOR;
+	return (
+		EASING_COEFFICIENTS.END_PROGRESS -
+		mirroredProgress ** EASING_COEFFICIENTS.CUBIC_EXPONENT /
+			EASING_COEFFICIENTS.DOUBLE_FACTOR
+	);
 }
 
 export function lerpNumber(start: number, end: number, progress: number) {

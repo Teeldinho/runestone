@@ -1,11 +1,10 @@
 import { assign, setup } from "xstate";
 
 import {
-	AUDIO_DEFAULT_LAST_AUDIBLE_STATE,
 	AUDIO_EVENTS,
+	AUDIO_INITIAL_CONTEXT,
 	AUDIO_MACHINE_ID,
 	AUDIO_MACHINE_STATES,
-	AUDIO_SETTINGS_DEFAULTS,
 } from "../config";
 import {
 	createMutedAudioContext,
@@ -13,11 +12,6 @@ import {
 } from "../lib/audioMachineContext";
 
 import type { AudioMachineContext, AudioMachineEvent } from "./types";
-
-const INITIAL_AUDIO_CONTEXT: AudioMachineContext = {
-	settings: AUDIO_SETTINGS_DEFAULTS,
-	lastAudibleState: AUDIO_DEFAULT_LAST_AUDIBLE_STATE,
-};
 
 export const audioMachine = setup({
 	types: {
@@ -27,7 +21,7 @@ export const audioMachine = setup({
 }).createMachine({
 	id: AUDIO_MACHINE_ID,
 	initial: AUDIO_MACHINE_STATES.PAUSED,
-	context: INITIAL_AUDIO_CONTEXT,
+	context: AUDIO_INITIAL_CONTEXT as AudioMachineContext,
 	states: {
 		[AUDIO_MACHINE_STATES.PAUSED]: {
 			on: {

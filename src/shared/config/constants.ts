@@ -12,6 +12,7 @@ export const CHAIN_MULTIPLIER_MAX_INDEX = CHAIN_MULTIPLIERS.length - 1;
 
 export const TIME_BONUS_CAP_PERCENT = 0.05;
 export const CAMERA_TRANSITION_MS = 800;
+export const CAMERA_DEFAULT_ZOOM = 1;
 export const HAPTIC_THROTTLE_MS = 50;
 export const PLAYER_EYE_HEIGHT = 1.7;
 export const WORLD_SCALE_FACTOR = 0.15;

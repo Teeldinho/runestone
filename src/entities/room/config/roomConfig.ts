@@ -41,4 +41,7 @@ export const ROOM_ENTITY_CONFIG = {
 		OUTLINE_COLOR: "var(--color-dungeon-fog)",
 		OUTLINE_WIDTH: 0.025,
 	},
+	GEOMETRY: {
+		EDGE_DIVISOR: 2,
+	},
 } as const;

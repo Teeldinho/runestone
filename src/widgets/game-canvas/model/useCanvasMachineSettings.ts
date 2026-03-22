@@ -7,6 +7,7 @@ import {
 	type DungeonRuneState,
 	ROOM_IDS,
 } from "@/entities/dungeon";
+import type { CameraStateSnapshot } from "@/features/camera-system";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 
 import {
@@ -46,6 +47,7 @@ const clampNumber = (value: number, min: number, max: number): number =>
 
 export const useCanvasMachineSettings = (
 	machineRuntime: CanvasMachineRuntime,
+	cameraStateSnapshot?: CameraStateSnapshot,
 ) => {
 	const baseCanvasSettings = useCanvasSettings();
 
@@ -64,6 +66,14 @@ export const useCanvasMachineSettings = (
 
 		return {
 			...baseCanvasSettings,
+			camera: {
+				...baseCanvasSettings.camera,
+				fov: cameraStateSnapshot?.fov ?? baseCanvasSettings.camera.fov,
+				position: cameraStateSnapshot
+					? ([...cameraStateSnapshot.position] as [number, number, number])
+					: baseCanvasSettings.camera.position,
+				zoom: cameraStateSnapshot?.zoom ?? baseCanvasSettings.camera.zoom,
+			},
 			environment: {
 				...baseCanvasSettings.environment,
 				rune: {
@@ -87,7 +97,7 @@ export const useCanvasMachineSettings = (
 				},
 			},
 		};
-	}, [baseCanvasSettings, machineRuntime]);
+	}, [baseCanvasSettings, cameraStateSnapshot, machineRuntime]);
 };
 
 export type { CanvasMachineRuntime };

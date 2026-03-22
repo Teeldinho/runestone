@@ -1,1 +1,1 @@
-export {};
+export { CameraModeSwitcher } from "./CameraModeSwitcher";
