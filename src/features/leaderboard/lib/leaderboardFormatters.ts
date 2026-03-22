@@ -4,7 +4,7 @@ import {
 	LEADERBOARD_ERROR_MESSAGES,
 	LEADERBOARD_ROOMS_COPY,
 	LEADERBOARD_TIME_UNITS,
-} from "@/features/leaderboard/config";
+} from "../config";
 
 const getRoomsDiscoveredLabel = (roomsDiscovered: number): string => {
 	const roomWord =
