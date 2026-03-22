@@ -103,5 +103,100 @@ describe("dungeon navigation rules", () => {
 				guardRoomReadyContext,
 			),
 		).toBe(false);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.PICK_UP_KEY,
+				createDungeonContext({
+					currentRoomId: ROOM_IDS.GUARD_ROOM,
+					hasTreasureKey: false,
+				}),
+			),
+		).toBe(false);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.PICK_UP_KEY,
+				createDungeonContext({
+					currentRoomId: ROOM_IDS.GUARD_ROOM,
+					hasTreasureKey: true,
+				}),
+			),
+		).toBe(true);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.ENEMY_DIED,
+				createDungeonContext({
+					currentRoomId: ROOM_IDS.GUARD_ROOM,
+					enemiesRemaining: 1,
+				}),
+			),
+		).toBe(false);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.ENEMY_DIED,
+				createDungeonContext({
+					currentRoomId: ROOM_IDS.GUARD_ROOM,
+					enemiesRemaining: 0,
+				}),
+			),
+		).toBe(true);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.ENTER_EXIT,
+				createDungeonContext({
+					currentRoomId: ROOM_IDS.TREASURY,
+					hasTreasureKey: true,
+				}),
+			),
+		).toBe(false);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.ENTER_EXIT,
+				createDungeonContext({
+					currentRoomId: ROOM_IDS.TREASURY,
+					hasTreasureKey: false,
+				}),
+			),
+		).toBe(true);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
+				createDungeonContext({ currentRoomId: ROOM_IDS.LIBRARY }),
+			),
+		).toBe(false);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
+				createDungeonContext({ currentRoomId: ROOM_IDS.TREASURY }),
+			),
+		).toBe(true);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM,
+				createDungeonContext({ currentRoomId: ROOM_IDS.TREASURY }),
+			),
+		).toBe(false);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM,
+				createDungeonContext({ currentRoomId: ROOM_IDS.LIBRARY }),
+			),
+		).toBe(true);
+
+		expect(
+			getNavigationActionDisabled(
+				"UNKNOWN_EVENT" as Parameters<typeof getNavigationActionDisabled>[0],
+				entranceContext,
+			),
+		).toBe(true);
 	});
 });
