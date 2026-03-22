@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import { renderHook } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it, vi } from "vitest";
 
 import {
 	CORRIDOR_DIRECTION_ORDER,
@@ -10,6 +10,14 @@ import {
 import { ROOM_ENTITY_CONFIG } from "@/entities/room";
 
 import { useSceneEnvironmentSettings } from "./useSceneEnvironmentSettings";
+
+const consoleWarnSpy = vi.hoisted(() => {
+	return vi.spyOn(console, "warn").mockImplementation(() => {});
+});
+
+afterAll(() => {
+	consoleWarnSpy.mockRestore();
+});
 
 describe("useSceneEnvironmentSettings", () => {
 	it("returns room label settings from room config constants", () => {
