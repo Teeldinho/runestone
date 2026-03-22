@@ -5,7 +5,6 @@ import {
 	LEADERBOARD_ROOMS_COPY,
 	LEADERBOARD_TIME_UNITS,
 } from "@/features/leaderboard/config";
-import type { LeaderboardDisplayEntry } from "@/features/leaderboard/model/types";
 
 const getRoomsDiscoveredLabel = (roomsDiscovered: number): string => {
 	const roomWord =
@@ -28,9 +27,7 @@ export const formatRunDurationLabel = (timeMs: number): string => {
 	return `${minutes}m ${String(seconds).padStart(2, "0")}s`;
 };
 
-export const formatLeaderboardEntries = (
-	entries: ScoreEntry[],
-): LeaderboardDisplayEntry[] => {
+export const formatLeaderboardEntries = (entries: ScoreEntry[]) => {
 	return entries.map((entry, index) => ({
 		rowId: `${entry.userId}${LEADERBOARD_DISPLAY_FORMAT.ROW_ID_SEPARATOR}${entry.completedAt}`,
 		rankLabel: `${LEADERBOARD_DISPLAY_FORMAT.RANK_PREFIX}${index + 1}`,

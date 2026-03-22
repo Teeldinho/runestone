@@ -7,7 +7,7 @@ import {
 	formatLeaderboardEntries,
 	getLeaderboardErrorMessage,
 } from "@/features/leaderboard/lib";
-import type { LeaderboardSnapshot } from "@/features/leaderboard/model/types";
+import type { LeaderboardSnapshot } from "./types";
 
 export const useLeaderboardSnapshot = (): LeaderboardSnapshot => {
 	const leaderboardQuery = useQuery(
