@@ -11,3 +11,16 @@ export type CorridorMeshSettings = {
 	position: Vector3Tuple;
 	rotationYRad: number;
 };
+
+export type CorridorPositionInput = {
+	anchor: Vector3Tuple;
+	depth: number;
+	direction: CorridorDirection;
+	yOffset: number;
+};
+
+export type CorridorMeshSettingsInput = {
+	anchors: CorridorAnchorMap;
+	depth: number;
+	yOffset: number;
+};

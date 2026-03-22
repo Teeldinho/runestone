@@ -1,22 +1,10 @@
 import { CORRIDOR_DIRECTION_ORDER, CORRIDOR_DIRECTIONS } from "../config";
 import type {
-	CorridorAnchorMap,
 	CorridorDirection,
 	CorridorMeshSettings,
+	CorridorMeshSettingsInput,
+	CorridorPositionInput,
 } from "../model";
-
-type CorridorPositionInput = {
-	anchor: readonly [number, number, number];
-	depth: number;
-	direction: CorridorDirection;
-	yOffset: number;
-};
-
-type CorridorMeshSettingsInput = {
-	anchors: CorridorAnchorMap;
-	depth: number;
-	yOffset: number;
-};
 
 const CORRIDOR_CENTER_DIVISOR = 2;
 const CORRIDOR_QUARTER_TURN_RAD = Math.PI / 2;
@@ -73,5 +61,3 @@ export const createCorridorMeshSettings = ({
 		};
 	});
 };
-
-export type { CorridorMeshSettingsInput, CorridorPositionInput };
