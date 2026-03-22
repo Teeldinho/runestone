@@ -1,14 +1,22 @@
 // @vitest-environment happy-dom
 
 import { act, renderHook } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 
 import { DUNGEON_EVENTS, ROOM_IDS } from "@/entities/dungeon";
+import { DungeonGameMachineProvider } from "@/features/dungeon-navigation";
 import { useGameMachine } from "@/features/dungeon-navigation/model/useGameMachine";
+
+const gameMachineRuntimeWrapper = ({ children }: { children: ReactNode }) => (
+	<DungeonGameMachineProvider>{children}</DungeonGameMachineProvider>
+);
 
 describe("useGameMachine", () => {
 	it("returns an entrance snapshot by default", () => {
-		const { result } = renderHook(() => useGameMachine());
+		const { result } = renderHook(() => useGameMachine(), {
+			wrapper: gameMachineRuntimeWrapper,
+		});
 
 		expect(result.current.snapshot.value).toBe(ROOM_IDS.ENTRANCE);
 		expect(result.current.snapshot.context.currentRoomId).toBe(
@@ -17,7 +25,9 @@ describe("useGameMachine", () => {
 	});
 
 	it("moves machine state through handleDungeonEventSend", () => {
-		const { result } = renderHook(() => useGameMachine());
+		const { result } = renderHook(() => useGameMachine(), {
+			wrapper: gameMachineRuntimeWrapper,
+		});
 
 		act(() => {
 			result.current.handleDungeonEventSend(DUNGEON_EVENTS.ENTER_LIBRARY);
@@ -27,7 +37,9 @@ describe("useGameMachine", () => {
 	});
 
 	it("resets machine state to entrance", () => {
-		const { result } = renderHook(() => useGameMachine());
+		const { result } = renderHook(() => useGameMachine(), {
+			wrapper: gameMachineRuntimeWrapper,
+		});
 
 		act(() => {
 			result.current.handleDungeonEventSend(DUNGEON_EVENTS.ENTER_LIBRARY);
@@ -41,7 +53,9 @@ describe("useGameMachine", () => {
 	});
 
 	it("exposes action button state derived from the machine snapshot", () => {
-		const { result } = renderHook(() => useGameMachine());
+		const { result } = renderHook(() => useGameMachine(), {
+			wrapper: gameMachineRuntimeWrapper,
+		});
 
 		const defaultLibraryAction = result.current.actionButtons.find(
 			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,

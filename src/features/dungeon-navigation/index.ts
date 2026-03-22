@@ -5,7 +5,12 @@ export {
 	NAVIGATION_ACTION_LABELS,
 	type NavigationActionEvent,
 } from "./config";
-export { createGameMachine, useGameMachine } from "./model";
+export {
+	createGameMachine,
+	DungeonGameMachineProvider,
+	useGameMachine,
+	useGameMachineRuntime,
+} from "./model";
 export type {
 	NavigationIntent,
 	NavigationPrompt,
