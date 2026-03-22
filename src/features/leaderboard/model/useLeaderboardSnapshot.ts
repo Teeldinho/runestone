@@ -2,7 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import { scoreQueries } from "@/entities/score";
-import { LEADERBOARD_QUERY_DEFAULTS } from "@/features/leaderboard/config";
+import {
+	LEADERBOARD_QUERY_DEFAULTS,
+	LEADERBOARD_STATES,
+} from "@/features/leaderboard/config";
 import {
 	formatLeaderboardEntries,
 	getLeaderboardErrorMessage,
@@ -20,7 +23,7 @@ export const useLeaderboardSnapshot = (): LeaderboardSnapshot => {
 	return useMemo(() => {
 		if (leaderboardQuery.isPending) {
 			return {
-				state: "loading",
+				state: LEADERBOARD_STATES.LOADING,
 				entries: [],
 				errorMessage: null,
 			};
@@ -28,14 +31,14 @@ export const useLeaderboardSnapshot = (): LeaderboardSnapshot => {
 
 		if (leaderboardQuery.isError) {
 			return {
-				state: "error",
+				state: LEADERBOARD_STATES.ERROR,
 				entries: [],
 				errorMessage: getLeaderboardErrorMessage(leaderboardQuery.error),
 			};
 		}
 
 		return {
-			state: "ready",
+			state: LEADERBOARD_STATES.READY,
 			entries: formatLeaderboardEntries(leaderboardQuery.data ?? []),
 			errorMessage: null,
 		};

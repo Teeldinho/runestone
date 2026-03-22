@@ -1,3 +1,5 @@
+import type { LEADERBOARD_STATES } from "../config";
+
 export type LeaderboardDisplayEntry = {
 	rowId: string;
 	rankLabel: string;
@@ -7,7 +9,8 @@ export type LeaderboardDisplayEntry = {
 	roomsDiscoveredLabel: string;
 };
 
-export type LeaderboardState = "idle" | "loading" | "ready" | "error";
+export type LeaderboardState =
+	(typeof LEADERBOARD_STATES)[keyof typeof LEADERBOARD_STATES];
 
 export type LeaderboardSnapshot = {
 	state: LeaderboardState;

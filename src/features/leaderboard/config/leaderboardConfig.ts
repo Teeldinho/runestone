@@ -21,6 +21,13 @@ export const LEADERBOARD_ROOMS_COPY = {
 	PLURAL: "rooms",
 } as const;
 
+export const LEADERBOARD_STATES = {
+	IDLE: "idle",
+	LOADING: "loading",
+	READY: "ready",
+	ERROR: "error",
+} as const;
+
 export const LEADERBOARD_ERROR_MESSAGES = {
 	LOAD_FAILED: "Unable to load leaderboard right now.",
 } as const;

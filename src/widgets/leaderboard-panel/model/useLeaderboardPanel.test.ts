@@ -6,34 +6,41 @@ import type { LeaderboardSnapshot } from "@/features/leaderboard";
 
 import { useLeaderboardPanel } from "./useLeaderboardPanel";
 
-const { mockUseLeaderboardSnapshot } = vi.hoisted(() => ({
+const { mockUseLeaderboardSnapshot, LEADERBOARD_STATES } = vi.hoisted(() => ({
 	mockUseLeaderboardSnapshot: vi.fn(),
+	LEADERBOARD_STATES: {
+		IDLE: "idle" as const,
+		LOADING: "loading" as const,
+		READY: "ready" as const,
+		ERROR: "error" as const,
+	},
 }));
 
 vi.mock("@/features/leaderboard", () => ({
 	useLeaderboardSnapshot: mockUseLeaderboardSnapshot,
+	LEADERBOARD_STATES,
 }));
 
 const LOADING_SNAPSHOT: LeaderboardSnapshot = {
-	state: "loading",
+	state: LEADERBOARD_STATES.LOADING,
 	entries: [],
 	errorMessage: null,
 };
 
 const ERROR_SNAPSHOT: LeaderboardSnapshot = {
-	state: "error",
+	state: LEADERBOARD_STATES.ERROR,
 	entries: [],
 	errorMessage: "Leaderboard unavailable",
 };
 
 const EMPTY_SNAPSHOT: LeaderboardSnapshot = {
-	state: "ready",
+	state: LEADERBOARD_STATES.READY,
 	entries: [],
 	errorMessage: null,
 };
 
 const POPULATED_SNAPSHOT: LeaderboardSnapshot = {
-	state: "ready",
+	state: LEADERBOARD_STATES.READY,
 	entries: [
 		{
 			rowId: "user-1:1739980000000",

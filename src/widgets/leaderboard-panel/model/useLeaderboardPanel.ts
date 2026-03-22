@@ -1,5 +1,8 @@
 import type { LeaderboardDisplayEntry } from "@/features/leaderboard";
-import { useLeaderboardSnapshot } from "@/features/leaderboard";
+import {
+	LEADERBOARD_STATES,
+	useLeaderboardSnapshot,
+} from "@/features/leaderboard";
 
 export type LeaderboardPanelViewModel = {
 	isLoading: boolean;
@@ -13,9 +16,9 @@ export type LeaderboardPanelViewModel = {
 export const useLeaderboardPanel = (): LeaderboardPanelViewModel => {
 	const snapshot = useLeaderboardSnapshot();
 
-	const isLoading = snapshot.state === "loading";
-	const isError = snapshot.state === "error";
-	const isReady = snapshot.state === "ready";
+	const isLoading = snapshot.state === LEADERBOARD_STATES.LOADING;
+	const isError = snapshot.state === LEADERBOARD_STATES.ERROR;
+	const isReady = snapshot.state === LEADERBOARD_STATES.READY;
 	const hasEntries = isReady && snapshot.entries.length > 0;
 	const isEmpty = isReady && snapshot.entries.length === 0;
 
