@@ -1,12 +1,12 @@
 import type { DungeonContext, RoomId } from "@/entities/dungeon";
-import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
+import { DUNGEON_DEFAULTS, FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
 
 const INITIAL_DUNGEON_CONTEXT: DungeonContext = {
 	currentFloorId: FLOOR_IDS.FLOOR_ONE,
 	currentRoomId: ROOM_IDS.ENTRANCE,
 	discoveredRooms: [ROOM_IDS.ENTRANCE],
 	hasTreasureKey: false,
-	enemiesRemaining: 1,
+	enemiesRemaining: DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
 };
 
 const addDiscoveredRoom = (
