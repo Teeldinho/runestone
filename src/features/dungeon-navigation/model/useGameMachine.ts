@@ -1,4 +1,3 @@
-import { useMachine } from "@xstate/react";
 import { useCallback, useMemo } from "react";
 
 import type { DungeonEvent } from "@/entities/dungeon";
@@ -11,8 +10,7 @@ import {
 	type NavigationActionEvent,
 } from "../config";
 import { getNavigationActionDisabled } from "../lib/navigationActionAvailability";
-
-import { createGameMachine } from "./gameMachine";
+import { useGameMachineRuntime } from "./gameMachineRuntime";
 
 type GameActionButton = {
 	eventType: NavigationActionEvent;
@@ -22,8 +20,7 @@ type GameActionButton = {
 };
 
 export const useGameMachine = () => {
-	const machine = useMemo(() => createGameMachine(), []);
-	const [snapshot, sendDungeonMachineEvent] = useMachine(machine);
+	const { snapshot, sendDungeonMachineEvent } = useGameMachineRuntime();
 
 	const handleDungeonEventSend = useCallback(
 		(eventType: DungeonEvent) => {
