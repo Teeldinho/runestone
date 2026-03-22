@@ -2,6 +2,10 @@ export const INSPECTOR_EDGE_LABELS = {
 	NO_GUARD: "No guard",
 } as const;
 
+export const INSPECTOR_COPY = {
+	ACTIVE_LABEL: "Active",
+} as const;
+
 export const INSPECTOR_FLOW_EDGE_VISUALS = {
 	TYPE: "smoothstep",
 } as const;

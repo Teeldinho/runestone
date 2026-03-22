@@ -15,6 +15,7 @@ import {
 
 import "@xyflow/react/dist/style.css";
 
+import { INSPECTOR_COPY } from "../config";
 import { useXStateInspectorPanel } from "../model";
 
 type XStateInspectorPanelProps = {
@@ -116,7 +117,9 @@ export function XStateInspectorPanel({
 								</span>
 								<div className="flex items-center gap-2">
 									<Badge variant="outline">{node.kind}</Badge>
-									{node.isActive ? <Badge>Active</Badge> : null}
+									{node.isActive ? (
+										<Badge>{INSPECTOR_COPY.ACTIVE_LABEL}</Badge>
+									) : null}
 								</div>
 							</li>
 						))}
