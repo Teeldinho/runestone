@@ -1,3 +1,4 @@
+export { checkHasProfile } from "./authMachineGuards";
 export {
 	formatUserDisplayTag,
 	isUsernameValid,

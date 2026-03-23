@@ -10,6 +10,7 @@ import {
 	createMutedAudioContext,
 	createUnmutedAudioContext,
 } from "../lib/audioMachineContext";
+import { checkWasPlaying } from "../lib/audioMachineGuards";
 
 import type { AudioMachineContext, AudioMachineEvent } from "./types";
 
@@ -80,8 +81,7 @@ export const audioMachine = setup({
 				[AUDIO_EVENTS.UNMUTE_REQUESTED]: [
 					{
 						target: AUDIO_MACHINE_STATES.PLAYING,
-						guard: ({ context }) =>
-							context.lastAudibleState === AUDIO_MACHINE_STATES.PLAYING,
+						guard: ({ context }) => checkWasPlaying(context.lastAudibleState),
 						actions: assign(({ context }) =>
 							createUnmutedAudioContext(context),
 						),
@@ -96,8 +96,7 @@ export const audioMachine = setup({
 				[AUDIO_EVENTS.TOGGLE_MUTE_REQUESTED]: [
 					{
 						target: AUDIO_MACHINE_STATES.PLAYING,
-						guard: ({ context }) =>
-							context.lastAudibleState === AUDIO_MACHINE_STATES.PLAYING,
+						guard: ({ context }) => checkWasPlaying(context.lastAudibleState),
 						actions: assign(({ context }) =>
 							createUnmutedAudioContext(context),
 						),

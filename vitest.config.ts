@@ -15,6 +15,12 @@ export default defineConfig({
 		passWithNoTests: true,
 		coverage: {
 			provider: "v8",
+			thresholds: {
+				lines: 55,
+				functions: 60,
+				branches: 55,
+				statements: 55,
+			},
 		},
 	},
 });

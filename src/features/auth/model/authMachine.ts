@@ -7,6 +7,8 @@ import {
 	AUTH_STATUS,
 } from "../config";
 
+import { checkHasProfile } from "../lib";
+
 import type { AuthMachineContext, AuthMachineEvent } from "./types";
 
 export const authMachine = setup({
@@ -22,7 +24,7 @@ export const authMachine = setup({
 		[AUTH_EVENTS.SESSION_BOOTSTRAPPED]: [
 			{
 				target: `.${AUTH_STATUS.AUTHENTICATED}`,
-				guard: ({ event }) => Boolean(event.profile),
+				guard: ({ event }) => checkHasProfile(event.profile),
 				actions: assign(({ event }) => ({
 					uuid: event.uuid,
 					profile: event.profile,

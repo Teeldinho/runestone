@@ -7,4 +7,4 @@ export {
 	applyDeath,
 	applyHeal,
 } from "./playerMachineActions";
-export { isLethalDamage, isPlayerAlive } from "./playerMachineGuards";
+export { checkLethalDamage, checkPlayerAlive } from "./playerMachineGuards";
