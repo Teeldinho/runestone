@@ -1,3 +1,4 @@
+import { usePlayerMachineRuntime } from "@/entities/player";
 import { useCameraSystem } from "@/features/camera-system";
 import { useGameMachine } from "@/features/dungeon-navigation";
 import { useStateVisualizer } from "@/features/state-visualizer";
@@ -22,6 +23,8 @@ type GamePageViewModel = {
 	>["handleCameraModeSwitch"];
 	hasTreasureKeyLabel: string;
 	handleDungeonRunReset: () => void;
+	playerHp: number;
+	playerMaxHp: number;
 };
 
 export const useGamePage = (): GamePageViewModel => {
@@ -33,6 +36,7 @@ export const useGamePage = (): GamePageViewModel => {
 		snapshot,
 	} = useGameMachine();
 	const { cameraStateSnapshot, handleCameraModeSwitch } = useCameraSystem();
+	const { snapshot: playerSnapshot } = usePlayerMachineRuntime();
 
 	const { edges, positionedNodes } = useStateVisualizer({
 		context: snapshot.context,
@@ -57,6 +61,8 @@ export const useGamePage = (): GamePageViewModel => {
 			? GAME_PAGE_COPY.TREASURE_KEY_STATUS.ACQUIRED
 			: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 		handleDungeonRunReset,
+		playerHp: playerSnapshot.context.stats.hp,
+		playerMaxHp: playerSnapshot.context.stats.maxHp,
 	};
 };
 

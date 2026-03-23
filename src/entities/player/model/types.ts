@@ -68,9 +68,14 @@ export type PlayerDieEvent = {
 	type: typeof PLAYER_EVENTS.DIE;
 };
 
+export type PlayerRestartEvent = {
+	type: typeof PLAYER_EVENTS.RESTART;
+};
+
 export type PlayerMachineEvent =
 	| PlayerMoveEvent
 	| PlayerStopEvent
 	| PlayerTakeDamageEvent
 	| PlayerHealEvent
-	| PlayerDieEvent;
+	| PlayerDieEvent
+	| PlayerRestartEvent;

@@ -17,6 +17,8 @@ type GameHudProps = {
 	enemiesRemaining: number;
 	handleDungeonRunReset: () => void;
 	hasTreasureKeyLabel: string;
+	playerHp: number;
+	playerMaxHp: number;
 };
 
 export function GameHud({
@@ -27,6 +29,8 @@ export function GameHud({
 	enemiesRemaining,
 	handleDungeonRunReset,
 	hasTreasureKeyLabel,
+	playerHp,
+	playerMaxHp,
 }: GameHudProps) {
 	const gameHudViewModel = useGameHud({
 		actionButtons,
@@ -36,6 +40,8 @@ export function GameHud({
 		enemiesRemaining,
 		handleDungeonRunReset,
 		hasTreasureKeyLabel,
+		playerHp,
+		playerMaxHp,
 	});
 
 	return (

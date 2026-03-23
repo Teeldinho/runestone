@@ -181,6 +181,50 @@ describe("createPlayerMachine", () => {
 		});
 	});
 
+	it("transitions from dead to alive on RESTART event", () => {
+		const actor = createActor(createPlayerMachine()).start();
+
+		actor.send({
+			type: PLAYER_EVENTS.TAKE_DAMAGE,
+			amount: PLAYER_MACHINE_DEFAULTS.STATS.HP,
+		});
+		actor.send({ type: PLAYER_EVENTS.RESTART });
+
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.ALIVE,
+		});
+	});
+
+	it("restores hp to maxHp on RESTART", () => {
+		const actor = createActor(createPlayerMachine()).start();
+
+		actor.send({
+			type: PLAYER_EVENTS.TAKE_DAMAGE,
+			amount: PLAYER_MACHINE_DEFAULTS.STATS.HP,
+		});
+		actor.send({ type: PLAYER_EVENTS.RESTART });
+
+		expect(actor.getSnapshot().context.stats.hp).toBe(
+			PLAYER_MACHINE_DEFAULTS.STATS.MAX_HP,
+		);
+	});
+
+	it("allows movement again after RESTART", () => {
+		const actor = createActor(createPlayerMachine()).start();
+
+		actor.send({
+			type: PLAYER_EVENTS.TAKE_DAMAGE,
+			amount: PLAYER_MACHINE_DEFAULTS.STATS.HP,
+		});
+		actor.send({ type: PLAYER_EVENTS.RESTART });
+		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0] });
+
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.WALKING,
+		});
+		expect(actor.getSnapshot().context.velocity).toEqual([1, 0, 0]);
+	});
+
 	it("can take further damage while already damaged", () => {
 		const actor = createActor(createPlayerMachine()).start();
 

@@ -6,6 +6,7 @@ export {
 	PLAYER_MACHINE_RUNTIME_ERRORS,
 	PLAYER_MOVEMENT_DIRECTIONS,
 	PLAYER_MOVEMENT_KEYS,
+	PLAYER_STATES,
 } from "./config";
 export { createPlayerMeshSettings, getPlayerSpawnPosition } from "./lib";
 export type {
@@ -20,6 +21,7 @@ export type {
 	PlayerMeshSettings,
 	PlayerMoveEvent,
 	PlayerMovementState,
+	PlayerRestartEvent,
 	PlayerSnapshot,
 	PlayerStats,
 	PlayerStopEvent,

@@ -7,6 +7,25 @@ import { HUD_COPY } from "@/widgets/hud/config";
 
 import { useGameHud } from "./useGameHud";
 
+const BASE_PARAMS = {
+	actionButtons: [
+		{
+			eventType: "ENTER_LIBRARY",
+			label: "Enter Library",
+			isDisabled: false,
+			handleDungeonActionTrigger: vi.fn(),
+		},
+	],
+	activeStateLabel: "entrance",
+	currentRoomLabel: "Entrance",
+	discoveredRoomLabels: ["Entrance", "Library"],
+	enemiesRemaining: 1,
+	hasTreasureKeyLabel: "Missing",
+	handleDungeonRunReset: vi.fn(),
+	playerHp: 80,
+	playerMaxHp: 100,
+};
+
 describe("useGameHud", () => {
 	it("builds machine snapshot entries and forwards action handlers", () => {
 		const handleActionTrigger = vi.fn();
@@ -14,6 +33,7 @@ describe("useGameHud", () => {
 
 		const { result } = renderHook(() =>
 			useGameHud({
+				...BASE_PARAMS,
 				actionButtons: [
 					{
 						eventType: "ENTER_LIBRARY",
@@ -22,11 +42,6 @@ describe("useGameHud", () => {
 						handleDungeonActionTrigger: handleActionTrigger,
 					},
 				],
-				activeStateLabel: "entrance",
-				currentRoomLabel: "Entrance",
-				discoveredRoomLabels: ["Entrance", "Library"],
-				enemiesRemaining: 1,
-				hasTreasureKeyLabel: "Missing",
 				handleDungeonRunReset,
 			}),
 		);
@@ -52,6 +67,11 @@ describe("useGameHud", () => {
 				label: HUD_COPY.SNAPSHOT_LABELS.ENEMIES_REMAINING,
 				value: "1",
 			},
+			{
+				displayVariant: "text",
+				label: HUD_COPY.SNAPSHOT_LABELS.PLAYER_HP,
+				value: "80 / 100",
+			},
 		]);
 		expect(result.current.actionButtons).toHaveLength(1);
 		expect(result.current.actionButtons[0]?.handleDungeonActionTrigger).toBe(
@@ -62,5 +82,16 @@ describe("useGameHud", () => {
 			"Entrance",
 			"Library",
 		]);
+	});
+
+	it("formats hp display as 'current / max'", () => {
+		const { result } = renderHook(() =>
+			useGameHud({ ...BASE_PARAMS, playerHp: 45, playerMaxHp: 100 }),
+		);
+
+		const hpEntry = result.current.machineSnapshotEntries.find(
+			(e) => e.label === HUD_COPY.SNAPSHOT_LABELS.PLAYER_HP,
+		);
+		expect(hpEntry?.value).toBe("45 / 100");
 	});
 });

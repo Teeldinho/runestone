@@ -17,6 +17,7 @@ export const HUD_COPY = {
 	SNAPSHOT_LABELS: {
 		CURRENT_ROOM: "Current Room",
 		ENEMIES_REMAINING: "Enemies Remaining",
+		PLAYER_HP: "Player HP",
 		ROOM_STATE: "Room State",
 		TREASURE_KEY: "Treasure Key",
 	},

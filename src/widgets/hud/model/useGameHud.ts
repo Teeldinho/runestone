@@ -12,6 +12,8 @@ type UseGameHudParams = {
 	enemiesRemaining: number;
 	handleDungeonRunReset: () => void;
 	hasTreasureKeyLabel: string;
+	playerHp: number;
+	playerMaxHp: number;
 };
 
 export const useGameHud = ({
@@ -22,6 +24,8 @@ export const useGameHud = ({
 	enemiesRemaining,
 	handleDungeonRunReset,
 	hasTreasureKeyLabel,
+	playerHp,
+	playerMaxHp,
 }: UseGameHudParams): GameHudViewModel => {
 	return useMemo(
 		() => ({
@@ -49,6 +53,11 @@ export const useGameHud = ({
 					label: HUD_COPY.SNAPSHOT_LABELS.ENEMIES_REMAINING,
 					value: String(enemiesRemaining),
 				},
+				{
+					displayVariant: HUD_DISPLAY_VARIANTS.TEXT,
+					label: HUD_COPY.SNAPSHOT_LABELS.PLAYER_HP,
+					value: `${playerHp} / ${playerMaxHp}`,
+				},
 			],
 		}),
 		[
@@ -59,6 +68,8 @@ export const useGameHud = ({
 			enemiesRemaining,
 			handleDungeonRunReset,
 			hasTreasureKeyLabel,
+			playerHp,
+			playerMaxHp,
 		],
 	);
 };

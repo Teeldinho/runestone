@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 
 import type { RoomId } from "@/entities/dungeon";
 import { FLOOR_IDS } from "@/entities/dungeon";
+import { PLAYER_STATES, usePlayerMachineRuntime } from "@/entities/player";
 import { useSubmitDungeonScore } from "@/entities/score";
 import { AUDIO_SPRITE_IDS, useAudioController } from "@/features/audio-manager";
 import { useAuthContext } from "@/features/auth";
@@ -13,7 +14,9 @@ import { shouldSubmitFloorScore } from "../lib";
 
 export const useGameSideEffects = (): void => {
 	const { snapshot } = useGameMachineRuntime();
-	const { onRoomEnter, onTransition, onFloorComplete } = useHaptics();
+	const { snapshot: playerSnapshot } = usePlayerMachineRuntime();
+	const { onRoomEnter, onTransition, onFloorComplete, onPlayerDeath } =
+		useHaptics();
 	const { handleSoundEffectPlay } = useAudioController();
 	const submitScore = useSubmitDungeonScore();
 	const { authenticatedProfile } = useAuthContext();
@@ -21,6 +24,7 @@ export const useGameSideEffects = (): void => {
 	const startTimeMsRef = useRef(Date.now());
 	const prevRoomRef = useRef<RoomId | null>(null);
 	const hasSubmittedRef = useRef(false);
+	const hasTriggeredDeathRef = useRef(false);
 
 	useEffect(() => {
 		onTransition();
@@ -62,4 +66,24 @@ export const useGameSideEffects = (): void => {
 		handleSoundEffectPlay,
 		submitScore,
 	]);
+
+	useEffect(() => {
+		const healthState =
+			playerSnapshot.value[
+				PLAYER_STATES.REGIONS.HEALTH as keyof typeof playerSnapshot.value
+			];
+
+		if (healthState !== PLAYER_STATES.HEALTH.DEAD) {
+			hasTriggeredDeathRef.current = false;
+			return;
+		}
+
+		if (hasTriggeredDeathRef.current) {
+			return;
+		}
+
+		hasTriggeredDeathRef.current = true;
+		onPlayerDeath();
+		handleSoundEffectPlay(AUDIO_SPRITE_IDS.PLAYER_HIT);
+	}, [playerSnapshot, onPlayerDeath, handleSoundEffectPlay]);
 };
