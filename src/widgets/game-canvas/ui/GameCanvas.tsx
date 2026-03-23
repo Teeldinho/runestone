@@ -12,6 +12,7 @@ import {
 import {
 	type CanvasMachineRuntime,
 	useCanvasMachineSettings,
+	useGameSideEffects,
 	usePlayerSceneController,
 } from "../model";
 
@@ -35,6 +36,7 @@ export function GameCanvas({
 	const { camera, environment, fog, lighting, renderer } = canvasSettings;
 
 	usePlayerSceneController();
+	useGameSideEffects();
 
 	return (
 		<Card className="overflow-hidden border-panel-border bg-panel shadow-xl backdrop-blur">
