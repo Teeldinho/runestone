@@ -1,12 +1,5 @@
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/shared/ui";
 import { CameraModeSwitcher } from "@/widgets/camera-mode-switcher";
 import { GameCanvas } from "@/widgets/game-canvas";
 import { GameHud } from "@/widgets/hud";
@@ -34,60 +27,103 @@ export function GamePage() {
 	return (
 		<main
 			id="main-content"
-			className="mx-auto flex min-h-dvh max-w-5xl items-center justify-center p-8"
+			className="flex h-dvh flex-col overflow-hidden"
+			style={{ background: "transparent" }}
 		>
-			<Card className="w-full border-panel-border bg-panel shadow-xl backdrop-blur">
-				<CardHeader className="space-y-2 text-left">
-					<CardTitle className="text-3xl font-semibold text-panel-title">
-						Game Arena
-					</CardTitle>
-					<CardDescription className="text-base text-panel-body">
-						Navigate the dungeon machine and inspect live room transitions.
-					</CardDescription>
-				</CardHeader>
+			<header className="flex shrink-0 items-center justify-between border-b border-[var(--panel-border)] px-4 py-2">
+				<div className="flex items-center gap-3">
+					<span
+						className="text-lg font-bold tracking-[0.2em]"
+						style={{ color: "var(--dungeon-gold)", fontFamily: "Space Grotesk, sans-serif" }}
+					>
+						RUNESTONE
+					</span>
+					<span className="rune-text">·</span>
+					<span className="rune-text">Floor I</span>
+				</div>
+				<div className="flex items-center gap-2">
+					<span className="rune-text">Room:</span>
+					<span className="rune-value" style={{ color: "var(--panel-title)" }}>
+						{currentRoomLabel}
+					</span>
+				</div>
+			</header>
 
-				<CardContent className="space-y-6">
-					<section aria-labelledby="dungeon-canvas-heading">
-						<h2 id="dungeon-canvas-heading" className="sr-only">
-							Dungeon Canvas
-						</h2>
+			<div className="flex min-h-0 flex-1 overflow-hidden">
+				<section
+					aria-labelledby="dungeon-canvas-heading"
+					className="relative flex min-w-0 flex-1 flex-col"
+				>
+					<h2 id="dungeon-canvas-heading" className="sr-only">
+						Dungeon Canvas
+					</h2>
+					<div className="flex min-h-0 flex-1">
 						<GameCanvas
 							cameraStateSnapshot={cameraStateSnapshot}
 							machineRuntime={canvasMachineRuntime}
 							postprocessingEnabled={settings.postprocessingEnabled}
 						/>
-					</section>
+					</div>
 
-					<section aria-labelledby="machine-snapshot-heading">
-						<GameHud
-							actionButtons={actionButtons}
-							activeStateLabel={activeStateLabel}
-							currentRoomLabel={currentRoomLabel}
-							discoveredRoomLabels={discoveredRoomLabels}
-							enemiesRemaining={enemiesRemaining}
-							handleDungeonRunReset={handleDungeonRunReset}
-							hasTreasureKeyLabel={hasTreasureKeyLabel}
-							playerHp={playerHp}
-							playerMaxHp={playerMaxHp}
-						/>
-					</section>
-
-					<section aria-labelledby="camera-mode-switcher-heading">
+					<div
+						className="shrink-0 border-t p-2"
+						style={{ borderColor: "var(--panel-border)" }}
+					>
 						<CameraModeSwitcher
 							activeCameraMode={cameraStateSnapshot.mode}
 							handleCameraModeSwitch={handleCameraModeSwitch}
 						/>
-					</section>
+					</div>
+				</section>
 
-					<section aria-labelledby="xstate-inspector-heading">
-						<XStateInspectorPanel
-							activeStateLabel={activeStateLabel}
-							graphNodes={graphNodes}
-							graphEdges={graphEdges}
-						/>
-					</section>
-				</CardContent>
-			</Card>
+				<aside
+					aria-label="Game controls and state"
+					className="flex w-72 shrink-0 flex-col overflow-y-auto border-l"
+					style={{
+						borderColor: "var(--panel-border)",
+						background: "var(--panel)",
+					}}
+				>
+					<div className="flex flex-1 flex-col gap-0">
+						<div className="border-b p-3" style={{ borderColor: "var(--panel-border)" }}>
+							<GameHud
+								actionButtons={actionButtons}
+								activeStateLabel={activeStateLabel}
+								currentRoomLabel={currentRoomLabel}
+								discoveredRoomLabels={discoveredRoomLabels}
+								enemiesRemaining={enemiesRemaining}
+								handleDungeonRunReset={handleDungeonRunReset}
+								hasTreasureKeyLabel={hasTreasureKeyLabel}
+								playerHp={playerHp}
+								playerMaxHp={playerMaxHp}
+							/>
+						</div>
+					</div>
+				</aside>
+			</div>
+
+			<details
+				className="shrink-0 border-t"
+				style={{ borderColor: "var(--panel-border)" }}
+			>
+				<summary
+					className="cursor-pointer px-4 py-2 text-xs font-semibold uppercase tracking-widest transition-colors"
+					style={{
+						color: "var(--muted-foreground)",
+						fontFamily: "Space Grotesk, sans-serif",
+						letterSpacing: "0.1em",
+					}}
+				>
+					XState Inspector
+				</summary>
+				<div style={{ height: "220px" }}>
+					<XStateInspectorPanel
+						activeStateLabel={activeStateLabel}
+						graphNodes={graphNodes}
+						graphEdges={graphEdges}
+					/>
+				</div>
+			</details>
 		</main>
 	);
 }
