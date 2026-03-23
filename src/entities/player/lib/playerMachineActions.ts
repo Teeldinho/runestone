@@ -1,6 +1,9 @@
 import type { PlayerStats } from "../model/types";
 
-export const applyDamage = (stats: PlayerStats, amount: number): PlayerStats => ({
+export const applyDamage = (
+	stats: PlayerStats,
+	amount: number,
+): PlayerStats => ({
 	...stats,
 	hp: stats.hp - amount,
 });
