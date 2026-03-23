@@ -8,3 +8,4 @@ export type {
 } from "./types";
 export type { UseAudioResult } from "./useAudio";
 export { useAudio } from "./useAudio";
+export { AudioContext, useAudioController } from "./useAudioController";

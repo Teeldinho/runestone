@@ -10,6 +10,7 @@ export type {
 } from "./useCanvasSettings";
 export { useCanvasSettings } from "./useCanvasSettings";
 export { useEnemySceneController } from "./useEnemySceneController";
+export { useGameSideEffects } from "./useGameSideEffects";
 export { usePlayerSceneController } from "./usePlayerSceneController";
 export type { SceneEnvironmentSettingsViewModel } from "./useSceneEnvironmentSettings";
 export { useSceneEnvironmentSettings } from "./useSceneEnvironmentSettings";

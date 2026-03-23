@@ -1,4 +1,5 @@
 export { createTorchSettings } from "./createTorchSettings";
+export { shouldSubmitFloorScore } from "./floorCompletion";
 export type {
 	EnemyMeshSettings,
 	SceneRoomMeshSettings,

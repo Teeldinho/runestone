@@ -14,6 +14,7 @@ type EnemyMeshProps = {
 	position: Vector3Tuple;
 	playerPosition: Vector3Tuple;
 	onDead: () => void;
+	onAttack: () => void;
 };
 
 export function EnemyMesh({
@@ -22,6 +23,7 @@ export function EnemyMesh({
 	position,
 	playerPosition,
 	onDead,
+	onAttack,
 }: EnemyMeshProps) {
 	const rigidBodyRef = useRef<RapierRigidBody>(null);
 
@@ -31,6 +33,7 @@ export function EnemyMesh({
 		position,
 		playerPosition,
 		onDead,
+		onAttack,
 	});
 
 	return (

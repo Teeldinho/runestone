@@ -15,6 +15,16 @@ export const AUDIO_SPRITES = {
 
 export type AudioSpriteId = keyof typeof AUDIO_SPRITES;
 
+export const AUDIO_SPRITE_IDS = {
+	DOOR_OPEN: "DOOR_OPEN",
+	DOOR_LOCKED: "DOOR_LOCKED",
+	RUNE_ACTIVATE: "RUNE_ACTIVATE",
+	ENEMY_HIT: "ENEMY_HIT",
+	ENEMY_DIE: "ENEMY_DIE",
+	PLAYER_HIT: "PLAYER_HIT",
+	ACHIEVEMENT: "ACHIEVEMENT",
+} as const satisfies Record<string, AudioSpriteId>;
+
 export const AUDIO_DEFAULTS = {
 	MASTER_VOLUME: 0.8,
 	MUSIC_VOLUME: 0.55,

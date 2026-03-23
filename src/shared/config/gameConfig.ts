@@ -36,6 +36,7 @@ export const ENEMY_CONFIG = {
 	PATROL_SPEED: 1.5,
 	CHASE_SPEED: 2.8,
 	ATTACK_COOLDOWN_MS: 1200,
+	ATTACK_DAMAGE: 8,
 } as const;
 
 export const CAMERA_CONFIG = {
