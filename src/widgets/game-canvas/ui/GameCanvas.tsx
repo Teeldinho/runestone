@@ -92,7 +92,7 @@ export function GameCanvas({
 						shadows={renderer.shadowsEnabled}
 					>
 						<PerformanceMonitor />
-						<AdaptiveDpr />
+						<AdaptiveDpr pixelated />
 						<Suspense fallback={null}>
 							<SceneFog fog={fog} />
 							<SceneLighting lighting={lighting} />
