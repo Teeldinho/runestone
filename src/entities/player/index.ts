@@ -1,12 +1,17 @@
-export { PLAYER_ENTITY_CONFIG, PLAYER_EVENTS, PLAYER_MACHINE_DEFAULTS } from "./config";
-export type { PlayerEvent } from "./config";
+export type { PlayerEvent, PlayerMovementKey } from "./config";
+export {
+	PLAYER_ENTITY_CONFIG,
+	PLAYER_EVENTS,
+	PLAYER_MACHINE_DEFAULTS,
+	PLAYER_MOVEMENT_DIRECTIONS,
+	PLAYER_MOVEMENT_KEYS,
+} from "./config";
 export { createPlayerMeshSettings, getPlayerSpawnPosition } from "./lib";
-export { createPlayerMachine } from "./model";
-export type { PlayerMachine } from "./model";
 export type {
 	PlayerDieEvent,
 	PlayerHealEvent,
 	PlayerHealthState,
+	PlayerMachine,
 	PlayerMachineContext,
 	PlayerMachineEvent,
 	PlayerMeshInput,
@@ -19,5 +24,5 @@ export type {
 	PlayerTakeDamageEvent,
 	UsePlayerMeshInput,
 } from "./model";
-export { usePlayerMesh } from "./model";
+export { createPlayerMachine, usePlayerMesh } from "./model";
 export { PlayerMesh } from "./ui";
