@@ -9,6 +9,12 @@ const config = defineConfig({
 	server: {
 		port: 3000,
 	},
+	optimizeDeps: {
+		include: ["tone"],
+	},
+	ssr: {
+		noExternal: ["tone"],
+	},
 	plugins: [
 		nitro({
 			rollupConfig: {
