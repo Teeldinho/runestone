@@ -1,7 +1,7 @@
 import {
+	formatVolumePercent,
 	SETTINGS_COPY,
 	SETTINGS_VOLUME_RANGE,
-	formatVolumePercent,
 	useSettingsForm,
 } from "@/features/settings";
 import {
@@ -130,7 +130,9 @@ export function SettingsPanel() {
 								settings.handleHapticsToggle(!settings.hapticsEnabled)
 							}
 						>
-							{settings.hapticsEnabled ? SETTINGS_COPY.HAPTICS_ON_LABEL : SETTINGS_COPY.HAPTICS_OFF_LABEL}
+							{settings.hapticsEnabled
+								? SETTINGS_COPY.HAPTICS_ON_LABEL
+								: SETTINGS_COPY.HAPTICS_OFF_LABEL}
 						</Button>
 					</Field>
 				</section>
