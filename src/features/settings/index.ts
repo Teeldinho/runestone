@@ -5,5 +5,10 @@ export {
 	SETTINGS_VOLUME_RANGE,
 } from "./config";
 export type { SettingsValues } from "./lib";
-export { readSettings, resetSettings, writeSettings, formatVolumePercent } from "./lib";
+export {
+	formatVolumePercent,
+	readSettings,
+	resetSettings,
+	writeSettings,
+} from "./lib";
 export { useSettingsForm } from "./model";
