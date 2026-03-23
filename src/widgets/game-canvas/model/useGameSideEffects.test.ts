@@ -2,9 +2,8 @@
 
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
 import type { RoomId } from "@/entities/dungeon";
+import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
 
 const mockOnRoomEnter = vi.fn();
 const mockOnTransition = vi.fn();
@@ -33,8 +32,7 @@ vi.mock("@/features/haptics-feedback", () => ({
 	}),
 }));
 
-vi.mock("@/features/audio-manager", async (importOriginal) => ({
-	...(await importOriginal<typeof import("@/features/audio-manager")>()),
+vi.mock("@/features/audio-manager", () => ({
 	useAudioController: () => ({
 		handleSoundEffectPlay: mockHandleSoundEffectPlay,
 	}),
@@ -44,8 +42,7 @@ vi.mock("@/entities/score", () => ({
 	useSubmitDungeonScore: () => ({ mutate: mockMutate }),
 }));
 
-vi.mock("@/features/auth", async (importOriginal) => ({
-	...(await importOriginal<typeof import("@/features/auth")>()),
+vi.mock("@/features/auth", () => ({
 	useAuthContext: () => ({ authenticatedProfile: mockProfileGetter() }),
 }));
 
@@ -65,7 +62,11 @@ const createMockSnapshot = (
 	status,
 });
 
-const MOCK_PROFILE = { id: "user-convex-id", username: "hero", discriminator: "0001" };
+const MOCK_PROFILE = {
+	id: "user-convex-id",
+	username: "hero",
+	discriminator: "0001",
+};
 
 import { useGameSideEffects } from "./useGameSideEffects";
 

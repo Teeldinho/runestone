@@ -13,6 +13,7 @@ export {
 	AUDIO_SPRITES,
 } from "./config";
 export {
+	AudioContext,
 	type AudioCue,
 	type AudioMachineContext,
 	type AudioMachineEvent,
@@ -21,4 +22,5 @@ export {
 	audioMachine,
 	type UseAudioResult,
 	useAudio,
+	useAudioController,
 } from "./model";
