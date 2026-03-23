@@ -9,13 +9,16 @@ import { AUDIO_SPRITE_IDS } from "@/features/audio-manager";
 const mockOnRoomEnter = vi.fn();
 const mockOnTransition = vi.fn();
 const mockOnFloorComplete = vi.fn();
+const mockOnPlayerDeath = vi.fn();
 const mockHandleSoundEffectPlay = vi.fn();
 const mockMutate = vi.fn();
 
-const { mockSnapshotGetter, mockProfileGetter } = vi.hoisted(() => ({
-	mockSnapshotGetter: vi.fn(),
-	mockProfileGetter: vi.fn(),
-}));
+const { mockSnapshotGetter, mockProfileGetter, mockPlayerSnapshotGetter } =
+	vi.hoisted(() => ({
+		mockSnapshotGetter: vi.fn(),
+		mockProfileGetter: vi.fn(),
+		mockPlayerSnapshotGetter: vi.fn(),
+	}));
 
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachineRuntime: () => ({
@@ -29,6 +32,7 @@ vi.mock("@/features/haptics-feedback", () => ({
 		onRoomEnter: mockOnRoomEnter,
 		onTransition: mockOnTransition,
 		onFloorComplete: mockOnFloorComplete,
+		onPlayerDeath: mockOnPlayerDeath,
 		onGuardFail: vi.fn(),
 	}),
 }));
@@ -40,6 +44,7 @@ vi.mock("@/features/audio-manager", () => ({
 	AUDIO_SPRITE_IDS: {
 		DOOR_OPEN: "DOOR_OPEN",
 		ACHIEVEMENT: "ACHIEVEMENT",
+		PLAYER_HIT: "PLAYER_HIT",
 	},
 }));
 
@@ -49,6 +54,17 @@ vi.mock("@/entities/score", () => ({
 
 vi.mock("@/features/auth", () => ({
 	useAuthContext: () => ({ authenticatedProfile: mockProfileGetter() }),
+}));
+
+vi.mock("@/entities/player", () => ({
+	usePlayerMachineRuntime: () => ({
+		snapshot: mockPlayerSnapshotGetter(),
+		sendPlayerMachineEvent: vi.fn(),
+	}),
+	PLAYER_STATES: {
+		REGIONS: { HEALTH: "health" },
+		HEALTH: { ALIVE: "alive", DAMAGED: "damaged", DEAD: "dead" },
+	},
 }));
 
 const createMockSnapshot = (
@@ -67,6 +83,17 @@ const createMockSnapshot = (
 	status,
 });
 
+const createMockPlayerSnapshot = (
+	healthState: "alive" | "damaged" | "dead" = "alive",
+) => ({
+	value: { health: healthState, movement: "idle" },
+	context: {
+		position: [0, 0, 0] as [number, number, number],
+		velocity: [0, 0, 0] as [number, number, number],
+		stats: { hp: 100, maxHp: 100, score: 0, keyCount: 0, chainMultiplier: 1 },
+	},
+});
+
 const MOCK_PROFILE = {
 	id: "user-convex-id",
 	username: "hero",
@@ -80,6 +107,7 @@ describe("useGameSideEffects — haptics and audio", () => {
 		vi.clearAllMocks();
 		mockSnapshotGetter.mockReturnValue(createMockSnapshot());
 		mockProfileGetter.mockReturnValue(MOCK_PROFILE);
+		mockPlayerSnapshotGetter.mockReturnValue(createMockPlayerSnapshot());
 	});
 
 	it("calls onTransition on initial render", () => {
@@ -150,6 +178,7 @@ describe("useGameSideEffects — score submission on floor completion", () => {
 		vi.clearAllMocks();
 		mockSnapshotGetter.mockReturnValue(createMockSnapshot());
 		mockProfileGetter.mockReturnValue(MOCK_PROFILE);
+		mockPlayerSnapshotGetter.mockReturnValue(createMockPlayerSnapshot());
 	});
 
 	it("calls onFloorComplete and plays ACHIEVEMENT when status becomes done", () => {
@@ -220,5 +249,47 @@ describe("useGameSideEffects — score submission on floor completion", () => {
 		rerender();
 
 		expect(mockMutate).toHaveBeenCalledOnce();
+	});
+});
+
+describe("useGameSideEffects — player death haptic and audio", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		mockSnapshotGetter.mockReturnValue(createMockSnapshot());
+		mockProfileGetter.mockReturnValue(MOCK_PROFILE);
+		mockPlayerSnapshotGetter.mockReturnValue(createMockPlayerSnapshot());
+	});
+
+	it("calls onPlayerDeath and plays PLAYER_HIT when player health becomes dead", () => {
+		const { rerender } = renderHook(() => useGameSideEffects());
+		vi.clearAllMocks();
+
+		act(() => {
+			mockPlayerSnapshotGetter.mockReturnValue(
+				createMockPlayerSnapshot("dead"),
+			);
+		});
+		rerender();
+
+		expect(mockOnPlayerDeath).toHaveBeenCalledTimes(1);
+		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith(
+			AUDIO_SPRITE_IDS.PLAYER_HIT,
+		);
+	});
+
+	it("does NOT call onPlayerDeath when player is alive", () => {
+		renderHook(() => useGameSideEffects());
+
+		expect(mockOnPlayerDeath).not.toHaveBeenCalled();
+	});
+
+	it("calls onPlayerDeath only once even when re-rendered in dead state", () => {
+		mockPlayerSnapshotGetter.mockReturnValue(createMockPlayerSnapshot("dead"));
+		const { rerender } = renderHook(() => useGameSideEffects());
+
+		rerender();
+		rerender();
+
+		expect(mockOnPlayerDeath).toHaveBeenCalledTimes(1);
 	});
 });

@@ -8,6 +8,7 @@ import { ENEMY_CONFIG } from "@/shared/config";
 
 const mockSendPlayerMachineEvent = vi.fn();
 const mockSendDungeonMachineEvent = vi.fn();
+const mockOnEnemyHit = vi.fn();
 
 const { mockPlayerSnapshotGetter } = vi.hoisted(() => ({
 	mockPlayerSnapshotGetter: vi.fn(),
@@ -34,6 +35,12 @@ vi.mock("@/entities/dungeon", () => ({
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachineRuntime: () => ({
 		sendDungeonMachineEvent: mockSendDungeonMachineEvent,
+	}),
+}));
+
+vi.mock("@/features/haptics-feedback", () => ({
+	useHaptics: () => ({
+		onEnemyHit: mockOnEnemyHit,
 	}),
 }));
 
@@ -74,5 +81,15 @@ describe("useEnemySceneController — handleEnemyAttack", () => {
 		rerender();
 
 		expect(result.current.handleEnemyAttack).toBe(firstRef);
+	});
+
+	it("handleEnemyAttack triggers onEnemyHit haptic", () => {
+		const { result } = renderHook(() => useEnemySceneController());
+
+		act(() => {
+			result.current.handleEnemyAttack();
+		});
+
+		expect(mockOnEnemyHit).toHaveBeenCalledTimes(1);
 	});
 });
