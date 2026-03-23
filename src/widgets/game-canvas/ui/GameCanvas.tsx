@@ -15,10 +15,12 @@ import {
 import {
 	type CanvasMachineRuntime,
 	useCanvasMachineSettings,
+	useGameOverState,
 	useGameSideEffects,
 	usePlayerSceneController,
 } from "../model";
 
+import { GameOverOverlay } from "./GameOverOverlay";
 import { SceneEnvironment } from "./SceneEnvironment";
 import { SceneFog } from "./SceneFog";
 import { SceneLighting } from "./SceneLighting";
@@ -51,6 +53,7 @@ export function GameCanvas({
 
 	usePlayerSceneController();
 	useGameSideEffects();
+	const { isGameOver, handleGameRestart } = useGameOverState();
 
 	return (
 		<Card className="overflow-hidden border-panel-border bg-panel shadow-xl backdrop-blur">
@@ -65,9 +68,10 @@ export function GameCanvas({
 
 			<CardContent className="p-0">
 				<div
-					className="w-full"
+					className="relative w-full"
 					style={{ height: GAME_CANVAS_CONFIG.UI.CANVAS_HEIGHT_PX }}
 				>
+					{isGameOver && <GameOverOverlay onRestart={handleGameRestart} />}
 					<Canvas
 						aria-label="Runestone dungeon 3D scene"
 						camera={{
