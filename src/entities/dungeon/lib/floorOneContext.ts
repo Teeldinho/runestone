@@ -1,4 +1,5 @@
 import {
+	DUNGEON_CONTEXT_KEYS,
 	DUNGEON_DEFAULTS,
 	FLOOR_IDS,
 	FLOOR_ONE_MACHINE_RULES,
@@ -22,11 +23,12 @@ export const createFloorOneContext = (
 	contextOverrides?: Partial<DungeonMachineContext>,
 ): DungeonMachineContext => {
 	return {
-		currentFloorId: FLOOR_IDS.FLOOR_ONE,
-		currentRoomId: ROOM_IDS.ENTRANCE,
-		discoveredRooms: [ROOM_IDS.ENTRANCE],
-		hasTreasureKey: false,
-		enemiesRemaining: DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
+		[DUNGEON_CONTEXT_KEYS.CURRENT_FLOOR_ID]: FLOOR_IDS.FLOOR_ONE,
+		[DUNGEON_CONTEXT_KEYS.CURRENT_ROOM_ID]: ROOM_IDS.ENTRANCE,
+		[DUNGEON_CONTEXT_KEYS.DISCOVERED_ROOMS]: [ROOM_IDS.ENTRANCE],
+		[DUNGEON_CONTEXT_KEYS.HAS_TREASURE_KEY]: false,
+		[DUNGEON_CONTEXT_KEYS.ENEMIES_REMAINING]:
+			DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
 		...contextOverrides,
 	};
 };
@@ -37,8 +39,11 @@ export const updateFloorOneContextRoom = (
 ): DungeonMachineContext => {
 	return {
 		...context,
-		currentRoomId: nextRoomId,
-		discoveredRooms: addDiscoveredRoom(context.discoveredRooms, nextRoomId),
+		[DUNGEON_CONTEXT_KEYS.CURRENT_ROOM_ID]: nextRoomId,
+		[DUNGEON_CONTEXT_KEYS.DISCOVERED_ROOMS]: addDiscoveredRoom(
+			context.discoveredRooms,
+			nextRoomId,
+		),
 	};
 };
 
@@ -47,7 +52,7 @@ export const decrementFloorOneEnemies = (
 ): DungeonMachineContext => {
 	return {
 		...context,
-		enemiesRemaining: Math.max(
+		[DUNGEON_CONTEXT_KEYS.ENEMIES_REMAINING]: Math.max(
 			context.enemiesRemaining - FLOOR_ONE_MACHINE_RULES.ENEMY_DECREMENT,
 			FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING,
 		),
@@ -59,7 +64,7 @@ export const markFloorOneTreasureKeyCollected = (
 ): DungeonMachineContext => {
 	return {
 		...context,
-		hasTreasureKey: true,
+		[DUNGEON_CONTEXT_KEYS.HAS_TREASURE_KEY]: true,
 	};
 };
 

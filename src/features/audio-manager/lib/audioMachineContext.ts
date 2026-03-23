@@ -1,15 +1,15 @@
-import { AUDIO_MACHINE_STATES } from "../config";
+import { AUDIO_CONTEXT_KEYS, AUDIO_MACHINE_STATES } from "../config";
 
 import type { AudioMachineContext } from "../model";
 
 export const createMutedAudioContext = (
 	context: AudioMachineContext,
 ): AudioMachineContext => ({
-	settings: {
+	[AUDIO_CONTEXT_KEYS.SETTINGS]: {
 		...context.settings,
 		isMuted: true,
 	},
-	lastAudibleState:
+	[AUDIO_CONTEXT_KEYS.LAST_AUDIBLE_STATE]:
 		context.lastAudibleState === AUDIO_MACHINE_STATES.PLAYING
 			? AUDIO_MACHINE_STATES.PLAYING
 			: AUDIO_MACHINE_STATES.PAUSED,
@@ -18,7 +18,7 @@ export const createMutedAudioContext = (
 export const createUnmutedAudioContext = (
 	context: AudioMachineContext,
 ): Partial<AudioMachineContext> => ({
-	settings: {
+	[AUDIO_CONTEXT_KEYS.SETTINGS]: {
 		...context.settings,
 		isMuted: false,
 	},

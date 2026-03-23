@@ -1,6 +1,7 @@
 import { assign, setup } from "xstate";
 
 import {
+	AUDIO_CONTEXT_KEYS,
 	AUDIO_EVENTS,
 	AUDIO_INITIAL_CONTEXT,
 	AUDIO_MACHINE_ID,
@@ -29,7 +30,8 @@ export const audioMachine = setup({
 				[AUDIO_EVENTS.PLAY_REQUESTED]: {
 					target: AUDIO_MACHINE_STATES.PLAYING,
 					actions: assign(() => ({
-						lastAudibleState: AUDIO_MACHINE_STATES.PLAYING,
+						[AUDIO_CONTEXT_KEYS.LAST_AUDIBLE_STATE]:
+							AUDIO_MACHINE_STATES.PLAYING,
 					})),
 				},
 				[AUDIO_EVENTS.MUTE_REQUESTED]: {
@@ -47,13 +49,15 @@ export const audioMachine = setup({
 				[AUDIO_EVENTS.PAUSE_REQUESTED]: {
 					target: AUDIO_MACHINE_STATES.PAUSED,
 					actions: assign(() => ({
-						lastAudibleState: AUDIO_MACHINE_STATES.PAUSED,
+						[AUDIO_CONTEXT_KEYS.LAST_AUDIBLE_STATE]:
+							AUDIO_MACHINE_STATES.PAUSED,
 					})),
 				},
 				[AUDIO_EVENTS.STOP_REQUESTED]: {
 					target: AUDIO_MACHINE_STATES.PAUSED,
 					actions: assign(() => ({
-						lastAudibleState: AUDIO_MACHINE_STATES.PAUSED,
+						[AUDIO_CONTEXT_KEYS.LAST_AUDIBLE_STATE]:
+							AUDIO_MACHINE_STATES.PAUSED,
 					})),
 				},
 				[AUDIO_EVENTS.MUTE_REQUESTED]: {
@@ -70,12 +74,14 @@ export const audioMachine = setup({
 			on: {
 				[AUDIO_EVENTS.PLAY_REQUESTED]: {
 					actions: assign(() => ({
-						lastAudibleState: AUDIO_MACHINE_STATES.PLAYING,
+						[AUDIO_CONTEXT_KEYS.LAST_AUDIBLE_STATE]:
+							AUDIO_MACHINE_STATES.PLAYING,
 					})),
 				},
 				[AUDIO_EVENTS.PAUSE_REQUESTED]: {
 					actions: assign(() => ({
-						lastAudibleState: AUDIO_MACHINE_STATES.PAUSED,
+						[AUDIO_CONTEXT_KEYS.LAST_AUDIBLE_STATE]:
+							AUDIO_MACHINE_STATES.PAUSED,
 					})),
 				},
 				[AUDIO_EVENTS.UNMUTE_REQUESTED]: [

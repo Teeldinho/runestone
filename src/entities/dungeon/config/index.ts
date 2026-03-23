@@ -14,4 +14,7 @@ export {
 } from "./dungeonConfig";
 export type { DungeonEvent, DungeonEventObject } from "./dungeonEvents";
 export { DUNGEON_EVENTS } from "./dungeonEvents";
-export { FLOOR_ONE_MACHINE_RULES } from "./floorOneMachineConfig";
+export {
+	DUNGEON_CONTEXT_KEYS,
+	FLOOR_ONE_MACHINE_RULES,
+} from "./floorOneMachineConfig";

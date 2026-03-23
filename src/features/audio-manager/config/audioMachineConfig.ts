@@ -18,3 +18,8 @@ export const AUDIO_INITIAL_CONTEXT = {
 export const AUDIO_CONTEXT_ERRORS = {
 	MISSING_PROVIDER: "useAudioController must be used within AudioProvider",
 } as const;
+
+export const AUDIO_CONTEXT_KEYS = {
+	SETTINGS: "settings",
+	LAST_AUDIBLE_STATE: "lastAudibleState",
+} as const;

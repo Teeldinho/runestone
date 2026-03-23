@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh pr:*)",
+      "Bash(gh api:*)",
+      "Bash(npm run:*)",
+      "Bash(git push:*)",
+      "Bash(git log:*)",
+      "Bash(git filter-branch:*)",
+      "Bash(xargs:*)",
+      "WebFetch(domain:feature-sliced.design)",
+      "Bash(git:*)",
+      "Bash(python3:*)",
+      "Bash(gh run:*)",
+      "Bash(npx biome:*)",
+      "Bash(npx tsc:*)",
+      "Bash(grep:*)",
+      "Bash(echo EXIT: $?:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(done)",
+      "Bash(wc:*)"
+    ]
+  }
+}
