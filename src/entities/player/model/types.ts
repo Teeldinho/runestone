@@ -1,7 +1,6 @@
 import type { Vector3Tuple } from "@/shared/types";
-
-import type { PlayerHealthState } from "../config/playerStates";
 import type { PLAYER_EVENTS } from "../config/playerEvents";
+import type { PlayerHealthState } from "../config/playerStates";
 
 export type { PlayerHealthState };
 
