@@ -40,10 +40,7 @@ export function EnemyMesh({
 			position={position}
 			type="kinematicPosition"
 		>
-			<mesh
-				castShadow
-				position={[0, ENEMY_ENTITY_CONFIG.BODY.POSITION_Y, 0]}
-			>
+			<mesh castShadow position={[0, ENEMY_ENTITY_CONFIG.BODY.POSITION_Y, 0]}>
 				<cylinderGeometry
 					args={[
 						ENEMY_ENTITY_CONFIG.BODY.RADIUS,

@@ -72,10 +72,7 @@ export const createEnemyBehaviorMachine = () =>
 				),
 			})),
 			applyDamage: assign(({ context, event }) => ({
-				hp: Math.max(
-					context.hp - (event as EnemyTakeDamageEvent).amount,
-					0,
-				),
+				hp: Math.max(context.hp - (event as EnemyTakeDamageEvent).amount, 0),
 			})),
 			applyDeath: assign(() => ({ hp: 0 })),
 		},
@@ -169,4 +166,6 @@ export const createEnemyBehaviorMachine = () =>
 		},
 	});
 
-export type EnemyBehaviorMachine = ReturnType<typeof createEnemyBehaviorMachine>;
+export type EnemyBehaviorMachine = ReturnType<
+	typeof createEnemyBehaviorMachine
+>;

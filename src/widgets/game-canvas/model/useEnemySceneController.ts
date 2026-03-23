@@ -10,17 +10,16 @@ type UseEnemySceneControllerResult = {
 	handleEnemyDead: () => void;
 };
 
-export const useEnemySceneController =
-	(): UseEnemySceneControllerResult => {
-		const { sendDungeonMachineEvent } = useGameMachineRuntime();
-		const { snapshot } = usePlayerMachineRuntime();
+export const useEnemySceneController = (): UseEnemySceneControllerResult => {
+	const { sendDungeonMachineEvent } = useGameMachineRuntime();
+	const { snapshot } = usePlayerMachineRuntime();
 
-		const handleEnemyDead = useCallback(() => {
-			sendDungeonMachineEvent({ type: DUNGEON_EVENTS.ENEMY_DIED });
-		}, [sendDungeonMachineEvent]);
+	const handleEnemyDead = useCallback(() => {
+		sendDungeonMachineEvent({ type: DUNGEON_EVENTS.ENEMY_DIED });
+	}, [sendDungeonMachineEvent]);
 
-		return {
-			playerPosition: snapshot.context.position,
-			handleEnemyDead,
-		};
+	return {
+		playerPosition: snapshot.context.position,
+		handleEnemyDead,
 	};
+};

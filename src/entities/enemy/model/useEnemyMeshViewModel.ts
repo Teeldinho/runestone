@@ -26,7 +26,9 @@ type EnemyGlowSettings = {
 type UseEnemyMeshViewModelResult = {
 	behaviorState: EnemyBehaviorState;
 	glowSettings: EnemyGlowSettings;
-	send: ReturnType<typeof useMachine<ReturnType<typeof createEnemyBehaviorMachine>>>[1];
+	send: ReturnType<
+		typeof useMachine<ReturnType<typeof createEnemyBehaviorMachine>>
+	>[1];
 };
 
 export const useEnemyMeshViewModel = ({
