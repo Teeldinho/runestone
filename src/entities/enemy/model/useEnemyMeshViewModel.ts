@@ -1,13 +1,14 @@
 import { useMachine } from "@xstate/react";
 import { useEffect, useMemo } from "react";
 
-import { XSTATE_ACTOR_STATUS } from "@/shared/config";
+import { ENEMY_CONFIG, XSTATE_ACTOR_STATUS } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 import {
 	ENEMY_EVENTS,
 	ENEMY_GLOW_COLORS_BY_STATE,
 	ENEMY_GLOW_EMISSIVE_INTENSITY_BY_STATE,
+	ENEMY_MACHINE_STATES,
 } from "../config";
 import { createEnemyBehaviorMachine } from "./enemyBehaviorMachine";
 import type { EnemyBehaviorState, EnemyGlowSettings } from "./types";
@@ -18,6 +19,7 @@ type UseEnemyMeshViewModelInput = {
 	position: Vector3Tuple;
 	playerPosition: Vector3Tuple;
 	onDead: () => void;
+	onAttack: () => void;
 };
 
 type UseEnemyMeshViewModelResult = {
@@ -34,6 +36,7 @@ export const useEnemyMeshViewModel = ({
 	position,
 	playerPosition,
 	onDead,
+	onAttack,
 }: UseEnemyMeshViewModelInput): UseEnemyMeshViewModelResult => {
 	const machine = useMemo(() => createEnemyBehaviorMachine(), []);
 	const [snapshot, send] = useMachine(machine, {
@@ -54,6 +57,18 @@ export const useEnemyMeshViewModel = ({
 			onDead();
 		}
 	}, [snapshot.status, onDead]);
+
+	useEffect(() => {
+		if (behaviorState !== ENEMY_MACHINE_STATES.ATTACK) {
+			return;
+		}
+
+		const interval = setInterval(onAttack, ENEMY_CONFIG.ATTACK_COOLDOWN_MS);
+
+		return () => {
+			clearInterval(interval);
+		};
+	}, [behaviorState, onAttack]);
 
 	return {
 		behaviorState,
