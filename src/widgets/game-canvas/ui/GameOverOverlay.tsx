@@ -8,6 +8,8 @@ import {
 	DialogTitle,
 } from "@/shared/ui";
 
+import { GAME_OVER_COPY } from "../config";
+
 type GameOverOverlayProps = {
 	isGameOver: boolean;
 	onRestart: () => void;
@@ -26,13 +28,13 @@ export function GameOverOverlay({
 			>
 				<DialogHeader>
 					<DialogTitle className="text-4xl font-bold tracking-widest text-red-400 uppercase">
-						You Died
+						{GAME_OVER_COPY.TITLE}
 					</DialogTitle>
-					<DialogDescription>Your dungeon run has ended.</DialogDescription>
+					<DialogDescription>{GAME_OVER_COPY.DESCRIPTION}</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
 					<Button variant="outline" onClick={onRestart}>
-						Restart
+						{GAME_OVER_COPY.RESTART_LABEL}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

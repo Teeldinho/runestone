@@ -13,6 +13,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui";
+import { GAME_CANVAS_COPY } from "../config";
 import {
 	type CanvasMachineRuntime,
 	useAchievementTracker,
@@ -62,10 +63,10 @@ export function GameCanvas({
 		<Card className="overflow-hidden border-panel-border bg-panel shadow-xl backdrop-blur">
 			<CardHeader className="space-y-2">
 				<CardTitle className="text-xl text-panel-title">
-					Dungeon Canvas
+					{GAME_CANVAS_COPY.CARD_TITLE}
 				</CardTitle>
 				<CardDescription className="text-panel-body">
-					A live 3D foundation for the Runestone dungeon floor.
+					{GAME_CANVAS_COPY.CARD_DESCRIPTION}
 				</CardDescription>
 			</CardHeader>
 
@@ -80,7 +81,7 @@ export function GameCanvas({
 						onRestart={handleGameRestart}
 					/>
 					<Canvas
-						aria-label="Runestone dungeon 3D scene"
+						aria-label={GAME_CANVAS_COPY.CANVAS_ARIA_LABEL}
 						camera={{
 							far: camera.far,
 							fov: camera.fov,
