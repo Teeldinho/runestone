@@ -3,22 +3,10 @@ import { RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 
 import { PLAYER_ENTITY_CONFIG } from "../config";
-import type { PlayerHealthState } from "../model";
-import { usePlayerMachineRuntime } from "../model/playerMachineRuntime";
-import { usePlayerMesh } from "../model/usePlayerMesh";
-import { usePlayerPhysics } from "../model/usePlayerPhysics";
+import { usePlayerMeshViewModel } from "../model/usePlayerMeshViewModel";
 
 export function PlayerMesh() {
-	const { snapshot } = usePlayerMachineRuntime();
-
-	const healthState = snapshot.value.health as PlayerHealthState;
-
-	const meshSettings = usePlayerMesh({ healthState });
-
-	const { rigidBodyRef } = usePlayerPhysics({
-		position: snapshot.context.position,
-		velocity: snapshot.context.velocity,
-	});
+	const { meshSettings, rigidBodyRef } = usePlayerMeshViewModel();
 
 	return (
 		<RigidBody

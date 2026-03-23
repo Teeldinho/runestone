@@ -16,7 +16,13 @@ vi.mock("./playerMachineRuntime", () => ({
 			context: {
 				position: [0, 0, 0],
 				velocity: [0, 0, 0],
-				stats: { maxHp: 100, hp: 100, score: 0, keyCount: 0, chainMultiplier: 1 },
+				stats: {
+					maxHp: 100,
+					hp: 100,
+					score: 0,
+					keyCount: 0,
+					chainMultiplier: 1,
+				},
 			},
 		},
 		sendPlayerMachineEvent: vi.fn(),
@@ -52,7 +58,7 @@ describe("usePlayerMeshViewModel", () => {
 						chainMultiplier: 1,
 					},
 				},
-			} as ReturnType<typeof usePlayerMachineRuntime>["snapshot"],
+			} as unknown as ReturnType<typeof usePlayerMachineRuntime>["snapshot"],
 			sendPlayerMachineEvent: vi.fn(),
 		});
 

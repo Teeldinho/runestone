@@ -22,4 +22,5 @@ export type {
 	UsePlayerMeshInput,
 } from "./types";
 export { usePlayerMesh } from "./usePlayerMesh";
+export { usePlayerMeshViewModel } from "./usePlayerMeshViewModel";
 export { usePlayerPhysics } from "./usePlayerPhysics";
