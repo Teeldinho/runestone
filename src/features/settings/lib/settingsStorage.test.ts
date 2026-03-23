@@ -112,4 +112,16 @@ describe("settingsStorage utilities", () => {
 		expect(readSettings(storage).masterVolume).toBe(1);
 		expect(readSettings(storage).musicVolume).toBe(0);
 	});
+
+	it("falls back to default masterVolume when field is missing", () => {
+		const storage = createMemoryStorage({
+			rs_settings: JSON.stringify({
+				musicVolume: 0.4,
+				sfxVolume: 0.6,
+				hapticsEnabled: false,
+			}),
+		});
+
+		expect(readSettings(storage).masterVolume).toBe(0.8);
+	});
 });

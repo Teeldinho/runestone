@@ -48,6 +48,34 @@ describe("useSettingsForm", () => {
 		);
 	});
 
+	it("updates music volume and persists", () => {
+		const { result } = renderHook(() => useSettingsForm());
+
+		act(() => {
+			result.current.handleMusicVolumeChange(0.4);
+		});
+
+		expect(result.current.musicVolume).toBe(0.4);
+		expect(mockWriteSettings).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({ musicVolume: 0.4 }),
+		);
+	});
+
+	it("updates sfx volume and persists", () => {
+		const { result } = renderHook(() => useSettingsForm());
+
+		act(() => {
+			result.current.handleSfxVolumeChange(0.3);
+		});
+
+		expect(result.current.sfxVolume).toBe(0.3);
+		expect(mockWriteSettings).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({ sfxVolume: 0.3 }),
+		);
+	});
+
 	it("toggles haptics and persists", () => {
 		const { result } = renderHook(() => useSettingsForm());
 
