@@ -1,4 +1,5 @@
 import { Canvas } from "@react-three/fiber";
+import { Physics } from "@react-three/rapier";
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 import {
@@ -8,7 +9,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui";
-import { type CanvasMachineRuntime, useCanvasMachineSettings } from "../model";
+import {
+	type CanvasMachineRuntime,
+	useCanvasMachineSettings,
+	usePlayerSceneController,
+} from "../model";
 
 import { SceneEnvironment } from "./SceneEnvironment";
 import { SceneFog } from "./SceneFog";
@@ -28,6 +33,8 @@ export function GameCanvas({
 		cameraStateSnapshot,
 	);
 	const { camera, environment, fog, lighting, renderer } = canvasSettings;
+
+	usePlayerSceneController();
 
 	return (
 		<Card className="overflow-hidden border-panel-border bg-panel shadow-xl backdrop-blur">
@@ -58,7 +65,9 @@ export function GameCanvas({
 					>
 						<SceneFog fog={fog} />
 						<SceneLighting lighting={lighting} />
-						<SceneEnvironment environment={environment} />
+						<Physics>
+							<SceneEnvironment environment={environment} />
+						</Physics>
 					</Canvas>
 				</div>
 			</CardContent>
