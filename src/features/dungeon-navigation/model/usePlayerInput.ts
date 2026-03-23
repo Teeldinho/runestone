@@ -2,31 +2,14 @@ import { useEffect, useRef } from "react";
 
 import {
 	PLAYER_EVENTS,
-	PLAYER_MOVEMENT_DIRECTIONS,
-	PLAYER_MOVEMENT_KEYS,
 	type PlayerMachineEvent,
 	type PlayerMovementKey,
 } from "@/entities/player";
-import type { Vector3Tuple } from "@/shared/types";
+
+import { computeVelocity, isMovementKey } from "../lib/playerInputHelpers";
 
 type UsePlayerInputOptions = {
 	sendPlayerEvent: (event: PlayerMachineEvent) => void;
-};
-
-const isMovementKey = (key: string): key is PlayerMovementKey =>
-	Object.values(PLAYER_MOVEMENT_KEYS).includes(key as PlayerMovementKey);
-
-const computeVelocity = (pressedKeys: Set<PlayerMovementKey>): Vector3Tuple => {
-	let x = 0;
-	let z = 0;
-
-	for (const key of pressedKeys) {
-		const direction = PLAYER_MOVEMENT_DIRECTIONS[key];
-		x += direction[0];
-		z += direction[2];
-	}
-
-	return [x, 0, z];
 };
 
 export const usePlayerInput = ({
