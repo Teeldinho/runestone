@@ -23,6 +23,7 @@
 	"packageManager": "npm@11.5.1",
 	"scripts": {
 		"dev": "vite dev --port 3000",
+		"convex:dev": "npx convex dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"routes:generate": "tsr generate",
