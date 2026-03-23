@@ -112,6 +112,38 @@ export function SettingsPanel() {
 
 				<Separator />
 
+				<section aria-labelledby="graphics-settings-heading">
+					<h3
+						id="graphics-settings-heading"
+						className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground"
+					>
+						{SETTINGS_COPY.GRAPHICS_SECTION}
+					</h3>
+
+					<Field orientation="horizontal">
+						<FieldContent>
+							<FieldTitle>
+								{SETTINGS_COPY.POSTPROCESSING_TOGGLE_LABEL}
+							</FieldTitle>
+						</FieldContent>
+						<Button
+							variant={settings.postprocessingEnabled ? "default" : "outline"}
+							aria-pressed={settings.postprocessingEnabled}
+							onClick={() =>
+								settings.handlePostprocessingToggle(
+									!settings.postprocessingEnabled,
+								)
+							}
+						>
+							{settings.postprocessingEnabled
+								? SETTINGS_COPY.POSTPROCESSING_ON_LABEL
+								: SETTINGS_COPY.POSTPROCESSING_OFF_LABEL}
+						</Button>
+					</Field>
+				</section>
+
+				<Separator />
+
 				<section aria-labelledby="haptics-settings-heading">
 					<h3
 						id="haptics-settings-heading"

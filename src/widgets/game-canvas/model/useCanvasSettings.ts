@@ -75,7 +75,22 @@ type CanvasSettingsViewModel = {
 	environment: CanvasEnvironmentSettings;
 	fog: CanvasFogSettings;
 	lighting: CanvasLightingSettings;
+	postprocessing: CanvasPostprocessingSettings;
 	renderer: CanvasRendererSettings;
+};
+
+type CanvasPostprocessingSettings = {
+	enabled: boolean;
+	bloom: {
+		luminanceThreshold: number;
+		luminanceSmoothing: number;
+		intensity: number;
+		mipmapBlur: boolean;
+	};
+	vignette: {
+		offset: number;
+		darkness: number;
+	};
 };
 
 export const useCanvasSettings = (): CanvasSettingsViewModel => {
@@ -141,6 +156,21 @@ export const useCanvasSettings = (): CanvasSettingsViewModel => {
 					),
 				},
 			},
+			postprocessing: {
+				enabled: GAME_CANVAS_CONFIG.POSTPROCESSING.ENABLED_DEFAULT,
+				bloom: {
+					luminanceThreshold:
+						GAME_CANVAS_CONFIG.POSTPROCESSING.BLOOM.LUMINANCE_THRESHOLD,
+					luminanceSmoothing:
+						GAME_CANVAS_CONFIG.POSTPROCESSING.BLOOM.LUMINANCE_SMOOTHING,
+					intensity: GAME_CANVAS_CONFIG.POSTPROCESSING.BLOOM.INTENSITY,
+					mipmapBlur: GAME_CANVAS_CONFIG.POSTPROCESSING.BLOOM.MIPMAP_BLUR,
+				},
+				vignette: {
+					offset: GAME_CANVAS_CONFIG.POSTPROCESSING.VIGNETTE.OFFSET,
+					darkness: GAME_CANVAS_CONFIG.POSTPROCESSING.VIGNETTE.DARKNESS,
+				},
+			},
 			renderer: {
 				dprRange: [...GAME_CANVAS_CONFIG.RENDERER.DPR_RANGE],
 				shadowsEnabled: GAME_CANVAS_CONFIG.RENDERER.SHADOWS_ENABLED,
@@ -155,6 +185,7 @@ export type {
 	CanvasEnvironmentSettings,
 	CanvasFogSettings,
 	CanvasLightingSettings,
+	CanvasPostprocessingSettings,
 	CanvasRendererSettings,
 	CanvasSettingsViewModel,
 };

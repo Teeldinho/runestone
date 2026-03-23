@@ -12,6 +12,7 @@ type UseSettingsFormResult = SettingsValues & {
 	handleMusicVolumeChange: (value: number) => void;
 	handleSfxVolumeChange: (value: number) => void;
 	handleHapticsToggle: (enabled: boolean) => void;
+	handlePostprocessingToggle: (enabled: boolean) => void;
 	handleSettingsReset: () => void;
 };
 
@@ -53,6 +54,13 @@ export const useSettingsForm = (): UseSettingsFormResult => {
 		[settings, persist],
 	);
 
+	const handlePostprocessingToggle = useCallback(
+		(enabled: boolean) => {
+			persist({ ...settings, postprocessingEnabled: enabled });
+		},
+		[settings, persist],
+	);
+
 	const handleSettingsReset = useCallback(() => {
 		resetSettings(localStorage);
 		const defaults = readSettings(localStorage);
@@ -65,6 +73,7 @@ export const useSettingsForm = (): UseSettingsFormResult => {
 		handleMusicVolumeChange,
 		handleSfxVolumeChange,
 		handleHapticsToggle,
+		handlePostprocessingToggle,
 		handleSettingsReset,
 	};
 };

@@ -5,6 +5,7 @@ export const SETTINGS_DEFAULTS = {
 	musicVolume: 0.55,
 	sfxVolume: 0.9,
 	hapticsEnabled: true,
+	postprocessingEnabled: true,
 } as const;
 
 export const SETTINGS_VOLUME_RANGE = {
@@ -29,4 +30,8 @@ export const SETTINGS_COPY = {
 	HAPTICS_ON_LABEL: "On",
 	HAPTICS_OFF_LABEL: "Off",
 	RESET_BUTTON: "Reset to Defaults",
+	GRAPHICS_SECTION: "Graphics",
+	POSTPROCESSING_TOGGLE_LABEL: "Postprocessing",
+	POSTPROCESSING_ON_LABEL: "On",
+	POSTPROCESSING_OFF_LABEL: "Off",
 } as const;

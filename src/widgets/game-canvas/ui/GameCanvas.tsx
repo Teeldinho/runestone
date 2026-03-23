@@ -1,8 +1,10 @@
 import { AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
 import { Physics } from "@react-three/rapier";
 import { Suspense } from "react";
 import type { CameraStateSnapshot } from "@/features/camera-system";
+import { readSettings } from "@/features/settings";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 import {
 	Card,
@@ -35,10 +37,14 @@ export function GameCanvas({
 		machineRuntime,
 		cameraStateSnapshot,
 	);
-	const { camera, environment, fog, lighting, renderer } = canvasSettings;
+	const { camera, environment, fog, lighting, postprocessing, renderer } =
+		canvasSettings;
 
 	usePlayerSceneController();
 	useGameSideEffects();
+
+	const isPostprocessingEnabled =
+		postprocessing.enabled && readSettings(localStorage).postprocessingEnabled;
 
 	return (
 		<Card className="overflow-hidden border-panel-border bg-panel shadow-xl backdrop-blur">
@@ -73,6 +79,20 @@ export function GameCanvas({
 						<Suspense fallback={null}>
 							<SceneFog fog={fog} />
 							<SceneLighting lighting={lighting} />
+							{isPostprocessingEnabled && (
+								<EffectComposer>
+									<Bloom
+										luminanceThreshold={postprocessing.bloom.luminanceThreshold}
+										luminanceSmoothing={postprocessing.bloom.luminanceSmoothing}
+										intensity={postprocessing.bloom.intensity}
+										mipmapBlur={postprocessing.bloom.mipmapBlur}
+									/>
+									<Vignette
+										offset={postprocessing.vignette.offset}
+										darkness={postprocessing.vignette.darkness}
+									/>
+								</EffectComposer>
+							)}
 							<Physics>
 								<SceneEnvironment environment={environment} />
 							</Physics>
