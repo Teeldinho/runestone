@@ -1,4 +1,8 @@
 export {
+	applyDamageToEnemy,
+	applyDeathToEnemy,
+} from "./enemyMachineActions";
+export {
 	checkIsLethalDamageForEnemy,
 	checkIsPlayerInAttackRange,
 	checkIsPlayerInDetectionRange,

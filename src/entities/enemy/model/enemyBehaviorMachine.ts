@@ -13,6 +13,8 @@ import {
 	ENEMY_MACHINE_STATES,
 } from "../config";
 import {
+	applyDamageToEnemy,
+	applyDeathToEnemy,
 	checkIsLethalDamageForEnemy,
 	checkIsPlayerInAttackRange,
 	checkIsPlayerInDetectionRange,
@@ -65,9 +67,14 @@ export const createEnemyBehaviorMachine = () =>
 				),
 			})),
 			[ENEMY_ACTIONS.APPLY_DAMAGE]: assign(({ context, event }) => ({
-				hp: Math.max(context.hp - (event as EnemyTakeDamageEvent).amount, 0),
+				hp: applyDamageToEnemy(
+					context.hp,
+					(event as EnemyTakeDamageEvent).amount,
+				),
 			})),
-			[ENEMY_ACTIONS.APPLY_DEATH]: assign(() => ({ hp: 0 })),
+			[ENEMY_ACTIONS.APPLY_DEATH]: assign(() => ({
+				hp: applyDeathToEnemy(),
+			})),
 		},
 	}).createMachine({
 		id: ENEMY_MACHINE_ID,
