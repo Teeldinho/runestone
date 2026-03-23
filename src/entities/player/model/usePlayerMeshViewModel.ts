@@ -1,8 +1,7 @@
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
-
-import type { PlayerHealthState, PlayerMeshSettings } from "./types";
 import { usePlayerMachineRuntime } from "./playerMachineRuntime";
+import type { PlayerHealthState, PlayerMeshSettings } from "./types";
 import { usePlayerMesh } from "./usePlayerMesh";
 import { usePlayerPhysics } from "./usePlayerPhysics";
 
