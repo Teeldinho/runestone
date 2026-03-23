@@ -4,6 +4,7 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RoomId } from "@/entities/dungeon";
 import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
+import { PLAYER_STATES, type PlayerHealthState } from "@/entities/player";
 import { AUDIO_SPRITE_IDS } from "@/features/audio-manager";
 
 const mockOnRoomEnter = vi.fn();
@@ -62,8 +63,9 @@ vi.mock("@/entities/player", () => ({
 		sendPlayerMachineEvent: vi.fn(),
 	}),
 	PLAYER_STATES: {
-		REGIONS: { HEALTH: "health" },
+		REGIONS: { HEALTH: "health", MOVEMENT: "movement" },
 		HEALTH: { ALIVE: "alive", DAMAGED: "damaged", DEAD: "dead" },
+		MOVEMENT: { IDLE: "idle", WALKING: "walking" },
 	},
 }));
 
@@ -84,9 +86,12 @@ const createMockSnapshot = (
 });
 
 const createMockPlayerSnapshot = (
-	healthState: "alive" | "damaged" | "dead" = "alive",
+	healthState: PlayerHealthState = PLAYER_STATES.HEALTH.ALIVE,
 ) => ({
-	value: { health: healthState, movement: "idle" },
+	value: {
+		[PLAYER_STATES.REGIONS.HEALTH]: healthState,
+		[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
+	},
 	context: {
 		position: [0, 0, 0] as [number, number, number],
 		velocity: [0, 0, 0] as [number, number, number],
@@ -266,7 +271,7 @@ describe("useGameSideEffects — player death haptic and audio", () => {
 
 		act(() => {
 			mockPlayerSnapshotGetter.mockReturnValue(
-				createMockPlayerSnapshot("dead"),
+				createMockPlayerSnapshot(PLAYER_STATES.HEALTH.DEAD),
 			);
 		});
 		rerender();
@@ -284,7 +289,9 @@ describe("useGameSideEffects — player death haptic and audio", () => {
 	});
 
 	it("calls onPlayerDeath only once even when re-rendered in dead state", () => {
-		mockPlayerSnapshotGetter.mockReturnValue(createMockPlayerSnapshot("dead"));
+		mockPlayerSnapshotGetter.mockReturnValue(
+			createMockPlayerSnapshot(PLAYER_STATES.HEALTH.DEAD),
+		);
 		const { rerender } = renderHook(() => useGameSideEffects());
 
 		rerender();

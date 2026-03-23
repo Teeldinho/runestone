@@ -3,7 +3,12 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { PLAYER_EVENTS } from "@/entities/player";
+import {
+	PLAYER_EVENTS,
+	PLAYER_STATES,
+	type PlayerHealthState,
+} from "@/entities/player";
+import { DUNGEON_MACHINE_SYSTEM_EVENTS } from "@/features/dungeon-navigation";
 
 const mockSendPlayerMachineEvent = vi.fn();
 const mockSendDungeonMachineEvent = vi.fn();
@@ -26,8 +31,9 @@ vi.mock("@/entities/player", () => ({
 		DIE: "DIE",
 	},
 	PLAYER_STATES: {
-		REGIONS: { HEALTH: "health" },
+		REGIONS: { HEALTH: "health", MOVEMENT: "movement" },
 		HEALTH: { ALIVE: "alive", DAMAGED: "damaged", DEAD: "dead" },
+		MOVEMENT: { IDLE: "idle", WALKING: "walking" },
 	},
 }));
 
@@ -39,9 +45,12 @@ vi.mock("@/features/dungeon-navigation", () => ({
 }));
 
 const createMockPlayerSnapshot = (
-	healthState: "alive" | "damaged" | "dead" = "alive",
+	healthState: PlayerHealthState = PLAYER_STATES.HEALTH.ALIVE,
 ) => ({
-	value: { health: healthState, movement: "idle" },
+	value: {
+		[PLAYER_STATES.REGIONS.HEALTH]: healthState,
+		[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
+	},
 	context: {
 		position: [0, 0, 0] as [number, number, number],
 		velocity: [0, 0, 0] as [number, number, number],
@@ -65,7 +74,7 @@ describe("useGameOverState", () => {
 
 	it("isGameOver is false when player is damaged", () => {
 		mockPlayerSnapshotGetter.mockReturnValue(
-			createMockPlayerSnapshot("damaged"),
+			createMockPlayerSnapshot(PLAYER_STATES.HEALTH.DAMAGED),
 		);
 		const { result } = renderHook(() => useGameOverState());
 
@@ -73,7 +82,9 @@ describe("useGameOverState", () => {
 	});
 
 	it("isGameOver is true when player health is dead", () => {
-		mockPlayerSnapshotGetter.mockReturnValue(createMockPlayerSnapshot("dead"));
+		mockPlayerSnapshotGetter.mockReturnValue(
+			createMockPlayerSnapshot(PLAYER_STATES.HEALTH.DEAD),
+		);
 		const { result } = renderHook(() => useGameOverState());
 
 		expect(result.current.isGameOver).toBe(true);
@@ -99,7 +110,7 @@ describe("useGameOverState", () => {
 		});
 
 		expect(mockSendDungeonMachineEvent).toHaveBeenCalledWith({
-			type: "RESET_DUNGEON_RUN",
+			type: DUNGEON_MACHINE_SYSTEM_EVENTS.RESET_DUNGEON_RUN,
 		});
 	});
 
