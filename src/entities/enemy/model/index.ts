@@ -9,3 +9,8 @@ export type {
 	EnemyTakeDamageEvent,
 	EnemyUpdatePlayerPositionEvent,
 } from "./types";
+export type {
+	UseEnemyMeshViewModelInput,
+	UseEnemyMeshViewModelResult,
+} from "./useEnemyMeshViewModel";
+export { useEnemyMeshViewModel } from "./useEnemyMeshViewModel";

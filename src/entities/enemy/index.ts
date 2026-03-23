@@ -5,4 +5,5 @@ export type {
 	EnemyMachineEvent,
 	EnemyMachineInput,
 } from "./model";
-export { createEnemyBehaviorMachine } from "./model";
+export { createEnemyBehaviorMachine, useEnemyMeshViewModel } from "./model";
+export { EnemyMesh } from "./ui";

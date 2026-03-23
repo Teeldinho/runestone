@@ -32,18 +32,6 @@ const resolvePlayerPosition = (
 	return positionEvent.position ?? fallback;
 };
 
-const updatePlayerPositionAction = assign(
-	({
-		context,
-		event,
-	}: {
-		context: EnemyMachineContext;
-		event: EnemyMachineEvent;
-	}) => ({
-		playerPosition: resolvePlayerPosition(event, context.playerPosition),
-	}),
-);
-
 export const createEnemyBehaviorMachine = () =>
 	setup({
 		types: {
@@ -76,6 +64,21 @@ export const createEnemyBehaviorMachine = () =>
 					(event as EnemyTakeDamageEvent).amount,
 				),
 		},
+		actions: {
+			syncPlayerPosition: assign(({ context, event }) => ({
+				playerPosition: resolvePlayerPosition(
+					event as EnemyMachineEvent,
+					context.playerPosition,
+				),
+			})),
+			applyDamage: assign(({ context, event }) => ({
+				hp: Math.max(
+					context.hp - (event as EnemyTakeDamageEvent).amount,
+					0,
+				),
+			})),
+			applyDeath: assign(() => ({ hp: 0 })),
+		},
 	}).createMachine({
 		id: ENEMY_MACHINE_ID,
 		initial: ENEMY_MACHINE_STATES.PATROL,
@@ -96,9 +99,9 @@ export const createEnemyBehaviorMachine = () =>
 						{
 							guard: ENEMY_GUARDS.IS_PLAYER_IN_DETECTION_RANGE,
 							target: ENEMY_MACHINE_STATES.DETECT,
-							actions: updatePlayerPositionAction,
+							actions: "syncPlayerPosition",
 						},
-						{ actions: updatePlayerPositionAction },
+						{ actions: "syncPlayerPosition" },
 					],
 				},
 			},
@@ -117,9 +120,9 @@ export const createEnemyBehaviorMachine = () =>
 						{
 							guard: not(ENEMY_GUARDS.IS_PLAYER_IN_DETECTION_RANGE),
 							target: ENEMY_MACHINE_STATES.PATROL,
-							actions: updatePlayerPositionAction,
+							actions: "syncPlayerPosition",
 						},
-						{ actions: updatePlayerPositionAction },
+						{ actions: "syncPlayerPosition" },
 					],
 				},
 			},
@@ -129,14 +132,14 @@ export const createEnemyBehaviorMachine = () =>
 						{
 							guard: ENEMY_GUARDS.IS_PLAYER_IN_ATTACK_RANGE,
 							target: ENEMY_MACHINE_STATES.ATTACK,
-							actions: updatePlayerPositionAction,
+							actions: "syncPlayerPosition",
 						},
 						{
 							guard: not(ENEMY_GUARDS.IS_PLAYER_IN_DETECTION_RANGE),
 							target: ENEMY_MACHINE_STATES.PATROL,
-							actions: updatePlayerPositionAction,
+							actions: "syncPlayerPosition",
 						},
-						{ actions: updatePlayerPositionAction },
+						{ actions: "syncPlayerPosition" },
 					],
 				},
 			},
@@ -146,24 +149,17 @@ export const createEnemyBehaviorMachine = () =>
 						{
 							guard: ENEMY_GUARDS.IS_LETHAL_DAMAGE,
 							target: ENEMY_MACHINE_STATES.DEAD,
-							actions: assign(() => ({ hp: 0 })),
+							actions: "applyDeath",
 						},
-						{
-							actions: assign(({ context, event }) => ({
-								hp: Math.max(
-									context.hp - (event as EnemyTakeDamageEvent).amount,
-									0,
-								),
-							})),
-						},
+						{ actions: "applyDamage" },
 					],
 					[ENEMY_EVENTS.UPDATE_PLAYER_POSITION]: [
 						{
 							guard: not(ENEMY_GUARDS.IS_PLAYER_IN_DETECTION_RANGE),
 							target: ENEMY_MACHINE_STATES.PATROL,
-							actions: updatePlayerPositionAction,
+							actions: "syncPlayerPosition",
 						},
-						{ actions: updatePlayerPositionAction },
+						{ actions: "syncPlayerPosition" },
 					],
 				},
 			},
