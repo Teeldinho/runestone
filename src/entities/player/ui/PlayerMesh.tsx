@@ -1,13 +1,32 @@
+import type { RapierRigidBody } from "@react-three/rapier";
+import { RigidBody } from "@react-three/rapier";
+import type { RefObject } from "react";
+
 import { PLAYER_ENTITY_CONFIG } from "../config";
-import type { PlayerMeshSettings } from "../model";
+import type { PlayerHealthState } from "../model";
+import { usePlayerMachineRuntime } from "../model/playerMachineRuntime";
+import { usePlayerMesh } from "../model/usePlayerMesh";
+import { usePlayerPhysics } from "../model/usePlayerPhysics";
 
-type PlayerMeshProps = {
-	settings: PlayerMeshSettings;
-};
+export function PlayerMesh() {
+	const { snapshot } = usePlayerMachineRuntime();
 
-export function PlayerMesh({ settings }: PlayerMeshProps) {
+	const healthState = snapshot.value.health as PlayerHealthState;
+
+	const meshSettings = usePlayerMesh({ healthState });
+
+	const { rigidBodyRef } = usePlayerPhysics({
+		position: snapshot.context.position,
+		velocity: snapshot.context.velocity,
+	});
+
 	return (
-		<group position={settings.position}>
+		<RigidBody
+			ref={rigidBodyRef as RefObject<RapierRigidBody>}
+			colliders="hull"
+			position={meshSettings.position}
+			type="kinematicPosition"
+		>
 			<mesh castShadow position={[0, PLAYER_ENTITY_CONFIG.BODY.POSITION_Y, 0]}>
 				<cylinderGeometry
 					args={[
@@ -48,13 +67,13 @@ export function PlayerMesh({ settings }: PlayerMeshProps) {
 					]}
 				/>
 				<meshStandardMaterial
-					color={settings.auraColor}
-					emissive={settings.auraColor}
-					emissiveIntensity={settings.auraEmissiveIntensity}
+					color={meshSettings.auraColor}
+					emissive={meshSettings.auraColor}
+					emissiveIntensity={meshSettings.auraEmissiveIntensity}
 					opacity={PLAYER_ENTITY_CONFIG.AURA.MATERIAL_OPACITY}
 					transparent
 				/>
 			</mesh>
-		</group>
+		</RigidBody>
 	);
 }

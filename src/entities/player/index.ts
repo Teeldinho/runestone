@@ -3,6 +3,7 @@ export {
 	PLAYER_ENTITY_CONFIG,
 	PLAYER_EVENTS,
 	PLAYER_MACHINE_DEFAULTS,
+	PLAYER_MACHINE_RUNTIME_ERRORS,
 	PLAYER_MOVEMENT_DIRECTIONS,
 	PLAYER_MOVEMENT_KEYS,
 } from "./config";
@@ -14,6 +15,7 @@ export type {
 	PlayerMachine,
 	PlayerMachineContext,
 	PlayerMachineEvent,
+	PlayerMachineSnapshot,
 	PlayerMeshInput,
 	PlayerMeshSettings,
 	PlayerMoveEvent,
@@ -24,5 +26,11 @@ export type {
 	PlayerTakeDamageEvent,
 	UsePlayerMeshInput,
 } from "./model";
-export { createPlayerMachine, usePlayerMesh } from "./model";
+export {
+	createPlayerMachine,
+	PlayerMachineProvider,
+	usePlayerMachineRuntime,
+	usePlayerMesh,
+	usePlayerPhysics,
+} from "./model";
 export { PlayerMesh } from "./ui";

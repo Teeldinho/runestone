@@ -1,5 +1,10 @@
-export { createPlayerMachine } from "./playerMachine";
 export type { PlayerMachine } from "./playerMachine";
+export { createPlayerMachine } from "./playerMachine";
+export {
+	PlayerMachineProvider,
+	usePlayerMachineRuntime,
+} from "./playerMachineRuntime";
+export type { PlayerMachineSnapshot } from "./playerMachineRuntime";
 export type {
 	PlayerDieEvent,
 	PlayerHealEvent,
@@ -17,3 +22,4 @@ export type {
 	UsePlayerMeshInput,
 } from "./types";
 export { usePlayerMesh } from "./usePlayerMesh";
+export { usePlayerPhysics } from "./usePlayerPhysics";

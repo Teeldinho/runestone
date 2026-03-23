@@ -25,6 +25,9 @@ const PLAYER_AURA_STYLES_BY_HEALTH: Record<
 const PLAYER_ORIGIN: Vector3Tuple = [0, 0, 0];
 
 export const PLAYER_ENTITY_CONFIG = {
+	MOVEMENT: {
+		SPEED: 5,
+	},
 	ORIGIN: PLAYER_ORIGIN,
 	DEFAULTS: {
 		HEALTH_STATE: "alive" as PlayerHealthState,
