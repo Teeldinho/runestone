@@ -1,5 +1,7 @@
+import { AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Physics } from "@react-three/rapier";
+import { Suspense } from "react";
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 import {
@@ -65,11 +67,15 @@ export function GameCanvas({
 						dpr={renderer.dprRange}
 						shadows={renderer.shadowsEnabled}
 					>
-						<SceneFog fog={fog} />
-						<SceneLighting lighting={lighting} />
-						<Physics>
-							<SceneEnvironment environment={environment} />
-						</Physics>
+						<PerformanceMonitor />
+						<AdaptiveDpr />
+						<Suspense fallback={null}>
+							<SceneFog fog={fog} />
+							<SceneLighting lighting={lighting} />
+							<Physics>
+								<SceneEnvironment environment={environment} />
+							</Physics>
+						</Suspense>
 					</Canvas>
 				</div>
 			</CardContent>
