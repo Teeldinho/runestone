@@ -1,4 +1,8 @@
 export const PLAYER_STATES = {
+	REGIONS: {
+		MOVEMENT: "movement",
+		HEALTH: "health",
+	} as const,
 	MOVEMENT: {
 		IDLE: "idle",
 		WALKING: "walking",
