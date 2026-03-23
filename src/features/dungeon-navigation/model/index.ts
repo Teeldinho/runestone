@@ -4,3 +4,4 @@ export {
 	useGameMachineRuntime,
 } from "./gameMachineRuntime";
 export { useGameMachine } from "./useGameMachine";
+export { usePlayerInput } from "./usePlayerInput";

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { PlayerMachineProvider } from "@/entities/player";
 import { DungeonGameMachineProvider } from "@/features/dungeon-navigation";
 
 type GameMachineProviderProps = {
@@ -7,5 +8,9 @@ type GameMachineProviderProps = {
 };
 
 export function GameMachineProvider({ children }: GameMachineProviderProps) {
-	return <DungeonGameMachineProvider>{children}</DungeonGameMachineProvider>;
+	return (
+		<DungeonGameMachineProvider>
+			<PlayerMachineProvider>{children}</PlayerMachineProvider>
+		</DungeonGameMachineProvider>
+	);
 }

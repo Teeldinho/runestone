@@ -11,7 +11,7 @@ type SceneEnvironmentProps = {
 };
 
 export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
-	const { corridorMeshSettings, playerMeshSettings, roomMeshSettings } =
+	const { corridorMeshSettings, roomMeshSettings } =
 		useSceneEnvironmentSettings();
 
 	return (
@@ -26,7 +26,7 @@ export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
 					surface={environment}
 				/>
 			))}
-			<PlayerMesh settings={playerMeshSettings} />
+			<PlayerMesh />
 			{roomMeshSettings.map((room) => (
 				<RoomLabel key={`${room.roomId}:label`} settings={room.labelSettings} />
 			))}

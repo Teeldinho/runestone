@@ -1,13 +1,20 @@
+import type { RapierRigidBody } from "@react-three/rapier";
+import { RigidBody } from "@react-three/rapier";
+import type { RefObject } from "react";
+
 import { PLAYER_ENTITY_CONFIG } from "../config";
-import type { PlayerMeshSettings } from "../model";
+import { usePlayerMeshViewModel } from "../model/usePlayerMeshViewModel";
 
-type PlayerMeshProps = {
-	settings: PlayerMeshSettings;
-};
+export function PlayerMesh() {
+	const { meshSettings, rigidBodyRef } = usePlayerMeshViewModel();
 
-export function PlayerMesh({ settings }: PlayerMeshProps) {
 	return (
-		<group position={settings.position}>
+		<RigidBody
+			ref={rigidBodyRef as RefObject<RapierRigidBody>}
+			colliders="hull"
+			position={meshSettings.position}
+			type="kinematicPosition"
+		>
 			<mesh castShadow position={[0, PLAYER_ENTITY_CONFIG.BODY.POSITION_Y, 0]}>
 				<cylinderGeometry
 					args={[
@@ -48,13 +55,13 @@ export function PlayerMesh({ settings }: PlayerMeshProps) {
 					]}
 				/>
 				<meshStandardMaterial
-					color={settings.auraColor}
-					emissive={settings.auraColor}
-					emissiveIntensity={settings.auraEmissiveIntensity}
+					color={meshSettings.auraColor}
+					emissive={meshSettings.auraColor}
+					emissiveIntensity={meshSettings.auraEmissiveIntensity}
 					opacity={PLAYER_ENTITY_CONFIG.AURA.MATERIAL_OPACITY}
 					transparent
 				/>
 			</mesh>
-		</group>
+		</RigidBody>
 	);
 }

@@ -1,5 +1,7 @@
 import type { Vector3Tuple } from "@/shared/types";
-import type { PlayerHealthState } from "../model";
+
+import type { PlayerHealthState } from "./playerStates";
+import { PLAYER_STATES } from "./playerStates";
 
 const PLAYER_AURA_STYLES_BY_HEALTH: Record<
 	PlayerHealthState,
@@ -8,15 +10,15 @@ const PLAYER_AURA_STYLES_BY_HEALTH: Record<
 		emissiveIntensity: number;
 	}
 > = {
-	alive: {
+	[PLAYER_STATES.HEALTH.ALIVE]: {
 		color: "var(--color-dungeon-rune-active)",
 		emissiveIntensity: 1.25,
 	},
-	damaged: {
+	[PLAYER_STATES.HEALTH.DAMAGED]: {
 		color: "var(--color-dungeon-torch)",
 		emissiveIntensity: 1.1,
 	},
-	dead: {
+	[PLAYER_STATES.HEALTH.DEAD]: {
 		color: "var(--color-dungeon-fog)",
 		emissiveIntensity: 0.15,
 	},
@@ -25,9 +27,12 @@ const PLAYER_AURA_STYLES_BY_HEALTH: Record<
 const PLAYER_ORIGIN: Vector3Tuple = [0, 0, 0];
 
 export const PLAYER_ENTITY_CONFIG = {
+	MOVEMENT: {
+		SPEED: 5,
+	},
 	ORIGIN: PLAYER_ORIGIN,
 	DEFAULTS: {
-		HEALTH_STATE: "alive" as PlayerHealthState,
+		HEALTH_STATE: PLAYER_STATES.HEALTH.ALIVE,
 	},
 	TRANSFORM: {
 		SPAWN_HEIGHT_OFFSET: 0.45,

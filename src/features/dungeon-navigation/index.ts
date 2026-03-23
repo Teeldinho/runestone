@@ -10,6 +10,7 @@ export {
 	DungeonGameMachineProvider,
 	useGameMachine,
 	useGameMachineRuntime,
+	usePlayerInput,
 } from "./model";
 export type {
 	NavigationIntent,
