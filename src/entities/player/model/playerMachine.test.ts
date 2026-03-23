@@ -23,7 +23,9 @@ describe("createPlayerMachine", () => {
 		expect(context.stats.hp).toBe(PLAYER_MACHINE_DEFAULTS.STATS.HP);
 		expect(context.stats.maxHp).toBe(PLAYER_MACHINE_DEFAULTS.STATS.MAX_HP);
 		expect(context.stats.score).toBe(PLAYER_MACHINE_DEFAULTS.STATS.SCORE);
-		expect(context.stats.keyCount).toBe(PLAYER_MACHINE_DEFAULTS.STATS.KEY_COUNT);
+		expect(context.stats.keyCount).toBe(
+			PLAYER_MACHINE_DEFAULTS.STATS.KEY_COUNT,
+		);
 		expect(context.stats.chainMultiplier).toBe(
 			PLAYER_MACHINE_DEFAULTS.STATS.CHAIN_MULTIPLIER,
 		);

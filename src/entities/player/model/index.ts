@@ -1,10 +1,10 @@
 export type { PlayerMachine } from "./playerMachine";
 export { createPlayerMachine } from "./playerMachine";
+export type { PlayerMachineSnapshot } from "./playerMachineRuntime";
 export {
 	PlayerMachineProvider,
 	usePlayerMachineRuntime,
 } from "./playerMachineRuntime";
-export type { PlayerMachineSnapshot } from "./playerMachineRuntime";
 export type {
 	PlayerDieEvent,
 	PlayerHealEvent,

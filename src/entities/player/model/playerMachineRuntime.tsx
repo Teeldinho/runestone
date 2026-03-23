@@ -1,5 +1,5 @@
 import { useMachine } from "@xstate/react";
-import { type ReactNode, createContext, useContext, useMemo } from "react";
+import { createContext, type ReactNode, useContext, useMemo } from "react";
 
 import { PLAYER_MACHINE_RUNTIME_ERRORS } from "../config";
 import { createPlayerMachine } from "./playerMachine";
@@ -39,15 +39,14 @@ export const PlayerMachineProvider = ({
 	);
 };
 
-export const usePlayerMachineRuntime =
-	(): PlayerMachineRuntimeContextValue => {
-		const context = useContext(playerMachineRuntimeContext);
+export const usePlayerMachineRuntime = (): PlayerMachineRuntimeContextValue => {
+	const context = useContext(playerMachineRuntimeContext);
 
-		if (!context) {
-			throw new Error(PLAYER_MACHINE_RUNTIME_ERRORS.MISSING_PROVIDER);
-		}
+	if (!context) {
+		throw new Error(PLAYER_MACHINE_RUNTIME_ERRORS.MISSING_PROVIDER);
+	}
 
-		return context;
-	};
+	return context;
+};
 
 export type { PlayerMachineSnapshot };

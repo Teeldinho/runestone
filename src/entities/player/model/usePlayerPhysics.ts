@@ -1,7 +1,7 @@
-import type { RefObject } from "react";
-import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import type { RapierRigidBody } from "@react-three/rapier";
+import type { RefObject } from "react";
+import { useRef } from "react";
 
 import type { Vector3Tuple } from "@/shared/types";
 

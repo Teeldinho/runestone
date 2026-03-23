@@ -27,8 +27,12 @@ export const createPlayerMachine = () =>
 		id: "playerMachine",
 		type: "parallel",
 		context: {
-			position: [...PLAYER_MACHINE_DEFAULTS.POSITION] as unknown as Vector3Tuple,
-			velocity: [...PLAYER_MACHINE_DEFAULTS.VELOCITY] as unknown as Vector3Tuple,
+			position: [
+				...PLAYER_MACHINE_DEFAULTS.POSITION,
+			] as unknown as Vector3Tuple,
+			velocity: [
+				...PLAYER_MACHINE_DEFAULTS.VELOCITY,
+			] as unknown as Vector3Tuple,
 			stats: {
 				maxHp: PLAYER_MACHINE_DEFAULTS.STATS.MAX_HP,
 				hp: PLAYER_MACHINE_DEFAULTS.STATS.HP,
