@@ -23,14 +23,21 @@ export const useAchievementTracker = (): UseAchievementTrackerResult => {
 	const { onAchievement } = useHaptics();
 	const { handleSoundEffectPlay } = useAudioController();
 
-	const [activeAchievement, setActiveAchievement] = useState<Achievement | null>(null);
+	const [activeAchievement, setActiveAchievement] =
+		useState<Achievement | null>(null);
 	const triggeredRef = useRef<Set<AchievementId>>(new Set());
 	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const prevDiscoveredCountRef = useRef<number>(snapshot.context.discoveredRooms.length);
+	const prevDiscoveredCountRef = useRef<number>(
+		snapshot.context.discoveredRooms.length,
+	);
 
 	useEffect(() => {
 		const count = snapshot.context.discoveredRooms.length;
-		if (count === 1 && !snapshot.context.hasTreasureKey && prevDiscoveredCountRef.current > 1) {
+		if (
+			count === 1 &&
+			!snapshot.context.hasTreasureKey &&
+			prevDiscoveredCountRef.current > 1
+		) {
 			triggeredRef.current.clear();
 			setActiveAchievement(null);
 		}
@@ -57,7 +64,10 @@ export const useAchievementTracker = (): UseAchievementTrackerResult => {
 
 		trigger(hasReachedLibrary(snapshot.context), ACHIEVEMENT_IDS.FIRST_STEPS);
 		trigger(hasCollectedKey(snapshot.context), ACHIEVEMENT_IDS.KEY_HUNTER);
-		trigger(hasDefeatedAllEnemies(snapshot.context), ACHIEVEMENT_IDS.COMBAT_MASTER);
+		trigger(
+			hasDefeatedAllEnemies(snapshot.context),
+			ACHIEVEMENT_IDS.COMBAT_MASTER,
+		);
 	}, [snapshot, onAchievement, handleSoundEffectPlay]);
 
 	useEffect(() => {

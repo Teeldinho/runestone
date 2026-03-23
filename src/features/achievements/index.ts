@@ -9,3 +9,4 @@ export {
 	hasReachedLibrary,
 } from "./lib";
 export type { Achievement, AchievementId } from "./model";
+export { AchievementNotification } from "./ui";

@@ -8,4 +8,5 @@ export const hasCollectedKey = (ctx: DungeonContext): boolean =>
 	ctx.hasTreasureKey;
 
 export const hasDefeatedAllEnemies = (ctx: DungeonContext): boolean =>
-	ctx.discoveredRooms.includes(ROOM_IDS.GUARD_ROOM) && ctx.enemiesRemaining === 0;
+	ctx.discoveredRooms.includes(ROOM_IDS.GUARD_ROOM) &&
+	ctx.enemiesRemaining === 0;

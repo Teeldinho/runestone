@@ -3,6 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
 import { Physics } from "@react-three/rapier";
 import { Suspense } from "react";
+import { AchievementNotification } from "@/features/achievements";
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 import {
@@ -14,6 +15,7 @@ import {
 } from "@/shared/ui";
 import {
 	type CanvasMachineRuntime,
+	useAchievementTracker,
 	useCanvasMachineSettings,
 	useGameOverState,
 	useGameSideEffects,
@@ -54,6 +56,7 @@ export function GameCanvas({
 	usePlayerSceneController();
 	useGameSideEffects();
 	const { isGameOver, handleGameRestart } = useGameOverState();
+	const { activeAchievement } = useAchievementTracker();
 
 	return (
 		<Card className="overflow-hidden border-panel-border bg-panel shadow-xl backdrop-blur">
@@ -71,6 +74,7 @@ export function GameCanvas({
 					className="relative w-full"
 					style={{ height: GAME_CANVAS_CONFIG.UI.CANVAS_HEIGHT_PX }}
 				>
+					<AchievementNotification achievement={activeAchievement} />
 					<GameOverOverlay
 						isGameOver={isGameOver}
 						onRestart={handleGameRestart}
