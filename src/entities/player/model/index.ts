@@ -15,6 +15,7 @@ export type {
 	PlayerMeshSettings,
 	PlayerMoveEvent,
 	PlayerMovementState,
+	PlayerRestartEvent,
 	PlayerSnapshot,
 	PlayerStats,
 	PlayerStopEvent,

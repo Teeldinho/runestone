@@ -176,7 +176,22 @@ export const createPlayerMachine = () =>
 							},
 						},
 					},
-					[PLAYER_STATES.HEALTH.DEAD]: {},
+					[PLAYER_STATES.HEALTH.DEAD]: {
+						on: {
+							[PLAYER_EVENTS.RESTART]: {
+								target: PLAYER_STATES.HEALTH.ALIVE,
+								actions: assign(({ context }) => ({
+									[PLAYER_CONTEXT_KEYS.STATS]: {
+										...context.stats,
+										hp: context.stats.maxHp,
+									},
+									[PLAYER_CONTEXT_KEYS.VELOCITY]: [
+										0, 0, 0,
+									] as unknown as Vector3Tuple,
+								})),
+							},
+						},
+					},
 				},
 			},
 		},
