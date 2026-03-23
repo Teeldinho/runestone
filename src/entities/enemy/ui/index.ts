@@ -1,1 +1,1 @@
-export {};
+export { EnemyMesh } from "./EnemyMesh";

@@ -76,4 +76,29 @@ export const createSceneSpawnPosition = (
 	];
 };
 
-export type { SceneRoomMeshSettings };
+type EnemyMeshSettings = {
+	id: string;
+	roomId: string;
+	position: Vector3Tuple;
+};
+
+export const createSceneEnemyMeshSettings = (
+	rooms: readonly DungeonRoomLayout[],
+	guardRoomId: string,
+): EnemyMeshSettings[] => {
+	const guardRoom = rooms.find((room) => room.roomId === guardRoomId);
+
+	if (!guardRoom) {
+		return [];
+	}
+
+	return [
+		{
+			id: `${guardRoomId}-enemy-1`,
+			roomId: guardRoomId,
+			position: guardRoom.position,
+		},
+	];
+};
+
+export type { EnemyMeshSettings, SceneRoomMeshSettings };

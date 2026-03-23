@@ -1,5 +1,6 @@
 import { assign, setup } from "xstate";
 
+import { MACHINE_STATE_TYPES } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 import {
@@ -41,7 +42,7 @@ export const createPlayerMachine = () =>
 		},
 	}).createMachine({
 		id: PLAYER_MACHINE_ID,
-		type: "parallel",
+		type: MACHINE_STATE_TYPES.PARALLEL,
 		context: {
 			position: [
 				...PLAYER_MACHINE_DEFAULTS.POSITION,

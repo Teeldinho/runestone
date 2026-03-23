@@ -1,17 +1,20 @@
 import { useMemo } from "react";
 import type { CorridorMeshSettings } from "@/entities/corridor";
-import { createFloorOneMachine } from "@/entities/dungeon";
+import { createFloorOneMachine, ROOM_IDS } from "@/entities/dungeon";
 import { type PlayerMeshSettings, usePlayerMesh } from "@/entities/player";
 import { createDungeonFloorLayout } from "@/entities/room";
 import {
 	createSceneCorridorMeshSettings,
+	createSceneEnemyMeshSettings,
 	createSceneRoomMeshSettings,
 	createSceneSpawnPosition,
+	type EnemyMeshSettings,
 	type SceneRoomMeshSettings,
 } from "@/widgets/game-canvas/lib";
 
 type SceneEnvironmentSettingsViewModel = {
 	corridorMeshSettings: CorridorMeshSettings[];
+	enemyMeshSettings: EnemyMeshSettings[];
 	playerMeshSettings: PlayerMeshSettings;
 	roomMeshSettings: SceneRoomMeshSettings[];
 };
@@ -26,6 +29,10 @@ export const useSceneEnvironmentSettings =
 				floorLayout.corridors,
 			);
 			const roomMeshSettings = createSceneRoomMeshSettings(floorLayout.rooms);
+			const enemyMeshSettings = createSceneEnemyMeshSettings(
+				floorLayout.rooms,
+				ROOM_IDS.GUARD_ROOM,
+			);
 			const playerPosition = createSceneSpawnPosition(
 				floorLayout.rooms,
 				defaultPlayerMeshSettings.position,
@@ -38,6 +45,7 @@ export const useSceneEnvironmentSettings =
 
 			return {
 				corridorMeshSettings,
+				enemyMeshSettings,
 				playerMeshSettings,
 				roomMeshSettings,
 			};

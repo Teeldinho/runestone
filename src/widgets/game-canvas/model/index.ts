@@ -9,6 +9,7 @@ export type {
 	CanvasSettingsViewModel,
 } from "./useCanvasSettings";
 export { useCanvasSettings } from "./useCanvasSettings";
+export { useEnemySceneController } from "./useEnemySceneController";
 export { usePlayerSceneController } from "./usePlayerSceneController";
 export type { SceneEnvironmentSettingsViewModel } from "./useSceneEnvironmentSettings";
 export { useSceneEnvironmentSettings } from "./useSceneEnvironmentSettings";
