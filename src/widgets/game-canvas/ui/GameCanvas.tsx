@@ -4,7 +4,6 @@ import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
 import { Physics } from "@react-three/rapier";
 import { Suspense } from "react";
 import type { CameraStateSnapshot } from "@/features/camera-system";
-import { readSettings } from "@/features/settings";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 import {
 	Card,
@@ -27,11 +26,13 @@ import { SceneLighting } from "./SceneLighting";
 type GameCanvasProps = {
 	cameraStateSnapshot?: CameraStateSnapshot;
 	machineRuntime: CanvasMachineRuntime;
+	postprocessingEnabled: boolean;
 };
 
 export function GameCanvas({
 	cameraStateSnapshot,
 	machineRuntime,
+	postprocessingEnabled,
 }: GameCanvasProps) {
 	const canvasSettings = useCanvasMachineSettings(
 		machineRuntime,
@@ -44,7 +45,7 @@ export function GameCanvas({
 	useGameSideEffects();
 
 	const isPostprocessingEnabled =
-		postprocessing.enabled && readSettings(localStorage).postprocessingEnabled;
+		postprocessing.enabled && postprocessingEnabled;
 
 	return (
 		<Card className="overflow-hidden border-panel-border bg-panel shadow-xl backdrop-blur">

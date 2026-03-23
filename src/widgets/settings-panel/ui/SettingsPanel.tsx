@@ -1,5 +1,6 @@
 import {
 	formatVolumePercent,
+	resolveToggleLabel,
 	SETTINGS_COPY,
 	SETTINGS_VOLUME_RANGE,
 	useSettingsForm,
@@ -135,9 +136,11 @@ export function SettingsPanel() {
 								)
 							}
 						>
-							{settings.postprocessingEnabled
-								? SETTINGS_COPY.POSTPROCESSING_ON_LABEL
-								: SETTINGS_COPY.POSTPROCESSING_OFF_LABEL}
+							{resolveToggleLabel(
+								settings.postprocessingEnabled,
+								SETTINGS_COPY.POSTPROCESSING_ON_LABEL,
+								SETTINGS_COPY.POSTPROCESSING_OFF_LABEL,
+							)}
 						</Button>
 					</Field>
 				</section>
@@ -163,9 +166,11 @@ export function SettingsPanel() {
 								settings.handleHapticsToggle(!settings.hapticsEnabled)
 							}
 						>
-							{settings.hapticsEnabled
-								? SETTINGS_COPY.HAPTICS_ON_LABEL
-								: SETTINGS_COPY.HAPTICS_OFF_LABEL}
+							{resolveToggleLabel(
+								settings.hapticsEnabled,
+								SETTINGS_COPY.HAPTICS_ON_LABEL,
+								SETTINGS_COPY.HAPTICS_OFF_LABEL,
+							)}
 						</Button>
 					</Field>
 				</section>

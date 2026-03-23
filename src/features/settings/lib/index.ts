@@ -1,3 +1,4 @@
+export { resolveToggleLabel } from "./resolveToggleLabel";
 export { formatVolumePercent } from "./settingsFormatters";
 export type { SettingsValues, StorageAdapter } from "./settingsStorage";
 export {

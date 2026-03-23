@@ -9,6 +9,7 @@ export {
 	formatVolumePercent,
 	readSettings,
 	resetSettings,
+	resolveToggleLabel,
 	writeSettings,
 } from "./lib";
 export { useSettingsForm } from "./model";
