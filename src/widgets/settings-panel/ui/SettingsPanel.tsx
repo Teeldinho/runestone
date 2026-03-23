@@ -126,6 +126,7 @@ export function SettingsPanel() {
 						</FieldContent>
 						<Button
 							variant={settings.hapticsEnabled ? "default" : "outline"}
+							aria-pressed={settings.hapticsEnabled}
 							onClick={() =>
 								settings.handleHapticsToggle(!settings.hapticsEnabled)
 							}

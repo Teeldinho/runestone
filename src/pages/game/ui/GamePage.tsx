@@ -28,7 +28,10 @@ export function GamePage() {
 	} = useGamePage();
 
 	return (
-		<main className="mx-auto flex min-h-dvh max-w-5xl items-center justify-center p-8">
+		<main
+			id="main-content"
+			className="mx-auto flex min-h-dvh max-w-5xl items-center justify-center p-8"
+		>
 			<Card className="w-full border-panel-border bg-panel shadow-xl backdrop-blur">
 				<CardHeader className="space-y-2 text-left">
 					<CardTitle className="text-3xl font-semibold text-panel-title">

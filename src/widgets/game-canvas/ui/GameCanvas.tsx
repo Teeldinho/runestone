@@ -57,6 +57,7 @@ export function GameCanvas({
 					style={{ height: GAME_CANVAS_CONFIG.UI.CANVAS_HEIGHT_PX }}
 				>
 					<Canvas
+						aria-label="Runestone dungeon 3D scene"
 						camera={{
 							far: camera.far,
 							fov: camera.fov,
