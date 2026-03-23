@@ -35,6 +35,7 @@ export const AUTH_COPY = {
 export const AUTH_ROUTE_PATHS = {
 	HOME: "/",
 	GAME: "/game",
+	TUTORIAL: "/tutorial",
 } as const;
 
 export const AUTH_STORAGE_KEYS = {
