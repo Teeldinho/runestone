@@ -1,10 +1,11 @@
 import type { Vector3Tuple } from "@/shared/types";
 
+import type { PlayerHealthState } from "../config/playerStates";
 import type { PLAYER_EVENTS } from "../config/playerEvents";
 
-export type PlayerMovementState = "idle" | "walk" | "run";
+export type { PlayerHealthState };
 
-export type PlayerHealthState = "alive" | "damaged" | "dead";
+export type PlayerMovementState = "idle" | "walking";
 
 export type PlayerStats = {
 	maxHp: number;

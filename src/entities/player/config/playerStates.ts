@@ -11,3 +11,6 @@ export const PLAYER_STATES = {
 } as const;
 
 export const PLAYER_MACHINE_ID = "playerMachine" as const;
+
+export type PlayerHealthState =
+	(typeof PLAYER_STATES.HEALTH)[keyof typeof PLAYER_STATES.HEALTH];

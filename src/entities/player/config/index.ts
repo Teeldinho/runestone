@@ -10,4 +10,5 @@ export {
 	PLAYER_MOVEMENT_DIRECTIONS,
 	PLAYER_MOVEMENT_KEYS,
 } from "./playerMovementConfig";
+export type { PlayerHealthState } from "./playerStates";
 export { PLAYER_MACHINE_ID, PLAYER_STATES } from "./playerStates";
