@@ -36,7 +36,10 @@ export function GameHud({
 		playerMaxHp,
 	});
 
-	const hpPercentage = Math.max(0, Math.min(100, (playerHp / playerMaxHp) * 100));
+	const hpPercentage = Math.max(
+		0,
+		Math.min(100, (playerHp / playerMaxHp) * 100),
+	);
 	const isLowHp = hpPercentage < 30;
 
 	return (
@@ -44,11 +47,15 @@ export function GameHud({
 			{/* Health Bar (Custom UI) */}
 			<section className="space-y-2">
 				<div className="flex items-center justify-between">
-					<span className="rune-text" style={{ color: "var(--dungeon-gold)" }}>VITALITY</span>
-					<span className="rune-value text-xs">{playerHp} / {playerMaxHp}</span>
+					<span className="rune-text" style={{ color: "var(--dungeon-gold)" }}>
+						VITALITY
+					</span>
+					<span className="rune-value text-xs">
+						{playerHp} / {playerMaxHp}
+					</span>
 				</div>
 				<div className="hp-bar-track">
-					<div 
+					<div
 						className={`hp-bar-fill ${isLowHp ? "hp-bar-fill-low" : ""}`}
 						style={{ width: `${hpPercentage}%` }}
 					/>
@@ -57,34 +64,46 @@ export function GameHud({
 
 			{/* Machine Snapshot */}
 			<section className="space-y-3">
-				<h3 className="rune-text border-b pb-1" style={{ borderColor: "var(--panel-border)" }}>
+				<h3
+					className="rune-text border-b pb-1"
+					style={{ borderColor: "var(--panel-border)" }}
+				>
 					{HUD_COPY.MACHINE_SNAPSHOT.TITLE}
 				</h3>
 				<dl aria-live="polite" className="grid gap-2">
 					{gameHudViewModel.machineSnapshotEntries
-						.filter(entry => entry.label !== "Player HP") // HP handles above
+						.filter((entry) => entry.label !== "Player HP") // HP handles above
 						.map((snapshotEntry) => (
-						<div key={snapshotEntry.label} className="flex items-center justify-between">
-							<dt className="text-xs text-[var(--muted-foreground)]">
-								{snapshotEntry.label}
-							</dt>
-							<dd>
-								{snapshotEntry.displayVariant === HUD_DISPLAY_VARIANTS.BADGE ? (
-									<span className="rounded bg-[var(--dungeon-gold-dim)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--accent)] border border-[var(--dungeon-gold)]">
-										{snapshotEntry.value}
-									</span>
-								) : (
-									<span className="rune-value text-xs">{snapshotEntry.value}</span>
-								)}
-							</dd>
-						</div>
-					))}
+							<div
+								key={snapshotEntry.label}
+								className="flex items-center justify-between"
+							>
+								<dt className="text-xs text-[var(--muted-foreground)]">
+									{snapshotEntry.label}
+								</dt>
+								<dd>
+									{snapshotEntry.displayVariant ===
+									HUD_DISPLAY_VARIANTS.BADGE ? (
+										<span className="rounded bg-[var(--dungeon-gold-dim)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--accent)] border border-[var(--dungeon-gold)]">
+											{snapshotEntry.value}
+										</span>
+									) : (
+										<span className="rune-value text-xs">
+											{snapshotEntry.value}
+										</span>
+									)}
+								</dd>
+							</div>
+						))}
 				</dl>
 			</section>
 
 			{/* Discovered Rooms */}
 			<section className="space-y-2">
-				<h3 className="rune-text border-b pb-1" style={{ borderColor: "var(--panel-border)" }}>
+				<h3
+					className="rune-text border-b pb-1"
+					style={{ borderColor: "var(--panel-border)" }}
+				>
 					{HUD_COPY.DISCOVERED_ROOMS.TITLE}
 				</h3>
 				<ul className="flex flex-wrap gap-1">
@@ -101,10 +120,13 @@ export function GameHud({
 
 			{/* Actions */}
 			<section className="mt-4 space-y-3">
-				<h3 className="rune-text border-b pb-1" style={{ borderColor: "var(--panel-border)" }}>
+				<h3
+					className="rune-text border-b pb-1"
+					style={{ borderColor: "var(--panel-border)" }}
+				>
 					{HUD_COPY.ACTIONS.TITLE}
 				</h3>
-				
+
 				<div className="flex flex-col gap-2">
 					{gameHudViewModel.actionButtons.map((actionButton) => (
 						<button

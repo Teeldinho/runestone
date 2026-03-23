@@ -34,7 +34,10 @@ export function GamePage() {
 				<div className="flex items-center gap-3">
 					<span
 						className="text-lg font-bold tracking-[0.2em]"
-						style={{ color: "var(--dungeon-gold)", fontFamily: "Space Grotesk, sans-serif" }}
+						style={{
+							color: "var(--dungeon-gold)",
+							fontFamily: "Space Grotesk, sans-serif",
+						}}
 					>
 						RUNESTONE
 					</span>
@@ -85,7 +88,10 @@ export function GamePage() {
 					}}
 				>
 					<div className="flex flex-1 flex-col gap-0">
-						<div className="border-b p-3" style={{ borderColor: "var(--panel-border)" }}>
+						<div
+							className="border-b p-3"
+							style={{ borderColor: "var(--panel-border)" }}
+						>
 							<GameHud
 								actionButtons={actionButtons}
 								activeStateLabel={activeStateLabel}

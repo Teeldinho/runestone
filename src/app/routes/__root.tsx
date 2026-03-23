@@ -12,14 +12,16 @@ import appCss from "@/app/styles/globals.css?url";
 
 function NotFoundPage() {
 	return (
-		<div className="flex h-dvh flex-col items-center justify-center gap-4 bg-[#06080f] text-[#f5f1e6]">
-			<p className="font-mono text-6xl font-bold tracking-widest text-[#00d7ff]">
+		<div className="flex h-dvh flex-col items-center justify-center gap-4 bg-[var(--background)] text-[var(--foreground)]">
+			<p className="font-mono text-6xl font-bold tracking-widest text-[var(--primary)]">
 				404
 			</p>
-			<p className="text-lg text-[#cbd5e1]">This passage does not exist.</p>
+			<p className="text-lg text-[var(--muted-foreground)]">
+				This passage does not exist.
+			</p>
 			<a
 				href="/"
-				className="mt-2 rounded border border-[#304156] px-4 py-2 text-sm text-[#f5c451] transition-colors hover:border-[#f5c451]"
+				className="mt-2 rounded border border-[var(--border)] px-4 py-2 text-sm text-[var(--accent)] transition-colors hover:border-[var(--accent)]"
 			>
 				Return to entrance
 			</a>
