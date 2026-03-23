@@ -37,15 +37,20 @@ export function GameCanvas({
 	const canvasSettings = useCanvasMachineSettings(
 		machineRuntime,
 		cameraStateSnapshot,
+		postprocessingEnabled,
 	);
-	const { camera, environment, fog, lighting, postprocessing, renderer } =
-		canvasSettings;
+	const {
+		camera,
+		environment,
+		fog,
+		lighting,
+		postprocessing,
+		renderer,
+		isPostprocessingEnabled,
+	} = canvasSettings;
 
 	usePlayerSceneController();
 	useGameSideEffects();
-
-	const isPostprocessingEnabled =
-		postprocessing.enabled && postprocessingEnabled;
 
 	return (
 		<Card className="overflow-hidden border-panel-border bg-panel shadow-xl backdrop-blur">
