@@ -1,3 +1,4 @@
+export { useAchievementTracker } from "./useAchievementTracker";
 export type { CanvasMachineRuntime } from "./useCanvasMachineSettings";
 export { useCanvasMachineSettings } from "./useCanvasMachineSettings";
 export type {

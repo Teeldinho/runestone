@@ -2,13 +2,13 @@
 
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
+import type { RoomId } from "@/entities/dungeon";
+import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
 import {
 	ACHIEVEMENT_COPY,
 	ACHIEVEMENT_DISPLAY_DURATION_MS,
 	ACHIEVEMENT_IDS,
 } from "@/features/achievements";
-import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
 
 const mockOnAchievement = vi.fn();
 const mockHandleSoundEffectPlay = vi.fn();
@@ -40,8 +40,14 @@ vi.mock("@/features/achievements", () => ({
 	},
 	ACHIEVEMENT_COPY: {
 		FIRST_STEPS: { label: "First Steps", description: "Explored the Library" },
-		KEY_HUNTER: { label: "Key Hunter", description: "Collected the treasure key" },
-		COMBAT_MASTER: { label: "Combat Master", description: "Defeated all enemies" },
+		KEY_HUNTER: {
+			label: "Key Hunter",
+			description: "Collected the treasure key",
+		},
+		COMBAT_MASTER: {
+			label: "Combat Master",
+			description: "Defeated all enemies",
+		},
 	},
 	ACHIEVEMENT_DISPLAY_DURATION_MS: 3000,
 	hasReachedLibrary: vi.fn(),
@@ -56,13 +62,13 @@ import {
 } from "@/features/achievements";
 
 const makeSnapshot = (
-	discoveredRooms = [ROOM_IDS.ENTRANCE],
+	discoveredRooms: RoomId[] = [ROOM_IDS.ENTRANCE],
 	hasTreasureKey = false,
 	enemiesRemaining = 3,
 ) => ({
 	context: {
 		currentFloorId: FLOOR_IDS.FLOOR_ONE,
-		currentRoomId: discoveredRooms.at(-1) ?? ROOM_IDS.ENTRANCE,
+		currentRoomId: ROOM_IDS.ENTRANCE,
 		discoveredRooms,
 		hasTreasureKey,
 		enemiesRemaining,
@@ -95,9 +101,7 @@ describe("useAchievementTracker", () => {
 		renderHook(() => useAchievementTracker());
 
 		expect(mockOnAchievement).toHaveBeenCalledTimes(1);
-		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith(
-			"ACHIEVEMENT",
-		);
+		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith("ACHIEVEMENT");
 	});
 
 	it("sets activeAchievement to FIRST_STEPS when library is reached", () => {
@@ -144,7 +148,9 @@ describe("useAchievementTracker", () => {
 		expect(mockOnAchievement).toHaveBeenCalledTimes(1);
 
 		act(() => {
-			mockSnapshotGetter.mockReturnValue(makeSnapshot([ROOM_IDS.ENTRANCE], false));
+			mockSnapshotGetter.mockReturnValue(
+				makeSnapshot([ROOM_IDS.ENTRANCE], false),
+			);
 		});
 		rerender();
 
