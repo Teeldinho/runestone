@@ -37,7 +37,13 @@ vi.mock("@/entities/player", () => ({
 			context: {
 				position: [0, 0, 0],
 				velocity: [0, 0, 0],
-				stats: { hp: 100, maxHp: 100, score: 0, keyCount: 0, chainMultiplier: 1 },
+				stats: {
+					hp: 100,
+					maxHp: 100,
+					score: 0,
+					keyCount: 0,
+					chainMultiplier: 1,
+				},
 			},
 		},
 		sendPlayerMachineEvent: vi.fn(),
