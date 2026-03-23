@@ -30,6 +30,20 @@ vi.mock("@/features/state-visualizer", () => ({
 	useStateVisualizer: vi.fn(),
 }));
 
+vi.mock("@/entities/player", () => ({
+	usePlayerMachineRuntime: vi.fn().mockReturnValue({
+		snapshot: {
+			value: { health: "alive", movement: "idle" },
+			context: {
+				position: [0, 0, 0],
+				velocity: [0, 0, 0],
+				stats: { hp: 100, maxHp: 100, score: 0, keyCount: 0, chainMultiplier: 1 },
+			},
+		},
+		sendPlayerMachineEvent: vi.fn(),
+	}),
+}));
+
 describe("useGamePage", () => {
 	it("composes page data from machine and visualizer hooks", () => {
 		const machineContext: DungeonContext = {
