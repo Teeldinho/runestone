@@ -1,4 +1,5 @@
 export { PLAYER_ENTITY_CONFIG } from "./playerConfig";
+export { PLAYER_GUARDS } from "./playerMachineConfig";
 export type { PlayerEvent } from "./playerEvents";
 export { PLAYER_EVENTS } from "./playerEvents";
 export {

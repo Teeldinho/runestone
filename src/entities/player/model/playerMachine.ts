@@ -4,6 +4,7 @@ import type { Vector3Tuple } from "@/shared/types";
 
 import {
 	PLAYER_EVENTS,
+	PLAYER_GUARDS,
 	PLAYER_MACHINE_DEFAULTS,
 	PLAYER_MACHINE_ID,
 	PLAYER_STATES,
@@ -12,8 +13,8 @@ import {
 	applyDamage,
 	applyDeath,
 	applyHeal,
-	isLethalDamage,
-	isPlayerAlive,
+	checkLethalDamage,
+	checkPlayerAlive,
 } from "../lib";
 import type {
 	PlayerHealEvent,
@@ -30,12 +31,13 @@ export const createPlayerMachine = () =>
 			events: {} as PlayerMachineEvent,
 		},
 		guards: {
-			isLethalDamage: ({ context, event }) =>
-				isLethalDamage(
+			[PLAYER_GUARDS.IS_LETHAL_DAMAGE]: ({ context, event }) =>
+				checkLethalDamage(
 					context.stats.hp,
 					(event as PlayerTakeDamageEvent).amount,
 				),
-			isPlayerAlive: ({ context }) => isPlayerAlive(context.stats.hp),
+			[PLAYER_GUARDS.IS_PLAYER_ALIVE]: ({ context }) =>
+				checkPlayerAlive(context.stats.hp),
 		},
 	}).createMachine({
 		id: PLAYER_MACHINE_ID,
@@ -62,7 +64,7 @@ export const createPlayerMachine = () =>
 					[PLAYER_STATES.MOVEMENT.IDLE]: {
 						on: {
 							[PLAYER_EVENTS.MOVE]: {
-								guard: "isPlayerAlive",
+								guard: PLAYER_GUARDS.IS_PLAYER_ALIVE,
 								target: PLAYER_STATES.MOVEMENT.WALKING,
 								actions: assign(({ event }) => ({
 									velocity: (event as PlayerMoveEvent).velocity,
@@ -73,7 +75,7 @@ export const createPlayerMachine = () =>
 					[PLAYER_STATES.MOVEMENT.WALKING]: {
 						on: {
 							[PLAYER_EVENTS.MOVE]: {
-								guard: "isPlayerAlive",
+								guard: PLAYER_GUARDS.IS_PLAYER_ALIVE,
 								actions: assign(({ event }) => ({
 									velocity: (event as PlayerMoveEvent).velocity,
 								})),
@@ -95,7 +97,7 @@ export const createPlayerMachine = () =>
 						on: {
 							[PLAYER_EVENTS.TAKE_DAMAGE]: [
 								{
-									guard: "isLethalDamage",
+									guard: PLAYER_GUARDS.IS_LETHAL_DAMAGE,
 									target: PLAYER_STATES.HEALTH.DEAD,
 									actions: assign(({ context }) => ({
 										stats: applyDeath(context.stats),
@@ -125,7 +127,7 @@ export const createPlayerMachine = () =>
 						on: {
 							[PLAYER_EVENTS.TAKE_DAMAGE]: [
 								{
-									guard: "isLethalDamage",
+									guard: PLAYER_GUARDS.IS_LETHAL_DAMAGE,
 									target: PLAYER_STATES.HEALTH.DEAD,
 									actions: assign(({ context }) => ({
 										stats: applyDeath(context.stats),

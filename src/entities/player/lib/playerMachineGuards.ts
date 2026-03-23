@@ -1,4 +1,4 @@
-export const isLethalDamage = (hp: number, amount: number): boolean =>
+export const checkLethalDamage = (hp: number, amount: number): boolean =>
 	hp - amount <= 0;
 
-export const isPlayerAlive = (hp: number): boolean => hp > 0;
+export const checkPlayerAlive = (hp: number): boolean => hp > 0;
