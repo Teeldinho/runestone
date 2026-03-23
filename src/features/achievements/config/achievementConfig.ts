@@ -20,3 +20,5 @@ export const ACHIEVEMENT_COPY = {
 } as const;
 
 export const ACHIEVEMENT_DISPLAY_DURATION_MS = 3000;
+
+export const ACHIEVEMENT_NOTIFICATION_BADGE_LABEL = "Achievement Unlocked";

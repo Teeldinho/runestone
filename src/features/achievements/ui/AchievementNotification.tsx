@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { Badge, Card, CardContent } from "@/shared/ui";
 
+import { ACHIEVEMENT_NOTIFICATION_BADGE_LABEL } from "../config";
 import type { Achievement } from "../model";
 
 type AchievementNotificationProps = {
@@ -28,7 +29,9 @@ export function AchievementNotification({
 					>
 						<Card className="border-panel-border bg-panel shadow-xl">
 							<CardContent className="flex items-center gap-3 px-4 py-3">
-								<Badge variant="secondary">Achievement Unlocked</Badge>
+								<Badge variant="secondary">
+									{ACHIEVEMENT_NOTIFICATION_BADGE_LABEL}
+								</Badge>
 								<span className="font-semibold text-panel-title">
 									{achievement.label}
 								</span>
