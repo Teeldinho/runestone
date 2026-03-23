@@ -43,6 +43,7 @@ export function CameraModeSwitcher({
 						<li key={cameraModeButton.mode}>
 							<Button
 								variant={cameraModeButton.isActive ? "default" : "outline"}
+								aria-pressed={cameraModeButton.isActive}
 								onClick={cameraModeButton.handleCameraModeSwitch}
 								className="flex w-full items-center justify-between"
 							>
