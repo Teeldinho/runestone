@@ -1,8 +1,10 @@
 import { CorridorMesh } from "@/entities/corridor";
+import { EnemyMesh } from "@/entities/enemy";
 import { PlayerMesh } from "@/entities/player";
 import { RoomLabel, RoomMesh } from "@/entities/room";
 import {
 	type CanvasEnvironmentSettings,
+	useEnemySceneController,
 	useSceneEnvironmentSettings,
 } from "../model";
 
@@ -11,8 +13,9 @@ type SceneEnvironmentProps = {
 };
 
 export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
-	const { corridorMeshSettings, roomMeshSettings } =
+	const { corridorMeshSettings, roomMeshSettings, enemyMeshSettings } =
 		useSceneEnvironmentSettings();
+	const { playerPosition, handleEnemyDead } = useEnemySceneController();
 
 	return (
 		<>
@@ -24,6 +27,16 @@ export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
 					key={room.roomId}
 					position={room.position}
 					surface={environment}
+				/>
+			))}
+			{enemyMeshSettings.map((enemy) => (
+				<EnemyMesh
+					key={enemy.id}
+					id={enemy.id}
+					roomId={enemy.roomId}
+					position={enemy.position}
+					playerPosition={playerPosition}
+					onDead={handleEnemyDead}
 				/>
 			))}
 			<PlayerMesh />

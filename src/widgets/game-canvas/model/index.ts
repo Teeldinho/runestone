@@ -1,5 +1,6 @@
 export type { CanvasMachineRuntime } from "./useCanvasMachineSettings";
 export { useCanvasMachineSettings } from "./useCanvasMachineSettings";
+export { useEnemySceneController } from "./useEnemySceneController";
 export type {
 	CanvasCameraSettings,
 	CanvasEnvironmentSettings,

@@ -1,7 +1,11 @@
 export { createTorchSettings } from "./createTorchSettings";
-export type { SceneRoomMeshSettings } from "./sceneEnvironmentMappers";
+export type {
+	EnemyMeshSettings,
+	SceneRoomMeshSettings,
+} from "./sceneEnvironmentMappers";
 export {
 	createSceneCorridorMeshSettings,
+	createSceneEnemyMeshSettings,
 	createSceneRoomMeshSettings,
 	createSceneSpawnPosition,
 } from "./sceneEnvironmentMappers";
