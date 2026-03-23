@@ -5,6 +5,7 @@ import type { Vector3Tuple } from "@/shared/types";
 
 import {
 	ENEMY_ACTIONS,
+	ENEMY_CONTEXT_KEYS,
 	ENEMY_DETECT_DELAY_MS,
 	ENEMY_EVENTS,
 	ENEMY_GUARDS,
@@ -61,33 +62,33 @@ export const createEnemyBehaviorMachine = () =>
 		},
 		actions: {
 			[ENEMY_ACTIONS.SYNC_PLAYER_POSITION]: assign(({ context, event }) => ({
-				playerPosition: resolvePlayerPosition(
+				[ENEMY_CONTEXT_KEYS.PLAYER_POSITION]: resolvePlayerPosition(
 					event as { position?: Vector3Tuple },
 					context.playerPosition,
 				),
 			})),
 			[ENEMY_ACTIONS.APPLY_DAMAGE]: assign(({ context, event }) => ({
-				hp: applyDamageToEnemy(
+				[ENEMY_CONTEXT_KEYS.HP]: applyDamageToEnemy(
 					context.hp,
 					(event as EnemyTakeDamageEvent).amount,
 				),
 			})),
 			[ENEMY_ACTIONS.APPLY_DEATH]: assign(() => ({
-				hp: applyDeathToEnemy(),
+				[ENEMY_CONTEXT_KEYS.HP]: applyDeathToEnemy(),
 			})),
 		},
 	}).createMachine({
 		id: ENEMY_MACHINE_ID,
 		initial: ENEMY_MACHINE_STATES.PATROL,
 		context: ({ input }) => ({
-			id: input.id,
-			roomId: input.roomId,
-			position: input.position,
-			playerPosition: [
+			[ENEMY_CONTEXT_KEYS.ID]: input.id,
+			[ENEMY_CONTEXT_KEYS.ROOM_ID]: input.roomId,
+			[ENEMY_CONTEXT_KEYS.POSITION]: input.position,
+			[ENEMY_CONTEXT_KEYS.PLAYER_POSITION]: [
 				...ENEMY_MACHINE_DEFAULTS.PLAYER_POSITION,
 			] as unknown as Vector3Tuple,
-			hp: ENEMY_MACHINE_DEFAULTS.HP,
-			maxHp: ENEMY_MACHINE_DEFAULTS.MAX_HP,
+			[ENEMY_CONTEXT_KEYS.HP]: ENEMY_MACHINE_DEFAULTS.HP,
+			[ENEMY_CONTEXT_KEYS.MAX_HP]: ENEMY_MACHINE_DEFAULTS.MAX_HP,
 		}),
 		states: {
 			[ENEMY_MACHINE_STATES.PATROL]: {

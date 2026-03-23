@@ -4,6 +4,7 @@ import { MACHINE_STATE_TYPES } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 import {
+	PLAYER_CONTEXT_KEYS,
 	PLAYER_EVENTS,
 	PLAYER_GUARDS,
 	PLAYER_MACHINE_DEFAULTS,
@@ -44,13 +45,13 @@ export const createPlayerMachine = () =>
 		id: PLAYER_MACHINE_ID,
 		type: MACHINE_STATE_TYPES.PARALLEL,
 		context: {
-			position: [
+			[PLAYER_CONTEXT_KEYS.POSITION]: [
 				...PLAYER_MACHINE_DEFAULTS.POSITION,
 			] as unknown as Vector3Tuple,
-			velocity: [
+			[PLAYER_CONTEXT_KEYS.VELOCITY]: [
 				...PLAYER_MACHINE_DEFAULTS.VELOCITY,
 			] as unknown as Vector3Tuple,
-			stats: {
+			[PLAYER_CONTEXT_KEYS.STATS]: {
 				maxHp: PLAYER_MACHINE_DEFAULTS.STATS.MAX_HP,
 				hp: PLAYER_MACHINE_DEFAULTS.STATS.HP,
 				score: PLAYER_MACHINE_DEFAULTS.STATS.SCORE,
@@ -68,7 +69,8 @@ export const createPlayerMachine = () =>
 								guard: PLAYER_GUARDS.IS_PLAYER_ALIVE,
 								target: PLAYER_STATES.MOVEMENT.WALKING,
 								actions: assign(({ event }) => ({
-									velocity: (event as PlayerMoveEvent).velocity,
+									[PLAYER_CONTEXT_KEYS.VELOCITY]: (event as PlayerMoveEvent)
+										.velocity,
 								})),
 							},
 						},
@@ -78,13 +80,16 @@ export const createPlayerMachine = () =>
 							[PLAYER_EVENTS.MOVE]: {
 								guard: PLAYER_GUARDS.IS_PLAYER_ALIVE,
 								actions: assign(({ event }) => ({
-									velocity: (event as PlayerMoveEvent).velocity,
+									[PLAYER_CONTEXT_KEYS.VELOCITY]: (event as PlayerMoveEvent)
+										.velocity,
 								})),
 							},
 							[PLAYER_EVENTS.STOP]: {
 								target: PLAYER_STATES.MOVEMENT.IDLE,
 								actions: assign(() => ({
-									velocity: [0, 0, 0] as unknown as Vector3Tuple,
+									[PLAYER_CONTEXT_KEYS.VELOCITY]: [
+										0, 0, 0,
+									] as unknown as Vector3Tuple,
 								})),
 							},
 						},
@@ -101,14 +106,16 @@ export const createPlayerMachine = () =>
 									guard: PLAYER_GUARDS.IS_LETHAL_DAMAGE,
 									target: PLAYER_STATES.HEALTH.DEAD,
 									actions: assign(({ context }) => ({
-										stats: applyDeath(context.stats),
-										velocity: [0, 0, 0] as unknown as Vector3Tuple,
+										[PLAYER_CONTEXT_KEYS.STATS]: applyDeath(context.stats),
+										[PLAYER_CONTEXT_KEYS.VELOCITY]: [
+											0, 0, 0,
+										] as unknown as Vector3Tuple,
 									})),
 								},
 								{
 									target: PLAYER_STATES.HEALTH.DAMAGED,
 									actions: assign(({ context, event }) => ({
-										stats: applyDamage(
+										[PLAYER_CONTEXT_KEYS.STATS]: applyDamage(
 											context.stats,
 											(event as PlayerTakeDamageEvent).amount,
 										),
@@ -118,8 +125,10 @@ export const createPlayerMachine = () =>
 							[PLAYER_EVENTS.DIE]: {
 								target: PLAYER_STATES.HEALTH.DEAD,
 								actions: assign(({ context }) => ({
-									stats: applyDeath(context.stats),
-									velocity: [0, 0, 0] as unknown as Vector3Tuple,
+									[PLAYER_CONTEXT_KEYS.STATS]: applyDeath(context.stats),
+									[PLAYER_CONTEXT_KEYS.VELOCITY]: [
+										0, 0, 0,
+									] as unknown as Vector3Tuple,
 								})),
 							},
 						},
@@ -131,13 +140,15 @@ export const createPlayerMachine = () =>
 									guard: PLAYER_GUARDS.IS_LETHAL_DAMAGE,
 									target: PLAYER_STATES.HEALTH.DEAD,
 									actions: assign(({ context }) => ({
-										stats: applyDeath(context.stats),
-										velocity: [0, 0, 0] as unknown as Vector3Tuple,
+										[PLAYER_CONTEXT_KEYS.STATS]: applyDeath(context.stats),
+										[PLAYER_CONTEXT_KEYS.VELOCITY]: [
+											0, 0, 0,
+										] as unknown as Vector3Tuple,
 									})),
 								},
 								{
 									actions: assign(({ context, event }) => ({
-										stats: applyDamage(
+										[PLAYER_CONTEXT_KEYS.STATS]: applyDamage(
 											context.stats,
 											(event as PlayerTakeDamageEvent).amount,
 										),
@@ -147,7 +158,7 @@ export const createPlayerMachine = () =>
 							[PLAYER_EVENTS.HEAL]: {
 								target: PLAYER_STATES.HEALTH.ALIVE,
 								actions: assign(({ context, event }) => ({
-									stats: applyHeal(
+									[PLAYER_CONTEXT_KEYS.STATS]: applyHeal(
 										context.stats,
 										(event as PlayerHealEvent).amount,
 										context.stats.maxHp,
@@ -157,8 +168,10 @@ export const createPlayerMachine = () =>
 							[PLAYER_EVENTS.DIE]: {
 								target: PLAYER_STATES.HEALTH.DEAD,
 								actions: assign(({ context }) => ({
-									stats: applyDeath(context.stats),
-									velocity: [0, 0, 0] as unknown as Vector3Tuple,
+									[PLAYER_CONTEXT_KEYS.STATS]: applyDeath(context.stats),
+									[PLAYER_CONTEXT_KEYS.VELOCITY]: [
+										0, 0, 0,
+									] as unknown as Vector3Tuple,
 								})),
 							},
 						},

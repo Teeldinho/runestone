@@ -22,3 +22,12 @@ export const ENEMY_ACTIONS = {
 	APPLY_DAMAGE: "applyDamage",
 	APPLY_DEATH: "applyDeath",
 } as const;
+
+export const ENEMY_CONTEXT_KEYS = {
+	ID: "id",
+	ROOM_ID: "roomId",
+	POSITION: "position",
+	PLAYER_POSITION: "playerPosition",
+	HP: "hp",
+	MAX_HP: "maxHp",
+} as const;

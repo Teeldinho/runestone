@@ -13,6 +13,7 @@ export {
 export type { EnemyBehaviorState } from "./enemyMachineStates";
 export {
 	ENEMY_ACTIONS,
+	ENEMY_CONTEXT_KEYS,
 	ENEMY_GUARDS,
 	ENEMY_MACHINE_ID,
 	ENEMY_MACHINE_STATES,
