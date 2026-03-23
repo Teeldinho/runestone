@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { createActor } from "xstate";
 
-import { PLAYER_EVENTS, PLAYER_MACHINE_DEFAULTS } from "../config";
+import {
+	PLAYER_EVENTS,
+	PLAYER_MACHINE_DEFAULTS,
+	PLAYER_STATES,
+} from "../config";
 import { createPlayerMachine } from "./playerMachine";
 
 describe("createPlayerMachine", () => {
@@ -9,8 +13,8 @@ describe("createPlayerMachine", () => {
 		const actor = createActor(createPlayerMachine()).start();
 
 		expect(actor.getSnapshot().value).toEqual({
-			movement: "idle",
-			health: "alive",
+			[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
+			[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.ALIVE,
 		});
 	});
 
@@ -36,7 +40,9 @@ describe("createPlayerMachine", () => {
 
 		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0] });
 
-		expect(actor.getSnapshot().value).toMatchObject({ movement: "walking" });
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.WALKING,
+		});
 	});
 
 	it("updates velocity context on MOVE event", () => {
@@ -53,7 +59,9 @@ describe("createPlayerMachine", () => {
 		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0] });
 		actor.send({ type: PLAYER_EVENTS.STOP });
 
-		expect(actor.getSnapshot().value).toMatchObject({ movement: "idle" });
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
+		});
 	});
 
 	it("zeros velocity on STOP event", () => {
@@ -70,7 +78,9 @@ describe("createPlayerMachine", () => {
 
 		actor.send({ type: PLAYER_EVENTS.TAKE_DAMAGE, amount: 10 });
 
-		expect(actor.getSnapshot().value).toMatchObject({ health: "damaged" });
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.DAMAGED,
+		});
 	});
 
 	it("reduces hp on TAKE_DAMAGE event", () => {
@@ -91,7 +101,9 @@ describe("createPlayerMachine", () => {
 			amount: PLAYER_MACHINE_DEFAULTS.STATS.HP,
 		});
 
-		expect(actor.getSnapshot().value).toMatchObject({ health: "dead" });
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.DEAD,
+		});
 	});
 
 	it("clamps hp to zero on lethal damage", () => {
@@ -103,7 +115,9 @@ describe("createPlayerMachine", () => {
 		});
 
 		expect(actor.getSnapshot().context.stats.hp).toBe(0);
-		expect(actor.getSnapshot().value).toMatchObject({ health: "dead" });
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.DEAD,
+		});
 	});
 
 	it("recovers from damaged to alive on HEAL event", () => {
@@ -112,7 +126,9 @@ describe("createPlayerMachine", () => {
 		actor.send({ type: PLAYER_EVENTS.TAKE_DAMAGE, amount: 10 });
 		actor.send({ type: PLAYER_EVENTS.HEAL, amount: 10 });
 
-		expect(actor.getSnapshot().value).toMatchObject({ health: "alive" });
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.ALIVE,
+		});
 	});
 
 	it("restores hp on HEAL but does not exceed maxHp", () => {
@@ -134,7 +150,9 @@ describe("createPlayerMachine", () => {
 
 		actor.send({ type: PLAYER_EVENTS.DIE });
 
-		expect(actor.getSnapshot().value).toMatchObject({ health: "dead" });
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.DEAD,
+		});
 	});
 
 	it("transitions to dead on DIE event from damaged", () => {
@@ -143,7 +161,9 @@ describe("createPlayerMachine", () => {
 		actor.send({ type: PLAYER_EVENTS.TAKE_DAMAGE, amount: 10 });
 		actor.send({ type: PLAYER_EVENTS.DIE });
 
-		expect(actor.getSnapshot().value).toMatchObject({ health: "dead" });
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.DEAD,
+		});
 	});
 
 	it("ignores MOVE when player is dead", () => {
@@ -156,7 +176,9 @@ describe("createPlayerMachine", () => {
 		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0] });
 
 		expect(actor.getSnapshot().context.velocity).toEqual([0, 0, 0]);
-		expect(actor.getSnapshot().value).toMatchObject({ movement: "idle" });
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
+		});
 	});
 
 	it("can take further damage while already damaged", () => {
@@ -179,7 +201,9 @@ describe("createPlayerMachine", () => {
 		});
 		actor.send({ type: PLAYER_EVENTS.TAKE_DAMAGE, amount: 1 });
 
-		expect(actor.getSnapshot().value).toMatchObject({ health: "dead" });
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.DEAD,
+		});
 		expect(actor.getSnapshot().context.stats.hp).toBe(0);
 	});
 });

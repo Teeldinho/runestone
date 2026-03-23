@@ -56,7 +56,7 @@ export const createPlayerMachine = () =>
 			},
 		},
 		states: {
-			movement: {
+			[PLAYER_STATES.REGIONS.MOVEMENT]: {
 				initial: PLAYER_STATES.MOVEMENT.IDLE,
 				states: {
 					[PLAYER_STATES.MOVEMENT.IDLE]: {
@@ -88,7 +88,7 @@ export const createPlayerMachine = () =>
 					},
 				},
 			},
-			health: {
+			[PLAYER_STATES.REGIONS.HEALTH]: {
 				initial: PLAYER_STATES.HEALTH.ALIVE,
 				states: {
 					[PLAYER_STATES.HEALTH.ALIVE]: {

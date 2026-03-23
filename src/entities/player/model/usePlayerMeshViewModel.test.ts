@@ -3,7 +3,7 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { PLAYER_ENTITY_CONFIG } from "../config";
+import { PLAYER_ENTITY_CONFIG, PLAYER_STATES } from "../config";
 
 vi.mock("@react-three/fiber", () => ({
 	useFrame: vi.fn(),
@@ -12,7 +12,10 @@ vi.mock("@react-three/fiber", () => ({
 vi.mock("./playerMachineRuntime", () => ({
 	usePlayerMachineRuntime: vi.fn(() => ({
 		snapshot: {
-			value: { movement: "idle", health: "alive" },
+			value: {
+				[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
+				[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.ALIVE,
+			},
 			context: {
 				position: [0, 0, 0],
 				velocity: [0, 0, 0],
@@ -46,7 +49,10 @@ describe("usePlayerMeshViewModel", () => {
 	it("returns mesh settings reflecting damaged health state", () => {
 		vi.mocked(usePlayerMachineRuntime).mockReturnValueOnce({
 			snapshot: {
-				value: { movement: "idle", health: "damaged" },
+				value: {
+					[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
+					[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.DAMAGED,
+				},
 				context: {
 					position: [0, 0, 0],
 					velocity: [0, 0, 0],
