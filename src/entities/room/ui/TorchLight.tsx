@@ -9,7 +9,6 @@ export function TorchLight({ settings }: TorchLightProps) {
 	return (
 		<>
 			<pointLight
-				castShadow
 				color={settings.color}
 				decay={settings.decay}
 				distance={settings.distance}
