@@ -48,6 +48,9 @@ export function HomePage() {
 								<Link to={AUTH_ROUTE_PATHS.GAME}>Continue to Game Arena</Link>
 							</Button>
 						) : null}
+						<Button asChild variant="ghost" size="sm" className="mx-auto">
+							<Link to={AUTH_ROUTE_PATHS.TUTORIAL}>How to Play</Link>
+						</Button>
 					</CardHeader>
 				</Card>
 			</main>
