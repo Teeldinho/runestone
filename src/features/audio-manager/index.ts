@@ -10,6 +10,7 @@ export {
 	AUDIO_MACHINE_ID,
 	AUDIO_MACHINE_STATES,
 	AUDIO_PATHS,
+	AUDIO_SPRITE_IDS,
 	AUDIO_SPRITES,
 } from "./config";
 export {

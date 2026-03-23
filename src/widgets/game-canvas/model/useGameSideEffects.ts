@@ -3,11 +3,13 @@ import { useEffect, useRef } from "react";
 import type { RoomId } from "@/entities/dungeon";
 import { FLOOR_IDS } from "@/entities/dungeon";
 import { useSubmitDungeonScore } from "@/entities/score";
-import { useAudioController } from "@/features/audio-manager";
+import { AUDIO_SPRITE_IDS, useAudioController } from "@/features/audio-manager";
 import { useAuthContext } from "@/features/auth";
 import { useGameMachineRuntime } from "@/features/dungeon-navigation";
 import { useHaptics } from "@/features/haptics-feedback";
-import { SCORE_VALUES, XSTATE_ACTOR_STATUS } from "@/shared/config";
+import { SCORE_VALUES } from "@/shared/config";
+
+import { shouldSubmitFloorScore } from "../lib";
 
 export const useGameSideEffects = (): void => {
 	const { snapshot } = useGameMachineRuntime();
@@ -27,16 +29,13 @@ export const useGameSideEffects = (): void => {
 
 		if (currentRoom !== prevRoomRef.current) {
 			onRoomEnter();
-			handleSoundEffectPlay("DOOR_OPEN");
+			handleSoundEffectPlay(AUDIO_SPRITE_IDS.DOOR_OPEN);
 			prevRoomRef.current = currentRoom;
 		}
 	}, [snapshot, onTransition, onRoomEnter, handleSoundEffectPlay]);
 
 	useEffect(() => {
-		if (
-			snapshot.status !== XSTATE_ACTOR_STATUS.DONE ||
-			hasSubmittedRef.current
-		) {
+		if (!shouldSubmitFloorScore(snapshot.status, hasSubmittedRef.current)) {
 			return;
 		}
 
@@ -46,7 +45,7 @@ export const useGameSideEffects = (): void => {
 
 		hasSubmittedRef.current = true;
 		onFloorComplete();
-		handleSoundEffectPlay("ACHIEVEMENT");
+		handleSoundEffectPlay(AUDIO_SPRITE_IDS.ACHIEVEMENT);
 		submitScore.mutate({
 			userId: authenticatedProfile.id,
 			dungeonId: FLOOR_IDS.FLOOR_ONE,

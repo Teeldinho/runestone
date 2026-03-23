@@ -4,6 +4,7 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RoomId } from "@/entities/dungeon";
 import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
+import { AUDIO_SPRITE_IDS } from "@/features/audio-manager";
 
 const mockOnRoomEnter = vi.fn();
 const mockOnTransition = vi.fn();
@@ -36,6 +37,10 @@ vi.mock("@/features/audio-manager", () => ({
 	useAudioController: () => ({
 		handleSoundEffectPlay: mockHandleSoundEffectPlay,
 	}),
+	AUDIO_SPRITE_IDS: {
+		DOOR_OPEN: "DOOR_OPEN",
+		ACHIEVEMENT: "ACHIEVEMENT",
+	},
 }));
 
 vi.mock("@/entities/score", () => ({
@@ -87,7 +92,9 @@ describe("useGameSideEffects — haptics and audio", () => {
 		renderHook(() => useGameSideEffects());
 
 		expect(mockOnRoomEnter).toHaveBeenCalledTimes(1);
-		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith("DOOR_OPEN");
+		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith(
+			AUDIO_SPRITE_IDS.DOOR_OPEN,
+		);
 	});
 
 	it("calls onRoomEnter again when room changes", () => {
@@ -105,7 +112,9 @@ describe("useGameSideEffects — haptics and audio", () => {
 		rerender();
 
 		expect(mockOnRoomEnter).toHaveBeenCalledTimes(1);
-		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith("DOOR_OPEN");
+		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith(
+			AUDIO_SPRITE_IDS.DOOR_OPEN,
+		);
 	});
 
 	it("does NOT call onRoomEnter when room is unchanged between renders", () => {
@@ -159,7 +168,9 @@ describe("useGameSideEffects — score submission on floor completion", () => {
 		rerender();
 
 		expect(mockOnFloorComplete).toHaveBeenCalledTimes(1);
-		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith("ACHIEVEMENT");
+		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith(
+			AUDIO_SPRITE_IDS.ACHIEVEMENT,
+		);
 	});
 
 	it("submits score with correct shape when floor is complete and user is authenticated", () => {
