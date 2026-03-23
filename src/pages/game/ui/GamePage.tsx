@@ -26,6 +26,8 @@ export function GamePage() {
 		handleCameraModeSwitch,
 		hasTreasureKeyLabel,
 		handleDungeonRunReset,
+		playerHp,
+		playerMaxHp,
 	} = useGamePage();
 	const settings = useSettingsForm();
 
@@ -65,6 +67,8 @@ export function GamePage() {
 							enemiesRemaining={enemiesRemaining}
 							handleDungeonRunReset={handleDungeonRunReset}
 							hasTreasureKeyLabel={hasTreasureKeyLabel}
+							playerHp={playerHp}
+							playerMaxHp={playerMaxHp}
 						/>
 					</section>
 
