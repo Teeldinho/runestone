@@ -133,4 +133,25 @@ describe("useCanvasMachineSettings", () => {
 		expect(result.current.camera.position).toEqual([1, 2, 3]);
 		expect(result.current.camera.zoom).toBe(1.25);
 	});
+
+	it("returns isPostprocessingEnabled as false when postprocessingEnabled prop is false", () => {
+		const machineRuntime = createMachineRuntime();
+
+		const { result } = renderHook(() =>
+			useCanvasMachineSettings(machineRuntime, undefined, false),
+		);
+
+		expect(result.current.isPostprocessingEnabled).toBe(false);
+	});
+
+	it("returns isPostprocessingEnabled as true when postprocessingEnabled prop is true and postprocessing.enabled is true", () => {
+		const machineRuntime = createMachineRuntime();
+
+		const { result } = renderHook(() =>
+			useCanvasMachineSettings(machineRuntime, undefined, true),
+		);
+
+		// Since postprocessing.enabled defaults to true in useCanvasSettings
+		expect(result.current.isPostprocessingEnabled).toBe(true);
+	});
 });

@@ -53,6 +53,7 @@ const clampNumber = (value: number, min: number, max: number): number =>
 export const useCanvasMachineSettings = (
 	machineRuntime: CanvasMachineRuntime,
 	cameraStateSnapshot?: CameraStateSnapshot,
+	postprocessingEnabled?: boolean,
 ) => {
 	const baseCanvasSettings = useCanvasSettings();
 
@@ -101,8 +102,16 @@ export const useCanvasMachineSettings = (
 					intensity: torchIntensity,
 				},
 			},
+			isPostprocessingEnabled:
+				baseCanvasSettings.postprocessing.enabled &&
+				(postprocessingEnabled ?? true),
 		};
-	}, [baseCanvasSettings, cameraStateSnapshot, machineRuntime]);
+	}, [
+		baseCanvasSettings,
+		cameraStateSnapshot,
+		machineRuntime,
+		postprocessingEnabled,
+	]);
 };
 
 export type { CanvasMachineRuntime };

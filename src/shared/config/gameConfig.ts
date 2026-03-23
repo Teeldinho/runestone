@@ -113,6 +113,19 @@ export const GAME_CANVAS_CONFIG = {
 			[4, 0, 4],
 		] as const,
 	},
+	POSTPROCESSING: {
+		BLOOM: {
+			LUMINANCE_THRESHOLD: 0.2,
+			LUMINANCE_SMOOTHING: 0.9,
+			INTENSITY: 0.8,
+			MIPMAP_BLUR: true,
+		},
+		VIGNETTE: {
+			OFFSET: 0.3,
+			DARKNESS: 0.7,
+		},
+		ENABLED_DEFAULT: true,
+	} as const,
 } as const;
 
 export type DagreDirection = (typeof DAGRE_CONFIG)["DIRECTION"];

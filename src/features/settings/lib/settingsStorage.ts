@@ -5,6 +5,7 @@ export type SettingsValues = {
 	musicVolume: number;
 	sfxVolume: number;
 	hapticsEnabled: boolean;
+	postprocessingEnabled: boolean;
 };
 
 type StorageAdapter = Pick<Storage, "getItem" | "setItem" | "removeItem">;
@@ -39,6 +40,10 @@ export const readSettings = (storage: StorageAdapter): SettingsValues => {
 				typeof parsed.hapticsEnabled === "boolean"
 					? parsed.hapticsEnabled
 					: SETTINGS_DEFAULTS.hapticsEnabled,
+			postprocessingEnabled:
+				typeof parsed.postprocessingEnabled === "boolean"
+					? parsed.postprocessingEnabled
+					: SETTINGS_DEFAULTS.postprocessingEnabled,
 		};
 	} catch {
 		return { ...SETTINGS_DEFAULTS };

@@ -1,3 +1,4 @@
+import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
 import {
 	Card,
@@ -26,6 +27,7 @@ export function GamePage() {
 		hasTreasureKeyLabel,
 		handleDungeonRunReset,
 	} = useGamePage();
+	const settings = useSettingsForm();
 
 	return (
 		<main
@@ -50,6 +52,7 @@ export function GamePage() {
 						<GameCanvas
 							cameraStateSnapshot={cameraStateSnapshot}
 							machineRuntime={canvasMachineRuntime}
+							postprocessingEnabled={settings.postprocessingEnabled}
 						/>
 					</section>
 

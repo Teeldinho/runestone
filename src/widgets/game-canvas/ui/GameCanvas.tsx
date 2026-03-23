@@ -1,5 +1,6 @@
 import { AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
 import { Physics } from "@react-three/rapier";
 import { Suspense } from "react";
 import type { CameraStateSnapshot } from "@/features/camera-system";
@@ -25,17 +26,28 @@ import { SceneLighting } from "./SceneLighting";
 type GameCanvasProps = {
 	cameraStateSnapshot?: CameraStateSnapshot;
 	machineRuntime: CanvasMachineRuntime;
+	postprocessingEnabled: boolean;
 };
 
 export function GameCanvas({
 	cameraStateSnapshot,
 	machineRuntime,
+	postprocessingEnabled,
 }: GameCanvasProps) {
 	const canvasSettings = useCanvasMachineSettings(
 		machineRuntime,
 		cameraStateSnapshot,
+		postprocessingEnabled,
 	);
-	const { camera, environment, fog, lighting, renderer } = canvasSettings;
+	const {
+		camera,
+		environment,
+		fog,
+		lighting,
+		postprocessing,
+		renderer,
+		isPostprocessingEnabled,
+	} = canvasSettings;
 
 	usePlayerSceneController();
 	useGameSideEffects();
@@ -73,6 +85,20 @@ export function GameCanvas({
 						<Suspense fallback={null}>
 							<SceneFog fog={fog} />
 							<SceneLighting lighting={lighting} />
+							{isPostprocessingEnabled && (
+								<EffectComposer>
+									<Bloom
+										luminanceThreshold={postprocessing.bloom.luminanceThreshold}
+										luminanceSmoothing={postprocessing.bloom.luminanceSmoothing}
+										intensity={postprocessing.bloom.intensity}
+										mipmapBlur={postprocessing.bloom.mipmapBlur}
+									/>
+									<Vignette
+										offset={postprocessing.vignette.offset}
+										darkness={postprocessing.vignette.darkness}
+									/>
+								</EffectComposer>
+							)}
 							<Physics>
 								<SceneEnvironment environment={environment} />
 							</Physics>

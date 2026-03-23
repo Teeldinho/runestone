@@ -29,6 +29,7 @@ describe("settingsStorage utilities", () => {
 			musicVolume: 0.55,
 			sfxVolume: 0.9,
 			hapticsEnabled: true,
+			postprocessingEnabled: true,
 		});
 	});
 
@@ -42,6 +43,7 @@ describe("settingsStorage utilities", () => {
 			musicVolume: 0.55,
 			sfxVolume: 0.9,
 			hapticsEnabled: false,
+			postprocessingEnabled: true,
 		});
 	});
 
@@ -53,6 +55,7 @@ describe("settingsStorage utilities", () => {
 			musicVolume: 0.55,
 			sfxVolume: 0.9,
 			hapticsEnabled: true,
+			postprocessingEnabled: true,
 		});
 	});
 
@@ -64,6 +67,7 @@ describe("settingsStorage utilities", () => {
 			musicVolume: 0.2,
 			sfxVolume: 0.7,
 			hapticsEnabled: false,
+			postprocessingEnabled: false,
 		});
 
 		expect(readSettings(storage)).toEqual({
@@ -71,6 +75,7 @@ describe("settingsStorage utilities", () => {
 			musicVolume: 0.2,
 			sfxVolume: 0.7,
 			hapticsEnabled: false,
+			postprocessingEnabled: false,
 		});
 	});
 
@@ -86,6 +91,7 @@ describe("settingsStorage utilities", () => {
 			musicVolume: 0.55,
 			sfxVolume: 0.9,
 			hapticsEnabled: true,
+			postprocessingEnabled: true,
 		});
 	});
 
@@ -100,6 +106,7 @@ describe("settingsStorage utilities", () => {
 			musicVolume: 0.55,
 			sfxVolume: 0.9,
 			hapticsEnabled: true,
+			postprocessingEnabled: true,
 		});
 		expect("unknownKey" in settings).toBe(false);
 	});

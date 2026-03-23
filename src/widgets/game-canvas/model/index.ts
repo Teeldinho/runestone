@@ -5,6 +5,7 @@ export type {
 	CanvasEnvironmentSettings,
 	CanvasFogSettings,
 	CanvasLightingSettings,
+	CanvasPostprocessingSettings,
 	CanvasRendererSettings,
 	CanvasSettingsViewModel,
 } from "./useCanvasSettings";
