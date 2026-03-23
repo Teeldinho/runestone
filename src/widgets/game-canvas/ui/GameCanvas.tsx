@@ -71,7 +71,10 @@ export function GameCanvas({
 					className="relative w-full"
 					style={{ height: GAME_CANVAS_CONFIG.UI.CANVAS_HEIGHT_PX }}
 				>
-					{isGameOver && <GameOverOverlay onRestart={handleGameRestart} />}
+					<GameOverOverlay
+						isGameOver={isGameOver}
+						onRestart={handleGameRestart}
+					/>
 					<Canvas
 						aria-label="Runestone dungeon 3D scene"
 						camera={{
