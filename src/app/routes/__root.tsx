@@ -10,6 +10,23 @@ import { AppProviders } from "@/app/providers";
 
 import appCss from "@/app/styles/globals.css?url";
 
+function NotFoundPage() {
+	return (
+		<div className="flex h-dvh flex-col items-center justify-center gap-4 bg-[#06080f] text-[#f5f1e6]">
+			<p className="font-mono text-6xl font-bold tracking-widest text-[#00d7ff]">
+				404
+			</p>
+			<p className="text-lg text-[#cbd5e1]">This passage does not exist.</p>
+			<a
+				href="/"
+				className="mt-2 rounded border border-[#304156] px-4 py-2 text-sm text-[#f5c451] transition-colors hover:border-[#f5c451]"
+			>
+				Return to entrance
+			</a>
+		</div>
+	);
+}
+
 export const Route = createRootRoute({
 	head: () => ({
 		meta: [
@@ -26,6 +43,7 @@ export const Route = createRootRoute({
 		],
 		links: [{ rel: "stylesheet", href: appCss }],
 	}),
+	notFoundComponent: NotFoundPage,
 	shellComponent: RootShell,
 	component: RootOutlet,
 });
