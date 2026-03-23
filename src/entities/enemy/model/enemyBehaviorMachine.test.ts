@@ -108,117 +108,88 @@ describe("createEnemyBehaviorMachine", () => {
 		});
 	});
 
-	it("transitions chase → attack when player enters attack range", () => {
-		const actor = createTestActor();
+	describe("from chase state", () => {
+		let actor: ReturnType<typeof createTestActor>;
 
-		actor.send({
-			type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
-			position: [10, 0, 13],
+		beforeEach(() => {
+			vi.useFakeTimers();
+			actor = createTestActor();
+			actor.send({
+				type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
+				position: [10, 0, 13],
+			});
+			vi.advanceTimersByTime(600);
 		});
 
-		vi.useFakeTimers();
-		vi.advanceTimersByTime(600);
-		vi.useRealTimers();
-
-		expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.CHASE);
-
-		actor.send({
-			type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
-			position: [10, 0, 11],
+		afterEach(() => {
+			vi.useRealTimers();
 		});
 
-		expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.ATTACK);
+		it("transitions chase → attack when player enters attack range", () => {
+			expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.CHASE);
+
+			actor.send({
+				type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
+				position: [10, 0, 11],
+			});
+
+			expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.ATTACK);
+		});
+
+		it("transitions chase → patrol when player leaves detection range", () => {
+			expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.CHASE);
+
+			actor.send({
+				type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
+				position: [0, 0, 0],
+			});
+
+			expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.PATROL);
+		});
 	});
 
-	it("transitions chase → patrol when player leaves detection range", () => {
-		const actor = createTestActor();
+	describe("from attack state", () => {
+		let actor: ReturnType<typeof createTestActor>;
 
-		actor.send({
-			type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
-			position: [10, 0, 13],
+		beforeEach(() => {
+			vi.useFakeTimers();
+			actor = createTestActor();
+			actor.send({
+				type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
+				position: [10, 0, 13],
+			});
+			vi.advanceTimersByTime(600);
+			actor.send({
+				type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
+				position: [10, 0, 11],
+			});
 		});
 
-		vi.useFakeTimers();
-		vi.advanceTimersByTime(600);
-		vi.useRealTimers();
-
-		expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.CHASE);
-
-		actor.send({
-			type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
-			position: [0, 0, 0],
+		afterEach(() => {
+			vi.useRealTimers();
 		});
 
-		expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.PATROL);
-	});
+		it("transitions attack → dead on lethal damage", () => {
+			expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.ATTACK);
 
-	it("transitions attack → dead on lethal damage", () => {
-		const actor = createTestActor();
+			actor.send({ type: ENEMY_EVENTS.TAKE_DAMAGE, amount: 100 });
 
-		actor.send({
-			type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
-			position: [10, 0, 13],
+			expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.DEAD);
 		});
 
-		vi.useFakeTimers();
-		vi.advanceTimersByTime(600);
-		vi.useRealTimers();
+		it("dead is a final state", () => {
+			actor.send({ type: ENEMY_EVENTS.TAKE_DAMAGE, amount: 100 });
 
-		actor.send({
-			type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
-			position: [10, 0, 11],
+			const snapshot = actor.getSnapshot();
+			expect(snapshot.value).toBe(ENEMY_MACHINE_STATES.DEAD);
+			expect(snapshot.status).toBe("done");
 		});
 
-		expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.ATTACK);
+		it("stores updated hp in context after non-lethal damage", () => {
+			actor.send({ type: ENEMY_EVENTS.TAKE_DAMAGE, amount: 20 });
 
-		actor.send({ type: ENEMY_EVENTS.TAKE_DAMAGE, amount: 100 });
-
-		expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.DEAD);
-	});
-
-	it("dead is a final state", () => {
-		const actor = createTestActor();
-
-		actor.send({
-			type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
-			position: [10, 0, 13],
+			expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.ATTACK);
+			expect(actor.getSnapshot().context.hp).toBe(25);
 		});
-
-		vi.useFakeTimers();
-		vi.advanceTimersByTime(600);
-		vi.useRealTimers();
-
-		actor.send({
-			type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
-			position: [10, 0, 11],
-		});
-		actor.send({ type: ENEMY_EVENTS.TAKE_DAMAGE, amount: 100 });
-
-		const snapshot = actor.getSnapshot();
-		expect(snapshot.value).toBe(ENEMY_MACHINE_STATES.DEAD);
-		expect(snapshot.status).toBe("done");
-	});
-
-	it("stores updated hp in context after non-lethal damage in attack state", () => {
-		const actor = createTestActor();
-
-		actor.send({
-			type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
-			position: [10, 0, 13],
-		});
-
-		vi.useFakeTimers();
-		vi.advanceTimersByTime(600);
-		vi.useRealTimers();
-
-		actor.send({
-			type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
-			position: [10, 0, 11],
-		});
-
-		actor.send({ type: ENEMY_EVENTS.TAKE_DAMAGE, amount: 20 });
-
-		expect(actor.getSnapshot().value).toBe(ENEMY_MACHINE_STATES.ATTACK);
-		expect(actor.getSnapshot().context.hp).toBe(25);
 	});
 });
