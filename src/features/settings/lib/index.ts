@@ -4,3 +4,4 @@ export {
 	resetSettings,
 	writeSettings,
 } from "./settingsStorage";
+export { formatVolumePercent } from "./settingsFormatters";

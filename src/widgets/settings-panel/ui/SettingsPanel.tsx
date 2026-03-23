@@ -1,6 +1,7 @@
 import {
 	SETTINGS_COPY,
 	SETTINGS_VOLUME_RANGE,
+	formatVolumePercent,
 	useSettingsForm,
 } from "@/features/settings";
 import {
@@ -54,7 +55,7 @@ export function SettingsPanel() {
 									{SETTINGS_COPY.MASTER_VOLUME_LABEL}
 								</FieldLabel>
 								<FieldDescription>
-									{Math.round(settings.masterVolume * 100)}%
+									{formatVolumePercent(settings.masterVolume)}
 								</FieldDescription>
 								<Slider
 									id="master-volume"
@@ -73,7 +74,7 @@ export function SettingsPanel() {
 									{SETTINGS_COPY.MUSIC_VOLUME_LABEL}
 								</FieldLabel>
 								<FieldDescription>
-									{Math.round(settings.musicVolume * 100)}%
+									{formatVolumePercent(settings.musicVolume)}
 								</FieldDescription>
 								<Slider
 									id="music-volume"
@@ -92,7 +93,7 @@ export function SettingsPanel() {
 									{SETTINGS_COPY.SFX_VOLUME_LABEL}
 								</FieldLabel>
 								<FieldDescription>
-									{Math.round(settings.sfxVolume * 100)}%
+									{formatVolumePercent(settings.sfxVolume)}
 								</FieldDescription>
 								<Slider
 									id="sfx-volume"
@@ -129,7 +130,7 @@ export function SettingsPanel() {
 								settings.handleHapticsToggle(!settings.hapticsEnabled)
 							}
 						>
-							{settings.hapticsEnabled ? "On" : "Off"}
+							{settings.hapticsEnabled ? SETTINGS_COPY.HAPTICS_ON_LABEL : SETTINGS_COPY.HAPTICS_OFF_LABEL}
 						</Button>
 					</Field>
 				</section>

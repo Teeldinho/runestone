@@ -26,5 +26,7 @@ export const SETTINGS_COPY = {
 	MUSIC_VOLUME_LABEL: "Music Volume",
 	SFX_VOLUME_LABEL: "SFX Volume",
 	HAPTICS_TOGGLE_LABEL: "Haptic Feedback",
+	HAPTICS_ON_LABEL: "On",
+	HAPTICS_OFF_LABEL: "Off",
 	RESET_BUTTON: "Reset to Defaults",
 } as const;
