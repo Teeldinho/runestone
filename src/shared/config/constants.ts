@@ -24,7 +24,11 @@ export const STORAGE_KEYS = {
 } as const;
 
 export const MACHINE_STATE_TYPES = {
+	ATOMIC: "atomic",
+	COMPOUND: "compound",
+	PARALLEL: "parallel",
 	FINAL: "final",
+	HISTORY: "history",
 } as const;
 
 export type ScoreValueKey = keyof typeof SCORE_VALUES;

@@ -1,6 +1,6 @@
 import { assign, not, setup } from "xstate";
 
-import { ENEMY_CONFIG } from "@/shared/config";
+import { ENEMY_CONFIG, MACHINE_STATE_TYPES } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 import {
@@ -154,7 +154,7 @@ export const createEnemyBehaviorMachine = () =>
 				},
 			},
 			[ENEMY_MACHINE_STATES.DEAD]: {
-				type: "final",
+				type: MACHINE_STATE_TYPES.FINAL,
 			},
 		},
 	});

@@ -1,5 +1,7 @@
 import { assign, setup } from "xstate";
 
+import { MACHINE_STATE_TYPES } from "@/shared/config";
+
 import { DUNGEON_EVENTS, ROOM_IDS } from "../config";
 import {
 	canEnterFloorOneExit,
@@ -93,7 +95,7 @@ export const createFloorOneMachine = (options?: {
 				},
 			},
 			[ROOM_IDS.EXIT]: {
-				type: "final",
+				type: MACHINE_STATE_TYPES.FINAL,
 				on: {
 					[DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM]: {
 						target: ROOM_IDS.GUARD_ROOM,
