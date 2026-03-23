@@ -16,3 +16,9 @@ export const ENEMY_GUARDS = {
 	IS_PLAYER_IN_ATTACK_RANGE: "isPlayerInAttackRange",
 	IS_LETHAL_DAMAGE: "isLethalDamage",
 } as const;
+
+export const ENEMY_ACTIONS = {
+	SYNC_PLAYER_POSITION: "syncPlayerPosition",
+	APPLY_DAMAGE: "applyDamage",
+	APPLY_DEATH: "applyDeath",
+} as const;

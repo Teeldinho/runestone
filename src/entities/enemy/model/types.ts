@@ -41,3 +41,8 @@ export type EnemyTakeDamageEvent = {
 export type EnemyMachineEvent =
 	| EnemyUpdatePlayerPositionEvent
 	| EnemyTakeDamageEvent;
+
+export type EnemyGlowSettings = {
+	color: string;
+	emissiveIntensity: number;
+};

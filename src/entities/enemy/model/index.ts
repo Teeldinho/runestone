@@ -3,6 +3,7 @@ export { createEnemyBehaviorMachine } from "./enemyBehaviorMachine";
 export type {
 	EnemyActorSnapshot,
 	EnemyBehaviorState,
+	EnemyGlowSettings,
 	EnemyMachineContext,
 	EnemyMachineEvent,
 	EnemyMachineInput,

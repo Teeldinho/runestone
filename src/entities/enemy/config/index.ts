@@ -12,6 +12,7 @@ export {
 } from "./enemyMachineDefaults";
 export type { EnemyBehaviorState } from "./enemyMachineStates";
 export {
+	ENEMY_ACTIONS,
 	ENEMY_GUARDS,
 	ENEMY_MACHINE_ID,
 	ENEMY_MACHINE_STATES,

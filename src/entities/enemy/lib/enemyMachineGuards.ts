@@ -1,7 +1,6 @@
-const computeSquaredDistance = (
-	a: [number, number, number],
-	b: [number, number, number],
-): number => {
+import type { Vector3Tuple } from "@/shared/types";
+
+const computeSquaredDistance = (a: Vector3Tuple, b: Vector3Tuple): number => {
 	const dx = a[0] - b[0];
 	const dy = a[1] - b[1];
 	const dz = a[2] - b[2];
@@ -9,16 +8,16 @@ const computeSquaredDistance = (
 };
 
 export const checkIsPlayerInDetectionRange = (
-	enemyPosition: [number, number, number],
-	playerPosition: [number, number, number],
+	enemyPosition: Vector3Tuple,
+	playerPosition: Vector3Tuple,
 	detectionRadius: number,
 ): boolean =>
 	computeSquaredDistance(enemyPosition, playerPosition) <=
 	detectionRadius * detectionRadius;
 
 export const checkIsPlayerInAttackRange = (
-	enemyPosition: [number, number, number],
-	playerPosition: [number, number, number],
+	enemyPosition: Vector3Tuple,
+	playerPosition: Vector3Tuple,
 	attackRadius: number,
 ): boolean =>
 	computeSquaredDistance(enemyPosition, playerPosition) <=

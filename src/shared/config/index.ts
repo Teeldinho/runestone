@@ -29,3 +29,4 @@ export {
 	ROOM_CONFIG,
 } from "./gameConfig";
 export { GRAPH_LAYOUT_DEFAULTS } from "./graphLayoutConfig";
+export { XSTATE_ACTOR_STATUS } from "./xstateActorStatus";

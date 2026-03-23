@@ -4,6 +4,7 @@ import { ENEMY_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 import {
+	ENEMY_ACTIONS,
 	ENEMY_DETECT_DELAY_MS,
 	ENEMY_EVENTS,
 	ENEMY_GUARDS,
@@ -15,22 +16,14 @@ import {
 	checkIsLethalDamageForEnemy,
 	checkIsPlayerInAttackRange,
 	checkIsPlayerInDetectionRange,
+	resolvePlayerPosition,
 } from "../lib";
 import type {
 	EnemyMachineContext,
 	EnemyMachineEvent,
 	EnemyMachineInput,
 	EnemyTakeDamageEvent,
-	EnemyUpdatePlayerPositionEvent,
 } from "./types";
-
-const resolvePlayerPosition = (
-	event: EnemyMachineEvent,
-	fallback: Vector3Tuple,
-): Vector3Tuple => {
-	const positionEvent = event as Partial<EnemyUpdatePlayerPositionEvent>;
-	return positionEvent.position ?? fallback;
-};
 
 export const createEnemyBehaviorMachine = () =>
 	setup({
@@ -42,20 +35,20 @@ export const createEnemyBehaviorMachine = () =>
 		guards: {
 			[ENEMY_GUARDS.IS_PLAYER_IN_DETECTION_RANGE]: ({ context, event }) =>
 				checkIsPlayerInDetectionRange(
-					context.position as [number, number, number],
+					context.position,
 					resolvePlayerPosition(
-						event as EnemyMachineEvent,
+						event as { position?: Vector3Tuple },
 						context.playerPosition,
-					) as [number, number, number],
+					),
 					ENEMY_CONFIG.DETECTION_RADIUS,
 				),
 			[ENEMY_GUARDS.IS_PLAYER_IN_ATTACK_RANGE]: ({ context, event }) =>
 				checkIsPlayerInAttackRange(
-					context.position as [number, number, number],
+					context.position,
 					resolvePlayerPosition(
-						event as EnemyMachineEvent,
+						event as { position?: Vector3Tuple },
 						context.playerPosition,
-					) as [number, number, number],
+					),
 					ENEMY_CONFIG.ATTACK_RADIUS,
 				),
 			[ENEMY_GUARDS.IS_LETHAL_DAMAGE]: ({ context, event }) =>
@@ -65,16 +58,16 @@ export const createEnemyBehaviorMachine = () =>
 				),
 		},
 		actions: {
-			syncPlayerPosition: assign(({ context, event }) => ({
+			[ENEMY_ACTIONS.SYNC_PLAYER_POSITION]: assign(({ context, event }) => ({
 				playerPosition: resolvePlayerPosition(
-					event as EnemyMachineEvent,
+					event as { position?: Vector3Tuple },
 					context.playerPosition,
 				),
 			})),
-			applyDamage: assign(({ context, event }) => ({
+			[ENEMY_ACTIONS.APPLY_DAMAGE]: assign(({ context, event }) => ({
 				hp: Math.max(context.hp - (event as EnemyTakeDamageEvent).amount, 0),
 			})),
-			applyDeath: assign(() => ({ hp: 0 })),
+			[ENEMY_ACTIONS.APPLY_DEATH]: assign(() => ({ hp: 0 })),
 		},
 	}).createMachine({
 		id: ENEMY_MACHINE_ID,
@@ -96,9 +89,9 @@ export const createEnemyBehaviorMachine = () =>
 						{
 							guard: ENEMY_GUARDS.IS_PLAYER_IN_DETECTION_RANGE,
 							target: ENEMY_MACHINE_STATES.DETECT,
-							actions: "syncPlayerPosition",
+							actions: ENEMY_ACTIONS.SYNC_PLAYER_POSITION,
 						},
-						{ actions: "syncPlayerPosition" },
+						{ actions: ENEMY_ACTIONS.SYNC_PLAYER_POSITION },
 					],
 				},
 			},
@@ -117,9 +110,9 @@ export const createEnemyBehaviorMachine = () =>
 						{
 							guard: not(ENEMY_GUARDS.IS_PLAYER_IN_DETECTION_RANGE),
 							target: ENEMY_MACHINE_STATES.PATROL,
-							actions: "syncPlayerPosition",
+							actions: ENEMY_ACTIONS.SYNC_PLAYER_POSITION,
 						},
-						{ actions: "syncPlayerPosition" },
+						{ actions: ENEMY_ACTIONS.SYNC_PLAYER_POSITION },
 					],
 				},
 			},
@@ -129,14 +122,14 @@ export const createEnemyBehaviorMachine = () =>
 						{
 							guard: ENEMY_GUARDS.IS_PLAYER_IN_ATTACK_RANGE,
 							target: ENEMY_MACHINE_STATES.ATTACK,
-							actions: "syncPlayerPosition",
+							actions: ENEMY_ACTIONS.SYNC_PLAYER_POSITION,
 						},
 						{
 							guard: not(ENEMY_GUARDS.IS_PLAYER_IN_DETECTION_RANGE),
 							target: ENEMY_MACHINE_STATES.PATROL,
-							actions: "syncPlayerPosition",
+							actions: ENEMY_ACTIONS.SYNC_PLAYER_POSITION,
 						},
-						{ actions: "syncPlayerPosition" },
+						{ actions: ENEMY_ACTIONS.SYNC_PLAYER_POSITION },
 					],
 				},
 			},
@@ -146,17 +139,17 @@ export const createEnemyBehaviorMachine = () =>
 						{
 							guard: ENEMY_GUARDS.IS_LETHAL_DAMAGE,
 							target: ENEMY_MACHINE_STATES.DEAD,
-							actions: "applyDeath",
+							actions: ENEMY_ACTIONS.APPLY_DEATH,
 						},
-						{ actions: "applyDamage" },
+						{ actions: ENEMY_ACTIONS.APPLY_DAMAGE },
 					],
 					[ENEMY_EVENTS.UPDATE_PLAYER_POSITION]: [
 						{
 							guard: not(ENEMY_GUARDS.IS_PLAYER_IN_DETECTION_RANGE),
 							target: ENEMY_MACHINE_STATES.PATROL,
-							actions: "syncPlayerPosition",
+							actions: ENEMY_ACTIONS.SYNC_PLAYER_POSITION,
 						},
-						{ actions: "syncPlayerPosition" },
+						{ actions: ENEMY_ACTIONS.SYNC_PLAYER_POSITION },
 					],
 				},
 			},
