@@ -86,7 +86,7 @@ export function RoomMesh({
 
 			{/* Floor - physics collider (invisible) */}
 			<RigidBody type="fixed" colliders="cuboid">
-				<mesh position={[0, -0.35, 0]} visible={false}>
+				<mesh position={[0, -0.1, 0]} visible={false}>
 					<boxGeometry args={[ROOM_CONFIG.WIDTH, 0.3, ROOM_CONFIG.DEPTH]} />
 				</mesh>
 			</RigidBody>

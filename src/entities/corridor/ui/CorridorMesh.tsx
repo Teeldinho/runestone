@@ -34,7 +34,7 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 
 			{/* Floor - physics collider */}
 			<RigidBody type="fixed" colliders="cuboid">
-				<mesh position={[0, -0.15, 0]} visible={false}>
+				<mesh position={[0, 0, 0]} visible={false}>
 					<boxGeometry
 						args={[
 							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.width,
