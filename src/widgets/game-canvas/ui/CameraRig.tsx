@@ -1,5 +1,6 @@
 import { OrbitControls, PointerLockControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
+import type React from "react";
 import { useCallback, useRef } from "react";
 import * as THREE from "three";
 
@@ -21,14 +22,7 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 	const targetPosition = useRef(new THREE.Vector3());
 	const targetLookAt = useRef(new THREE.Vector3());
 	const prevModeRef = useRef<string | undefined>(undefined);
-	const pointerLockRef =
-		useRef<
-			Parameters<typeof PointerLockControls>[0]["ref"] extends React.RefObject<
-				infer T
-			>
-				? T
-				: never
-		>(null);
+	const pointerLockRef = useRef<{ isLocked: boolean } | null>(null);
 
 	const handleFirstPersonLock = useCallback(() => {
 		// Pointer locked
@@ -120,7 +114,7 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 	if (mode === CAMERA_MODES.FIRST_PERSON) {
 		return (
 			<PointerLockControls
-				ref={pointerLockRef}
+				ref={pointerLockRef as React.RefObject<never>}
 				selector="#game-canvas-fp-lock"
 				onLock={handleFirstPersonLock}
 				onUnlock={handleFirstPersonUnlock}
