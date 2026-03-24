@@ -1,6 +1,6 @@
-import { XSTATE_ACTOR_STATUS } from "@/shared/config";
+import { ROOM_IDS } from "@/entities/dungeon";
 
 export const shouldSubmitFloorScore = (
-	snapshotStatus: string,
+	snapshotValue: string,
 	hasSubmitted: boolean,
-): boolean => snapshotStatus === XSTATE_ACTOR_STATUS.DONE && !hasSubmitted;
+): boolean => snapshotValue === ROOM_IDS.EXIT && !hasSubmitted;
