@@ -1,5 +1,5 @@
 export const AUDIO_PATHS = {
-	MUSIC: "/audio/music/dungeon-loop.ogg",
+	MUSIC: "/audio/music/dungeon-loop.wav",
 	SFX: "/audio/sfx/game-sprites.ogg",
 } as const;
 
