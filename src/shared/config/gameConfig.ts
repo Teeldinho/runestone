@@ -124,7 +124,7 @@ export const GAME_CANVAS_CONFIG = {
 		},
 		VIGNETTE: {
 			OFFSET: 0.3,
-			DARKNESS: 0.7,
+			DARKNESS: 0.3,
 		},
 		ENABLED_DEFAULT: true,
 	} as const,

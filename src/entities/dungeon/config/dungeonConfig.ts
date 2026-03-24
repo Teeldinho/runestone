@@ -37,17 +37,17 @@ export type DungeonRuneState =
 
 export const DUNGEON_THEME = {
 	STONE: {
-		BASE_COLOR: "#1a2332",
-		DETAIL_COLOR: "#2a3a4e",
+		BASE_COLOR: "#3d4a5c",
+		DETAIL_COLOR: "#4a5c70",
 	},
 	LIGHTING: {
 		TORCH_COLOR: "#ffb347",
-		TORCH_INTENSITY: 3.5,
-		AMBIENT_INTENSITY: 0.4,
+		TORCH_INTENSITY: 150,
+		AMBIENT_INTENSITY: 1.0,
 	},
 	FOG: {
 		COLOR: "#06090f",
-		DENSITY: 0.035,
+		DENSITY: 0.025,
 	},
 	RUNES: {
 		SEALED: "#ff2ecf",

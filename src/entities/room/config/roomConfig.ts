@@ -1,8 +1,8 @@
 import { ROOM_CONFIG } from "@/shared/config";
 
 export const ROOM_LIGHT_CONFIG = {
-	INTENSITY: 3.5,
-	DISTANCE: 14,
+	INTENSITY: 200,
+	DISTANCE: 20,
 	DECAY: 2,
 	HEIGHT: 3.0,
 	COLOR: "#ffb347",
