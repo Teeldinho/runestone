@@ -1,7 +1,16 @@
-import { usePlayerMachineRuntime } from "@/entities/player";
+import { useCallback, useMemo } from "react";
+
+import { createFloorOneMachine, ROOM_IDS } from "@/entities/dungeon";
+import {
+	PLAYER_ENTITY_CONFIG,
+	PLAYER_EVENTS,
+	usePlayerMachineRuntime,
+} from "@/entities/player";
+import { createDungeonFloorLayout } from "@/entities/room";
 import { useCameraSystem } from "@/features/camera-system";
 import { useGameMachine } from "@/features/dungeon-navigation";
 import { useStateVisualizer } from "@/features/state-visualizer";
+import { setPlayerTeleportTarget } from "@/shared/lib/playerPositionStore";
 import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 
 import { GAME_PAGE_COPY } from "../config";
@@ -32,11 +41,36 @@ export const useGamePage = (): GamePageViewModel => {
 		actionButtons,
 		currentRoomLabel,
 		discoveredRoomLabels,
-		handleDungeonRunReset,
+		handleDungeonRunReset: resetDungeonMachine,
 		snapshot,
 	} = useGameMachine();
 	const { cameraStateSnapshot, handleCameraModeSwitch } = useCameraSystem();
-	const { snapshot: playerSnapshot } = usePlayerMachineRuntime();
+	const { snapshot: playerSnapshot, sendPlayerMachineEvent } =
+		usePlayerMachineRuntime();
+
+	const entrancePosition = useMemo(() => {
+		const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
+		const entrance = floorLayout.rooms.find(
+			(room) => room.roomId === ROOM_IDS.ENTRANCE,
+		);
+		return entrance
+			? [
+					entrance.position[0],
+					PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+					entrance.position[2],
+				]
+			: [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0];
+	}, []);
+
+	const handleDungeonRunReset = useCallback(() => {
+		sendPlayerMachineEvent({ type: PLAYER_EVENTS.RESTART });
+		setPlayerTeleportTarget(
+			entrancePosition[0],
+			entrancePosition[1],
+			entrancePosition[2],
+		);
+		resetDungeonMachine();
+	}, [sendPlayerMachineEvent, resetDungeonMachine, entrancePosition]);
 
 	const { edges, positionedNodes } = useStateVisualizer({
 		context: snapshot.context,

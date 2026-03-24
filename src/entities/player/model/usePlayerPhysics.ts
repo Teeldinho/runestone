@@ -2,7 +2,11 @@ import { useFrame } from "@react-three/fiber";
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
-import { setPlayerPosition } from "@/shared/lib/playerPositionStore";
+
+import {
+	consumePlayerTeleportTarget,
+	setPlayerPosition,
+} from "@/shared/lib/playerPositionStore";
 import type { Vector3Tuple } from "@/shared/types";
 
 import { PLAYER_ENTITY_CONFIG } from "../config";
@@ -24,6 +28,15 @@ export const usePlayerPhysics = ({
 	useFrame((_, delta) => {
 		const body = rigidBodyRef.current;
 		if (!body) return;
+
+		const teleportTarget = consumePlayerTeleportTarget();
+		if (teleportTarget) {
+			body.setNextKinematicTranslation({
+				x: teleportTarget[0],
+				y: teleportTarget[1],
+				z: teleportTarget[2],
+			});
+		}
 
 		const current = body.translation();
 		setPlayerPosition(current.x, current.y, current.z);

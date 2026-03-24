@@ -31,6 +31,10 @@ vi.mock("@/features/state-visualizer", () => ({
 }));
 
 vi.mock("@/entities/player", () => ({
+	PLAYER_EVENTS: { RESTART: "RESTART" },
+	PLAYER_ENTITY_CONFIG: {
+		TRANSFORM: { SPAWN_HEIGHT_OFFSET: 0.45 },
+	},
 	usePlayerMachineRuntime: vi.fn().mockReturnValue({
 		snapshot: {
 			value: { health: "alive", movement: "idle" },
@@ -48,6 +52,26 @@ vi.mock("@/entities/player", () => ({
 		},
 		sendPlayerMachineEvent: vi.fn(),
 	}),
+}));
+
+vi.mock("@/entities/dungeon", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("@/entities/dungeon")>();
+	return {
+		...actual,
+		createFloorOneMachine: vi.fn(() => ({})),
+	};
+});
+
+vi.mock("@/entities/room", () => ({
+	createDungeonFloorLayout: vi.fn(() => ({
+		rooms: [{ roomId: "entrance", position: [0, 0, 0], isInitial: true }],
+		corridors: [],
+		transitions: [],
+	})),
+}));
+
+vi.mock("@/shared/lib/playerPositionStore", () => ({
+	setPlayerTeleportTarget: vi.fn(),
 }));
 
 describe("useGamePage", () => {

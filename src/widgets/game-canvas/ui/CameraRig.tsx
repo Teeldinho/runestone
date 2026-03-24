@@ -6,6 +6,7 @@ import * as THREE from "three";
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { CAMERA_MODES } from "@/features/camera-system";
 import { CAMERA_CONFIG, CAMERA_TRANSITION_MS } from "@/shared/config";
+import { setCameraMode } from "@/shared/lib/cameraModeStore";
 import { getPlayerPosition } from "@/shared/lib/playerPositionStore";
 
 type CameraRigProps = {
@@ -38,6 +39,8 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 
 	useFrame(() => {
 		if (!cameraStateSnapshot) return;
+
+		setCameraMode(cameraStateSnapshot.mode);
 
 		const [px, py, pz] = getPlayerPosition();
 
