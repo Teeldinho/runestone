@@ -1,5 +1,13 @@
 import { ROOM_CONFIG } from "@/shared/config";
 
+export const ROOM_LIGHT_CONFIG = {
+	INTENSITY: 3.5,
+	DISTANCE: 14,
+	DECAY: 2,
+	HEIGHT: 3.0,
+	COLOR: "#ffb347",
+} as const;
+
 export const ROOM_KINDS = {
 	START: "start",
 	EXPLORATION: "exploration",

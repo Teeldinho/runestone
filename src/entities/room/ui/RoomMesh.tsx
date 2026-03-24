@@ -3,6 +3,7 @@ import { DoubleSide } from "three";
 
 import { ROOM_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
+import { ROOM_LIGHT_CONFIG } from "../config";
 import type { RoomSurfaceSettings } from "../model";
 
 type WallOpening = "north" | "south" | "east" | "west";
@@ -27,6 +28,14 @@ export function RoomMesh({
 
 	return (
 		<group position={position}>
+			<pointLight
+				color={ROOM_LIGHT_CONFIG.COLOR}
+				decay={ROOM_LIGHT_CONFIG.DECAY}
+				distance={ROOM_LIGHT_CONFIG.DISTANCE}
+				intensity={ROOM_LIGHT_CONFIG.INTENSITY}
+				position={[0, ROOM_LIGHT_CONFIG.HEIGHT, 0]}
+			/>
+
 			{/* Floor - visual */}
 			<mesh
 				position={[0, floor.offsetY, 0]}
