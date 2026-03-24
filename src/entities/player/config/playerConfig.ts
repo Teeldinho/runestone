@@ -28,7 +28,8 @@ const PLAYER_ORIGIN: Vector3Tuple = [0, 0, 0];
 
 export const PLAYER_ENTITY_CONFIG = {
 	MOVEMENT: {
-		SPEED: 5,
+		SPEED: 7,
+		SPRINT_SPEED: 11,
 	},
 	ORIGIN: PLAYER_ORIGIN,
 	DEFAULTS: {

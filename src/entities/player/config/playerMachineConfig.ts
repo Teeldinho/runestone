@@ -4,6 +4,7 @@ export const PLAYER_GUARDS = {
 } as const;
 
 export const PLAYER_CONTEXT_KEYS = {
+	IS_SPRINTING: "isSprinting",
 	POSITION: "position",
 	VELOCITY: "velocity",
 	STATS: "stats",

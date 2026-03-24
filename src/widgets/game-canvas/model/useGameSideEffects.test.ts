@@ -93,6 +93,7 @@ const createMockPlayerSnapshot = (
 		[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
 	},
 	context: {
+		isSprinting: false,
 		position: [0, 0, 0] as [number, number, number],
 		velocity: [0, 0, 0] as [number, number, number],
 		stats: { hp: 100, maxHp: 100, score: 0, keyCount: 0, chainMultiplier: 1 },

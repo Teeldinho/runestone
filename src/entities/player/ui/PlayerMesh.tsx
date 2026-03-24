@@ -1,5 +1,5 @@
 import type { RapierRigidBody } from "@react-three/rapier";
-import { RigidBody } from "@react-three/rapier";
+import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 
 import { getCameraMode } from "@/shared/lib/cameraModeStore";
@@ -14,10 +14,12 @@ export function PlayerMesh() {
 	return (
 		<RigidBody
 			ref={rigidBodyRef as RefObject<RapierRigidBody>}
-			colliders="hull"
+			colliders={false}
+			lockRotations
 			position={meshSettings.position}
-			type="kinematicPosition"
+			type="dynamic"
 		>
+			<CapsuleCollider args={[0.35, 0.25]} />
 			{!isFirstPerson && (
 				<>
 					<mesh

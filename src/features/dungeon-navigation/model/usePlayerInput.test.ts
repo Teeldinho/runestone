@@ -26,6 +26,7 @@ describe("usePlayerInput", () => {
 		expect(sendPlayerEvent).toHaveBeenCalledWith({
 			type: PLAYER_EVENTS.MOVE,
 			velocity: [0, 0, -1],
+			isSprinting: false,
 		});
 	});
 
@@ -37,6 +38,7 @@ describe("usePlayerInput", () => {
 		expect(sendPlayerEvent).toHaveBeenCalledWith({
 			type: PLAYER_EVENTS.MOVE,
 			velocity: [0, 0, 1],
+			isSprinting: false,
 		});
 	});
 
@@ -48,6 +50,7 @@ describe("usePlayerInput", () => {
 		expect(sendPlayerEvent).toHaveBeenCalledWith({
 			type: PLAYER_EVENTS.MOVE,
 			velocity: [-1, 0, 0],
+			isSprinting: false,
 		});
 	});
 
@@ -59,6 +62,7 @@ describe("usePlayerInput", () => {
 		expect(sendPlayerEvent).toHaveBeenCalledWith({
 			type: PLAYER_EVENTS.MOVE,
 			velocity: [1, 0, 0],
+			isSprinting: false,
 		});
 	});
 
@@ -82,6 +86,7 @@ describe("usePlayerInput", () => {
 		expect(sendPlayerEvent).toHaveBeenLastCalledWith({
 			type: PLAYER_EVENTS.MOVE,
 			velocity: [1, 0, -1],
+			isSprinting: false,
 		});
 	});
 
@@ -95,6 +100,7 @@ describe("usePlayerInput", () => {
 		expect(sendPlayerEvent).toHaveBeenLastCalledWith({
 			type: PLAYER_EVENTS.MOVE,
 			velocity: [0, 0, -1],
+			isSprinting: false,
 		});
 	});
 

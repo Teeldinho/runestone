@@ -38,7 +38,7 @@ describe("createPlayerMachine", () => {
 	it("transitions to walking on MOVE event", () => {
 		const actor = createActor(createPlayerMachine()).start();
 
-		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0] });
+		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0], isSprinting: false });
 
 		expect(actor.getSnapshot().value).toMatchObject({
 			[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.WALKING,
@@ -48,7 +48,7 @@ describe("createPlayerMachine", () => {
 	it("updates velocity context on MOVE event", () => {
 		const actor = createActor(createPlayerMachine()).start();
 
-		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0] });
+		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0], isSprinting: false });
 
 		expect(actor.getSnapshot().context.velocity).toEqual([1, 0, 0]);
 	});
@@ -56,7 +56,7 @@ describe("createPlayerMachine", () => {
 	it("transitions back to idle on STOP event", () => {
 		const actor = createActor(createPlayerMachine()).start();
 
-		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0] });
+		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0], isSprinting: false });
 		actor.send({ type: PLAYER_EVENTS.STOP });
 
 		expect(actor.getSnapshot().value).toMatchObject({
@@ -67,7 +67,7 @@ describe("createPlayerMachine", () => {
 	it("zeros velocity on STOP event", () => {
 		const actor = createActor(createPlayerMachine()).start();
 
-		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0] });
+		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0], isSprinting: false });
 		actor.send({ type: PLAYER_EVENTS.STOP });
 
 		expect(actor.getSnapshot().context.velocity).toEqual([0, 0, 0]);
@@ -173,7 +173,7 @@ describe("createPlayerMachine", () => {
 			type: PLAYER_EVENTS.TAKE_DAMAGE,
 			amount: PLAYER_MACHINE_DEFAULTS.STATS.HP,
 		});
-		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0] });
+		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0], isSprinting: false });
 
 		expect(actor.getSnapshot().context.velocity).toEqual([0, 0, 0]);
 		expect(actor.getSnapshot().value).toMatchObject({
@@ -217,7 +217,7 @@ describe("createPlayerMachine", () => {
 			amount: PLAYER_MACHINE_DEFAULTS.STATS.HP,
 		});
 		actor.send({ type: PLAYER_EVENTS.RESTART });
-		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0] });
+		actor.send({ type: PLAYER_EVENTS.MOVE, velocity: [1, 0, 0], isSprinting: false });
 
 		expect(actor.getSnapshot().value).toMatchObject({
 			[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.WALKING,
