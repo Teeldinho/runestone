@@ -78,13 +78,13 @@ export function GameHud({
 								key={snapshotEntry.label}
 								className="flex items-center justify-between"
 							>
-								<dt className="text-xs text-[var(--muted-foreground)]">
+								<dt className="text-xs text-muted-foreground">
 									{snapshotEntry.label}
 								</dt>
 								<dd>
 									{snapshotEntry.displayVariant ===
 									HUD_DISPLAY_VARIANTS.BADGE ? (
-										<span className="rounded bg-[var(--dungeon-gold-dim)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--accent)] border border-[var(--dungeon-gold)]">
+										<span className="rounded bg-(--dungeon-gold-dim) px-1.5 py-0.5 font-mono text-[10px] text-accent border border-(--dungeon-gold)">
 											{snapshotEntry.value}
 										</span>
 									) : (
@@ -110,7 +110,7 @@ export function GameHud({
 					{gameHudViewModel.discoveredRoomLabels.map((roomLabel) => (
 						<li
 							key={roomLabel}
-							className="rounded border border-[var(--panel-border)] bg-black/40 px-2 py-1 text-xs text-[var(--muted-foreground)] shadow-inner"
+							className="rounded border border-panel-border bg-black/40 px-2 py-1 text-xs text-muted-foreground shadow-inner"
 						>
 							{roomLabel}
 						</li>

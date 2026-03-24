@@ -1,5 +1,13 @@
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { useState } from "react";
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+	ScrollArea,
+} from "@/shared/ui";
 import { CameraModeSwitcher } from "@/widgets/camera-mode-switcher";
 import { GameCanvas } from "@/widgets/game-canvas";
 import { GameHud } from "@/widgets/hud";
@@ -23,6 +31,7 @@ export function GamePage() {
 		playerMaxHp,
 	} = useGamePage();
 	const settings = useSettingsForm();
+	const [isInspectorOpen, setIsInspectorOpen] = useState(false);
 
 	return (
 		<main
@@ -30,7 +39,7 @@ export function GamePage() {
 			className="flex h-dvh flex-col overflow-hidden"
 			style={{ background: "transparent" }}
 		>
-			<header className="flex shrink-0 items-center justify-between border-b border-[var(--panel-border)] px-4 py-2">
+			<header className="flex shrink-0 items-center justify-between border-b border-panel-border px-4 py-2">
 				<div className="flex items-center gap-3">
 					<span
 						className="text-lg font-bold tracking-[0.2em]"
@@ -81,55 +90,66 @@ export function GamePage() {
 
 				<aside
 					aria-label="Game controls and state"
-					className="flex w-72 shrink-0 flex-col overflow-y-auto border-l"
+					className="flex w-72 shrink-0 flex-col border-l"
 					style={{
 						borderColor: "var(--panel-border)",
 						background: "var(--panel)",
 					}}
 				>
-					<div className="flex flex-1 flex-col gap-0">
-						<div
-							className="border-b p-3"
-							style={{ borderColor: "var(--panel-border)" }}
-						>
-							<GameHud
-								actionButtons={actionButtons}
-								activeStateLabel={activeStateLabel}
-								currentRoomLabel={currentRoomLabel}
-								discoveredRoomLabels={discoveredRoomLabels}
-								enemiesRemaining={enemiesRemaining}
-								handleDungeonRunReset={handleDungeonRunReset}
-								hasTreasureKeyLabel={hasTreasureKeyLabel}
-								playerHp={playerHp}
-								playerMaxHp={playerMaxHp}
-							/>
+					<ScrollArea className="flex-1">
+						<div className="flex flex-col gap-0">
+							<div
+								className="border-b p-3"
+								style={{ borderColor: "var(--panel-border)" }}
+							>
+								<GameHud
+									actionButtons={actionButtons}
+									activeStateLabel={activeStateLabel}
+									currentRoomLabel={currentRoomLabel}
+									discoveredRoomLabels={discoveredRoomLabels}
+									enemiesRemaining={enemiesRemaining}
+									handleDungeonRunReset={handleDungeonRunReset}
+									hasTreasureKeyLabel={hasTreasureKeyLabel}
+									playerHp={playerHp}
+									playerMaxHp={playerMaxHp}
+								/>
+							</div>
 						</div>
-					</div>
+					</ScrollArea>
 				</aside>
 			</div>
 
-			<details
+			<Collapsible
+				open={isInspectorOpen}
+				onOpenChange={setIsInspectorOpen}
 				className="shrink-0 border-t"
 				style={{ borderColor: "var(--panel-border)" }}
 			>
-				<summary
-					className="cursor-pointer px-4 py-2 text-xs font-semibold uppercase tracking-widest transition-colors"
+				<CollapsibleTrigger
+					className="flex w-full cursor-pointer items-center justify-between px-4 py-2 text-xs font-semibold uppercase tracking-widest transition-colors hover:bg-black/20"
 					style={{
 						color: "var(--muted-foreground)",
 						fontFamily: "Space Grotesk, sans-serif",
 						letterSpacing: "0.1em",
 					}}
 				>
-					XState Inspector
-				</summary>
-				<div style={{ height: "220px" }}>
-					<XStateInspectorPanel
-						activeStateLabel={activeStateLabel}
-						graphNodes={graphNodes}
-						graphEdges={graphEdges}
-					/>
-				</div>
-			</details>
+					<span>XState Inspector</span>
+					{isInspectorOpen ? (
+						<ChevronDown className="h-4 w-4 text-[var(--dungeon-gold)]" />
+					) : (
+						<ChevronRight className="h-4 w-4" />
+					)}
+				</CollapsibleTrigger>
+				<CollapsibleContent>
+					<div className="h-[35vh] min-h-[300px]">
+						<XStateInspectorPanel
+							activeStateLabel={activeStateLabel}
+							graphNodes={graphNodes}
+							graphEdges={graphEdges}
+						/>
+					</div>
+				</CollapsibleContent>
+			</Collapsible>
 		</main>
 	);
 }

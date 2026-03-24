@@ -28,7 +28,7 @@ export function CameraModeSwitcher({
 							className={`dungeon-btn ${cameraModeButton.isActive ? "dungeon-btn-active" : ""}`}
 						>
 							<span>{cameraModeButton.label}</span>
-							<span className="ml-2 rounded bg-black/40 px-1.5 py-0.5 font-mono text-[10px] text-[var(--dungeon-rune)]">
+							<span className="ml-2 rounded bg-black/40 px-1.5 py-0.5 font-mono text-[10px] text-(--dungeon-rune)">
 								{cameraModeButton.hotkey}
 							</span>
 						</button>
