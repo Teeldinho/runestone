@@ -79,7 +79,7 @@ export function GamePage() {
 					{/* 3D Scene */}
 					<section
 						aria-labelledby="dungeon-canvas-heading"
-						className="relative flex min-h-0 flex-[3] flex-col"
+						className="relative flex min-h-0 flex-[4] flex-col"
 					>
 						<h2 id="dungeon-canvas-heading" className="sr-only">
 							Dungeon Canvas
@@ -106,7 +106,7 @@ export function GamePage() {
 					{/* XState Inspector - always visible below scene */}
 					<section
 						aria-labelledby="xstate-inspector-heading"
-						className="flex min-h-[280px] flex-[2] flex-col border-t"
+						className="flex min-h-[200px] flex-[1] flex-col border-t"
 						style={{
 							borderColor: "var(--panel-border)",
 							background: "var(--panel)",
@@ -123,7 +123,7 @@ export function GamePage() {
 				{/* Right column: Sidebar always visible */}
 				<aside
 					aria-label="Game controls and state"
-					className="flex w-72 shrink-0 flex-col border-l"
+					className="flex w-60 shrink-0 flex-col border-l"
 					style={{
 						borderColor: "var(--panel-border)",
 						background: "var(--panel)",

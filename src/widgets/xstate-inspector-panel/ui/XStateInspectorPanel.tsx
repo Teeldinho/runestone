@@ -50,7 +50,7 @@ export function XStateInspectorPanel({
 			<div className="flex min-h-0 flex-1">
 				{/* Graph area */}
 				<div
-					className="min-h-0 flex-[2] border-r"
+					className="min-h-0 flex-[3] border-r"
 					style={{ borderColor: "var(--panel-border)" }}
 				>
 					<ReactFlow
