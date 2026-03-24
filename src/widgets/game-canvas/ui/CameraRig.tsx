@@ -88,6 +88,9 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 			} else {
 				camera.position.lerp(targetPosition.current, LERP_ALPHA);
 			}
+			if (!pointerLockRef.current?.isLocked) {
+				camera.lookAt(targetLookAt.current);
+			}
 		}
 
 		const fovDiff = Math.abs(perspCamera.fov - cameraStateSnapshot.fov);
