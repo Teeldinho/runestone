@@ -97,7 +97,7 @@ export function XStateInspectorPanel({
 											className="flex items-center justify-between rounded px-2 py-1.5 text-xs"
 											style={{
 												background: node.isActive
-													? "rgba(0, 215, 255, 0.1)"
+													? "color-mix(in srgb, var(--primary) 10%, transparent)"
 													: "var(--background)",
 												border: `1px solid ${node.isActive ? "var(--primary)" : "var(--panel-border)"}`,
 											}}

@@ -35,7 +35,15 @@ const toLineNumber = (sourceText, index) =>
 const allowLiteralColorsIn = new Set([
 	GLOBALS_RELATIVE_PATH,
 	MANIFEST_RELATIVE_PATH,
+	// Three.js cannot resolve CSS var() - these config files provide hex literals for R3F materials
+	"src/entities/dungeon/config/dungeonConfig.ts",
+	"src/entities/enemy/config/enemyEntityConfig.ts",
+	"src/entities/player/config/playerConfig.ts",
+	"src/entities/corridor/config/corridorConfig.ts",
+	"src/entities/room/config/roomConfig.ts",
 ]);
+
+const isTestFile = (relativePath) => /\.test\.[^.]+$/.test(relativePath);
 
 const scanForColorLiterals = () => {
 	const filesToScan = collectFiles(SOURCE_DIR);
@@ -44,6 +52,10 @@ const scanForColorLiterals = () => {
 	for (const absolutePath of filesToScan) {
 		const relativePath = relative(ROOT, absolutePath);
 		if (allowLiteralColorsIn.has(relativePath)) {
+			continue;
+		}
+
+		if (isTestFile(relativePath)) {
 			continue;
 		}
 
