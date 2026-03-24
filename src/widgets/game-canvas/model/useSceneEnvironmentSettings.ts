@@ -28,7 +28,10 @@ export const useSceneEnvironmentSettings =
 			const corridorMeshSettings = createSceneCorridorMeshSettings(
 				floorLayout.corridors,
 			);
-			const roomMeshSettings = createSceneRoomMeshSettings(floorLayout.rooms);
+			const roomMeshSettings = createSceneRoomMeshSettings(
+				floorLayout.rooms,
+				floorLayout.corridors,
+			);
 			const enemyMeshSettings = createSceneEnemyMeshSettings(
 				floorLayout.rooms,
 				ROOM_IDS.GUARD_ROOM,

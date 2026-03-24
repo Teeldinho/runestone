@@ -3,6 +3,7 @@ export { shouldSubmitFloorScore } from "./floorCompletion";
 export type {
 	EnemyMeshSettings,
 	SceneRoomMeshSettings,
+	WallOpening,
 } from "./sceneEnvironmentMappers";
 export {
 	createSceneCorridorMeshSettings,

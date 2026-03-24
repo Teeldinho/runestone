@@ -68,6 +68,11 @@ type CanvasEnvironmentSettings = {
 		orbWidthSegments: number;
 		sealedColor: string;
 	};
+	wall: {
+		color: string;
+		roughness: number;
+		metalness: number;
+	};
 };
 
 type CanvasSettingsViewModel = {
@@ -135,6 +140,11 @@ export const useCanvasSettings = (): CanvasSettingsViewModel => {
 					orbRadius: GAME_CANVAS_CONFIG.SCENE.RUNE_ORB_RADIUS,
 					orbWidthSegments: GAME_CANVAS_CONFIG.SCENE.RUNE_ORB_WIDTH_SEGMENTS,
 					sealedColor: DUNGEON_THEME.RUNES.SEALED,
+				},
+				wall: {
+					color: DUNGEON_THEME.STONE.DETAIL_COLOR,
+					roughness: 0.88,
+					metalness: 0.12,
 				},
 			},
 			fog: {

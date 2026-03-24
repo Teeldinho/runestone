@@ -28,6 +28,7 @@ export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
 					key={room.roomId}
 					position={room.position}
 					surface={environment}
+					wallOpenings={room.wallOpenings}
 				/>
 			))}
 			{enemyMeshSettings.map((enemy) => (

@@ -16,7 +16,10 @@ type SceneRoomMeshSettings = {
 	roomId: string;
 	position: Vector3Tuple;
 	labelSettings: RoomLabelSettings;
+	wallOpenings: WallOpening[];
 };
+
+type WallOpening = "north" | "south" | "east" | "west";
 
 const createSceneRoomLabelSettings = (
 	roomId: string,
@@ -36,13 +39,48 @@ const withYOffset = (position: Vector3Tuple, yOffset: number): Vector3Tuple => {
 	return [position[0], position[1] + yOffset, position[2]];
 };
 
+const computeWallOpenings = (
+	roomId: string,
+	roomPosition: Vector3Tuple,
+	corridors: readonly DungeonCorridorLayout[],
+): WallOpening[] => {
+	const openings: WallOpening[] = [];
+
+	for (const corridor of corridors) {
+		if (corridor.sourceRoomId !== roomId && corridor.targetRoomId !== roomId) {
+			continue;
+		}
+
+		const dx = corridor.position[0] - roomPosition[0];
+		const dz = corridor.position[2] - roomPosition[2];
+
+		if (Math.abs(dz) > Math.abs(dx)) {
+			if (dz > 0) {
+				openings.push("south");
+			} else {
+				openings.push("north");
+			}
+		} else {
+			if (dx > 0) {
+				openings.push("east");
+			} else {
+				openings.push("west");
+			}
+		}
+	}
+
+	return [...new Set(openings)];
+};
+
 export const createSceneRoomMeshSettings = (
 	rooms: readonly DungeonRoomLayout[],
+	corridors: readonly DungeonCorridorLayout[] = [],
 ): SceneRoomMeshSettings[] => {
 	return rooms.map((room) => ({
 		roomId: room.roomId,
 		position: room.position,
 		labelSettings: createSceneRoomLabelSettings(room.roomId, room.position),
+		wallOpenings: computeWallOpenings(room.roomId, room.position, corridors),
 	}));
 };
 
@@ -101,4 +139,4 @@ export const createSceneEnemyMeshSettings = (
 	];
 };
 
-export type { EnemyMeshSettings, SceneRoomMeshSettings };
+export type { EnemyMeshSettings, SceneRoomMeshSettings, WallOpening };

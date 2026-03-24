@@ -40,7 +40,9 @@ const CORRIDOR_LAYOUT_FIXTURE: DungeonCorridorLayout[] = [
 
 describe("sceneEnvironmentMappers", () => {
 	it("maps dungeon rooms into scene room mesh settings", () => {
-		expect(createSceneRoomMeshSettings(ROOM_LAYOUT_FIXTURE)).toEqual([
+		expect(
+			createSceneRoomMeshSettings(ROOM_LAYOUT_FIXTURE, CORRIDOR_LAYOUT_FIXTURE),
+		).toEqual([
 			{
 				roomId: ROOM_IDS.ENTRANCE,
 				position: [0, 0, -40],
@@ -49,6 +51,7 @@ describe("sceneEnvironmentMappers", () => {
 					position: [0, ROOM_ENTITY_CONFIG.LABEL.HEIGHT_OFFSET, -40],
 					text: ROOM_LABELS[ROOM_IDS.ENTRANCE],
 				},
+				wallOpenings: ["south"],
 			},
 			{
 				roomId: ROOM_IDS.LIBRARY,
@@ -58,6 +61,7 @@ describe("sceneEnvironmentMappers", () => {
 					position: [0, ROOM_ENTITY_CONFIG.LABEL.HEIGHT_OFFSET, -20],
 					text: ROOM_LABELS[ROOM_IDS.LIBRARY],
 				},
+				wallOpenings: ["north"],
 			},
 		]);
 	});
