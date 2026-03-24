@@ -15,6 +15,7 @@ export type PlayerStats = {
 };
 
 export type PlayerSnapshot = {
+	isSprinting: boolean;
 	position: Vector3Tuple;
 	velocity: Vector3Tuple;
 	movementState: PlayerMovementState;
@@ -39,6 +40,7 @@ export type UsePlayerMeshInput = {
 
 // Player machine context — source of truth for all player state
 export type PlayerMachineContext = {
+	isSprinting: boolean;
 	position: Vector3Tuple;
 	velocity: Vector3Tuple;
 	stats: PlayerStats;
@@ -48,6 +50,7 @@ export type PlayerMachineContext = {
 export type PlayerMoveEvent = {
 	type: typeof PLAYER_EVENTS.MOVE;
 	velocity: Vector3Tuple;
+	isSprinting: boolean;
 };
 
 export type PlayerStopEvent = {

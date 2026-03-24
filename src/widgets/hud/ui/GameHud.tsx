@@ -1,11 +1,3 @@
-import {
-	Badge,
-	Button,
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@/shared/ui";
 import { HUD_COPY, HUD_DISPLAY_VARIANTS } from "@/widgets/hud/config";
 import { type HudActionButton, useGameHud } from "@/widgets/hud/model";
 
@@ -44,102 +36,120 @@ export function GameHud({
 		playerMaxHp,
 	});
 
+	const hpPercentage = Math.max(
+		0,
+		Math.min(100, (playerHp / playerMaxHp) * 100),
+	);
+	const isLowHp = hpPercentage < 30;
+
 	return (
-		<div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
-			<section aria-labelledby="machine-snapshot-heading">
-				<Card className="border-border bg-background/70">
-					<CardHeader className="pb-0">
-						<CardTitle
-							id="machine-snapshot-heading"
-							className="text-sm font-semibold uppercase tracking-wide text-muted-foreground"
-						>
-							{HUD_COPY.MACHINE_SNAPSHOT.TITLE}
-						</CardTitle>
-					</CardHeader>
-
-					<CardContent className="space-y-4">
-						<dl
-							aria-live="polite"
-							className="grid gap-2 text-sm text-foreground"
-						>
-							{gameHudViewModel.machineSnapshotEntries.map((snapshotEntry) => (
-								<div
-									key={snapshotEntry.label}
-									className="flex items-center justify-between"
-								>
-									<dt className="text-muted-foreground">
-										{snapshotEntry.label}
-									</dt>
-									<dd>
-										{snapshotEntry.displayVariant ===
-										HUD_DISPLAY_VARIANTS.BADGE ? (
-											<Badge variant="outline">{snapshotEntry.value}</Badge>
-										) : (
-											<span className="font-medium">{snapshotEntry.value}</span>
-										)}
-									</dd>
-								</div>
-							))}
-						</dl>
-
-						<section
-							aria-labelledby="discovered-rooms-heading"
-							className="space-y-2"
-						>
-							<h3
-								id="discovered-rooms-heading"
-								className="text-sm font-semibold text-muted-foreground"
-							>
-								{HUD_COPY.DISCOVERED_ROOMS.TITLE}
-							</h3>
-							<ul className="space-y-1 text-sm text-foreground">
-								{gameHudViewModel.discoveredRoomLabels.map((roomLabel) => (
-									<li
-										key={roomLabel}
-										className="rounded-md bg-muted/40 px-2 py-1"
-									>
-										{roomLabel}
-									</li>
-								))}
-							</ul>
-						</section>
-					</CardContent>
-				</Card>
+		<div className="flex flex-col gap-6">
+			{/* Health Bar (Custom UI) */}
+			<section className="space-y-2">
+				<div className="flex items-center justify-between">
+					<span className="rune-text" style={{ color: "var(--dungeon-gold)" }}>
+						VITALITY
+					</span>
+					<span className="rune-value text-xs">
+						{playerHp} / {playerMaxHp}
+					</span>
+				</div>
+				<div className="hp-bar-track">
+					<div
+						className={`hp-bar-fill ${isLowHp ? "hp-bar-fill-low" : ""}`}
+						style={{ width: `${hpPercentage}%` }}
+					/>
+				</div>
 			</section>
 
-			<section aria-labelledby="actions-heading">
-				<Card className="border-border bg-background/70">
-					<CardHeader className="pb-0">
-						<CardTitle
-							id="actions-heading"
-							className="text-sm font-semibold uppercase tracking-wide text-muted-foreground"
-						>
-							{HUD_COPY.ACTIONS.TITLE}
-						</CardTitle>
-					</CardHeader>
+			{/* Machine Snapshot */}
+			<section className="space-y-3">
+				<h3
+					className="rune-text border-b pb-1"
+					style={{ borderColor: "var(--panel-border)" }}
+				>
+					{HUD_COPY.MACHINE_SNAPSHOT.TITLE}
+				</h3>
+				<dl aria-live="polite" className="grid gap-2">
+					{gameHudViewModel.machineSnapshotEntries
+						.filter((entry) => entry.label !== "Player HP") // HP handles above
+						.map((snapshotEntry) => (
+							<div
+								key={snapshotEntry.label}
+								className="flex items-center justify-between"
+							>
+								<dt className="text-xs text-muted-foreground">
+									{snapshotEntry.label}
+								</dt>
+								<dd>
+									{snapshotEntry.displayVariant ===
+									HUD_DISPLAY_VARIANTS.BADGE ? (
+										<span className="rounded bg-(--dungeon-gold-dim) px-1.5 py-0.5 font-mono text-[10px] text-accent border border-(--dungeon-gold)">
+											{snapshotEntry.value}
+										</span>
+									) : (
+										<span className="rune-value text-xs">
+											{snapshotEntry.value}
+										</span>
+									)}
+								</dd>
+							</div>
+						))}
+				</dl>
+			</section>
 
-					<CardContent className="space-y-4">
-						<div className="grid gap-2 sm:grid-cols-2">
-							{gameHudViewModel.actionButtons.map((actionButton) => (
-								<Button
-									key={actionButton.eventType}
-									variant="outline"
-									onClick={actionButton.handleDungeonActionTrigger}
-									disabled={actionButton.isDisabled}
-								>
-									{actionButton.label}
-								</Button>
-							))}
-						</div>
-
-						<Button
-							variant="secondary"
-							onClick={gameHudViewModel.handleDungeonRunReset}
+			{/* Discovered Rooms */}
+			<section className="space-y-2">
+				<h3
+					className="rune-text border-b pb-1"
+					style={{ borderColor: "var(--panel-border)" }}
+				>
+					{HUD_COPY.DISCOVERED_ROOMS.TITLE}
+				</h3>
+				<ul className="flex flex-wrap gap-1">
+					{gameHudViewModel.discoveredRoomLabels.map((roomLabel) => (
+						<li
+							key={roomLabel}
+							className="rounded border border-panel-border bg-black/40 px-2 py-1 text-xs text-muted-foreground shadow-inner"
 						>
-							{HUD_COPY.ACTIONS.RESET_BUTTON}
-						</Button>
-					</CardContent>
-				</Card>
+							{roomLabel}
+						</li>
+					))}
+				</ul>
+			</section>
+
+			{/* Actions */}
+			<section className="mt-4 space-y-3">
+				<h3
+					className="rune-text border-b pb-1"
+					style={{ borderColor: "var(--panel-border)" }}
+				>
+					{HUD_COPY.ACTIONS.TITLE}
+				</h3>
+
+				<div className="flex flex-col gap-2">
+					{gameHudViewModel.actionButtons.map((actionButton) => (
+						<button
+							key={actionButton.eventType}
+							type="button"
+							onClick={actionButton.handleDungeonActionTrigger}
+							disabled={actionButton.isDisabled}
+							className="dungeon-btn"
+						>
+							{actionButton.label}
+						</button>
+					))}
+				</div>
+
+				<div className="pt-4">
+					<button
+						type="button"
+						onClick={gameHudViewModel.handleDungeonRunReset}
+						className="dungeon-btn dungeon-btn-danger uppercase tracking-widest text-[10px]"
+					>
+						{HUD_COPY.ACTIONS.RESET_BUTTON}
+					</button>
+				</div>
 			</section>
 		</div>
 	);

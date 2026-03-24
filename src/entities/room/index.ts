@@ -1,4 +1,9 @@
-export { ROOM_DOOR_GUARDS, ROOM_ENTITY_CONFIG, ROOM_KINDS } from "./config";
+export {
+	ROOM_DOOR_GUARDS,
+	ROOM_ENTITY_CONFIG,
+	ROOM_KINDS,
+	ROOM_LIGHT_CONFIG,
+} from "./config";
 export type {
 	DungeonCorridorLayout,
 	DungeonFloorLayout,

@@ -25,7 +25,7 @@ export const CORRIDOR_ENTITY_CONFIG = {
 		HORIZONTAL_ROTATION_Y_RAD: Math.PI / 2,
 	},
 	SURFACE: {
-		BASE_COLOR: "var(--color-dungeon-stone-detail)",
+		BASE_COLOR: "#1b2430",
 		METALNESS: 0.14,
 		ROUGHNESS: 0.86,
 		SLAB_HEIGHT: 0.24,

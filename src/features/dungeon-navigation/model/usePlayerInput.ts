@@ -27,6 +27,7 @@ export const usePlayerInput = ({
 			sendPlayerEvent({
 				type: PLAYER_EVENTS.MOVE,
 				velocity: computeVelocity(pressedKeysRef.current),
+				isSprinting: event.shiftKey,
 			});
 		};
 
@@ -41,6 +42,7 @@ export const usePlayerInput = ({
 				sendPlayerEvent({
 					type: PLAYER_EVENTS.MOVE,
 					velocity: computeVelocity(pressedKeysRef.current),
+					isSprinting: event.shiftKey,
 				});
 			}
 		};

@@ -77,7 +77,7 @@ describe("GamePage", () => {
 
 		expect(screen.getByTestId("game-canvas-widget")).not.toBeNull();
 		expect(screen.getByTestId("camera-switcher-widget")).not.toBeNull();
-		expect(screen.getByTestId("xstate-inspector-widget")).not.toBeNull();
 		expect(screen.getByTestId("hud-widget-marker")).not.toBeNull();
+		expect(screen.getByTestId("xstate-inspector-widget")).not.toBeNull();
 	});
 });

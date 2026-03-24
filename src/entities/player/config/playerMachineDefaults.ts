@@ -4,6 +4,7 @@ export const PLAYER_MACHINE_RUNTIME_ERRORS = {
 } as const;
 
 export const PLAYER_MACHINE_DEFAULTS = {
+	IS_SPRINTING: false,
 	POSITION: [0, 0, 0] as const,
 	VELOCITY: [0, 0, 0] as const,
 	STATS: {

@@ -45,6 +45,7 @@ export const createPlayerMachine = () =>
 		id: PLAYER_MACHINE_ID,
 		type: MACHINE_STATE_TYPES.PARALLEL,
 		context: {
+			[PLAYER_CONTEXT_KEYS.IS_SPRINTING]: PLAYER_MACHINE_DEFAULTS.IS_SPRINTING,
 			[PLAYER_CONTEXT_KEYS.POSITION]: [
 				...PLAYER_MACHINE_DEFAULTS.POSITION,
 			] as unknown as Vector3Tuple,
@@ -71,6 +72,8 @@ export const createPlayerMachine = () =>
 								actions: assign(({ event }) => ({
 									[PLAYER_CONTEXT_KEYS.VELOCITY]: (event as PlayerMoveEvent)
 										.velocity,
+									[PLAYER_CONTEXT_KEYS.IS_SPRINTING]: (event as PlayerMoveEvent)
+										.isSprinting,
 								})),
 							},
 						},
@@ -82,6 +85,8 @@ export const createPlayerMachine = () =>
 								actions: assign(({ event }) => ({
 									[PLAYER_CONTEXT_KEYS.VELOCITY]: (event as PlayerMoveEvent)
 										.velocity,
+									[PLAYER_CONTEXT_KEYS.IS_SPRINTING]: (event as PlayerMoveEvent)
+										.isSprinting,
 								})),
 							},
 							[PLAYER_EVENTS.STOP]: {

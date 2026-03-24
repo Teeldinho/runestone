@@ -30,7 +30,7 @@ const GRAPH_NODES: PositionedMachineGraphNode[] = [
 
 const GRAPH_EDGES: MachineGraphEdge[] = [
 	{
-		guard: "hasTreasureKey",
+		guard: "hasKey",
 		id: `${ROOM_IDS.ENTRANCE}:${ROOM_IDS.GUARD_ROOM}`,
 		source: ROOM_IDS.ENTRANCE,
 		target: ROOM_IDS.GUARD_ROOM,
@@ -59,7 +59,7 @@ describe("useXStateInspectorPanel", () => {
 		});
 		expect(result.current.flowEdges[0]).toMatchObject({
 			id: `${ROOM_IDS.ENTRANCE}:${ROOM_IDS.GUARD_ROOM}`,
-			label: "hasTreasureKey",
+			label: "hasKey",
 		});
 	});
 });

@@ -11,15 +11,15 @@ const PLAYER_AURA_STYLES_BY_HEALTH: Record<
 	}
 > = {
 	[PLAYER_STATES.HEALTH.ALIVE]: {
-		color: "var(--color-dungeon-rune-active)",
+		color: "#00d7ff",
 		emissiveIntensity: 1.25,
 	},
 	[PLAYER_STATES.HEALTH.DAMAGED]: {
-		color: "var(--color-dungeon-torch)",
+		color: "#ffb347",
 		emissiveIntensity: 1.1,
 	},
 	[PLAYER_STATES.HEALTH.DEAD]: {
-		color: "var(--color-dungeon-fog)",
+		color: "#06090f",
 		emissiveIntensity: 0.15,
 	},
 };
@@ -28,7 +28,8 @@ const PLAYER_ORIGIN: Vector3Tuple = [0, 0, 0];
 
 export const PLAYER_ENTITY_CONFIG = {
 	MOVEMENT: {
-		SPEED: 5,
+		SPEED: 7,
+		SPRINT_SPEED: 11,
 	},
 	ORIGIN: PLAYER_ORIGIN,
 	DEFAULTS: {
@@ -38,7 +39,7 @@ export const PLAYER_ENTITY_CONFIG = {
 		SPAWN_HEIGHT_OFFSET: 0.45,
 	},
 	BODY: {
-		COLOR: "var(--color-panel-title)",
+		COLOR: "#a5f3fc",
 		HEIGHT: 0.9,
 		METALNESS: 0.22,
 		POSITION_Y: 0.45,
@@ -47,7 +48,7 @@ export const PLAYER_ENTITY_CONFIG = {
 		ROUGHNESS: 0.56,
 	},
 	HEAD: {
-		COLOR: "var(--color-dungeon-rune-open)",
+		COLOR: "#f5c451",
 		HEIGHT_SEGMENTS: 16,
 		OFFSET_Y: 0.9,
 		RADIUS: 0.17,

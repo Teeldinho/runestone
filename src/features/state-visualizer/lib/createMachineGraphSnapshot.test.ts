@@ -56,7 +56,7 @@ describe("createMachineGraphSnapshot", () => {
 			id: `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.TREASURY}`,
 			source: ROOM_IDS.GUARD_ROOM,
 			target: ROOM_IDS.TREASURY,
-			guard: "hasTreasureKey && enemiesRemaining === 0",
+			guard: "hasKey & enemies=0",
 		});
 		expect(snapshot.edges).toContainEqual({
 			id: `${ROOM_IDS.LIBRARY}:${ROOM_IDS.GUARD_ROOM}`,

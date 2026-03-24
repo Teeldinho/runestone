@@ -1,16 +1,22 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import type { RoomId } from "@/entities/dungeon";
-import { FLOOR_IDS } from "@/entities/dungeon";
-import { PLAYER_STATES, usePlayerMachineRuntime } from "@/entities/player";
+import { createFloorOneMachine, FLOOR_IDS } from "@/entities/dungeon";
+import {
+	PLAYER_ENTITY_CONFIG,
+	PLAYER_STATES,
+	usePlayerMachineRuntime,
+} from "@/entities/player";
+import { createDungeonFloorLayout } from "@/entities/room";
 import { useSubmitDungeonScore } from "@/entities/score";
 import { AUDIO_SPRITE_IDS, useAudioController } from "@/features/audio-manager";
 import { useAuthContext } from "@/features/auth";
 import { useGameMachineRuntime } from "@/features/dungeon-navigation";
 import { useHaptics } from "@/features/haptics-feedback";
 import { SCORE_VALUES } from "@/shared/config";
+import { setPlayerTeleportTarget } from "@/shared/lib/playerPositionStore";
 
-import { shouldSubmitFloorScore } from "../lib";
+import { getRoomWorldPosition, shouldSubmitFloorScore } from "../lib";
 
 export const useGameSideEffects = (): void => {
 	const { snapshot } = useGameMachineRuntime();
@@ -20,6 +26,11 @@ export const useGameSideEffects = (): void => {
 	const { handleSoundEffectPlay } = useAudioController();
 	const submitScore = useSubmitDungeonScore();
 	const { authenticatedProfile } = useAuthContext();
+
+	const floorRooms = useMemo(
+		() => createDungeonFloorLayout(createFloorOneMachine()).rooms,
+		[],
+	);
 
 	const startTimeMsRef = useRef(Date.now());
 	const prevRoomRef = useRef<RoomId | null>(null);
@@ -34,9 +45,19 @@ export const useGameSideEffects = (): void => {
 		if (currentRoom !== prevRoomRef.current) {
 			onRoomEnter();
 			handleSoundEffectPlay(AUDIO_SPRITE_IDS.DOOR_OPEN);
+
+			const roomPosition = getRoomWorldPosition(
+				floorRooms,
+				currentRoom,
+				PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+			);
+			if (roomPosition) {
+				setPlayerTeleportTarget(...roomPosition);
+			}
+
 			prevRoomRef.current = currentRoom;
 		}
-	}, [snapshot, onTransition, onRoomEnter, handleSoundEffectPlay]);
+	}, [snapshot, onTransition, onRoomEnter, handleSoundEffectPlay, floorRooms]);
 
 	useEffect(() => {
 		if (!shouldSubmitFloorScore(snapshot.status, hasSubmittedRef.current)) {

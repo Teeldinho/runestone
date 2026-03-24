@@ -1,7 +1,17 @@
-import { usePlayerMachineRuntime } from "@/entities/player";
+import { useCallback, useEffect, useMemo } from "react";
+
+import { createFloorOneMachine, ROOM_IDS } from "@/entities/dungeon";
+import {
+	PLAYER_ENTITY_CONFIG,
+	PLAYER_EVENTS,
+	usePlayerMachineRuntime,
+} from "@/entities/player";
+import { createDungeonFloorLayout } from "@/entities/room";
+import { useAudioController } from "@/features/audio-manager";
 import { useCameraSystem } from "@/features/camera-system";
 import { useGameMachine } from "@/features/dungeon-navigation";
 import { useStateVisualizer } from "@/features/state-visualizer";
+import { setPlayerTeleportTarget } from "@/shared/lib/playerPositionStore";
 import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 
 import { GAME_PAGE_COPY } from "../config";
@@ -18,11 +28,13 @@ type GamePageViewModel = {
 	enemiesRemaining: number;
 	graphEdges: ReturnType<typeof useStateVisualizer>["edges"];
 	graphNodes: ReturnType<typeof useStateVisualizer>["positionedNodes"];
+	handleAudioMuteToggle: () => void;
 	handleCameraModeSwitch: ReturnType<
 		typeof useCameraSystem
 	>["handleCameraModeSwitch"];
 	hasTreasureKeyLabel: string;
 	handleDungeonRunReset: () => void;
+	isAudioMuted: boolean;
 	playerHp: number;
 	playerMaxHp: number;
 };
@@ -32,11 +44,42 @@ export const useGamePage = (): GamePageViewModel => {
 		actionButtons,
 		currentRoomLabel,
 		discoveredRoomLabels,
-		handleDungeonRunReset,
+		handleDungeonRunReset: resetDungeonMachine,
 		snapshot,
 	} = useGameMachine();
 	const { cameraStateSnapshot, handleCameraModeSwitch } = useCameraSystem();
-	const { snapshot: playerSnapshot } = usePlayerMachineRuntime();
+	const { snapshot: playerSnapshot, sendPlayerMachineEvent } =
+		usePlayerMachineRuntime();
+	const { handleAudioPlayRequest, handleAudioMuteToggle, isAudioMuted } =
+		useAudioController();
+
+	useEffect(() => {
+		handleAudioPlayRequest();
+	}, [handleAudioPlayRequest]);
+
+	const entrancePosition = useMemo(() => {
+		const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
+		const entrance = floorLayout.rooms.find(
+			(room) => room.roomId === ROOM_IDS.ENTRANCE,
+		);
+		return entrance
+			? [
+					entrance.position[0],
+					PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+					entrance.position[2],
+				]
+			: [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0];
+	}, []);
+
+	const handleDungeonRunReset = useCallback(() => {
+		sendPlayerMachineEvent({ type: PLAYER_EVENTS.RESTART });
+		setPlayerTeleportTarget(
+			entrancePosition[0],
+			entrancePosition[1],
+			entrancePosition[2],
+		);
+		resetDungeonMachine();
+	}, [sendPlayerMachineEvent, resetDungeonMachine, entrancePosition]);
 
 	const { edges, positionedNodes } = useStateVisualizer({
 		context: snapshot.context,
@@ -56,11 +99,13 @@ export const useGamePage = (): GamePageViewModel => {
 		enemiesRemaining: snapshot.context.enemiesRemaining,
 		graphEdges: edges,
 		graphNodes: positionedNodes,
+		handleAudioMuteToggle,
 		handleCameraModeSwitch,
 		hasTreasureKeyLabel: snapshot.context.hasTreasureKey
 			? GAME_PAGE_COPY.TREASURE_KEY_STATUS.ACQUIRED
 			: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 		handleDungeonRunReset,
+		isAudioMuted,
 		playerHp: playerSnapshot.context.stats.hp,
 		playerMaxHp: playerSnapshot.context.stats.maxHp,
 	};

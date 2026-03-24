@@ -47,6 +47,11 @@ export type RoomSurfaceSettings = {
 		orbWidthSegments: number;
 		sealedColor: string;
 	};
+	wall: {
+		color: string;
+		roughness: number;
+		metalness: number;
+	};
 };
 
 export type RoomTorchSettings = {

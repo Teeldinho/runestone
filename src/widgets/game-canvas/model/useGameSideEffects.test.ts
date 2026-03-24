@@ -13,6 +13,7 @@ const mockOnFloorComplete = vi.fn();
 const mockOnPlayerDeath = vi.fn();
 const mockHandleSoundEffectPlay = vi.fn();
 const mockMutate = vi.fn();
+const mockSetPlayerTeleportTarget = vi.fn();
 
 const { mockSnapshotGetter, mockProfileGetter, mockPlayerSnapshotGetter } =
 	vi.hoisted(() => ({
@@ -20,6 +21,50 @@ const { mockSnapshotGetter, mockProfileGetter, mockPlayerSnapshotGetter } =
 		mockProfileGetter: vi.fn(),
 		mockPlayerSnapshotGetter: vi.fn(),
 	}));
+
+vi.mock("@/shared/lib/playerPositionStore", () => ({
+	setPlayerTeleportTarget: (...args: unknown[]) =>
+		mockSetPlayerTeleportTarget(...args),
+}));
+
+vi.mock("@/entities/dungeon", async (importOriginal) => {
+	const original = await importOriginal<typeof import("@/entities/dungeon")>();
+	return { ...original };
+});
+
+vi.mock("@/entities/room", async (importOriginal) => {
+	const original = await importOriginal<typeof import("@/entities/room")>();
+	return {
+		...original,
+		createDungeonFloorLayout: () => ({
+			rooms: [
+				{
+					roomId: "entrance",
+					label: "Entrance",
+					position: [-20, 0, 0] as [number, number, number],
+					isInitial: true,
+					isFinal: false,
+				},
+				{
+					roomId: "library",
+					label: "Library",
+					position: [0, 0, 20] as [number, number, number],
+					isInitial: false,
+					isFinal: false,
+				},
+				{
+					roomId: "guard_room",
+					label: "Guard Room",
+					position: [20, 0, 20] as [number, number, number],
+					isInitial: false,
+					isFinal: false,
+				},
+			],
+			transitions: [],
+			corridors: [],
+		}),
+	};
+});
 
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachineRuntime: () => ({
@@ -67,6 +112,9 @@ vi.mock("@/entities/player", () => ({
 		HEALTH: { ALIVE: "alive", DAMAGED: "damaged", DEAD: "dead" },
 		MOVEMENT: { IDLE: "idle", WALKING: "walking" },
 	},
+	PLAYER_ENTITY_CONFIG: {
+		TRANSFORM: { SPAWN_HEIGHT_OFFSET: 0.45 },
+	},
 }));
 
 const createMockSnapshot = (
@@ -93,6 +141,7 @@ const createMockPlayerSnapshot = (
 		[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
 	},
 	context: {
+		isSprinting: false,
 		position: [0, 0, 0] as [number, number, number],
 		velocity: [0, 0, 0] as [number, number, number],
 		stats: { hp: 100, maxHp: 100, score: 0, keyCount: 0, chainMultiplier: 1 },
@@ -159,6 +208,37 @@ describe("useGameSideEffects — haptics and audio", () => {
 		rerender();
 
 		expect(mockOnRoomEnter).not.toHaveBeenCalled();
+	});
+
+	it("teleports player to the room world position on room change", () => {
+		const { rerender } = renderHook(() => useGameSideEffects());
+		vi.clearAllMocks();
+
+		act(() => {
+			mockSnapshotGetter.mockReturnValue(
+				createMockSnapshot(ROOM_IDS.LIBRARY, "active", [
+					ROOM_IDS.ENTRANCE,
+					ROOM_IDS.LIBRARY,
+				]),
+			);
+		});
+		rerender();
+
+		expect(mockSetPlayerTeleportTarget).toHaveBeenCalledWith(
+			0,
+			expect.any(Number),
+			20,
+		);
+	});
+
+	it("teleports player on initial render (first room entry)", () => {
+		renderHook(() => useGameSideEffects());
+
+		expect(mockSetPlayerTeleportTarget).toHaveBeenCalledWith(
+			-20,
+			expect.any(Number),
+			0,
+		);
 	});
 
 	it("calls onTransition on every snapshot change", () => {

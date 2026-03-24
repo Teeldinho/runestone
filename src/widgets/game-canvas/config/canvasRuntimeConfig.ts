@@ -21,9 +21,9 @@ const CANVAS_RUNE_EMISSIVE_MULTIPLIERS: Record<DungeonRuneState, number> = {
 };
 
 const CANVAS_TORCH_INTENSITY_CONFIG = {
-	ENEMY_STEP: 0.35,
-	MIN: 2.4,
-	MAX: 5,
+	ENEMY_STEP: 15,
+	MIN: 120,
+	MAX: 180,
 } as const;
 
 const CANVAS_RUNE_COLORS_BY_STATE: Record<

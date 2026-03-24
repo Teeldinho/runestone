@@ -20,6 +20,7 @@ export const usePlayerMeshViewModel = (): UsePlayerMeshViewModelResult => {
 	const { rigidBodyRef } = usePlayerPhysics({
 		position: snapshot.context.position,
 		velocity: snapshot.context.velocity,
+		isSprinting: snapshot.context.isSprinting,
 	});
 	return { meshSettings, rigidBodyRef };
 };

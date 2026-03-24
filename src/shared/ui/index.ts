@@ -10,6 +10,11 @@ export {
 	CardTitle,
 } from "./card";
 export {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "./collapsible";
+export {
 	Dialog,
 	DialogClose,
 	DialogContent,
@@ -35,5 +40,6 @@ export {
 } from "./field";
 export { Input } from "./input";
 export { Label } from "./label";
+export { ScrollArea, ScrollBar } from "./scroll-area";
 export { Separator } from "./separator";
 export { Slider } from "./slider";

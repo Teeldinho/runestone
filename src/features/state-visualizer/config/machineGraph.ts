@@ -49,7 +49,7 @@ export const MACHINE_GRAPH_TRANSITIONS: MachineGraphTransition[] = [
 		id: `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.TREASURY}`,
 		source: ROOM_IDS.GUARD_ROOM,
 		target: ROOM_IDS.TREASURY,
-		guard: "hasTreasureKey && enemiesRemaining === 0",
+		guard: "hasKey & enemies=0",
 	},
 	{
 		id: `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.ENTRANCE}`,
@@ -61,7 +61,7 @@ export const MACHINE_GRAPH_TRANSITIONS: MachineGraphTransition[] = [
 		id: `${ROOM_IDS.TREASURY}:${ROOM_IDS.EXIT}`,
 		source: ROOM_IDS.TREASURY,
 		target: ROOM_IDS.EXIT,
-		guard: "hasTreasureKey",
+		guard: "hasKey",
 	},
 	{
 		id: `${ROOM_IDS.TREASURY}:${ROOM_IDS.GUARD_ROOM}`,
@@ -79,10 +79,10 @@ export const MACHINE_GRAPH_TRANSITIONS: MachineGraphTransition[] = [
 
 export const MACHINE_GRAPH_LAYOUT = {
 	DIRECTION: "LR",
-	NODE_WIDTH: 220,
-	NODE_HEIGHT: 88,
-	NODE_SEPARATION: 70,
-	RANK_SEPARATION: 100,
+	NODE_WIDTH: 160,
+	NODE_HEIGHT: 60,
+	NODE_SEPARATION: 80,
+	RANK_SEPARATION: 120,
 } as const;
 
 export type { MachineGraphNodeKind, MachineGraphTransition };

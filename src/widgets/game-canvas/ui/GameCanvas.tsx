@@ -5,14 +5,7 @@ import { Physics } from "@react-three/rapier";
 import { Suspense } from "react";
 import { AchievementNotification } from "@/features/achievements";
 import type { CameraStateSnapshot } from "@/features/camera-system";
-import { GAME_CANVAS_CONFIG } from "@/shared/config";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/shared/ui";
+import { CAMERA_MODES } from "@/features/camera-system";
 import { GAME_CANVAS_COPY } from "../config";
 import {
 	type CanvasMachineRuntime,
@@ -23,6 +16,7 @@ import {
 	usePlayerSceneController,
 } from "../model";
 
+import { CameraRig } from "./CameraRig";
 import { GameOverOverlay } from "./GameOverOverlay";
 import { SceneEnvironment } from "./SceneEnvironment";
 import { SceneFog } from "./SceneFog";
@@ -60,64 +54,57 @@ export function GameCanvas({
 	const { activeAchievement } = useAchievementTracker();
 
 	return (
-		<Card className="overflow-hidden border-panel-border bg-panel shadow-xl backdrop-blur">
-			<CardHeader className="space-y-2">
-				<CardTitle className="text-xl text-panel-title">
-					{GAME_CANVAS_COPY.CARD_TITLE}
-				</CardTitle>
-				<CardDescription className="text-panel-body">
-					{GAME_CANVAS_COPY.CARD_DESCRIPTION}
-				</CardDescription>
-			</CardHeader>
-
-			<CardContent className="p-0">
-				<div
-					className="relative w-full"
-					style={{ height: GAME_CANVAS_CONFIG.UI.CANVAS_HEIGHT_PX }}
+		<div className="relative h-full w-full overflow-hidden">
+			<AchievementNotification achievement={activeAchievement} />
+			<GameOverOverlay isGameOver={isGameOver} onRestart={handleGameRestart} />
+			{cameraStateSnapshot?.mode === CAMERA_MODES.FIRST_PERSON && (
+				<button
+					id="game-canvas-fp-lock"
+					className="absolute inset-0 z-10 flex cursor-crosshair items-center justify-center bg-transparent text-sm font-medium"
+					style={{ color: "color-mix(in srgb, white 60%, transparent)" }}
+					type="button"
 				>
-					<AchievementNotification achievement={activeAchievement} />
-					<GameOverOverlay
-						isGameOver={isGameOver}
-						onRestart={handleGameRestart}
-					/>
-					<Canvas
-						aria-label={GAME_CANVAS_COPY.CANVAS_ARIA_LABEL}
-						camera={{
-							far: camera.far,
-							fov: camera.fov,
-							near: camera.near,
-							position: camera.position,
-							zoom: camera.zoom,
-						}}
-						dpr={renderer.dprRange}
-						shadows={renderer.shadowsEnabled}
-					>
-						<PerformanceMonitor />
-						<AdaptiveDpr pixelated />
-						<Suspense fallback={null}>
-							<SceneFog fog={fog} />
-							<SceneLighting lighting={lighting} />
-							{isPostprocessingEnabled && (
-								<EffectComposer>
-									<Bloom
-										luminanceThreshold={postprocessing.bloom.luminanceThreshold}
-										luminanceSmoothing={postprocessing.bloom.luminanceSmoothing}
-										intensity={postprocessing.bloom.intensity}
-										mipmapBlur={postprocessing.bloom.mipmapBlur}
-									/>
-									<Vignette
-										offset={postprocessing.vignette.offset}
-										darkness={postprocessing.vignette.darkness}
-									/>
-								</EffectComposer>
-							)}
-							<Physics>
-								<SceneEnvironment environment={environment} />
-							</Physics>
-						</Suspense>
-					</Canvas>
-				</div>
-			</CardContent>
-		</Card>
+					{GAME_CANVAS_COPY.FIRST_PERSON_LOCK_HINT}
+				</button>
+			)}
+			<Canvas
+				aria-label={GAME_CANVAS_COPY.CANVAS_ARIA_LABEL}
+				camera={{
+					far: camera.far,
+					fov: camera.fov,
+					near: camera.near,
+					position: camera.position,
+					zoom: camera.zoom,
+				}}
+				dpr={renderer.dprRange}
+				shadows={renderer.shadowsEnabled}
+				style={{ width: "100%", height: "100%" }}
+			>
+				<PerformanceMonitor />
+				<AdaptiveDpr pixelated />
+				<CameraRig cameraStateSnapshot={cameraStateSnapshot} />
+				<Suspense fallback={null}>
+					<SceneFog fog={fog} />
+					<SceneLighting lighting={lighting} />
+					{isPostprocessingEnabled && (
+						<EffectComposer>
+							<Bloom
+								luminanceThreshold={postprocessing.bloom.luminanceThreshold}
+								luminanceSmoothing={postprocessing.bloom.luminanceSmoothing}
+								intensity={postprocessing.bloom.intensity}
+								mipmapBlur={postprocessing.bloom.mipmapBlur}
+							/>
+							<Vignette
+								offset={postprocessing.vignette.offset}
+								darkness={postprocessing.vignette.darkness}
+							/>
+						</EffectComposer>
+					)}
+					<Physics>
+						<SceneEnvironment environment={environment} />
+					</Physics>
+				</Suspense>
+			</Canvas>
+		</div>
 	);
 }
