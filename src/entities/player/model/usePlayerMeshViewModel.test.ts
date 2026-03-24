@@ -41,7 +41,7 @@ describe("usePlayerMeshViewModel", () => {
 
 		expect(result.current.meshSettings).toEqual({
 			auraColor: "#00d7ff",
-			auraEmissiveIntensity: 1.25,
+			auraEmissiveIntensity: 2.0,
 			position: [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0],
 		});
 	});

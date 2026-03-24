@@ -19,7 +19,7 @@ export function PlayerMesh() {
 			position={meshSettings.position}
 			type="dynamic"
 		>
-			<CapsuleCollider args={[0.35, 0.25]} />
+			<CapsuleCollider args={[0.55, 0.35]} />
 			{!isFirstPerson && (
 				<>
 					<mesh
