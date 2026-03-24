@@ -7,7 +7,7 @@ export const ENEMY_ENTITY_CONFIG = {
 		HEIGHT: 0.85,
 		POSITION_Y: 0.43,
 		RADIAL_SEGMENTS: 14,
-		COLOR: "var(--color-dungeon-rune-sealed)",
+		COLOR: "#ff2ecf",
 		ROUGHNESS: 0.72,
 		METALNESS: 0.18,
 	},
@@ -16,7 +16,7 @@ export const ENEMY_ENTITY_CONFIG = {
 		OFFSET_Y: 0.88,
 		WIDTH_SEGMENTS: 14,
 		HEIGHT_SEGMENTS: 14,
-		COLOR: "var(--color-dungeon-torch)",
+		COLOR: "#ffb347",
 	},
 	GLOW: {
 		RADIUS: 0.32,
@@ -30,11 +30,11 @@ export const ENEMY_ENTITY_CONFIG = {
 } as const;
 
 export const ENEMY_GLOW_COLORS_BY_STATE: Record<EnemyBehaviorState, string> = {
-	[ENEMY_MACHINE_STATES.PATROL]: "var(--color-dungeon-rune-sealed)",
-	[ENEMY_MACHINE_STATES.DETECT]: "var(--color-dungeon-torch)",
-	[ENEMY_MACHINE_STATES.CHASE]: "var(--color-dungeon-rune-open)",
-	[ENEMY_MACHINE_STATES.ATTACK]: "var(--color-dungeon-rune-active)",
-	[ENEMY_MACHINE_STATES.DEAD]: "var(--color-dungeon-fog)",
+	[ENEMY_MACHINE_STATES.PATROL]: "#ff2ecf",
+	[ENEMY_MACHINE_STATES.DETECT]: "#ffb347",
+	[ENEMY_MACHINE_STATES.CHASE]: "#f5c451",
+	[ENEMY_MACHINE_STATES.ATTACK]: "#00d7ff",
+	[ENEMY_MACHINE_STATES.DEAD]: "#06090f",
 };
 
 export const ENEMY_GLOW_EMISSIVE_INTENSITY_BY_STATE: Record<

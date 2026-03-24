@@ -27,7 +27,7 @@ describe("playerGeometry", () => {
 		});
 
 		expect(meshSettings).toEqual({
-			auraColor: "var(--color-dungeon-rune-active)",
+			auraColor: "#00d7ff",
 			auraEmissiveIntensity: 1.25,
 			position: [0, 0.45, 0],
 		});
@@ -39,7 +39,7 @@ describe("playerGeometry", () => {
 			origin: PLAYER_ENTITY_CONFIG.ORIGIN,
 		});
 
-		expect(meshSettings.auraColor).toBe("var(--color-dungeon-fog)");
+		expect(meshSettings.auraColor).toBe("#06090f");
 		expect(meshSettings.auraEmissiveIntensity).toBe(0.15);
 	});
 });

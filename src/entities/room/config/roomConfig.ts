@@ -25,7 +25,7 @@ export const ROOM_ENTITY_CONFIG = {
 	TORCH: {
 		HEIGHT: 2.2,
 		INSET: 4,
-		COLOR: "var(--color-dungeon-torch)",
+		COLOR: "#ffb347",
 		ORB_RADIUS: 0.08,
 		ORB_WIDTH_SEGMENTS: 10,
 		ORB_HEIGHT_SEGMENTS: 10,
@@ -33,12 +33,12 @@ export const ROOM_ENTITY_CONFIG = {
 	},
 	LABEL: {
 		TEXT: "Rune Chamber",
-		COLOR: "var(--color-panel-title)",
+		COLOR: "#a5f3fc",
 		FONT_SIZE: 0.42,
 		HEIGHT_OFFSET: 7,
 		DISTANCE_FACTOR: 12,
 		MAX_WIDTH: 10,
-		OUTLINE_COLOR: "var(--color-dungeon-fog)",
+		OUTLINE_COLOR: "#06090f",
 		OUTLINE_WIDTH: 0.025,
 	},
 	GEOMETRY: {

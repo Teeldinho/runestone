@@ -40,7 +40,7 @@ describe("usePlayerMeshViewModel", () => {
 		const { result } = renderHook(() => usePlayerMeshViewModel());
 
 		expect(result.current.meshSettings).toEqual({
-			auraColor: "var(--color-dungeon-rune-active)",
+			auraColor: "#00d7ff",
 			auraEmissiveIntensity: 1.25,
 			position: [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0],
 		});
@@ -70,9 +70,7 @@ describe("usePlayerMeshViewModel", () => {
 
 		const { result } = renderHook(() => usePlayerMeshViewModel());
 
-		expect(result.current.meshSettings.auraColor).toBe(
-			"var(--color-dungeon-torch)",
-		);
+		expect(result.current.meshSettings.auraColor).toBe("#ffb347");
 		expect(result.current.meshSettings.auraEmissiveIntensity).toBe(1.1);
 	});
 

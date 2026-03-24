@@ -62,7 +62,7 @@ describe("useSceneEnvironmentSettings", () => {
 		const { result } = renderHook(() => useSceneEnvironmentSettings());
 
 		expect(result.current.playerMeshSettings).toMatchObject({
-			auraColor: "var(--color-dungeon-rune-active)",
+			auraColor: "#00d7ff",
 			auraEmissiveIntensity: 1.25,
 		});
 		expect(result.current.playerMeshSettings.position).toEqual([
