@@ -11,6 +11,7 @@ import {
 import { CAMERA_MODES } from "@/features/camera-system";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 
+import { CANVAS_TORCH_INTENSITY_CONFIG } from "../config";
 import {
 	type CanvasMachineRuntime,
 	useCanvasMachineSettings,
@@ -20,7 +21,6 @@ const FOG_MULTIPLIER_GUARD_ROOM = 1.2;
 const RUNE_EMISSIVE_MULTIPLIER_SEALED = 0.3;
 const RUNE_EMISSIVE_MULTIPLIER_OPEN = 0.75;
 const RUNE_EMISSIVE_MULTIPLIER_ACTIVE = 1.2;
-const TORCH_INTENSITY_ENEMY_STEP = 0.3;
 
 const RUNE_COLORS_BY_STATE = {
 	[DUNGEON_RUNE_STATES.SEALED]: DUNGEON_THEME.RUNES.SEALED,
@@ -63,7 +63,8 @@ describe("useCanvasMachineSettings", () => {
 			DUNGEON_THEME.FOG.DENSITY * FOG_MULTIPLIER_GUARD_ROOM,
 		);
 		expect(result.current.lighting.torch.intensity).toBeCloseTo(
-			DUNGEON_THEME.LIGHTING.TORCH_INTENSITY + TORCH_INTENSITY_ENEMY_STEP,
+			DUNGEON_THEME.LIGHTING.TORCH_INTENSITY +
+				1 * CANVAS_TORCH_INTENSITY_CONFIG.ENEMY_STEP,
 		);
 	});
 

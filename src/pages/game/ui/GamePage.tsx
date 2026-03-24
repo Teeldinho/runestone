@@ -1,5 +1,4 @@
 import { Volume2, VolumeX } from "lucide-react";
-import { useCallback, useState } from "react";
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
 import { ScrollArea } from "@/shared/ui";
@@ -19,18 +18,15 @@ export function GamePage() {
 		enemiesRemaining,
 		graphEdges,
 		graphNodes,
+		handleAudioMuteToggle,
 		handleCameraModeSwitch,
 		hasTreasureKeyLabel,
 		handleDungeonRunReset,
+		isAudioMuted,
 		playerHp,
 		playerMaxHp,
 	} = useGamePage();
 	const settings = useSettingsForm();
-	const [isMuted, setIsMuted] = useState(true);
-
-	const handleMuteToggle = useCallback(() => {
-		setIsMuted((prev) => !prev);
-	}, []);
 
 	return (
 		<main
@@ -64,11 +60,11 @@ export function GamePage() {
 					</span>
 					<button
 						type="button"
-						onClick={handleMuteToggle}
+						onClick={handleAudioMuteToggle}
 						className="dungeon-btn w-auto px-2 py-1"
-						aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+						aria-label={isAudioMuted ? "Unmute audio" : "Mute audio"}
 					>
-						{isMuted ? (
+						{isAudioMuted ? (
 							<VolumeX className="h-4 w-4" />
 						) : (
 							<Volume2 className="h-4 w-4 text-[var(--dungeon-gold)]" />
