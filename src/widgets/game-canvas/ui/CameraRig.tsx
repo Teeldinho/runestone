@@ -20,6 +20,7 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 	const perspCamera = camera as THREE.PerspectiveCamera;
 	const targetPosition = useRef(new THREE.Vector3());
 	const targetLookAt = useRef(new THREE.Vector3());
+	const prevModeRef = useRef<string | undefined>(undefined);
 	const pointerLockRef =
 		useRef<
 			Parameters<typeof PointerLockControls>[0]["ref"] extends React.RefObject<
@@ -41,6 +42,9 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 		if (!cameraStateSnapshot) return;
 
 		setCameraMode(cameraStateSnapshot.mode);
+
+		const isModeChange = cameraStateSnapshot.mode !== prevModeRef.current;
+		prevModeRef.current = cameraStateSnapshot.mode;
 
 		const [px, py, pz] = getPlayerPosition();
 
@@ -66,7 +70,11 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 		}
 
 		if (cameraStateSnapshot.mode !== CAMERA_MODES.FREE_ORBITAL) {
-			camera.position.lerp(targetPosition.current, LERP_ALPHA);
+			if (isModeChange) {
+				camera.position.copy(targetPosition.current);
+			} else {
+				camera.position.lerp(targetPosition.current, LERP_ALPHA);
+			}
 			camera.lookAt(targetLookAt.current);
 		}
 
