@@ -51,4 +51,21 @@ describe("createFloorOneMachine", () => {
 
 		expect(actor.getSnapshot().value).toBe(ROOM_IDS.GUARD_ROOM);
 	});
+
+	it("allows RETURN_TO_GUARD_ROOM from EXIT state", () => {
+		const actor = createActor(createFloorOneMachine()).start();
+
+		actor.send({ type: DUNGEON_EVENTS.ENTER_LIBRARY });
+		actor.send({ type: DUNGEON_EVENTS.ENTER_GUARD_ROOM });
+		actor.send({ type: DUNGEON_EVENTS.PICK_UP_KEY });
+		actor.send({ type: DUNGEON_EVENTS.ENEMY_DIED });
+		actor.send({ type: DUNGEON_EVENTS.ENTER_TREASURY });
+		actor.send({ type: DUNGEON_EVENTS.ENTER_EXIT });
+
+		expect(actor.getSnapshot().value).toBe(ROOM_IDS.EXIT);
+
+		actor.send({ type: DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM });
+
+		expect(actor.getSnapshot().value).toBe(ROOM_IDS.GUARD_ROOM);
+	});
 });

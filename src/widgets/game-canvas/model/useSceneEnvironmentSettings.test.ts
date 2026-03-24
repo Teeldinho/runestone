@@ -63,7 +63,7 @@ describe("useSceneEnvironmentSettings", () => {
 
 		expect(result.current.playerMeshSettings).toMatchObject({
 			auraColor: "#00d7ff",
-			auraEmissiveIntensity: 1.25,
+			auraEmissiveIntensity: 2,
 		});
 		expect(result.current.playerMeshSettings.position).toEqual([
 			0,

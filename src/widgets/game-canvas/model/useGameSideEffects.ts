@@ -60,7 +60,9 @@ export const useGameSideEffects = (): void => {
 	}, [snapshot, onTransition, onRoomEnter, handleSoundEffectPlay, floorRooms]);
 
 	useEffect(() => {
-		if (!shouldSubmitFloorScore(snapshot.status, hasSubmittedRef.current)) {
+		if (
+			!shouldSubmitFloorScore(snapshot.value as string, hasSubmittedRef.current)
+		) {
 			return;
 		}
 
@@ -80,7 +82,7 @@ export const useGameSideEffects = (): void => {
 			roomsDiscovered: snapshot.context.discoveredRooms.length,
 		});
 	}, [
-		snapshot.status,
+		snapshot.value,
 		snapshot.context.discoveredRooms,
 		authenticatedProfile,
 		onFloorComplete,

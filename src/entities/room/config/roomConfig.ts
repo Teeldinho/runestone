@@ -23,6 +23,38 @@ export const ROOM_DOOR_GUARDS = {
 	PUZZLE_RUNE: "puzzleRune",
 } as const;
 
+export const ROOM_GLTF_CONFIG = {
+	FLOOR_TILE: {
+		PATH: "/models/dungeon/floor_tile_large.gltf",
+		TILE_SIZE: 2,
+		SCALE: [1, 1, 1] as const,
+	},
+	WALL: {
+		PATH: "/models/dungeon/wall.gltf",
+		SCALE: [1, 1, 1] as const,
+	},
+	WALL_DOORWAY: {
+		PATH: "/models/dungeon/wall_doorway.gltf",
+		SCALE: [1, 1, 1] as const,
+	},
+	WALL_CORNER: {
+		PATH: "/models/dungeon/wall_corner.gltf",
+		SCALE: [1, 1, 1] as const,
+	},
+	COLUMN: {
+		PATH: "/models/dungeon/column.gltf",
+		SCALE: [1, 1, 1] as const,
+	},
+	TORCH: {
+		PATH: "/models/dungeon/torch_mounted.gltf",
+		SCALE: [1, 1, 1] as const,
+	},
+	CHEST: {
+		PATH: "/models/dungeon/chest_gold.gltf",
+		SCALE: [1, 1, 1] as const,
+	},
+} as const;
+
 export const ROOM_ENTITY_CONFIG = {
 	DIMENSIONS: {
 		width: ROOM_CONFIG.WIDTH,

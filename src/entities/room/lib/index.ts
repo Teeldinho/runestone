@@ -18,3 +18,4 @@ export {
 	getRoomLabelPosition,
 	getRoomTorchPositions,
 } from "./roomGeometry";
+export { getColumnPlacements, getFloorTilePositions } from "./roomGltfLayout";

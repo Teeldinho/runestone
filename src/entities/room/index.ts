@@ -1,6 +1,7 @@
 export {
 	ROOM_DOOR_GUARDS,
 	ROOM_ENTITY_CONFIG,
+	ROOM_GLTF_CONFIG,
 	ROOM_KINDS,
 	ROOM_LIGHT_CONFIG,
 } from "./config";
@@ -13,6 +14,8 @@ export type {
 } from "./lib";
 export {
 	createDungeonFloorLayout,
+	getColumnPlacements,
+	getFloorTilePositions,
 	getRoomBounds,
 	getRoomCorridorAnchors,
 	getRoomLabelPosition,
