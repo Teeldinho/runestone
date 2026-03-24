@@ -132,14 +132,12 @@ export function RoomMesh({
 
 			{/* North wall */}
 			{hasOpening("north") ? (
-				<>
-					<primitive
-						object={doorwayScene.clone()}
-						position={[0, WALL_Y, -HALF_DEPTH]}
-						rotation={[0, 0, 0]}
-						scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
-					/>
-				</>
+				<primitive
+					object={doorwayScene.clone()}
+					position={[0, WALL_Y, -HALF_DEPTH]}
+					rotation={[0, 0, 0]}
+					scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
+				/>
 			) : (
 				<RigidBody type="fixed" colliders="cuboid">
 					<primitive
