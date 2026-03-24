@@ -78,11 +78,11 @@ export const MACHINE_GRAPH_TRANSITIONS: MachineGraphTransition[] = [
 ];
 
 export const MACHINE_GRAPH_LAYOUT = {
-	DIRECTION: "TB",
-	NODE_WIDTH: 200,
+	DIRECTION: "LR",
+	NODE_WIDTH: 160,
 	NODE_HEIGHT: 60,
-	NODE_SEPARATION: 60,
-	RANK_SEPARATION: 100,
+	NODE_SEPARATION: 80,
+	RANK_SEPARATION: 120,
 } as const;
 
 export type { MachineGraphNodeKind, MachineGraphTransition };

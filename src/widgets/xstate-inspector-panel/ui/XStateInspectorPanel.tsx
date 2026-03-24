@@ -121,6 +121,51 @@ export function XStateInspectorPanel({
 							<Separator />
 
 							<section
+								aria-labelledby="inspector-guards-heading"
+								className="space-y-2"
+							>
+								<h3
+									id="inspector-guards-heading"
+									className="text-[10px] font-semibold uppercase tracking-widest"
+									style={{ color: "var(--muted-foreground)" }}
+								>
+									Guard Legend
+								</h3>
+								<dl className="space-y-1 text-[10px]">
+									<div className="flex gap-1">
+										<dt
+											className="rounded px-1 py-0.5"
+											style={{
+												background: "var(--destructive)",
+												color: "var(--base-black)",
+											}}
+										>
+											hasKey
+										</dt>
+										<dd style={{ color: "var(--muted-foreground)" }}>
+											treasure key collected
+										</dd>
+									</div>
+									<div className="flex gap-1">
+										<dt
+											className="rounded px-1 py-0.5"
+											style={{
+												background: "var(--destructive)",
+												color: "var(--base-black)",
+											}}
+										>
+											enemies=0
+										</dt>
+										<dd style={{ color: "var(--muted-foreground)" }}>
+											all enemies defeated
+										</dd>
+									</div>
+								</dl>
+							</section>
+
+							<Separator />
+
+							<section
 								aria-labelledby="inspector-edges-heading"
 								className="space-y-2"
 							>
