@@ -1,13 +1,8 @@
-import { ChevronDown, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { Volume2, VolumeX } from "lucide-react";
+import { useCallback, useState } from "react";
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-	ScrollArea,
-} from "@/shared/ui";
+import { ScrollArea } from "@/shared/ui";
 import { CameraModeSwitcher } from "@/widgets/camera-mode-switcher";
 import { GameCanvas } from "@/widgets/game-canvas";
 import { GameHud } from "@/widgets/hud";
@@ -31,7 +26,11 @@ export function GamePage() {
 		playerMaxHp,
 	} = useGamePage();
 	const settings = useSettingsForm();
-	const [isInspectorOpen, setIsInspectorOpen] = useState(false);
+	const [isMuted, setIsMuted] = useState(true);
+
+	const handleMuteToggle = useCallback(() => {
+		setIsMuted((prev) => !prev);
+	}, []);
 
 	return (
 		<main
@@ -53,41 +52,79 @@ export function GamePage() {
 					<span className="rune-text">·</span>
 					<span className="rune-text">Floor I</span>
 				</div>
-				<div className="flex items-center gap-2">
-					<span className="rune-text">Room:</span>
-					<span className="rune-value" style={{ color: "var(--panel-title)" }}>
-						{currentRoomLabel}
+				<div className="flex items-center gap-4">
+					<span className="flex items-center gap-2">
+						<span className="rune-text">Room:</span>
+						<span
+							className="rune-value"
+							style={{ color: "var(--panel-title)" }}
+						>
+							{currentRoomLabel}
+						</span>
 					</span>
+					<button
+						type="button"
+						onClick={handleMuteToggle}
+						className="dungeon-btn w-auto px-2 py-1"
+						aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+					>
+						{isMuted ? (
+							<VolumeX className="h-4 w-4" />
+						) : (
+							<Volume2 className="h-4 w-4 text-[var(--dungeon-gold)]" />
+						)}
+					</button>
 				</div>
 			</header>
 
 			<div className="flex min-h-0 flex-1 overflow-hidden">
-				<section
-					aria-labelledby="dungeon-canvas-heading"
-					className="relative flex min-w-0 flex-1 flex-col"
-				>
-					<h2 id="dungeon-canvas-heading" className="sr-only">
-						Dungeon Canvas
-					</h2>
-					<div className="flex min-h-0 flex-1">
-						<GameCanvas
-							cameraStateSnapshot={cameraStateSnapshot}
-							machineRuntime={canvasMachineRuntime}
-							postprocessingEnabled={settings.postprocessingEnabled}
-						/>
-					</div>
-
-					<div
-						className="shrink-0 border-t p-2"
-						style={{ borderColor: "var(--panel-border)" }}
+				{/* Left column: Scene + XState Inspector stacked */}
+				<div className="flex min-w-0 flex-1 flex-col">
+					{/* 3D Scene */}
+					<section
+						aria-labelledby="dungeon-canvas-heading"
+						className="relative flex min-h-0 flex-[3] flex-col"
 					>
-						<CameraModeSwitcher
-							activeCameraMode={cameraStateSnapshot.mode}
-							handleCameraModeSwitch={handleCameraModeSwitch}
-						/>
-					</div>
-				</section>
+						<h2 id="dungeon-canvas-heading" className="sr-only">
+							Dungeon Canvas
+						</h2>
+						<div className="min-h-0 flex-1" style={{ cursor: "grab" }}>
+							<GameCanvas
+								cameraStateSnapshot={cameraStateSnapshot}
+								machineRuntime={canvasMachineRuntime}
+								postprocessingEnabled={settings.postprocessingEnabled}
+							/>
+						</div>
 
+						<div
+							className="shrink-0 border-t p-2"
+							style={{ borderColor: "var(--panel-border)" }}
+						>
+							<CameraModeSwitcher
+								activeCameraMode={cameraStateSnapshot.mode}
+								handleCameraModeSwitch={handleCameraModeSwitch}
+							/>
+						</div>
+					</section>
+
+					{/* XState Inspector - always visible below scene */}
+					<section
+						aria-labelledby="xstate-inspector-heading"
+						className="flex min-h-[280px] flex-[2] flex-col border-t"
+						style={{
+							borderColor: "var(--panel-border)",
+							background: "var(--panel)",
+						}}
+					>
+						<XStateInspectorPanel
+							activeStateLabel={activeStateLabel}
+							graphNodes={graphNodes}
+							graphEdges={graphEdges}
+						/>
+					</section>
+				</div>
+
+				{/* Right column: Sidebar always visible */}
 				<aside
 					aria-label="Game controls and state"
 					className="flex w-72 shrink-0 flex-col border-l"
@@ -97,59 +134,22 @@ export function GamePage() {
 					}}
 				>
 					<ScrollArea className="flex-1">
-						<div className="flex flex-col gap-0">
-							<div
-								className="border-b p-3"
-								style={{ borderColor: "var(--panel-border)" }}
-							>
-								<GameHud
-									actionButtons={actionButtons}
-									activeStateLabel={activeStateLabel}
-									currentRoomLabel={currentRoomLabel}
-									discoveredRoomLabels={discoveredRoomLabels}
-									enemiesRemaining={enemiesRemaining}
-									handleDungeonRunReset={handleDungeonRunReset}
-									hasTreasureKeyLabel={hasTreasureKeyLabel}
-									playerHp={playerHp}
-									playerMaxHp={playerMaxHp}
-								/>
-							</div>
+						<div className="p-3">
+							<GameHud
+								actionButtons={actionButtons}
+								activeStateLabel={activeStateLabel}
+								currentRoomLabel={currentRoomLabel}
+								discoveredRoomLabels={discoveredRoomLabels}
+								enemiesRemaining={enemiesRemaining}
+								handleDungeonRunReset={handleDungeonRunReset}
+								hasTreasureKeyLabel={hasTreasureKeyLabel}
+								playerHp={playerHp}
+								playerMaxHp={playerMaxHp}
+							/>
 						</div>
 					</ScrollArea>
 				</aside>
 			</div>
-
-			<Collapsible
-				open={isInspectorOpen}
-				onOpenChange={setIsInspectorOpen}
-				className="shrink-0 border-t"
-				style={{ borderColor: "var(--panel-border)" }}
-			>
-				<CollapsibleTrigger
-					className="flex w-full cursor-pointer items-center justify-between px-4 py-2 text-xs font-semibold uppercase tracking-widest transition-colors hover:bg-black/20"
-					style={{
-						color: "var(--muted-foreground)",
-						fontFamily: "Space Grotesk, sans-serif",
-						letterSpacing: "0.1em",
-					}}
-				>
-					<span>XState Inspector</span>
-					{isInspectorOpen ? (
-						<ChevronDown className="h-4 w-4 text-[var(--dungeon-gold)]" />
-					) : (
-						<ChevronRight className="h-4 w-4" />
-					)}
-				</CollapsibleTrigger>
-				<CollapsibleContent>
-					<div className="h-[35vh] min-h-[300px]">
-						<XStateInspectorPanel
-							activeStateLabel={activeStateLabel}
-							graphNodes={graphNodes}
-							graphEdges={graphEdges}
-						/>
-					</div>
-				</CollapsibleContent>
-			</Collapsible>
 		</main>
 	);
 }

@@ -3,19 +3,10 @@ import type {
 	MachineGraphEdge,
 	PositionedMachineGraphNode,
 } from "@/features/state-visualizer";
-import {
-	Badge,
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-	Separator,
-} from "@/shared/ui";
+import { Badge, ScrollArea, Separator } from "@/shared/ui";
 
 import "@xyflow/react/dist/style.css";
 
-import { INSPECTOR_COPY } from "../config";
 import { useXStateInspectorPanel } from "../model";
 
 type XStateInspectorPanelProps = {
@@ -36,133 +27,148 @@ export function XStateInspectorPanel({
 	});
 
 	return (
-		<Card className="border-border bg-background/70">
-			<CardHeader>
-				<CardTitle id="xstate-inspector-heading" className="text-base">
+		<div className="flex h-full flex-col">
+			<div
+				className="flex items-center justify-between border-b px-4 py-2"
+				style={{ borderColor: "var(--panel-border)" }}
+			>
+				<h2
+					id="xstate-inspector-heading"
+					className="text-xs font-semibold uppercase tracking-widest"
+					style={{
+						color: "var(--dungeon-gold)",
+						fontFamily: "Space Grotesk, sans-serif",
+					}}
+				>
 					XState Inspector
-				</CardTitle>
-				<CardDescription>
-					Live machine graph metadata derived from the active dungeon context.
-				</CardDescription>
-			</CardHeader>
+				</h2>
+				<Badge variant="outline" className="text-[10px]">
+					{inspectorPanel.activeStateLabel}
+				</Badge>
+			</div>
 
-			<CardContent className="space-y-5">
-				<section
-					aria-labelledby="inspector-graph-heading"
-					className="space-y-2"
+			<div className="flex min-h-0 flex-1">
+				{/* Graph area */}
+				<div
+					className="min-h-0 flex-[2] border-r"
+					style={{ borderColor: "var(--panel-border)" }}
 				>
-					<h3
-						id="inspector-graph-heading"
-						className="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+					<ReactFlow
+						colorMode="dark"
+						edges={inspectorPanel.flowEdges}
+						elementsSelectable={false}
+						fitView
+						fitViewOptions={{
+							padding: inspectorPanel.reactFlowDefaults.FIT_VIEW_PADDING,
+						}}
+						maxZoom={inspectorPanel.reactFlowDefaults.MAX_ZOOM}
+						minZoom={inspectorPanel.reactFlowDefaults.MIN_ZOOM}
+						nodeOrigin={inspectorPanel.reactFlowDefaults.NODE_ORIGIN}
+						nodes={inspectorPanel.flowNodes}
+						nodesConnectable={false}
+						nodesDraggable={false}
+						proOptions={{ hideAttribution: true }}
+						style={{ background: "var(--background)" }}
 					>
-						Graph Runtime
-					</h3>
-					<div className="h-80 overflow-hidden rounded-md border border-border/60 bg-muted/20">
-						<ReactFlow
-							edges={inspectorPanel.flowEdges}
-							elementsSelectable={false}
-							fitView
-							fitViewOptions={{
-								padding: inspectorPanel.reactFlowDefaults.FIT_VIEW_PADDING,
-							}}
-							maxZoom={inspectorPanel.reactFlowDefaults.MAX_ZOOM}
-							minZoom={inspectorPanel.reactFlowDefaults.MIN_ZOOM}
-							nodeOrigin={inspectorPanel.reactFlowDefaults.NODE_ORIGIN}
-							nodes={inspectorPanel.flowNodes}
-							nodesConnectable={false}
-							nodesDraggable={false}
-							proOptions={{ hideAttribution: true }}
-						>
-							<Background gap={20} size={1} />
-							<Controls position="bottom-right" showInteractive={false} />
-						</ReactFlow>
-					</div>
-				</section>
+						<Background gap={20} size={1} color="var(--panel-border)" />
+						<Controls position="bottom-right" showInteractive={false} />
+					</ReactFlow>
+				</div>
 
-				<Separator />
-
-				<section
-					aria-labelledby="inspector-active-state-heading"
-					className="space-y-2"
-				>
-					<h3
-						id="inspector-active-state-heading"
-						className="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-					>
-						Current State
-					</h3>
-					<Badge>{inspectorPanel.activeStateLabel}</Badge>
-				</section>
-
-				<Separator />
-
-				<section
-					aria-labelledby="inspector-nodes-heading"
-					className="space-y-2"
-				>
-					<h3
-						id="inspector-nodes-heading"
-						className="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-					>
-						Graph Nodes
-					</h3>
-					<ul className="grid gap-2 md:grid-cols-2">
-						{inspectorPanel.graphNodes.map((node) => (
-							<li
-								key={node.id}
-								className="flex items-center justify-between rounded-md border border-border/60 bg-muted/30 px-3 py-2"
+				{/* Metadata panel */}
+				<div className="min-w-0 flex-1">
+					<ScrollArea className="h-full">
+						<div className="space-y-4 p-3">
+							<section
+								aria-labelledby="inspector-nodes-heading"
+								className="space-y-2"
 							>
-								<span className="font-medium text-foreground">
-									{node.label}
-								</span>
-								<div className="flex items-center gap-2">
-									<Badge variant="outline">{node.kind}</Badge>
-									{node.isActive ? (
-										<Badge>{INSPECTOR_COPY.ACTIVE_LABEL}</Badge>
-									) : null}
-								</div>
-							</li>
-						))}
-					</ul>
-				</section>
+								<h3
+									id="inspector-nodes-heading"
+									className="text-[10px] font-semibold uppercase tracking-widest"
+									style={{ color: "var(--muted-foreground)" }}
+								>
+									States
+								</h3>
+								<ul className="space-y-1">
+									{inspectorPanel.graphNodes.map((node) => (
+										<li
+											key={node.id}
+											className="flex items-center justify-between rounded px-2 py-1.5 text-xs"
+											style={{
+												background: node.isActive
+													? "rgba(0, 215, 255, 0.1)"
+													: "var(--background)",
+												border: `1px solid ${node.isActive ? "var(--primary)" : "var(--panel-border)"}`,
+											}}
+										>
+											<span style={{ color: "var(--foreground)" }}>
+												{node.label}
+											</span>
+											<div className="flex items-center gap-1">
+												{node.isActive ? (
+													<span
+														className="h-1.5 w-1.5 rounded-full"
+														style={{ background: "var(--primary)" }}
+													/>
+												) : null}
+											</div>
+										</li>
+									))}
+								</ul>
+							</section>
 
-				<Separator />
+							<Separator />
 
-				<section
-					aria-labelledby="inspector-edges-heading"
-					className="space-y-2"
-				>
-					<h3
-						id="inspector-edges-heading"
-						className="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-					>
-						Transitions
-					</h3>
-					<ul className="space-y-2 text-sm">
-						{inspectorPanel.graphEdges.map((edge) => (
-							<li
-								key={edge.id}
-								className="flex flex-wrap items-center gap-2 rounded-md border border-border/60 bg-muted/30 px-3 py-2"
+							<section
+								aria-labelledby="inspector-edges-heading"
+								className="space-y-2"
 							>
-								<span className="font-medium text-foreground">
-									{edge.source}
-								</span>
-								<span aria-hidden="true" className="text-muted-foreground">
-									→
-								</span>
-								<span className="font-medium text-foreground">
-									{edge.target}
-								</span>
-								{edge.guard ? (
-									<Badge variant="secondary">{edge.guard}</Badge>
-								) : (
-									<Badge variant="outline">No guard</Badge>
-								)}
-							</li>
-						))}
-					</ul>
-				</section>
-			</CardContent>
-		</Card>
+								<h3
+									id="inspector-edges-heading"
+									className="text-[10px] font-semibold uppercase tracking-widest"
+									style={{ color: "var(--muted-foreground)" }}
+								>
+									Transitions
+								</h3>
+								<ul className="space-y-1">
+									{inspectorPanel.graphEdges.map((edge) => (
+										<li
+											key={edge.id}
+											className="flex flex-wrap items-center gap-1 rounded px-2 py-1.5 text-xs"
+											style={{
+												background: "var(--background)",
+												border: "1px solid var(--panel-border)",
+											}}
+										>
+											<span style={{ color: "var(--foreground)" }}>
+												{edge.source}
+											</span>
+											<span style={{ color: "var(--muted-foreground)" }}>
+												→
+											</span>
+											<span style={{ color: "var(--foreground)" }}>
+												{edge.target}
+											</span>
+											{edge.guard ? (
+												<span
+													className="rounded px-1 py-0.5 text-[9px]"
+													style={{
+														background: "var(--destructive)",
+														color: "var(--base-black)",
+													}}
+												>
+													{edge.guard}
+												</span>
+											) : null}
+										</li>
+									))}
+								</ul>
+							</section>
+						</div>
+					</ScrollArea>
+				</div>
+			</div>
+		</div>
 	);
 }

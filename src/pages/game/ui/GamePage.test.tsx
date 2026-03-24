@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { GamePage } from "./GamePage";
@@ -78,11 +78,6 @@ describe("GamePage", () => {
 		expect(screen.getByTestId("game-canvas-widget")).not.toBeNull();
 		expect(screen.getByTestId("camera-switcher-widget")).not.toBeNull();
 		expect(screen.getByTestId("hud-widget-marker")).not.toBeNull();
-
-		// Open the XState inspector collapsible
-		const inspectorTrigger = screen.getByText("XState Inspector");
-		fireEvent.click(inspectorTrigger);
-
 		expect(screen.getByTestId("xstate-inspector-widget")).not.toBeNull();
 	});
 });
