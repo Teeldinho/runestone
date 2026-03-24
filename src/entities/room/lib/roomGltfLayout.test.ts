@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-	getColumnPlacements,
-	getFloorTilePositions,
-} from "./roomGltfLayout";
+import { getColumnPlacements, getFloorTilePositions } from "./roomGltfLayout";
 
 describe("getFloorTilePositions", () => {
 	it("returns a 6×6 grid (36 tiles) for a 12×12 room with tileSize 2", () => {

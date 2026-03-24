@@ -61,10 +61,7 @@ export const useGameSideEffects = (): void => {
 
 	useEffect(() => {
 		if (
-			!shouldSubmitFloorScore(
-				snapshot.value as string,
-				hasSubmittedRef.current,
-			)
+			!shouldSubmitFloorScore(snapshot.value as string, hasSubmittedRef.current)
 		) {
 			return;
 		}

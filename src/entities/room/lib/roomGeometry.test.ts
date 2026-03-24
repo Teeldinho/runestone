@@ -17,8 +17,8 @@ describe("roomGeometry", () => {
 		});
 
 		expect(roomBounds).toEqual({
-			max: [6, 3, 6],
-			min: [-6, -3, -6],
+			max: [7, 3, 7],
+			min: [-7, -3, -7],
 		});
 	});
 
@@ -29,10 +29,10 @@ describe("roomGeometry", () => {
 		});
 
 		expect(corridorAnchors).toEqual({
-			east: [6, 0, 0],
-			north: [0, 0, -6],
-			south: [0, 0, 6],
-			west: [-6, 0, 0],
+			east: [7, 0, 0],
+			north: [0, 0, -7],
+			south: [0, 0, 7],
+			west: [-7, 0, 0],
 		});
 	});
 

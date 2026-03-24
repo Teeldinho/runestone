@@ -1,6 +1,5 @@
 import { assign, setup } from "xstate";
 
-
 import { DUNGEON_EVENTS, ROOM_IDS } from "../config";
 import {
 	canEnterFloorOneExit,

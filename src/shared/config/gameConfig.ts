@@ -1,7 +1,7 @@
 export const ROOM_CONFIG = {
-	WIDTH: 12,
+	WIDTH: 14,
 	HEIGHT: 6,
-	DEPTH: 12,
+	DEPTH: 14,
 	WALL_THICKNESS: 0.35,
 } as const;
 
@@ -12,9 +12,9 @@ export const CORRIDOR_CONFIG = {
 } as const;
 
 export const DAGRE_CONFIG = {
-	DIRECTION: "TB",
-	NODE_SEPARATION: 70,
-	RANK_SEPARATION: 120,
+	DIRECTION: "LR",
+	NODE_SEPARATION: 120,
+	RANK_SEPARATION: 160,
 	MARGIN_X: 32,
 	MARGIN_Y: 32,
 } as const;
