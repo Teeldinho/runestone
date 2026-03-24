@@ -45,12 +45,8 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 		const [px, py, pz] = getPlayerPosition();
 
 		if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
-			targetPosition.current.set(
-				px,
-				py + CAMERA_CONFIG.FIRST_PERSON.HEAD_BOB_AMPLITUDE * 2 + 0.5,
-				pz,
-			);
-			targetLookAt.current.set(px, py + 1.7, pz + 1);
+			targetPosition.current.set(px, py + 1.6, pz);
+			targetLookAt.current.set(px, py + 1.6, pz - 1);
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON) {
 			const [ox, oy, oz] = CAMERA_CONFIG.THIRD_PERSON.OFFSET;
 			targetPosition.current.set(px + ox, py + oy, pz + oz);
@@ -69,9 +65,8 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 			targetLookAt.current.set(tx, ty, tz);
 		}
 
-		camera.position.lerp(targetPosition.current, LERP_ALPHA);
-
 		if (cameraStateSnapshot.mode !== CAMERA_MODES.FREE_ORBITAL) {
+			camera.position.lerp(targetPosition.current, LERP_ALPHA);
 			camera.lookAt(targetLookAt.current);
 		}
 
