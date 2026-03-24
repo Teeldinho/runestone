@@ -84,10 +84,12 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 		return (
 			<OrbitControls
 				makeDefault
-				target={[0, 0, 0]}
-				minDistance={CAMERA_CONFIG.FREE_ORBITAL.MIN_DISTANCE}
-				maxDistance={CAMERA_CONFIG.FREE_ORBITAL.MAX_DISTANCE}
 				enablePan
+				maxDistance={CAMERA_CONFIG.FREE_ORBITAL.MAX_DISTANCE}
+				maxPolarAngle={CAMERA_CONFIG.FREE_ORBITAL.MAX_POLAR_ANGLE}
+				minDistance={CAMERA_CONFIG.FREE_ORBITAL.MIN_DISTANCE}
+				minPolarAngle={CAMERA_CONFIG.FREE_ORBITAL.MIN_POLAR_ANGLE}
+				target={[0, 0, 0]}
 			/>
 		);
 	}
@@ -96,6 +98,7 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 		return (
 			<PointerLockControls
 				ref={pointerLockRef}
+				selector="#game-canvas-fp-lock"
 				onLock={handleFirstPersonLock}
 				onUnlock={handleFirstPersonUnlock}
 			/>

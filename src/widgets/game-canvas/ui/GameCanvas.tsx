@@ -5,6 +5,7 @@ import { Physics } from "@react-three/rapier";
 import { Suspense } from "react";
 import { AchievementNotification } from "@/features/achievements";
 import type { CameraStateSnapshot } from "@/features/camera-system";
+import { CAMERA_MODES } from "@/features/camera-system";
 import { GAME_CANVAS_COPY } from "../config";
 import {
 	type CanvasMachineRuntime,
@@ -56,6 +57,16 @@ export function GameCanvas({
 		<div className="relative h-full w-full overflow-hidden">
 			<AchievementNotification achievement={activeAchievement} />
 			<GameOverOverlay isGameOver={isGameOver} onRestart={handleGameRestart} />
+			{cameraStateSnapshot?.mode === CAMERA_MODES.FIRST_PERSON && (
+				<button
+					id="game-canvas-fp-lock"
+					className="absolute inset-0 z-10 flex cursor-crosshair items-center justify-center bg-transparent text-sm font-medium"
+					style={{ color: "color-mix(in srgb, white 60%, transparent)" }}
+					type="button"
+				>
+					{GAME_CANVAS_COPY.FIRST_PERSON_LOCK_HINT}
+				</button>
+			)}
 			<Canvas
 				aria-label={GAME_CANVAS_COPY.CANVAS_ARIA_LABEL}
 				camera={{

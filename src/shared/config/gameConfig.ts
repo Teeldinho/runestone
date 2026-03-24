@@ -48,7 +48,7 @@ export const CAMERA_CONFIG = {
 	TOP_DOWN: {
 		FOV: 60,
 		HEIGHT: 16,
-		DISTANCE: 0.1,
+		DISTANCE: 3.0,
 		MIN_ZOOM: 0.7,
 		MAX_ZOOM: 1.6,
 		PAN_SPEED: 1.3,
@@ -67,6 +67,8 @@ export const CAMERA_CONFIG = {
 		ROTATE_SPEED: 0.8,
 		PAN_SPEED: 0.8,
 		ZOOM_SPEED: 1,
+		MIN_POLAR_ANGLE: 0.1,
+		MAX_POLAR_ANGLE: Math.PI * 0.48,
 	},
 } as const;
 
