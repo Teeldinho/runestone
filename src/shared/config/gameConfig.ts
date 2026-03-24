@@ -42,7 +42,7 @@ export const ENEMY_CONFIG = {
 export const CAMERA_CONFIG = {
 	THIRD_PERSON: {
 		FOV: 65,
-		OFFSET: [0, 2.5, 4.8],
+		OFFSET: [0, 2.5, -4.8],
 		LERP_SPEED: 5,
 	},
 	TOP_DOWN: {

@@ -50,12 +50,15 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 
 		if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
 			targetPosition.current.set(px, py + 1.6, pz);
-			targetLookAt.current.set(px, py + 1.6, pz - 1);
+			targetLookAt.current.set(px, py + 1.6, pz + 1);
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON) {
 			const [ox, oy, oz] = CAMERA_CONFIG.THIRD_PERSON.OFFSET;
 			targetPosition.current.set(px + ox, py + oy, pz + oz);
 			targetLookAt.current.set(px, py + 1, pz);
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.TOP_DOWN) {
+			if (isModeChange) {
+				camera.up.set(0, 1, 0);
+			}
 			targetPosition.current.set(
 				px,
 				CAMERA_CONFIG.TOP_DOWN.HEIGHT,
@@ -69,13 +72,22 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 			targetLookAt.current.set(tx, ty, tz);
 		}
 
-		if (cameraStateSnapshot.mode !== CAMERA_MODES.FREE_ORBITAL) {
+		if (
+			cameraStateSnapshot.mode !== CAMERA_MODES.FREE_ORBITAL &&
+			cameraStateSnapshot.mode !== CAMERA_MODES.FIRST_PERSON
+		) {
 			if (isModeChange) {
 				camera.position.copy(targetPosition.current);
 			} else {
 				camera.position.lerp(targetPosition.current, LERP_ALPHA);
 			}
 			camera.lookAt(targetLookAt.current);
+		} else if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
+			if (isModeChange) {
+				camera.position.copy(targetPosition.current);
+			} else {
+				camera.position.lerp(targetPosition.current, LERP_ALPHA);
+			}
 		}
 
 		const fovDiff = Math.abs(perspCamera.fov - cameraStateSnapshot.fov);
