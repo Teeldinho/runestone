@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import type { RoomId } from "@/entities/dungeon";
-import { FLOOR_IDS } from "@/entities/dungeon";
-import { createFloorOneMachine } from "@/entities/dungeon";
-import { PLAYER_ENTITY_CONFIG, PLAYER_STATES, usePlayerMachineRuntime } from "@/entities/player";
+import { createFloorOneMachine, FLOOR_IDS } from "@/entities/dungeon";
+import {
+	PLAYER_ENTITY_CONFIG,
+	PLAYER_STATES,
+	usePlayerMachineRuntime,
+} from "@/entities/player";
 import { createDungeonFloorLayout } from "@/entities/room";
 import { useSubmitDungeonScore } from "@/entities/score";
 import { AUDIO_SPRITE_IDS, useAudioController } from "@/features/audio-manager";

@@ -1,6 +1,6 @@
 export { createTorchSettings } from "./createTorchSettings";
-export { getRoomWorldPosition } from "./getRoomWorldPosition";
 export { shouldSubmitFloorScore } from "./floorCompletion";
+export { getRoomWorldPosition } from "./getRoomWorldPosition";
 export type {
 	EnemyMeshSettings,
 	SceneRoomMeshSettings,

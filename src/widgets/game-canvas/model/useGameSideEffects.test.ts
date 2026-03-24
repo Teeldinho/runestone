@@ -28,8 +28,7 @@ vi.mock("@/shared/lib/playerPositionStore", () => ({
 }));
 
 vi.mock("@/entities/dungeon", async (importOriginal) => {
-	const original =
-		await importOriginal<typeof import("@/entities/dungeon")>();
+	const original = await importOriginal<typeof import("@/entities/dungeon")>();
 	return { ...original };
 });
 
