@@ -35,17 +35,12 @@ describe("useAudio", () => {
 		mockStartBackgroundMusicLoop.mockResolvedValue(undefined);
 	});
 
-	it("starts paused and transitions to playing on play request", async () => {
+	it("starts playing and calls startBackgroundMusicLoop on mount", async () => {
 		const { result } = renderHook(() => useAudio());
 
-		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PAUSED);
-
-		act(() => {
-			result.current.handleAudioPlayRequest();
-		});
+		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PLAYING);
 
 		await waitFor(() => {
-			expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PLAYING);
 			expect(mockStartBackgroundMusicLoop).toHaveBeenCalledTimes(1);
 		});
 	});
