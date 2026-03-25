@@ -10,6 +10,7 @@ export default defineConfig([
 			"fsd/no-higher-level-imports": "error",
 			"fsd/insignificant-slice": "off",
 			"fsd/segments-by-purpose": "off",
+			"fsd/shared-lib-grouping": "off",
 		},
 	},
 	{
