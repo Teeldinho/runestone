@@ -15,3 +15,4 @@ export type {
 	UseEnemyMeshViewModelResult,
 } from "./useEnemyMeshViewModel";
 export { useEnemyMeshViewModel } from "./useEnemyMeshViewModel";
+export { useEnemyMovement } from "./useEnemyMovement";

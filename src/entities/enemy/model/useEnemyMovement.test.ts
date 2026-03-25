@@ -1,3 +1,5 @@
+// @vitest-environment happy-dom
+
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -59,9 +61,7 @@ describe("useEnemyMovement", () => {
 			}),
 		);
 		const nextPos = result.current.getNextPosition(DELTA, current);
-		const moved =
-			nextPos[0] !== current[0] ||
-			nextPos[2] !== current[2];
+		const moved = nextPos[0] !== current[0] || nextPos[2] !== current[2];
 		expect(moved).toBe(true);
 	});
 });

@@ -1,3 +1,4 @@
+export { computeEnemyMovement } from "./computeEnemyMovement";
 export {
 	applyDamageToEnemy,
 	applyDeathToEnemy,

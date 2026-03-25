@@ -1,4 +1,5 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 import type { RapierRigidBody } from "@react-three/rapier";
 import { RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
@@ -14,6 +15,7 @@ import {
 	ENEMY_GLTF_CONFIG,
 } from "../config";
 import { useEnemyMeshViewModel } from "../model/useEnemyMeshViewModel";
+import { useEnemyMovement } from "../model/useEnemyMovement";
 
 useGLTF.preload(ENEMY_GLTF_CONFIG.CHARACTER.PATH);
 useGLTF.preload(ENEMY_ANIMATION_PATHS.MOVEMENT_BASIC);
@@ -40,13 +42,31 @@ export function EnemyMesh({
 	const rigidBodyRef = useRef<RapierRigidBody>(null);
 	const groupRef = useRef<THREE.Group>(null);
 
-	const { glowSettings, animationName } = useEnemyMeshViewModel({
+	const { glowSettings, animationName, behaviorState } = useEnemyMeshViewModel({
 		id,
 		roomId,
 		position,
 		playerPosition,
 		onDead,
 		onAttack,
+	});
+
+	const { getNextPosition } = useEnemyMovement({
+		behaviorState,
+		playerPosition,
+		patrolCenter: position,
+	});
+
+	useFrame((_, delta) => {
+		const body = rigidBodyRef.current;
+		if (!body) return;
+		const current = body.translation();
+		const nextPos = getNextPosition(delta, [current.x, current.y, current.z]);
+		body.setNextKinematicTranslation({
+			x: nextPos[0],
+			y: nextPos[1],
+			z: nextPos[2],
+		});
 	});
 
 	const { scene: rawScene } = useGLTF(ENEMY_GLTF_CONFIG.CHARACTER.PATH);
