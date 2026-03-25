@@ -7,6 +7,7 @@ import { ROOM_ENTITY_CONFIG } from "@/entities/room";
 
 import {
 	createSceneCorridorMeshSettings,
+	createSceneEnemyMeshSettings,
 	createSceneRoomMeshSettings,
 	createSceneSpawnPosition,
 } from "./sceneEnvironmentMappers";
@@ -23,6 +24,16 @@ const ROOM_LAYOUT_FIXTURE: DungeonRoomLayout[] = [
 		roomId: ROOM_IDS.LIBRARY,
 		label: ROOM_LABELS[ROOM_IDS.LIBRARY],
 		position: [0, 0, -20],
+		isFinal: false,
+		isInitial: false,
+	},
+] as const;
+
+const GUARD_ROOM_FIXTURE: DungeonRoomLayout[] = [
+	{
+		roomId: ROOM_IDS.GUARD_ROOM,
+		label: ROOM_LABELS[ROOM_IDS.GUARD_ROOM],
+		position: [0, 0, 0],
 		isFinal: false,
 		isInitial: false,
 	},
@@ -80,5 +91,28 @@ describe("sceneEnvironmentMappers", () => {
 		expect(
 			createSceneSpawnPosition(ROOM_LAYOUT_FIXTURE, [12, 0.45, 18]),
 		).toEqual([0, 0.45, -40]);
+	});
+
+	it("returns empty array when guard room is not found", () => {
+		expect(
+			createSceneEnemyMeshSettings(ROOM_LAYOUT_FIXTURE, ROOM_IDS.GUARD_ROOM),
+		).toEqual([]);
+	});
+
+	it("spawns 2 enemies at offset positions in the guard room", () => {
+		const enemies = createSceneEnemyMeshSettings(
+			GUARD_ROOM_FIXTURE,
+			ROOM_IDS.GUARD_ROOM,
+		);
+
+		expect(enemies).toHaveLength(2);
+		expect(enemies[0].id).toBe(`${ROOM_IDS.GUARD_ROOM}-enemy-1`);
+		expect(enemies[1].id).toBe(`${ROOM_IDS.GUARD_ROOM}-enemy-2`);
+		expect(enemies[0].roomId).toBe(ROOM_IDS.GUARD_ROOM);
+		expect(enemies[1].roomId).toBe(ROOM_IDS.GUARD_ROOM);
+		expect(enemies[0].position[0]).toBe(-2);
+		expect(enemies[0].position[2]).toBe(2);
+		expect(enemies[1].position[0]).toBe(2);
+		expect(enemies[1].position[2]).toBe(-2);
 	});
 });
