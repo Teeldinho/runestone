@@ -16,6 +16,7 @@ type RoomMeshProps = {
 	surface: RoomSurfaceSettings;
 	wallOpenings?: WallOpening[];
 	isTreasury?: boolean;
+	showGrid?: boolean;
 };
 
 const HALF_WIDTH = ROOM_CONFIG.WIDTH / 2;
@@ -26,7 +27,6 @@ const WALL_Y = WALL_HALF_HEIGHT;
 useGLTF.preload(ROOM_GLTF_CONFIG.FLOOR_TILE.PATH);
 useGLTF.preload(ROOM_GLTF_CONFIG.WALL.PATH);
 useGLTF.preload(ROOM_GLTF_CONFIG.WALL_DOORWAY.PATH);
-useGLTF.preload(ROOM_GLTF_CONFIG.WALL_CORNER.PATH);
 useGLTF.preload(ROOM_GLTF_CONFIG.COLUMN.PATH);
 useGLTF.preload(ROOM_GLTF_CONFIG.TORCH.PATH);
 useGLTF.preload(ROOM_GLTF_CONFIG.CHEST.PATH);
@@ -36,6 +36,7 @@ export function RoomMesh({
 	surface,
 	wallOpenings = [],
 	isTreasury = false,
+	showGrid = false,
 }: RoomMeshProps) {
 	const { rune, grid, pillar } = surface;
 	const hasOpening = (side: WallOpening) => wallOpenings.includes(side);
@@ -43,7 +44,6 @@ export function RoomMesh({
 	const floorScene = useGLTF(ROOM_GLTF_CONFIG.FLOOR_TILE.PATH).scene;
 	const wallScene = useGLTF(ROOM_GLTF_CONFIG.WALL.PATH).scene;
 	const doorwayScene = useGLTF(ROOM_GLTF_CONFIG.WALL_DOORWAY.PATH).scene;
-	const cornerScene = useGLTF(ROOM_GLTF_CONFIG.WALL_CORNER.PATH).scene;
 	const columnScene = useGLTF(ROOM_GLTF_CONFIG.COLUMN.PATH).scene;
 	const torchScene = useGLTF(ROOM_GLTF_CONFIG.TORCH.PATH).scene;
 	const chestScene = useGLTF(ROOM_GLTF_CONFIG.CHEST.PATH).scene;
@@ -86,7 +86,7 @@ export function RoomMesh({
 
 			{/* Floor - physics collider (invisible) */}
 			<RigidBody type="fixed" colliders="cuboid">
-				<mesh position={[0, -0.35, 0]} visible={false}>
+				<mesh position={[0, -0.1, 0]} visible={false}>
 					<boxGeometry args={[ROOM_CONFIG.WIDTH, 0.3, ROOM_CONFIG.DEPTH]} />
 				</mesh>
 			</RigidBody>
@@ -114,11 +114,12 @@ export function RoomMesh({
 				/>
 			</mesh>
 
-			{/* Grid overlay (keep for XState inspector aesthetic) */}
-			<gridHelper
-				args={[grid.size, grid.divisions, rune.sealedColor, pillar.color]}
-				position={[0, 0.04, 0]}
-			/>
+			{showGrid && (
+				<gridHelper
+					args={[grid.size, grid.divisions, rune.sealedColor, pillar.color]}
+					position={[0, 0.04, 0]}
+				/>
+			)}
 
 			{/* Treasury chest */}
 			{isTreasury && (
@@ -130,162 +131,180 @@ export function RoomMesh({
 				/>
 			)}
 
-			{/* North wall */}
-			{hasOpening("north") ? (
-				<primitive
-					object={doorwayScene.clone()}
-					position={[0, WALL_Y, -HALF_DEPTH]}
-					rotation={[0, 0, 0]}
-					scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
-				/>
-			) : (
-				<RigidBody type="fixed" colliders="cuboid">
-					<primitive
-						object={wallScene.clone()}
-						position={[0, WALL_Y, -HALF_DEPTH]}
-						rotation={[0, 0, 0]}
-						scale={ROOM_GLTF_CONFIG.WALL.SCALE}
-					/>
-					<mesh visible={false} position={[0, 0, -HALF_DEPTH]}>
-						<boxGeometry
-							args={[
-								ROOM_CONFIG.WIDTH,
-								ROOM_CONFIG.HEIGHT,
-								ROOM_CONFIG.WALL_THICKNESS,
-							]}
+			{/* North wall — tiled segments */}
+			{[-4, 0, 4].map((x) => {
+				if (hasOpening("north") && x === 0) {
+					return (
+						<primitive
+							key="doorway-north"
+							object={doorwayScene.clone()}
+							position={[0, WALL_Y, -HALF_DEPTH]}
+							rotation={[0, 0, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
 						/>
-					</mesh>
-				</RigidBody>
-			)}
+					);
+				}
+				return (
+					<RigidBody key={`north-${x}`} type="fixed" colliders="cuboid">
+						<primitive
+							object={wallScene.clone()}
+							position={[x, WALL_Y, -HALF_DEPTH]}
+							rotation={[0, 0, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL.SCALE}
+						/>
+						<mesh visible={false} position={[x, 0, -HALF_DEPTH]}>
+							<boxGeometry
+								args={[4, ROOM_CONFIG.HEIGHT, ROOM_CONFIG.WALL_THICKNESS]}
+							/>
+						</mesh>
+					</RigidBody>
+				);
+			})}
 
-			{/* North wall torch */}
-			{!hasOpening("north") && (
-				<primitive
-					object={torchScene.clone()}
-					position={[0, ROOM_LIGHT_CONFIG.HEIGHT, -HALF_DEPTH + 0.2]}
-					scale={ROOM_GLTF_CONFIG.TORCH.SCALE}
-				/>
-			)}
-
-			{/* South wall */}
-			{hasOpening("south") ? (
-				<primitive
-					object={doorwayScene.clone()}
-					position={[0, WALL_Y, HALF_DEPTH]}
-					rotation={[0, Math.PI, 0]}
-					scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
-				/>
-			) : (
-				<RigidBody type="fixed" colliders="cuboid">
+			{/* North wall torches */}
+			{[-4, 0, 4].map((x) => {
+				if (hasOpening("north") && x === 0) return null;
+				return (
 					<primitive
-						object={wallScene.clone()}
-						position={[0, WALL_Y, HALF_DEPTH]}
+						key={`torch-north-${x}`}
+						object={torchScene.clone()}
+						position={[x, ROOM_LIGHT_CONFIG.HEIGHT, -HALF_DEPTH + 0.2]}
+						scale={ROOM_GLTF_CONFIG.TORCH.SCALE}
+					/>
+				);
+			})}
+
+			{/* South wall — tiled segments */}
+			{[-4, 0, 4].map((x) => {
+				if (hasOpening("south") && x === 0) {
+					return (
+						<primitive
+							key="doorway-south"
+							object={doorwayScene.clone()}
+							position={[0, WALL_Y, HALF_DEPTH]}
+							rotation={[0, Math.PI, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
+						/>
+					);
+				}
+				return (
+					<RigidBody key={`south-${x}`} type="fixed" colliders="cuboid">
+						<primitive
+							object={wallScene.clone()}
+							position={[x, WALL_Y, HALF_DEPTH]}
+							rotation={[0, Math.PI, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL.SCALE}
+						/>
+						<mesh visible={false} position={[x, 0, HALF_DEPTH]}>
+							<boxGeometry
+								args={[4, ROOM_CONFIG.HEIGHT, ROOM_CONFIG.WALL_THICKNESS]}
+							/>
+						</mesh>
+					</RigidBody>
+				);
+			})}
+
+			{/* South wall torches */}
+			{[-4, 0, 4].map((x) => {
+				if (hasOpening("south") && x === 0) return null;
+				return (
+					<primitive
+						key={`torch-south-${x}`}
+						object={torchScene.clone()}
+						position={[x, ROOM_LIGHT_CONFIG.HEIGHT, HALF_DEPTH - 0.2]}
 						rotation={[0, Math.PI, 0]}
-						scale={ROOM_GLTF_CONFIG.WALL.SCALE}
+						scale={ROOM_GLTF_CONFIG.TORCH.SCALE}
 					/>
-					<mesh visible={false} position={[0, 0, HALF_DEPTH]}>
-						<boxGeometry
-							args={[
-								ROOM_CONFIG.WIDTH,
-								ROOM_CONFIG.HEIGHT,
-								ROOM_CONFIG.WALL_THICKNESS,
-							]}
+				);
+			})}
+
+			{/* East wall — tiled segments */}
+			{[-4, 0, 4].map((z) => {
+				if (hasOpening("east") && z === 0) {
+					return (
+						<primitive
+							key="doorway-east"
+							object={doorwayScene.clone()}
+							position={[HALF_WIDTH, WALL_Y, 0]}
+							rotation={[0, -Math.PI / 2, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
 						/>
-					</mesh>
-				</RigidBody>
-			)}
+					);
+				}
+				return (
+					<RigidBody key={`east-${z}`} type="fixed" colliders="cuboid">
+						<primitive
+							object={wallScene.clone()}
+							position={[HALF_WIDTH, WALL_Y, z]}
+							rotation={[0, -Math.PI / 2, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL.SCALE}
+						/>
+						<mesh visible={false} position={[HALF_WIDTH, 0, z]}>
+							<boxGeometry
+								args={[ROOM_CONFIG.WALL_THICKNESS, ROOM_CONFIG.HEIGHT, 4]}
+							/>
+						</mesh>
+					</RigidBody>
+				);
+			})}
 
-			{/* South wall torch */}
-			{!hasOpening("south") && (
-				<primitive
-					object={torchScene.clone()}
-					position={[0, ROOM_LIGHT_CONFIG.HEIGHT, HALF_DEPTH - 0.2]}
-					rotation={[0, Math.PI, 0]}
-					scale={ROOM_GLTF_CONFIG.TORCH.SCALE}
-				/>
-			)}
-
-			{/* East wall */}
-			{hasOpening("east") ? (
-				<primitive
-					object={doorwayScene.clone()}
-					position={[HALF_WIDTH, WALL_Y, 0]}
-					rotation={[0, -Math.PI / 2, 0]}
-					scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
-				/>
-			) : (
-				<RigidBody type="fixed" colliders="cuboid">
+			{/* East wall torches */}
+			{[-4, 0, 4].map((z) => {
+				if (hasOpening("east") && z === 0) return null;
+				return (
 					<primitive
-						object={wallScene.clone()}
-						position={[HALF_WIDTH, WALL_Y, 0]}
+						key={`torch-east-${z}`}
+						object={torchScene.clone()}
+						position={[HALF_WIDTH - 0.2, ROOM_LIGHT_CONFIG.HEIGHT, z]}
 						rotation={[0, -Math.PI / 2, 0]}
-						scale={ROOM_GLTF_CONFIG.WALL.SCALE}
+						scale={ROOM_GLTF_CONFIG.TORCH.SCALE}
 					/>
-					<mesh visible={false} position={[HALF_WIDTH, 0, 0]}>
-						<boxGeometry
-							args={[
-								ROOM_CONFIG.WALL_THICKNESS,
-								ROOM_CONFIG.HEIGHT,
-								ROOM_CONFIG.DEPTH,
-							]}
-						/>
-					</mesh>
-				</RigidBody>
-			)}
+				);
+			})}
 
-			{/* West wall */}
-			{hasOpening("west") ? (
-				<primitive
-					object={doorwayScene.clone()}
-					position={[-HALF_WIDTH, WALL_Y, 0]}
-					rotation={[0, Math.PI / 2, 0]}
-					scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
-				/>
-			) : (
-				<RigidBody type="fixed" colliders="cuboid">
+			{/* West wall — tiled segments */}
+			{[-4, 0, 4].map((z) => {
+				if (hasOpening("west") && z === 0) {
+					return (
+						<primitive
+							key="doorway-west"
+							object={doorwayScene.clone()}
+							position={[-HALF_WIDTH, WALL_Y, 0]}
+							rotation={[0, Math.PI / 2, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
+						/>
+					);
+				}
+				return (
+					<RigidBody key={`west-${z}`} type="fixed" colliders="cuboid">
+						<primitive
+							object={wallScene.clone()}
+							position={[-HALF_WIDTH, WALL_Y, z]}
+							rotation={[0, Math.PI / 2, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL.SCALE}
+						/>
+						<mesh visible={false} position={[-HALF_WIDTH, 0, z]}>
+							<boxGeometry
+								args={[ROOM_CONFIG.WALL_THICKNESS, ROOM_CONFIG.HEIGHT, 4]}
+							/>
+						</mesh>
+					</RigidBody>
+				);
+			})}
+
+			{/* West wall torches */}
+			{[-4, 0, 4].map((z) => {
+				if (hasOpening("west") && z === 0) return null;
+				return (
 					<primitive
-						object={wallScene.clone()}
-						position={[-HALF_WIDTH, WALL_Y, 0]}
+						key={`torch-west-${z}`}
+						object={torchScene.clone()}
+						position={[-HALF_WIDTH + 0.2, ROOM_LIGHT_CONFIG.HEIGHT, z]}
 						rotation={[0, Math.PI / 2, 0]}
-						scale={ROOM_GLTF_CONFIG.WALL.SCALE}
+						scale={ROOM_GLTF_CONFIG.TORCH.SCALE}
 					/>
-					<mesh visible={false} position={[-HALF_WIDTH, 0, 0]}>
-						<boxGeometry
-							args={[
-								ROOM_CONFIG.WALL_THICKNESS,
-								ROOM_CONFIG.HEIGHT,
-								ROOM_CONFIG.DEPTH,
-							]}
-						/>
-					</mesh>
-				</RigidBody>
-			)}
-
-			{/* Wall corners — GLTF */}
-			<primitive
-				object={cornerScene.clone()}
-				position={[-HALF_WIDTH, WALL_Y, -HALF_DEPTH]}
-				rotation={[0, 0, 0]}
-				scale={ROOM_GLTF_CONFIG.WALL_CORNER.SCALE}
-			/>
-			<primitive
-				object={cornerScene.clone()}
-				position={[HALF_WIDTH, WALL_Y, -HALF_DEPTH]}
-				rotation={[0, Math.PI / 2, 0]}
-				scale={ROOM_GLTF_CONFIG.WALL_CORNER.SCALE}
-			/>
-			<primitive
-				object={cornerScene.clone()}
-				position={[HALF_WIDTH, WALL_Y, HALF_DEPTH]}
-				rotation={[0, Math.PI, 0]}
-				scale={ROOM_GLTF_CONFIG.WALL_CORNER.SCALE}
-			/>
-			<primitive
-				object={cornerScene.clone()}
-				position={[-HALF_WIDTH, WALL_Y, HALF_DEPTH]}
-				rotation={[0, -Math.PI / 2, 0]}
-				scale={ROOM_GLTF_CONFIG.WALL_CORNER.SCALE}
-			/>
+				);
+			})}
 		</group>
 	);
 }

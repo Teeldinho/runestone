@@ -8,3 +8,4 @@ export {
 	checkIsPlayerInDetectionRange,
 } from "./enemyMachineGuards";
 export { resolvePlayerPosition } from "./resolvePlayerPosition";
+export { selectEnemyAnimation } from "./selectEnemyAnimation";

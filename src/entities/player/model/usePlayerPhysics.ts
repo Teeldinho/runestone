@@ -2,7 +2,8 @@ import { useFrame } from "@react-three/fiber";
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
-
+import { getCameraMode } from "@/shared/lib/cameraModeStore";
+import { getCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
 import {
 	consumePlayerTeleportTarget,
 	setPlayerPosition,
@@ -51,19 +52,31 @@ export const usePlayerPhysics = ({
 		const speed = isSprinting
 			? PLAYER_ENTITY_CONFIG.MOVEMENT.SPRINT_SPEED
 			: PLAYER_ENTITY_CONFIG.MOVEMENT.SPEED;
-		const currentLinvel = body.linvel();
 
 		if (isMoving) {
+			const currentLinvel = body.linvel();
+			const mode = getCameraMode();
+			const isRelativeMode = mode === "thirdPerson" || mode === "firstPerson";
+
+			let vx = velocity[0] * speed;
+			let vz = velocity[2] * speed;
+
+			if (isRelativeMode) {
+				const azimuth = getCameraAzimuth();
+				const cos = Math.cos(azimuth);
+				const sin = Math.sin(azimuth);
+				vx = (velocity[0] * cos + velocity[2] * sin) * speed;
+				vz = (-velocity[0] * sin + velocity[2] * cos) * speed;
+			}
+
 			body.setLinvel(
 				{
-					x: velocity[0] * speed,
+					x: vx,
 					y: currentLinvel.y,
-					z: velocity[2] * speed,
+					z: vz,
 				},
 				true,
 			);
-		} else {
-			body.setLinvel({ x: 0, y: currentLinvel.y, z: 0 }, true);
 		}
 	});
 

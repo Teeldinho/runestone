@@ -6,6 +6,11 @@ export {
 export type { EnemyEvent } from "./enemyEvents";
 export { ENEMY_EVENTS } from "./enemyEvents";
 export {
+	ENEMY_ANIMATION_NAMES,
+	ENEMY_ANIMATION_PATHS,
+	ENEMY_GLTF_CONFIG,
+} from "./enemyGltfConfig";
+export {
 	ENEMY_DETECT_DELAY_MS,
 	ENEMY_MACHINE_DEFAULTS,
 	ENEMY_MACHINE_RUNTIME_ERRORS,

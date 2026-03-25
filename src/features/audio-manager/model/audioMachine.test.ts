@@ -6,10 +6,10 @@ import { AUDIO_EVENTS, AUDIO_MACHINE_STATES } from "../config";
 import { audioMachine } from "./audioMachine";
 
 describe("audioMachine", () => {
-	it("starts in paused state", () => {
+	it("starts in playing state", () => {
 		const audioActor = createActor(audioMachine).start();
 
-		expect(audioActor.getSnapshot().value).toBe(AUDIO_MACHINE_STATES.PAUSED);
+		expect(audioActor.getSnapshot().value).toBe(AUDIO_MACHINE_STATES.PLAYING);
 	});
 
 	it("transitions between playing and paused", () => {
@@ -29,9 +29,6 @@ describe("audioMachine", () => {
 	it("restores previous audible state after unmuting", () => {
 		const audioActor = createActor(audioMachine).start();
 
-		audioActor.send({
-			type: AUDIO_EVENTS.PLAY_REQUESTED,
-		});
 		audioActor.send({
 			type: AUDIO_EVENTS.MUTE_REQUESTED,
 		});

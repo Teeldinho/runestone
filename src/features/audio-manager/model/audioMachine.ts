@@ -22,7 +22,7 @@ export const audioMachine = setup({
 	},
 }).createMachine({
 	id: AUDIO_MACHINE_ID,
-	initial: AUDIO_MACHINE_STATES.PAUSED,
+	initial: AUDIO_MACHINE_STATES.PLAYING,
 	context: AUDIO_INITIAL_CONTEXT as AudioMachineContext,
 	states: {
 		[AUDIO_MACHINE_STATES.PAUSED]: {

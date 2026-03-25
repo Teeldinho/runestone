@@ -10,6 +10,7 @@ import {
 	ENEMY_GLOW_EMISSIVE_INTENSITY_BY_STATE,
 	ENEMY_MACHINE_STATES,
 } from "../config";
+import { selectEnemyAnimation } from "../lib";
 import { createEnemyBehaviorMachine } from "./enemyBehaviorMachine";
 import type { EnemyBehaviorState, EnemyGlowSettings } from "./types";
 
@@ -25,6 +26,7 @@ type UseEnemyMeshViewModelInput = {
 type UseEnemyMeshViewModelResult = {
 	behaviorState: EnemyBehaviorState;
 	glowSettings: EnemyGlowSettings;
+	animationName: string;
 	send: ReturnType<
 		typeof useMachine<ReturnType<typeof createEnemyBehaviorMachine>>
 	>[1];
@@ -76,6 +78,7 @@ export const useEnemyMeshViewModel = ({
 			color: ENEMY_GLOW_COLORS_BY_STATE[behaviorState],
 			emissiveIntensity: ENEMY_GLOW_EMISSIVE_INTENSITY_BY_STATE[behaviorState],
 		},
+		animationName: selectEnemyAnimation(behaviorState),
 		send,
 	};
 };

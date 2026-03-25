@@ -8,6 +8,7 @@ import type { CameraStateSnapshot } from "@/features/camera-system";
 import { CAMERA_MODES } from "@/features/camera-system";
 import { CAMERA_CONFIG, CAMERA_TRANSITION_MS } from "@/shared/config";
 import { setCameraMode } from "@/shared/lib/cameraModeStore";
+import { setCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
 import { getPlayerPosition } from "@/shared/lib/playerPositionStore";
 
 type CameraRigProps = {
@@ -23,6 +24,10 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 	const targetLookAt = useRef(new THREE.Vector3());
 	const prevModeRef = useRef<string | undefined>(undefined);
 	const pointerLockRef = useRef<{ isLocked: boolean } | null>(null);
+	const thirdPersonOrbitRef = useRef<{
+		target: THREE.Vector3;
+		update: () => void;
+	} | null>(null);
 
 	const handleFirstPersonLock = useCallback(() => {
 		// Pointer locked
@@ -68,7 +73,8 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 
 		if (
 			cameraStateSnapshot.mode !== CAMERA_MODES.FREE_ORBITAL &&
-			cameraStateSnapshot.mode !== CAMERA_MODES.FIRST_PERSON
+			cameraStateSnapshot.mode !== CAMERA_MODES.FIRST_PERSON &&
+			cameraStateSnapshot.mode !== CAMERA_MODES.THIRD_PERSON
 		) {
 			if (isModeChange) {
 				camera.position.copy(targetPosition.current);
@@ -85,6 +91,20 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 			if (!pointerLockRef.current?.isLocked) {
 				camera.lookAt(targetLookAt.current);
 			}
+		} else if (cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON) {
+			if (thirdPersonOrbitRef.current) {
+				thirdPersonOrbitRef.current.target.set(px, py + 1, pz);
+				thirdPersonOrbitRef.current.update();
+			} else if (isModeChange) {
+				camera.position.copy(targetPosition.current);
+			}
+		}
+
+		const dir = new THREE.Vector3();
+		camera.getWorldDirection(dir);
+		dir.y = 0;
+		if (dir.lengthSq() > 0) {
+			setCameraAzimuth(Math.atan2(dir.x, dir.z));
 		}
 
 		const fovDiff = Math.abs(perspCamera.fov - cameraStateSnapshot.fov);
@@ -107,6 +127,35 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 				minDistance={CAMERA_CONFIG.FREE_ORBITAL.MIN_DISTANCE}
 				minPolarAngle={CAMERA_CONFIG.FREE_ORBITAL.MIN_POLAR_ANGLE}
 				target={[0, 0, 0]}
+			/>
+		);
+	}
+
+	if (mode === CAMERA_MODES.THIRD_PERSON) {
+		return (
+			<OrbitControls
+				ref={thirdPersonOrbitRef as React.RefObject<never>}
+				makeDefault
+				enablePan
+				enableZoom
+				enableRotate
+				maxDistance={12}
+				minDistance={3}
+				maxPolarAngle={Math.PI * 0.48}
+				minPolarAngle={0.2}
+			/>
+		);
+	}
+
+	if (mode === CAMERA_MODES.TOP_DOWN) {
+		return (
+			<OrbitControls
+				makeDefault
+				enableRotate={false}
+				enablePan
+				enableZoom
+				maxDistance={45}
+				minDistance={20}
 			/>
 		);
 	}
