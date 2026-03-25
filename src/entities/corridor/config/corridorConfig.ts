@@ -37,3 +37,10 @@ export const CORRIDOR_FLOOR_COLLIDER = {
 	HALF_HEIGHT: 0.3,
 	POSITION_Y: -0.18,
 } as const;
+
+export const CORRIDOR_LIGHT_CONFIG = {
+	INTENSITY: 4,
+	DECAY: 2,
+	HEIGHT: 2.0,
+	COLOR: "#ffb347",
+} as const;

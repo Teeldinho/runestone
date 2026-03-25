@@ -1,6 +1,10 @@
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 
-import { CORRIDOR_ENTITY_CONFIG, CORRIDOR_FLOOR_COLLIDER } from "../config";
+import {
+	CORRIDOR_ENTITY_CONFIG,
+	CORRIDOR_FLOOR_COLLIDER,
+	CORRIDOR_LIGHT_CONFIG,
+} from "../config";
 import type { CorridorMeshSettings } from "../model";
 
 type CorridorMeshProps = {
@@ -16,6 +20,13 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 			position={settings.position}
 			rotation={[0, settings.rotationYRad, 0]}
 		>
+			<pointLight
+				color={CORRIDOR_LIGHT_CONFIG.COLOR}
+				decay={CORRIDOR_LIGHT_CONFIG.DECAY}
+				intensity={CORRIDOR_LIGHT_CONFIG.INTENSITY}
+				position={[0, CORRIDOR_LIGHT_CONFIG.HEIGHT, 0]}
+			/>
+
 			{/* Floor - visual */}
 			<mesh castShadow receiveShadow>
 				<boxGeometry
