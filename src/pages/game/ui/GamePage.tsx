@@ -1,5 +1,5 @@
 import { Volume2, VolumeX } from "lucide-react";
-import { useCameraMachine } from "@/features/camera-system";
+import { useCameraSystem } from "@/features/camera-system";
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
 import { ScrollArea } from "@/shared/ui";
@@ -26,7 +26,7 @@ export function GamePage() {
 		playerMaxHp,
 	} = useGamePage();
 	const settings = useSettingsForm();
-	const { cameraStateSnapshot, handleCameraModeSwitch } = useCameraMachine();
+	const { cameraStateSnapshot, handleCameraModeSwitch } = useCameraSystem();
 
 	return (
 		<main
