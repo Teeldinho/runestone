@@ -7,6 +7,9 @@ export const ENEMY_PATROL_REACH_THRESHOLD = 0.3;
 export const ENEMY_PATROL_RADIUS = 3.0;
 
 export const ENEMY_ENTITY_CONFIG = {
+	PHYSICS: {
+		LINEAR_DAMPING: 8,
+	},
 	BODY: {
 		RADIUS: 0.22,
 		HEIGHT: 0.85,

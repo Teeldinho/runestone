@@ -62,11 +62,15 @@ export function EnemyMesh({
 		if (!body) return;
 		const current = body.translation();
 		const nextPos = getNextPosition(delta, [current.x, current.y, current.z]);
-		body.setNextKinematicTranslation({
-			x: nextPos[0],
-			y: nextPos[1],
-			z: nextPos[2],
-		});
+		const currentLinvel = body.linvel();
+		body.setLinvel(
+			{
+				x: (nextPos[0] - current.x) / delta,
+				y: currentLinvel.y,
+				z: (nextPos[2] - current.z) / delta,
+			},
+			true,
+		);
 	});
 
 	const { scene: rawScene } = useGLTF(ENEMY_GLTF_CONFIG.CHARACTER.PATH);
@@ -99,11 +103,14 @@ export function EnemyMesh({
 		<RigidBody
 			ref={rigidBodyRef as RefObject<RapierRigidBody>}
 			colliders="hull"
+			linearDamping={ENEMY_ENTITY_CONFIG.PHYSICS.LINEAR_DAMPING}
+			lockRotations
 			position={position}
-			type="kinematicPosition"
+			type="dynamic"
 		>
 			<group ref={groupRef}>
 				<primitive
+					frustumCulled={false}
 					object={clonedScene}
 					position={[0, ENEMY_GLTF_CONFIG.CHARACTER.POSITION_Y, 0]}
 					scale={ENEMY_GLTF_CONFIG.CHARACTER.SCALE}
