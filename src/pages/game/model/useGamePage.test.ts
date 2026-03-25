@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { DungeonContext } from "@/entities/dungeon";
@@ -62,7 +62,10 @@ vi.mock("@/entities/dungeon", async (importOriginal) => {
 
 vi.mock("@/entities/room", () => ({
 	createDungeonFloorLayout: vi.fn(() => ({
-		rooms: [{ roomId: "entrance", position: [0, 0, 0], isInitial: true }],
+		rooms: [
+			{ roomId: "entrance", position: [0, 0, 0], isInitial: true },
+			{ roomId: "guardRoom", position: [20, 0, 0], isInitial: false },
+		],
 		corridors: [],
 		transitions: [],
 	})),
@@ -120,5 +123,62 @@ describe("useGamePage", () => {
 		expect(
 			vi.mocked(useAudioController)().handleAudioPlayRequest,
 		).toHaveBeenCalled();
+	});
+});
+
+describe("room transition teleport", () => {
+	it("calls setPlayerTeleportTarget when currentRoomId changes", async () => {
+		const { setPlayerTeleportTarget } = await import(
+			"@/shared/lib/playerPositionStore"
+		);
+
+		const machineContext: DungeonContext = {
+			currentFloorId: FLOOR_IDS.FLOOR_ONE,
+			currentRoomId: ROOM_IDS.ENTRANCE,
+			discoveredRooms: [ROOM_IDS.ENTRANCE],
+			hasTreasureKey: false,
+			enemiesRemaining: 0,
+		};
+
+		vi.mocked(useGameMachine).mockReturnValue({
+			actionButtons: [],
+			currentRoomLabel: "Entrance",
+			discoveredRoomLabels: ["Entrance"],
+			handleDungeonRunReset: vi.fn(),
+			handleDungeonEventSend: vi.fn(),
+			snapshot: { context: machineContext, value: ROOM_IDS.ENTRANCE },
+		} as unknown as ReturnType<typeof useGameMachine>);
+
+		vi.mocked(useStateVisualizer).mockReturnValue({
+			edges: [],
+			nodes: [],
+			positionedNodes: [],
+		} as unknown as ReturnType<typeof useStateVisualizer>);
+
+		const { rerender } = renderHook(() => useGamePage());
+
+		const updatedContext: DungeonContext = {
+			...machineContext,
+			currentRoomId: ROOM_IDS.GUARD_ROOM,
+		};
+
+		vi.mocked(useGameMachine).mockReturnValue({
+			actionButtons: [],
+			currentRoomLabel: "Guard Room",
+			discoveredRoomLabels: ["Entrance", "Guard Room"],
+			handleDungeonRunReset: vi.fn(),
+			handleDungeonEventSend: vi.fn(),
+			snapshot: { context: updatedContext, value: ROOM_IDS.GUARD_ROOM },
+		} as unknown as ReturnType<typeof useGameMachine>);
+
+		act(() => {
+			rerender();
+		});
+
+		expect(setPlayerTeleportTarget).toHaveBeenCalledWith(
+			20,
+			expect.any(Number),
+			0,
+		);
 	});
 });
