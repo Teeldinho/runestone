@@ -1,34 +1,109 @@
 import { OrbitControls, PointerLockControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import type React from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import * as THREE from "three";
 
-import { CAMERA_MODES, useCameraMachine } from "@/features/camera-system";
-import { CAMERA_CONFIG } from "@/shared/config";
+import type { CameraStateSnapshot } from "@/features/camera-system";
+import { CAMERA_MODES } from "@/features/camera-system";
+import { CAMERA_CONFIG, CAMERA_TRANSITION_MS } from "@/shared/config";
+import { setCameraMode } from "@/shared/lib/cameraModeStore";
 import { setCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
 import { getPlayerPosition } from "@/shared/lib/playerPositionStore";
 
-export function CameraRig() {
+type CameraRigProps = {
+	cameraStateSnapshot?: CameraStateSnapshot;
+};
+
+const LERP_ALPHA = 1 - Math.exp((-4 * 16) / CAMERA_TRANSITION_MS);
+
+export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 	const { camera } = useThree();
 	const perspCamera = camera as THREE.PerspectiveCamera;
+	const targetPosition = useRef(new THREE.Vector3());
+	const targetLookAt = useRef(new THREE.Vector3());
+	const prevModeRef = useRef<string | undefined>(undefined);
+	const pointerLockRef = useRef<{ isLocked: boolean } | null>(null);
+	const thirdPersonOrbitRef = useRef<{
+		target: THREE.Vector3;
+		update: () => void;
+	} | null>(null);
 
-	const { mode, cameraStateSnapshot } = useCameraMachine();
+	const handleFirstPersonLock = useCallback(() => {
+		// Pointer locked
+	}, []);
 
-	const prevModeRef = useRef<string | null>(null);
-	const isModeChange = mode !== prevModeRef.current;
+	const handleFirstPersonUnlock = useCallback(() => {
+		// Pointer unlocked
+	}, []);
 
-	// Refs for controls
-	const orbitControlsRef =
-		useRef<React.ComponentRef<typeof OrbitControls>>(null);
-	const pointerLockRef =
-		useRef<React.ComponentRef<typeof PointerLockControls>>(null);
-
-	// Track player position for orbit controls target
 	useFrame(() => {
+		if (!cameraStateSnapshot) return;
+
+		setCameraMode(cameraStateSnapshot.mode);
+
+		const isModeChange = cameraStateSnapshot.mode !== prevModeRef.current;
+		prevModeRef.current = cameraStateSnapshot.mode;
+
 		const [px, py, pz] = getPlayerPosition();
 
-		// Write camera azimuth for player-relative movement
+		if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
+			targetPosition.current.set(px, py + 1.6, pz);
+			targetLookAt.current.set(px, py + 1.6, pz + 1);
+		} else if (cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON) {
+			const [ox, oy, oz] = CAMERA_CONFIG.THIRD_PERSON.OFFSET;
+			targetPosition.current.set(px + ox, py + oy, pz + oz);
+			targetLookAt.current.set(px, py + 1, pz);
+		} else if (cameraStateSnapshot.mode === CAMERA_MODES.TOP_DOWN) {
+			if (isModeChange) {
+				camera.up.set(0, 1, 0);
+			}
+			targetPosition.current.set(
+				px,
+				CAMERA_CONFIG.TOP_DOWN.HEIGHT,
+				pz + CAMERA_CONFIG.TOP_DOWN.DISTANCE,
+			);
+			targetLookAt.current.set(px, 0, pz);
+		} else {
+			const [sx, sy, sz] = cameraStateSnapshot.position;
+			targetPosition.current.set(sx, sy, sz);
+			const [tx, ty, tz] = cameraStateSnapshot.target;
+			targetLookAt.current.set(tx, ty, tz);
+		}
+
+		if (
+			cameraStateSnapshot.mode !== CAMERA_MODES.FREE_ORBITAL &&
+			cameraStateSnapshot.mode !== CAMERA_MODES.FIRST_PERSON &&
+			cameraStateSnapshot.mode !== CAMERA_MODES.THIRD_PERSON
+		) {
+			if (isModeChange) {
+				camera.position.copy(targetPosition.current);
+			} else {
+				camera.position.lerp(targetPosition.current, LERP_ALPHA);
+			}
+			camera.lookAt(targetLookAt.current);
+		} else if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
+			if (isModeChange) {
+				camera.position.copy(targetPosition.current);
+			} else {
+				camera.position.lerp(targetPosition.current, LERP_ALPHA);
+			}
+			if (!pointerLockRef.current?.isLocked) {
+				camera.lookAt(targetLookAt.current);
+			}
+		} else if (cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON) {
+			const [ox, oy, oz] = CAMERA_CONFIG.THIRD_PERSON.OFFSET;
+			if (thirdPersonOrbitRef.current) {
+				if (isModeChange) {
+					camera.position.set(px + ox, py + oy, pz + oz);
+				}
+				thirdPersonOrbitRef.current.target.set(px, py + 1, pz);
+				thirdPersonOrbitRef.current.update();
+			} else if (isModeChange) {
+				camera.position.copy(targetPosition.current);
+			}
+		}
+
 		const dir = new THREE.Vector3();
 		camera.getWorldDirection(dir);
 		dir.y = 0;
@@ -36,112 +111,19 @@ export function CameraRig() {
 			setCameraAzimuth(Math.atan2(dir.x, dir.z));
 		}
 
-		// Handle mode-specific logic
-		switch (mode) {
-			case CAMERA_MODES.THIRD_PERSON: {
-				// Orbit controls track player
-				if (orbitControlsRef.current) {
-					orbitControlsRef.current.target.set(px, py + 1, pz);
-					orbitControlsRef.current.update();
-				}
-				break;
-			}
-			case CAMERA_MODES.TOP_DOWN: {
-				// Position camera above player, looking straight down
-				if (isModeChange) {
-					camera.position.set(
-						px,
-						CAMERA_CONFIG.TOP_DOWN.HEIGHT,
-						pz + CAMERA_CONFIG.TOP_DOWN.DISTANCE,
-					);
-					camera.up.set(0, 0, -1); // Rotate view to horizontal orientation
-				}
-				camera.lookAt(px, 0, pz);
-				break;
-			}
-			case CAMERA_MODES.FIRST_PERSON: {
-				// Position camera at player eye level
-				const eyeHeight = py + 1.7;
-				if (isModeChange) {
-					camera.position.set(px, eyeHeight, pz);
-				}
-				break;
-			}
-			case CAMERA_MODES.FREE_ORBITAL: {
-				// Orbit controls at fixed position
-				if (orbitControlsRef.current) {
-					orbitControlsRef.current.target.set(0, 0, 0);
-					orbitControlsRef.current.update();
-				}
-				break;
-			}
-			default:
-				break;
-		}
-
-		// Update FOV based on mode
-		const targetFov = cameraStateSnapshot.fov;
-		if (Math.abs(perspCamera.fov - targetFov) > 0.01) {
-			perspCamera.fov += (targetFov - perspCamera.fov) * 0.1;
+		const fovDiff = Math.abs(perspCamera.fov - cameraStateSnapshot.fov);
+		if (fovDiff > 0.01) {
+			perspCamera.fov +=
+				(cameraStateSnapshot.fov - perspCamera.fov) * LERP_ALPHA;
 			perspCamera.updateProjectionMatrix();
-		}
-
-		// Update prevModeRef after processing
-		if (isModeChange) {
-			prevModeRef.current = mode;
 		}
 	});
 
-	// Handle pointer lock for first person
-	const handleFirstPersonLock = useCallback(() => {
-		// Pointer locked - no action needed
-	}, []);
+	const mode = cameraStateSnapshot?.mode;
 
-	const handleFirstPersonUnlock = useCallback(() => {
-		// Pointer unlocked - no action needed
-	}, []);
-
-	// Reset camera on mode change
-	useEffect(() => {
-		if (isModeChange) {
-			const [px, py, pz] = getPlayerPosition();
-
-			switch (mode) {
-				case CAMERA_MODES.THIRD_PERSON: {
-					const [ox, oy, oz] = CAMERA_CONFIG.THIRD_PERSON.OFFSET;
-					camera.position.set(px + ox, py + oy, pz + oz);
-					break;
-				}
-				case CAMERA_MODES.TOP_DOWN: {
-					camera.position.set(
-						px,
-						CAMERA_CONFIG.TOP_DOWN.HEIGHT,
-						pz + CAMERA_CONFIG.TOP_DOWN.DISTANCE,
-					);
-					camera.up.set(0, 0, -1);
-					break;
-				}
-				case CAMERA_MODES.FIRST_PERSON: {
-					camera.position.set(px, py + 1.7, pz);
-					break;
-				}
-				case CAMERA_MODES.FREE_ORBITAL: {
-					const [ix, iy, iz] = CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION;
-					camera.position.set(ix, iy, iz);
-					camera.up.set(0, 1, 0);
-					break;
-				}
-				default:
-					break;
-			}
-		}
-	}, [mode, isModeChange, camera]);
-
-	// Render appropriate controls based on mode
 	if (mode === CAMERA_MODES.FREE_ORBITAL) {
 		return (
 			<OrbitControls
-				ref={orbitControlsRef}
 				makeDefault
 				enablePan
 				maxDistance={CAMERA_CONFIG.FREE_ORBITAL.MAX_DISTANCE}
@@ -156,7 +138,7 @@ export function CameraRig() {
 	if (mode === CAMERA_MODES.THIRD_PERSON) {
 		return (
 			<OrbitControls
-				ref={orbitControlsRef}
+				ref={thirdPersonOrbitRef as React.RefObject<never>}
 				makeDefault
 				enablePan
 				enableZoom
@@ -169,24 +151,10 @@ export function CameraRig() {
 		);
 	}
 
-	if (mode === CAMERA_MODES.TOP_DOWN) {
-		return (
-			<OrbitControls
-				ref={orbitControlsRef}
-				makeDefault
-				enableRotate={false}
-				enablePan
-				enableZoom
-				maxDistance={45}
-				minDistance={20}
-			/>
-		);
-	}
-
 	if (mode === CAMERA_MODES.FIRST_PERSON) {
 		return (
 			<PointerLockControls
-				ref={pointerLockRef}
+				ref={pointerLockRef as React.RefObject<never>}
 				selector="#game-canvas-fp-lock"
 				onLock={handleFirstPersonLock}
 				onUnlock={handleFirstPersonUnlock}
