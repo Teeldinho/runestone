@@ -3,7 +3,7 @@ import type { RapierRigidBody } from "@react-three/rapier";
 import { RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
-import * as THREE from "three";
+import type * as THREE from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 import type { Vector3Tuple } from "@/shared/types";
@@ -50,9 +50,13 @@ export function EnemyMesh({
 	});
 
 	const { scene: rawScene } = useGLTF(ENEMY_GLTF_CONFIG.CHARACTER.PATH);
-	const { animations: moveAnims } = useGLTF(ENEMY_ANIMATION_PATHS.MOVEMENT_BASIC);
+	const { animations: moveAnims } = useGLTF(
+		ENEMY_ANIMATION_PATHS.MOVEMENT_BASIC,
+	);
 	const { animations: generalAnims } = useGLTF(ENEMY_ANIMATION_PATHS.GENERAL);
-	const { animations: meleeAnims } = useGLTF(ENEMY_ANIMATION_PATHS.COMBAT_MELEE);
+	const { animations: meleeAnims } = useGLTF(
+		ENEMY_ANIMATION_PATHS.COMBAT_MELEE,
+	);
 
 	const clonedScene = useMemo(() => skeletonClone(rawScene), [rawScene]);
 	const allAnims = useMemo(

@@ -1,9 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import {
-	getCameraAzimuth,
-	setCameraAzimuth,
-} from "./cameraOrientationStore";
+import { getCameraAzimuth, setCameraAzimuth } from "./cameraOrientationStore";
 
 describe("cameraOrientationStore", () => {
 	afterEach(() => {

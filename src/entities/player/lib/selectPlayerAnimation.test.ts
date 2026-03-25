@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-
-import { PLAYER_ANIMATION_NAMES } from "../config/playerGltfConfig";
 import { PLAYER_STATES } from "../config";
+import { PLAYER_ANIMATION_NAMES } from "../config/playerGltfConfig";
 
 import { selectPlayerAnimation } from "./selectPlayerAnimation";
 

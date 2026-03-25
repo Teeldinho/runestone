@@ -1,6 +1,6 @@
-import { PLAYER_ANIMATION_NAMES } from "../config/playerGltfConfig";
-import { PLAYER_STATES } from "../config";
 import type { Vector3Tuple } from "@/shared/types";
+import { PLAYER_STATES } from "../config";
+import { PLAYER_ANIMATION_NAMES } from "../config/playerGltfConfig";
 
 export const selectPlayerAnimation = (
 	velocity: Vector3Tuple,

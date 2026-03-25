@@ -3,7 +3,7 @@ import type { RapierRigidBody } from "@react-three/rapier";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
-import * as THREE from "three";
+import type * as THREE from "three";
 
 import {
 	PLAYER_ANIMATION_PATHS,

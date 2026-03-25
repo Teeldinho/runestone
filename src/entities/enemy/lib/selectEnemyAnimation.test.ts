@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-
-import { ENEMY_ANIMATION_NAMES } from "../config/enemyGltfConfig";
 import { ENEMY_MACHINE_STATES } from "../config";
+import { ENEMY_ANIMATION_NAMES } from "../config/enemyGltfConfig";
 
 import { selectEnemyAnimation } from "./selectEnemyAnimation";
 

@@ -2,9 +2,8 @@ import { useFrame } from "@react-three/fiber";
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
-
-import { getCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
 import { getCameraMode } from "@/shared/lib/cameraModeStore";
+import { getCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
 import {
 	consumePlayerTeleportTarget,
 	setPlayerPosition,
