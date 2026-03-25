@@ -32,3 +32,8 @@ export const CORRIDOR_ENTITY_CONFIG = {
 		Y_OFFSET: -0.12,
 	},
 } as const;
+
+export const CORRIDOR_FLOOR_COLLIDER = {
+	HALF_HEIGHT: 0.3,
+	POSITION_Y: -0.18,
+} as const;

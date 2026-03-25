@@ -1,6 +1,6 @@
-import { RigidBody } from "@react-three/rapier";
+import { CuboidCollider, RigidBody } from "@react-three/rapier";
 
-import { CORRIDOR_ENTITY_CONFIG } from "../config";
+import { CORRIDOR_ENTITY_CONFIG, CORRIDOR_FLOOR_COLLIDER } from "../config";
 import type { CorridorMeshSettings } from "../model";
 
 type CorridorMeshProps = {
@@ -33,19 +33,15 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 			</mesh>
 
 			{/* Floor - physics collider */}
-			<RigidBody type="fixed" colliders="cuboid">
-				<mesh position={[0, -0.3, 0]} visible={false}>
-					<boxGeometry
-						args={[
-							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.width,
-							0.6,
-							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth,
-						]}
-					/>
-					<meshStandardMaterial
-						color={CORRIDOR_ENTITY_CONFIG.SURFACE.BASE_COLOR}
-					/>
-				</mesh>
+			<RigidBody type="fixed" colliders={false}>
+				<CuboidCollider
+					args={[
+						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.width / 2,
+						CORRIDOR_FLOOR_COLLIDER.HALF_HEIGHT,
+						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth / 2,
+					]}
+					position={[0, CORRIDOR_FLOOR_COLLIDER.POSITION_Y, 0]}
+				/>
 			</RigidBody>
 
 			{/* Left wall */}
