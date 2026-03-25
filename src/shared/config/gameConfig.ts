@@ -1,3 +1,5 @@
+import { CAMERA_MODES } from "./cameraModesConfig";
+
 export const ROOM_CONFIG = {
 	WIDTH: 12,
 	HEIGHT: 6,
@@ -39,7 +41,10 @@ export const ENEMY_CONFIG = {
 	ATTACK_DAMAGE: 8,
 } as const;
 
-export const RELATIVE_CAMERA_MODES = ["thirdPerson", "firstPerson"] as const;
+export const RELATIVE_CAMERA_MODES = [
+	CAMERA_MODES.THIRD_PERSON,
+	CAMERA_MODES.FIRST_PERSON,
+] as const;
 
 export const CAMERA_CONFIG = {
 	THIRD_PERSON: {

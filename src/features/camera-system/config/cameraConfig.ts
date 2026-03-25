@@ -1,11 +1,7 @@
-export const CAMERA_MODES = {
-	THIRD_PERSON: "thirdPerson",
-	TOP_DOWN: "topDown",
-	FIRST_PERSON: "firstPerson",
-	FREE_ORBITAL: "freeOrbital",
-} as const;
+import { CAMERA_MODES } from "@/shared/config";
 
-export type CameraMode = (typeof CAMERA_MODES)[keyof typeof CAMERA_MODES];
+export type { CameraMode } from "@/shared/config";
+export { CAMERA_MODES };
 
 export const CAMERA_DEFAULT_MODE = CAMERA_MODES.FREE_ORBITAL;
 
