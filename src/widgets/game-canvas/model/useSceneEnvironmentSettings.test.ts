@@ -54,7 +54,7 @@ describe("useSceneEnvironmentSettings", () => {
 		]);
 		expect(result.current.corridorMeshSettings).toHaveLength(4);
 		expect(result.current.corridorMeshSettings[0].position).toEqual([
-			0, -0.1, -30,
+			0, -0.12, -30,
 		]);
 	});
 
