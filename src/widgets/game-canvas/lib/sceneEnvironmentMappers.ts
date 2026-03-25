@@ -130,11 +130,17 @@ export const createSceneEnemyMeshSettings = (
 		return [];
 	}
 
+	const [rx, ry, rz] = guardRoom.position;
 	return [
 		{
 			id: `${guardRoomId}-enemy-1`,
 			roomId: guardRoomId,
-			position: guardRoom.position,
+			position: [rx - 2, ry, rz + 2] as [number, number, number],
+		},
+		{
+			id: `${guardRoomId}-enemy-2`,
+			roomId: guardRoomId,
+			position: [rx + 2, ry, rz - 2] as [number, number, number],
 		},
 	];
 };
