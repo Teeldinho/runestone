@@ -55,6 +55,11 @@ export const ROOM_GLTF_CONFIG = {
 	},
 } as const;
 
+export const ROOM_FLOOR_COLLIDER = {
+	HALF_HEIGHT: 0.3,
+	POSITION_Y: -0.3,
+} as const;
+
 export const ROOM_ENTITY_CONFIG = {
 	DIMENSIONS: {
 		width: ROOM_CONFIG.WIDTH,

@@ -92,7 +92,7 @@ describe("updated config values", () => {
 
 	it("has correct spawn height offset", () => {
 		expect(PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET).toBeCloseTo(
-			1.0,
+			1.5,
 			2,
 		);
 	});

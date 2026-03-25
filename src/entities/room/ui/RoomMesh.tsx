@@ -1,11 +1,11 @@
 import { useGLTF } from "@react-three/drei";
-import { RigidBody } from "@react-three/rapier";
+import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import { useMemo } from "react";
 
 import { ROOM_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
-import { ROOM_GLTF_CONFIG, ROOM_LIGHT_CONFIG } from "../config";
+import { ROOM_FLOOR_COLLIDER, ROOM_GLTF_CONFIG, ROOM_LIGHT_CONFIG } from "../config";
 import { getColumnPlacements, getFloorTilePositions } from "../lib";
 import type { RoomSurfaceSettings } from "../model";
 
@@ -83,11 +83,12 @@ export function RoomMesh({
 				/>
 			))}
 
-			{/* Floor - physics collider (invisible) */}
-			<RigidBody type="fixed" colliders="cuboid">
-				<mesh position={[0, -0.3, 0]} visible={false}>
-					<boxGeometry args={[ROOM_CONFIG.WIDTH, 0.6, ROOM_CONFIG.DEPTH]} />
-				</mesh>
+			{/* Floor - physics collider */}
+			<RigidBody type="fixed" colliders={false}>
+				<CuboidCollider
+					args={[HALF_WIDTH, ROOM_FLOOR_COLLIDER.HALF_HEIGHT, HALF_DEPTH]}
+					position={[0, ROOM_FLOOR_COLLIDER.POSITION_Y, 0]}
+				/>
 			</RigidBody>
 
 			{/* Columns — GLTF (4 inner corners) */}

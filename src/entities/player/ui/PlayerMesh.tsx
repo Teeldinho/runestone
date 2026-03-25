@@ -47,6 +47,7 @@ export function PlayerMesh() {
 	return (
 		<RigidBody
 			ref={rigidBodyRef as RefObject<RapierRigidBody>}
+			ccd
 			colliders={false}
 			lockRotations
 			position={meshSettings.position}
