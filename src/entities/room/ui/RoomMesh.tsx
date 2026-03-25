@@ -16,6 +16,7 @@ type RoomMeshProps = {
 	surface: RoomSurfaceSettings;
 	wallOpenings?: WallOpening[];
 	isTreasury?: boolean;
+	showGrid?: boolean;
 };
 
 const HALF_WIDTH = ROOM_CONFIG.WIDTH / 2;
@@ -25,6 +26,7 @@ const WALL_Y = WALL_HALF_HEIGHT;
 
 useGLTF.preload(ROOM_GLTF_CONFIG.FLOOR_TILE.PATH);
 useGLTF.preload(ROOM_GLTF_CONFIG.WALL.PATH);
+useGLTF.preload(ROOM_GLTF_CONFIG.WALL_DOORWAY.PATH);
 useGLTF.preload(ROOM_GLTF_CONFIG.COLUMN.PATH);
 useGLTF.preload(ROOM_GLTF_CONFIG.TORCH.PATH);
 useGLTF.preload(ROOM_GLTF_CONFIG.CHEST.PATH);
@@ -34,12 +36,14 @@ export function RoomMesh({
 	surface,
 	wallOpenings = [],
 	isTreasury = false,
+	showGrid = false,
 }: RoomMeshProps) {
 	const { rune, grid, pillar } = surface;
 	const hasOpening = (side: WallOpening) => wallOpenings.includes(side);
 
 	const floorScene = useGLTF(ROOM_GLTF_CONFIG.FLOOR_TILE.PATH).scene;
 	const wallScene = useGLTF(ROOM_GLTF_CONFIG.WALL.PATH).scene;
+	const doorwayScene = useGLTF(ROOM_GLTF_CONFIG.WALL_DOORWAY.PATH).scene;
 	const columnScene = useGLTF(ROOM_GLTF_CONFIG.COLUMN.PATH).scene;
 	const torchScene = useGLTF(ROOM_GLTF_CONFIG.TORCH.PATH).scene;
 	const chestScene = useGLTF(ROOM_GLTF_CONFIG.CHEST.PATH).scene;
@@ -110,11 +114,12 @@ export function RoomMesh({
 				/>
 			</mesh>
 
-			{/* Grid overlay (keep for XState inspector aesthetic) */}
-			<gridHelper
-				args={[grid.size, grid.divisions, rune.sealedColor, pillar.color]}
-				position={[0, 0.04, 0]}
-			/>
+			{showGrid && (
+				<gridHelper
+					args={[grid.size, grid.divisions, rune.sealedColor, pillar.color]}
+					position={[0, 0.04, 0]}
+				/>
+			)}
 
 			{/* Treasury chest */}
 			{isTreasury && (
@@ -128,7 +133,17 @@ export function RoomMesh({
 
 			{/* North wall — tiled segments */}
 			{[-4, 0, 4].map((x) => {
-				if (hasOpening("north") && x === 0) return null;
+				if (hasOpening("north") && x === 0) {
+					return (
+						<primitive
+							key="doorway-north"
+							object={doorwayScene.clone()}
+							position={[0, WALL_Y, -HALF_DEPTH]}
+							rotation={[0, 0, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
+						/>
+					);
+				}
 				return (
 					<RigidBody key={`north-${x}`} type="fixed" colliders="cuboid">
 						<primitive
@@ -161,7 +176,17 @@ export function RoomMesh({
 
 			{/* South wall — tiled segments */}
 			{[-4, 0, 4].map((x) => {
-				if (hasOpening("south") && x === 0) return null;
+				if (hasOpening("south") && x === 0) {
+					return (
+						<primitive
+							key="doorway-south"
+							object={doorwayScene.clone()}
+							position={[0, WALL_Y, HALF_DEPTH]}
+							rotation={[0, Math.PI, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
+						/>
+					);
+				}
 				return (
 					<RigidBody key={`south-${x}`} type="fixed" colliders="cuboid">
 						<primitive
@@ -195,7 +220,17 @@ export function RoomMesh({
 
 			{/* East wall — tiled segments */}
 			{[-4, 0, 4].map((z) => {
-				if (hasOpening("east") && z === 0) return null;
+				if (hasOpening("east") && z === 0) {
+					return (
+						<primitive
+							key="doorway-east"
+							object={doorwayScene.clone()}
+							position={[HALF_WIDTH, WALL_Y, 0]}
+							rotation={[0, -Math.PI / 2, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
+						/>
+					);
+				}
 				return (
 					<RigidBody key={`east-${z}`} type="fixed" colliders="cuboid">
 						<primitive
@@ -229,7 +264,17 @@ export function RoomMesh({
 
 			{/* West wall — tiled segments */}
 			{[-4, 0, 4].map((z) => {
-				if (hasOpening("west") && z === 0) return null;
+				if (hasOpening("west") && z === 0) {
+					return (
+						<primitive
+							key="doorway-west"
+							object={doorwayScene.clone()}
+							position={[-HALF_WIDTH, WALL_Y, 0]}
+							rotation={[0, Math.PI / 2, 0]}
+							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
+						/>
+					);
+				}
 				return (
 					<RigidBody key={`west-${z}`} type="fixed" colliders="cuboid">
 						<primitive
