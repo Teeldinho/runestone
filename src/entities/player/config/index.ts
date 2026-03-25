@@ -1,4 +1,9 @@
 export { PLAYER_ENTITY_CONFIG } from "./playerConfig";
+export {
+	PLAYER_ANIMATION_NAMES,
+	PLAYER_ANIMATION_PATHS,
+	PLAYER_GLTF_CONFIG,
+} from "./playerGltfConfig";
 export type { PlayerEvent } from "./playerEvents";
 export { PLAYER_EVENTS } from "./playerEvents";
 export { PLAYER_CONTEXT_KEYS, PLAYER_GUARDS } from "./playerMachineConfig";

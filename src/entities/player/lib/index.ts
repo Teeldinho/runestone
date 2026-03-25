@@ -8,3 +8,4 @@ export {
 	applyHeal,
 } from "./playerMachineActions";
 export { checkLethalDamage, checkPlayerAlive } from "./playerMachineGuards";
+export { selectPlayerAnimation } from "./selectPlayerAnimation";

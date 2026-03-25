@@ -1,15 +1,48 @@
+import { useAnimations, useGLTF } from "@react-three/drei";
 import type { RapierRigidBody } from "@react-three/rapier";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import * as THREE from "three";
 
-import { getCameraMode } from "@/shared/lib/cameraModeStore";
-
-import { PLAYER_ENTITY_CONFIG } from "../config";
+import {
+	PLAYER_ANIMATION_PATHS,
+	PLAYER_ENTITY_CONFIG,
+	PLAYER_GLTF_CONFIG,
+} from "../config";
 import { usePlayerMeshViewModel } from "../model/usePlayerMeshViewModel";
 
+useGLTF.preload(PLAYER_GLTF_CONFIG.CHARACTER.PATH);
+useGLTF.preload(PLAYER_ANIMATION_PATHS.MOVEMENT_BASIC);
+useGLTF.preload(PLAYER_ANIMATION_PATHS.GENERAL);
+
 export function PlayerMesh() {
-	const { meshSettings, rigidBodyRef } = usePlayerMeshViewModel();
-	const isFirstPerson = getCameraMode() === "firstPerson";
+	const { meshSettings, rigidBodyRef, animationName } =
+		usePlayerMeshViewModel();
+
+	const groupRef = useRef<THREE.Group>(null);
+	const { scene } = useGLTF(PLAYER_GLTF_CONFIG.CHARACTER.PATH);
+	const { animations: moveAnims } = useGLTF(
+		PLAYER_ANIMATION_PATHS.MOVEMENT_BASIC,
+	);
+	const { animations: generalAnims } = useGLTF(PLAYER_ANIMATION_PATHS.GENERAL);
+
+	const clonedScene = useMemo(() => scene.clone(), [scene]);
+	const allAnims = useMemo(
+		() => [...moveAnims, ...generalAnims],
+		[moveAnims, generalAnims],
+	);
+
+	const { actions } = useAnimations(allAnims, groupRef);
+
+	useEffect(() => {
+		const action = actions[animationName];
+		if (!action) return;
+		action.reset().fadeIn(0.2).play();
+		return () => {
+			action.fadeOut(0.2);
+		};
+	}, [actions, animationName]);
 
 	return (
 		<RigidBody
@@ -20,63 +53,33 @@ export function PlayerMesh() {
 			type="dynamic"
 		>
 			<CapsuleCollider args={[0.55, 0.35]} />
-			{!isFirstPerson && (
-				<>
-					<mesh
-						castShadow
-						position={[0, PLAYER_ENTITY_CONFIG.BODY.POSITION_Y, 0]}
-					>
-						<cylinderGeometry
-							args={[
-								PLAYER_ENTITY_CONFIG.BODY.RADIUS,
-								PLAYER_ENTITY_CONFIG.BODY.RADIUS,
-								PLAYER_ENTITY_CONFIG.BODY.HEIGHT,
-								PLAYER_ENTITY_CONFIG.BODY.RADIAL_SEGMENTS,
-							]}
-						/>
-						<meshStandardMaterial
-							color={PLAYER_ENTITY_CONFIG.BODY.COLOR}
-							metalness={PLAYER_ENTITY_CONFIG.BODY.METALNESS}
-							roughness={PLAYER_ENTITY_CONFIG.BODY.ROUGHNESS}
-						/>
-					</mesh>
-
-					<mesh
-						castShadow
-						position={[0, PLAYER_ENTITY_CONFIG.HEAD.OFFSET_Y, 0]}
-					>
-						<sphereGeometry
-							args={[
-								PLAYER_ENTITY_CONFIG.HEAD.RADIUS,
-								PLAYER_ENTITY_CONFIG.HEAD.WIDTH_SEGMENTS,
-								PLAYER_ENTITY_CONFIG.HEAD.HEIGHT_SEGMENTS,
-							]}
-						/>
-						<meshStandardMaterial color={PLAYER_ENTITY_CONFIG.HEAD.COLOR} />
-					</mesh>
-
-					<mesh
-						position={[0, PLAYER_ENTITY_CONFIG.AURA.OFFSET_Y, 0]}
-						rotation={[PLAYER_ENTITY_CONFIG.AURA.ROTATION_X_RAD, 0, 0]}
-					>
-						<torusGeometry
-							args={[
-								PLAYER_ENTITY_CONFIG.AURA.RADIUS,
-								PLAYER_ENTITY_CONFIG.AURA.TUBE_RADIUS,
-								PLAYER_ENTITY_CONFIG.AURA.RADIAL_SEGMENTS,
-								PLAYER_ENTITY_CONFIG.AURA.TUBULAR_SEGMENTS,
-							]}
-						/>
-						<meshStandardMaterial
-							color={meshSettings.auraColor}
-							emissive={meshSettings.auraColor}
-							emissiveIntensity={meshSettings.auraEmissiveIntensity}
-							opacity={PLAYER_ENTITY_CONFIG.AURA.MATERIAL_OPACITY}
-							transparent
-						/>
-					</mesh>
-				</>
-			)}
+			<group ref={groupRef}>
+				<primitive
+					object={clonedScene}
+					position={[0, PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y, 0]}
+					scale={PLAYER_GLTF_CONFIG.CHARACTER.SCALE}
+				/>
+				<mesh
+					position={[0, PLAYER_ENTITY_CONFIG.AURA.OFFSET_Y, 0]}
+					rotation={[PLAYER_ENTITY_CONFIG.AURA.ROTATION_X_RAD, 0, 0]}
+				>
+					<torusGeometry
+						args={[
+							PLAYER_ENTITY_CONFIG.AURA.RADIUS,
+							PLAYER_ENTITY_CONFIG.AURA.TUBE_RADIUS,
+							PLAYER_ENTITY_CONFIG.AURA.RADIAL_SEGMENTS,
+							PLAYER_ENTITY_CONFIG.AURA.TUBULAR_SEGMENTS,
+						]}
+					/>
+					<meshStandardMaterial
+						color={meshSettings.auraColor}
+						emissive={meshSettings.auraColor}
+						emissiveIntensity={meshSettings.auraEmissiveIntensity}
+						opacity={PLAYER_ENTITY_CONFIG.AURA.MATERIAL_OPACITY}
+						transparent
+					/>
+				</mesh>
+			</group>
 		</RigidBody>
 	);
 }
