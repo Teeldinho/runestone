@@ -4,7 +4,8 @@ import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
 import { Physics } from "@react-three/rapier";
 import { Suspense } from "react";
 import { AchievementNotification } from "@/features/achievements";
-import { CAMERA_MODES, useCameraMachine } from "@/features/camera-system";
+import type { CameraStateSnapshot } from "@/features/camera-system";
+import { CAMERA_MODES } from "@/features/camera-system";
 import { GAME_CANVAS_COPY } from "../config";
 import {
 	type CanvasMachineRuntime,
@@ -22,19 +23,19 @@ import { SceneFog } from "./SceneFog";
 import { SceneLighting } from "./SceneLighting";
 
 type GameCanvasProps = {
+	cameraStateSnapshot?: CameraStateSnapshot;
 	machineRuntime: CanvasMachineRuntime;
 	postprocessingEnabled: boolean;
 };
 
 export function GameCanvas({
+	cameraStateSnapshot,
 	machineRuntime,
 	postprocessingEnabled,
 }: GameCanvasProps) {
-	const { mode } = useCameraMachine();
-
 	const canvasSettings = useCanvasMachineSettings(
 		machineRuntime,
-		undefined, // CameraRig now manages camera mode internally
+		cameraStateSnapshot,
 		postprocessingEnabled,
 	);
 	const {
@@ -56,7 +57,7 @@ export function GameCanvas({
 		<div className="relative h-full w-full overflow-hidden">
 			<AchievementNotification achievement={activeAchievement} />
 			<GameOverOverlay isGameOver={isGameOver} onRestart={handleGameRestart} />
-			{mode === CAMERA_MODES.FIRST_PERSON && (
+			{cameraStateSnapshot?.mode === CAMERA_MODES.FIRST_PERSON && (
 				<button
 					id="game-canvas-fp-lock"
 					className="absolute inset-0 z-10 flex cursor-crosshair items-center justify-center bg-transparent text-sm font-medium"
@@ -81,7 +82,7 @@ export function GameCanvas({
 			>
 				<PerformanceMonitor />
 				<AdaptiveDpr pixelated />
-				<CameraRig />
+				<CameraRig cameraStateSnapshot={cameraStateSnapshot} />
 				<Suspense fallback={null}>
 					<SceneFog fog={fog} />
 					<SceneLighting lighting={lighting} />

@@ -1,5 +1,4 @@
 import { Volume2, VolumeX } from "lucide-react";
-import type { CameraMode } from "@/features/camera-system";
 import { useCameraMachine } from "@/features/camera-system";
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
@@ -27,7 +26,7 @@ export function GamePage() {
 		playerMaxHp,
 	} = useGamePage();
 	const settings = useSettingsForm();
-	const { mode, handleCameraModeSwitch } = useCameraMachine();
+	const { cameraStateSnapshot, handleCameraModeSwitch } = useCameraMachine();
 
 	return (
 		<main
@@ -87,6 +86,7 @@ export function GamePage() {
 						</h2>
 						<div className="min-h-0 flex-1" style={{ cursor: "grab" }}>
 							<GameCanvas
+								cameraStateSnapshot={cameraStateSnapshot}
 								machineRuntime={canvasMachineRuntime}
 								postprocessingEnabled={settings.postprocessingEnabled}
 							/>
@@ -99,7 +99,7 @@ export function GamePage() {
 							}}
 						>
 							<CameraModeSwitcher
-								activeCameraMode={mode as CameraMode}
+								activeCameraMode={cameraStateSnapshot.mode}
 								handleCameraModeSwitch={handleCameraModeSwitch}
 							/>
 						</div>

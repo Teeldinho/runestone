@@ -1,6 +1,12 @@
 import { useSelector } from "@xstate/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { createActor } from "xstate";
+import {
+	CAMERA_EVENTS,
+	CAMERA_HOTKEY_EVENT_TYPE,
+	type CameraHotkey,
+} from "../config";
+import { isCameraHotkey } from "../lib";
 import { createCameraStateSnapshot } from "../lib/cameraStateSnapshot";
 import { createCameraMachine } from "./cameraMachine";
 import type { CameraMachineEvent, CameraStateSnapshot } from "./types";
@@ -11,7 +17,16 @@ export const useCameraMachine = () => {
 	const actorRef = useRef(createActor(cameraMachine).start());
 	const actor = actorRef.current;
 
-	const mode = useSelector(actor, (snapshot) => snapshot.value as string);
+	useEffect(() => {
+		return () => {
+			actor.stop();
+		};
+	}, [actor]);
+
+	const mode = useSelector(
+		actor,
+		(snapshot) => snapshot.value as CameraStateSnapshot["mode"],
+	);
 
 	const cameraStateSnapshot = useMemo<CameraStateSnapshot>(() => {
 		return createCameraStateSnapshot(mode as CameraStateSnapshot["mode"]);
@@ -40,20 +55,22 @@ export const useCameraMachine = () => {
 		[actor],
 	);
 
-	// Listen for hotkey events from the custom event type
+	// Listen for camera mode keyboard hotkeys.
 	useEffect(() => {
-		const handleHotkey = (e: CustomEvent) => {
-			if (e.detail?.hotkey) {
-				actor.send({ type: "HOTKEY", hotkey: e.detail.hotkey });
+		const handleHotkey = (event: KeyboardEvent) => {
+			if (!isCameraHotkey(event.key)) {
+				return;
 			}
+
+			actor.send({
+				type: CAMERA_EVENTS.HOTKEY,
+				hotkey: event.key as CameraHotkey,
+			});
 		};
 
-		window.addEventListener("camera-hotkey", handleHotkey as EventListener);
+		window.addEventListener(CAMERA_HOTKEY_EVENT_TYPE, handleHotkey);
 		return () => {
-			window.removeEventListener(
-				"camera-hotkey",
-				handleHotkey as EventListener,
-			);
+			window.removeEventListener(CAMERA_HOTKEY_EVENT_TYPE, handleHotkey);
 		};
 	}, [actor]);
 
