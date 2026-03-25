@@ -49,13 +49,20 @@ export function PlayerMesh() {
 			ref={rigidBodyRef as RefObject<RapierRigidBody>}
 			ccd
 			colliders={false}
+			linearDamping={PLAYER_ENTITY_CONFIG.PHYSICS.LINEAR_DAMPING}
 			lockRotations
 			position={meshSettings.position}
 			type="dynamic"
 		>
-			<CapsuleCollider args={[0.55, 0.35]} />
+			<CapsuleCollider
+				args={[
+					PLAYER_ENTITY_CONFIG.CAPSULE.HALF_HEIGHT,
+					PLAYER_ENTITY_CONFIG.CAPSULE.RADIUS,
+				]}
+			/>
 			<group ref={groupRef}>
 				<primitive
+					frustumCulled={false}
 					object={clonedScene}
 					position={[0, PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y, 0]}
 					scale={PLAYER_GLTF_CONFIG.CHARACTER.SCALE}
