@@ -42,7 +42,7 @@ export const DUNGEON_THEME = {
 	},
 	LIGHTING: {
 		TORCH_COLOR: "#ffb347",
-		TORCH_INTENSITY: 150,
+		TORCH_INTENSITY: 1.0,
 		AMBIENT_INTENSITY: 1.0,
 	},
 	FOG: {
