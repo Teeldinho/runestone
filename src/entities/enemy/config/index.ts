@@ -5,6 +5,7 @@ export {
 	ENEMY_PATROL_RADIUS,
 	ENEMY_PATROL_REACH_THRESHOLD,
 	ENEMY_SPAWN_HEIGHT_OFFSET,
+	ENEMY_SPAWN_OFFSET_XZ,
 } from "./enemyEntityConfig";
 export type { EnemyEvent } from "./enemyEvents";
 export { ENEMY_EVENTS } from "./enemyEvents";

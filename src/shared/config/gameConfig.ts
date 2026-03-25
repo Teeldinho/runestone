@@ -39,11 +39,19 @@ export const ENEMY_CONFIG = {
 	ATTACK_DAMAGE: 8,
 } as const;
 
+export const RELATIVE_CAMERA_MODES = ["thirdPerson", "firstPerson"] as const;
+
 export const CAMERA_CONFIG = {
 	THIRD_PERSON: {
 		FOV: 65,
 		OFFSET: [0, 2.5, -4.8],
 		LERP_SPEED: 5,
+		ORBIT: {
+			MAX_DISTANCE: 12,
+			MIN_DISTANCE: 3,
+			MAX_POLAR_ANGLE: Math.PI * 0.48,
+			MIN_POLAR_ANGLE: 0.2,
+		},
 	},
 	TOP_DOWN: {
 		FOV: 60,

@@ -2,6 +2,7 @@ import { useFrame } from "@react-three/fiber";
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
+import { RELATIVE_CAMERA_MODES } from "@/shared/config";
 import { getCameraMode } from "@/shared/lib/cameraModeStore";
 import { getCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
 import {
@@ -56,7 +57,7 @@ export const usePlayerPhysics = ({
 		if (isMoving) {
 			const currentLinvel = body.linvel();
 			const mode = getCameraMode();
-			const isRelativeMode = mode === "thirdPerson" || mode === "firstPerson";
+			const isRelativeMode = (RELATIVE_CAMERA_MODES as ReadonlyArray<string>).includes(mode);
 
 			let vx = velocity[0] * speed;
 			let vz = velocity[2] * speed;

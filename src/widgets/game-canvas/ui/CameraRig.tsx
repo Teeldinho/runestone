@@ -143,10 +143,10 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 				enablePan
 				enableZoom
 				enableRotate
-				maxDistance={12}
-				minDistance={3}
-				maxPolarAngle={Math.PI * 0.48}
-				minPolarAngle={0.2}
+				maxDistance={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MAX_DISTANCE}
+				minDistance={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MIN_DISTANCE}
+				maxPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MAX_POLAR_ANGLE}
+				minPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MIN_POLAR_ANGLE}
 			/>
 		);
 	}

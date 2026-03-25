@@ -26,6 +26,7 @@ export {
 	ENEMY_CONFIG,
 	GAME_CANVAS_CONFIG,
 	PLAYER_CONFIG,
+	RELATIVE_CAMERA_MODES,
 	ROOM_CONFIG,
 } from "./gameConfig";
 export { GRAPH_LAYOUT_DEFAULTS } from "./graphLayoutConfig";
