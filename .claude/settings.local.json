@@ -19,7 +19,24 @@
       "Bash(find:*)",
       "Bash(cat:*)",
       "Bash(done)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(npx vitest:*)",
+      "Bash(tee /tmp/ci-local.txt)",
+      "Bash(echo \"--- CI EXIT: $?--\")",
+      "Bash(find /Users/tshepang/Documents/Runes -type f \\\\\\(-name *.gltf -o -name *.glb -o -name *.mp3 -o -name *.ogg -o -name *.wav \\\\\\))",
+      "Read(//Users/tshepang/Documents/**)",
+      "Read(//Users/tshepang/**)",
+      "Read(//private/tmp/**)",
+      "Bash(node -e \":*)",
+      "Bash(node:*)",
+      "Bash(cp ~/Documents/Runes/KayKit_Adventurers_2.0_FREE/Characters/gltf/Knight.glb public/models/adventurers/)",
+      "Bash(cp ~/Documents/Runes/KayKit_Adventurers_2.0_FREE/Characters/gltf/Barbarian.glb public/models/enemies/)",
+      "Bash(cp ~/Documents/Runes/KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_MovementBasic.glb public/models/animations/)",
+      "Bash(cp ~/Documents/Runes/KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_General.glb public/models/animations/)",
+      "Bash(cp ~/Documents/Runes/KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_CombatMelee.glb public/models/animations/)",
+      "Bash(npx steiger:*)",
+      "Bash(ls /Users/tshepang/Documents/GitHub/runestone/node_modules/three/examples/jsm/utils/SkeletonUtils*)",
+      "Bash(ls /Users/tshepang/Documents/GitHub/runestone/node_modules/three/src/helpers/SkeletonHelper*)"
     ]
   }
 }

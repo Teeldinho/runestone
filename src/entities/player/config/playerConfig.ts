@@ -36,7 +36,8 @@ export const PLAYER_ENTITY_CONFIG = {
 		HEALTH_STATE: PLAYER_STATES.HEALTH.ALIVE,
 	},
 	TRANSFORM: {
-		SPAWN_HEIGHT_OFFSET: 0.75,
+		// spawnY = colliderTop (0) + capsuleHalfHeight (0.55) = 0.55
+		SPAWN_HEIGHT_OFFSET: 0.55,
 	},
 	BODY: {
 		COLOR: "#a5f3fc",

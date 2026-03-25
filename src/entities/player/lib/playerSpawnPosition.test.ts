@@ -51,11 +51,11 @@ describe("player spawn position calculations", () => {
 
 	it("calculates spawn Y so player feet are at floor collider top", () => {
 		const capsuleHalfHeight = 0.55;
-		const colliderTop = 0.1; // -0.1 + 0.2
+		const colliderTop = 0; // Floor collider top aligns with visual floor at y=0
 		const spawnY = calculatePlayerSpawnY(capsuleHalfHeight, colliderTop);
 
-		// spawnY = colliderTop + capsuleHalfHeight = 0.1 + 0.55 = 0.65
-		expect(spawnY).toBeCloseTo(0.65, 3);
+		// spawnY = colliderTop + capsuleHalfHeight = 0 + 0.55 = 0.55
+		expect(spawnY).toBeCloseTo(0.55, 3);
 	});
 
 	it("calculates floor collider position below visual tiles", () => {
@@ -74,9 +74,8 @@ describe("player spawn position calculations", () => {
 		const colliderThickness = 0.2;
 		const collider = calculateFloorCollider(visualFloorY, colliderThickness);
 
-		// Spawn Y should be: colliderTop + capsuleHalfHeight
-		// This places RigidBody center so capsule bottom touches collider top
-		const colliderTop = collider.y + collider.height;
+		// Collider top = -0.1 + 0.1 = 0 (aligned with visual floor)
+		const colliderTop = collider.y + collider.height / 2;
 		const expectedSpawnY = colliderTop + capsuleHalfHeight;
 
 		const spawnY = calculatePlayerSpawnY(capsuleHalfHeight, colliderTop);
@@ -88,17 +87,22 @@ describe("player spawn position calculations", () => {
 	});
 });
 
-describe("current config values", () => {
-	it("documents current GLTF config values", () => {
-		expect(PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y).toBe(-0.9);
+describe("updated config values", () => {
+	it("has correct GLTF POSITION_Y to prevent ground burial", () => {
+		// Should be ~0.365, not -0.9
+		expect(PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y).toBeCloseTo(0.365, 2);
 		expect(PLAYER_GLTF_CONFIG.CHARACTER.SCALE).toEqual([0.72, 0.72, 0.72]);
 	});
 
-	it("documents current spawn height offset", () => {
-		expect(PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET).toBe(0.75);
+	it("has correct spawn height offset", () => {
+		// Should be 0.55 (colliderTop 0 + capsuleHalfHeight 0.55)
+		expect(PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET).toBeCloseTo(
+			0.55,
+			2,
+		);
 	});
 
-	it("documents current room/floor config", () => {
+	it("documents room/floor config", () => {
 		expect(ROOM_CONFIG.HEIGHT).toBe(6);
 		expect(ROOM_CONFIG.WIDTH).toBe(12);
 	});

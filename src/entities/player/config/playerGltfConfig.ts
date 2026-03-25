@@ -2,7 +2,10 @@ export const PLAYER_GLTF_CONFIG = {
 	CHARACTER: {
 		PATH: "/models/adventurers/Knight.glb",
 		SCALE: [0.72, 0.72, 0.72] as const,
-		POSITION_Y: -0.9,
+		// Knight.glb height at scale 1.0 ≈ 2.543, scaled ≈ 1.831
+		// Model half height ≈ 0.915, capsule half height = 0.55
+		// POSITION_Y = -0.55 + 0.915 = 0.365
+		POSITION_Y: 0.365,
 	},
 } as const;
 

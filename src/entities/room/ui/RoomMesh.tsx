@@ -84,10 +84,12 @@ export function RoomMesh({
 				/>
 			))}
 
-			{/* Floor - physics collider (invisible) */}
+			{/* Floor - physics collider (invisible)
+			    Aligned so collider top (y=0) matches visual floor tiles (y=0).
+			    Thickness 0.2, center at y=-0.1 → extends from -0.2 to 0.0 */}
 			<RigidBody type="fixed" colliders="cuboid">
 				<mesh position={[0, -0.1, 0]} visible={false}>
-					<boxGeometry args={[ROOM_CONFIG.WIDTH, 0.3, ROOM_CONFIG.DEPTH]} />
+					<boxGeometry args={[ROOM_CONFIG.WIDTH, 0.2, ROOM_CONFIG.DEPTH]} />
 				</mesh>
 			</RigidBody>
 
