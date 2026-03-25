@@ -3,6 +3,7 @@ import {
 	type CorridorMeshSettings,
 } from "@/entities/corridor";
 import { ROOM_LABELS, type RoomId } from "@/entities/dungeon";
+import { ENEMY_SPAWN_HEIGHT_OFFSET } from "@/entities/enemy";
 import {
 	type DungeonCorridorLayout,
 	type DungeonRoomLayout,
@@ -135,12 +136,20 @@ export const createSceneEnemyMeshSettings = (
 		{
 			id: `${guardRoomId}-enemy-1`,
 			roomId: guardRoomId,
-			position: [rx - 2, ry, rz + 2] as [number, number, number],
+			position: [rx - 2, ry + ENEMY_SPAWN_HEIGHT_OFFSET, rz + 2] as [
+				number,
+				number,
+				number,
+			],
 		},
 		{
 			id: `${guardRoomId}-enemy-2`,
 			roomId: guardRoomId,
-			position: [rx + 2, ry, rz - 2] as [number, number, number],
+			position: [rx + 2, ry + ENEMY_SPAWN_HEIGHT_OFFSET, rz - 2] as [
+				number,
+				number,
+				number,
+			],
 		},
 	];
 };

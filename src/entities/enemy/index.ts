@@ -1,3 +1,4 @@
+export { ENEMY_SPAWN_HEIGHT_OFFSET } from "./config";
 export type {
 	EnemyBehaviorMachine,
 	EnemyBehaviorState,

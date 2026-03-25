@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { CORRIDOR_ENTITY_CONFIG } from "@/entities/corridor";
 import { ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
+import { ENEMY_SPAWN_HEIGHT_OFFSET } from "@/entities/enemy";
 import type { DungeonCorridorLayout, DungeonRoomLayout } from "@/entities/room";
 import { ROOM_ENTITY_CONFIG } from "@/entities/room";
 
@@ -111,8 +112,10 @@ describe("sceneEnvironmentMappers", () => {
 		expect(enemies[0].roomId).toBe(ROOM_IDS.GUARD_ROOM);
 		expect(enemies[1].roomId).toBe(ROOM_IDS.GUARD_ROOM);
 		expect(enemies[0].position[0]).toBe(-2);
+		expect(enemies[0].position[1]).toBe(ENEMY_SPAWN_HEIGHT_OFFSET);
 		expect(enemies[0].position[2]).toBe(2);
 		expect(enemies[1].position[0]).toBe(2);
+		expect(enemies[1].position[1]).toBe(ENEMY_SPAWN_HEIGHT_OFFSET);
 		expect(enemies[1].position[2]).toBe(-2);
 	});
 });

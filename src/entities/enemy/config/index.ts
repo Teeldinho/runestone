@@ -2,6 +2,7 @@ export {
 	ENEMY_ENTITY_CONFIG,
 	ENEMY_GLOW_COLORS_BY_STATE,
 	ENEMY_GLOW_EMISSIVE_INTENSITY_BY_STATE,
+	ENEMY_SPAWN_HEIGHT_OFFSET,
 } from "./enemyEntityConfig";
 export type { EnemyEvent } from "./enemyEvents";
 export { ENEMY_EVENTS } from "./enemyEvents";

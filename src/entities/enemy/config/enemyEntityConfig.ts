@@ -1,6 +1,8 @@
 import type { EnemyBehaviorState } from "./enemyMachineStates";
 import { ENEMY_MACHINE_STATES } from "./enemyMachineStates";
 
+export const ENEMY_SPAWN_HEIGHT_OFFSET = 0.91;
+
 export const ENEMY_ENTITY_CONFIG = {
 	BODY: {
 		RADIUS: 0.22,
