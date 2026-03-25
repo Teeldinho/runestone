@@ -17,7 +17,9 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 			rotation={[0, settings.rotationYRad, 0]}
 		>
 			{/* Floor - visual */}
-			<mesh castShadow receiveShadow>
+			{/* Floor slab centered so top aligns with y=0 (room floor level) */}
+			{/* With SLAB_HEIGHT=0.24 and group Y_OFFSET=-0.12: top = -0.12 + 0.12 = 0 */}
+			<mesh castShadow receiveShadow position={[0, 0, 0]}>
 				<boxGeometry
 					args={[
 						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.width,
