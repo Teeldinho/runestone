@@ -29,9 +29,6 @@ export const CORRIDOR_ENTITY_CONFIG = {
 		METALNESS: 0.14,
 		ROUGHNESS: 0.86,
 		SLAB_HEIGHT: 0.24,
-		// Aligned with room floor: corridor visual top at y=0
-		// Floor mesh centered at y=0, height=0.24 → top at y=0.12
-		// Need position y = -0.12 for top at y=0
 		Y_OFFSET: -0.12,
 	},
 } as const;
