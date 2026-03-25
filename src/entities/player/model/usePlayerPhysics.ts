@@ -57,7 +57,9 @@ export const usePlayerPhysics = ({
 		if (isMoving) {
 			const currentLinvel = body.linvel();
 			const mode = getCameraMode();
-			const isRelativeMode = (RELATIVE_CAMERA_MODES as ReadonlyArray<string>).includes(mode);
+			const isRelativeMode = (
+				RELATIVE_CAMERA_MODES as ReadonlyArray<string>
+			).includes(mode);
 
 			let vx = velocity[0] * speed;
 			let vz = velocity[2] * speed;

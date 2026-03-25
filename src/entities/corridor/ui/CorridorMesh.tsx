@@ -58,11 +58,19 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 			<RigidBody type="fixed" colliders="cuboid">
 				<mesh
 					castShadow
-					position={[-HALF_WIDTH, CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT / 2, 0]}
+					position={[
+						-HALF_WIDTH,
+						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT / 2,
+						0,
+					]}
 					receiveShadow
 				>
 					<boxGeometry
-						args={[0.2, CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT, CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth]}
+						args={[
+							0.2,
+							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT,
+							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth,
+						]}
 					/>
 					<meshStandardMaterial
 						color={CORRIDOR_ENTITY_CONFIG.SURFACE.BASE_COLOR}
@@ -76,11 +84,19 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 			<RigidBody type="fixed" colliders="cuboid">
 				<mesh
 					castShadow
-					position={[HALF_WIDTH, CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT / 2, 0]}
+					position={[
+						HALF_WIDTH,
+						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT / 2,
+						0,
+					]}
 					receiveShadow
 				>
 					<boxGeometry
-						args={[0.2, CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT, CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth]}
+						args={[
+							0.2,
+							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT,
+							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth,
+						]}
 					/>
 					<meshStandardMaterial
 						color={CORRIDOR_ENTITY_CONFIG.SURFACE.BASE_COLOR}

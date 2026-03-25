@@ -1,3 +1,5 @@
+export type { CameraMode } from "./cameraModesConfig";
+export { CAMERA_MODES } from "./cameraModesConfig";
 export type { ChainMultiplier, ScoreValueKey, StorageKey } from "./constants";
 export {
 	CAMERA_DEFAULT_ZOOM,
@@ -12,8 +14,6 @@ export {
 	TIME_BONUS_CAP_PERCENT,
 	WORLD_SCALE_FACTOR,
 } from "./constants";
-export type { CameraMode } from "./cameraModesConfig";
-export { CAMERA_MODES } from "./cameraModesConfig";
 export { CONVEX_LOCAL_URL, QUERY_CLIENT_DEFAULTS } from "./convexConfig";
 export { EASING_COEFFICIENTS } from "./easingConfig";
 export type {

@@ -5,7 +5,11 @@ import { useMemo } from "react";
 import { ROOM_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
-import { ROOM_FLOOR_COLLIDER, ROOM_GLTF_CONFIG, ROOM_LIGHT_CONFIG } from "../config";
+import {
+	ROOM_FLOOR_COLLIDER,
+	ROOM_GLTF_CONFIG,
+	ROOM_LIGHT_CONFIG,
+} from "../config";
 import { getColumnPlacements, getFloorTilePositions } from "../lib";
 import type { RoomSurfaceSettings } from "../model";
 

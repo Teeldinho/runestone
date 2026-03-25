@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import { CORRIDOR_ENTITY_CONFIG } from "@/entities/corridor";
 import { ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
-import { ENEMY_SPAWN_HEIGHT_OFFSET, ENEMY_SPAWN_OFFSET_XZ } from "@/entities/enemy";
+import {
+	ENEMY_SPAWN_HEIGHT_OFFSET,
+	ENEMY_SPAWN_OFFSET_XZ,
+} from "@/entities/enemy";
 import type { DungeonCorridorLayout, DungeonRoomLayout } from "@/entities/room";
 import { ROOM_ENTITY_CONFIG } from "@/entities/room";
 
