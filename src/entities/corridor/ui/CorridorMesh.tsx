@@ -17,9 +17,7 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 			rotation={[0, settings.rotationYRad, 0]}
 		>
 			{/* Floor - visual */}
-			{/* Floor slab centered so top aligns with y=0 (room floor level) */}
-			{/* With SLAB_HEIGHT=0.24 and group Y_OFFSET=-0.12: top = -0.12 + 0.12 = 0 */}
-			<mesh castShadow receiveShadow position={[0, 0, 0]}>
+			<mesh castShadow receiveShadow>
 				<boxGeometry
 					args={[
 						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.width,
@@ -36,11 +34,11 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 
 			{/* Floor - physics collider */}
 			<RigidBody type="fixed" colliders="cuboid">
-				<mesh position={[0, 0, 0]} visible={false}>
+				<mesh position={[0, -0.3, 0]} visible={false}>
 					<boxGeometry
 						args={[
 							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.width,
-							0.3,
+							0.6,
 							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth,
 						]}
 					/>
