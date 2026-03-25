@@ -21,8 +21,7 @@ type RoomMeshProps = {
 
 const HALF_WIDTH = ROOM_CONFIG.WIDTH / 2;
 const HALF_DEPTH = ROOM_CONFIG.DEPTH / 2;
-const WALL_HALF_HEIGHT = ROOM_CONFIG.HEIGHT / 2;
-const WALL_Y = WALL_HALF_HEIGHT;
+const WALL_Y = 0;
 
 useGLTF.preload(ROOM_GLTF_CONFIG.FLOOR_TILE.PATH);
 useGLTF.preload(ROOM_GLTF_CONFIG.WALL.PATH);
@@ -84,12 +83,10 @@ export function RoomMesh({
 				/>
 			))}
 
-			{/* Floor - physics collider (invisible)
-			    Aligned so collider top (y=0) matches visual floor tiles (y=0).
-			    Thickness 0.2, center at y=-0.1 → extends from -0.2 to 0.0 */}
+			{/* Floor - physics collider (invisible) */}
 			<RigidBody type="fixed" colliders="cuboid">
-				<mesh position={[0, -0.1, 0]} visible={false}>
-					<boxGeometry args={[ROOM_CONFIG.WIDTH, 0.2, ROOM_CONFIG.DEPTH]} />
+				<mesh position={[0, -0.3, 0]} visible={false}>
+					<boxGeometry args={[ROOM_CONFIG.WIDTH, 0.6, ROOM_CONFIG.DEPTH]} />
 				</mesh>
 			</RigidBody>
 
