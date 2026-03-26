@@ -1,4 +1,5 @@
 import { Volume2, VolumeX } from "lucide-react";
+import { useCameraMachine } from "@/features/camera-system";
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
 import { ScrollArea } from "@/shared/ui";
@@ -11,7 +12,6 @@ export function GamePage() {
 	const {
 		actionButtons,
 		activeStateLabel,
-		cameraStateSnapshot,
 		canvasMachineRuntime,
 		currentRoomLabel,
 		discoveredRoomLabels,
@@ -19,7 +19,6 @@ export function GamePage() {
 		graphEdges,
 		graphNodes,
 		handleAudioMuteToggle,
-		handleCameraModeSwitch,
 		hasTreasureKeyLabel,
 		handleDungeonRunReset,
 		isAudioMuted,
@@ -27,6 +26,7 @@ export function GamePage() {
 		playerMaxHp,
 	} = useGamePage();
 	const settings = useSettingsForm();
+	const { cameraStateSnapshot, handleCameraModeSwitch } = useCameraMachine();
 
 	return (
 		<main
@@ -94,7 +94,9 @@ export function GamePage() {
 
 						<div
 							className="shrink-0 border-t p-2"
-							style={{ borderColor: "var(--panel-border)" }}
+							style={{
+								borderColor: "var(--panel-border)",
+							}}
 						>
 							<CameraModeSwitcher
 								activeCameraMode={cameraStateSnapshot.mode}

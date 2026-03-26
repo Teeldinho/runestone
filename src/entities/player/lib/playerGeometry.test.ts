@@ -15,7 +15,7 @@ describe("playerGeometry", () => {
 			origin: [0, 0, 0],
 		});
 
-		expect(spawnPosition).toEqual([0, 0.75, 0]);
+		expect(spawnPosition).toEqual([0, 1.5, 0]);
 	});
 
 	it("creates player mesh settings with health-based aura styles", () => {
@@ -29,7 +29,7 @@ describe("playerGeometry", () => {
 		expect(meshSettings).toEqual({
 			auraColor: "#00d7ff",
 			auraEmissiveIntensity: 2.0,
-			position: [0, 0.75, 0],
+			position: [0, 1.5, 0],
 		});
 	});
 

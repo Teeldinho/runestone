@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import { act, renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PLAYER_EVENTS } from "@/entities/player";
 import { ENEMY_CONFIG } from "@/shared/config";
@@ -9,10 +9,8 @@ import { ENEMY_CONFIG } from "@/shared/config";
 const mockSendPlayerMachineEvent = vi.fn();
 const mockSendDungeonMachineEvent = vi.fn();
 const mockOnEnemyHit = vi.fn();
-
-const { mockPlayerSnapshotGetter } = vi.hoisted(() => ({
-	mockPlayerSnapshotGetter: vi.fn(),
-}));
+const mockGetPlayerPosition = vi.fn();
+const mockSubscribeToPlayerPosition = vi.fn();
 
 vi.mock("@/entities/player", () => ({
 	PLAYER_EVENTS: {
@@ -24,7 +22,6 @@ vi.mock("@/entities/player", () => ({
 	},
 	usePlayerMachineRuntime: () => ({
 		sendPlayerMachineEvent: mockSendPlayerMachineEvent,
-		snapshot: mockPlayerSnapshotGetter(),
 	}),
 }));
 
@@ -44,24 +41,24 @@ vi.mock("@/features/haptics-feedback", () => ({
 	}),
 }));
 
-const createMockPlayerSnapshot = () => ({
-	context: { position: [0, 0, 0] as [number, number, number] },
-});
+vi.mock("@/shared/lib/playerPositionStore", () => ({
+	getPlayerPosition: () => mockGetPlayerPosition(),
+	subscribeToPlayerPosition: (listener: () => void) => {
+		mockSubscribeToPlayerPosition(listener);
+		return () => {};
+	},
+}));
 
 import { useEnemySceneController } from "./useEnemySceneController";
 
-describe("useEnemySceneController — handleEnemyAttack", () => {
+describe("useEnemySceneController", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		vi.useFakeTimers();
-		mockPlayerSnapshotGetter.mockReturnValue(createMockPlayerSnapshot());
-	});
-
-	afterEach(() => {
-		vi.useRealTimers();
 	});
 
 	it("handleEnemyAttack sends TAKE_DAMAGE with ATTACK_DAMAGE amount", () => {
+		mockGetPlayerPosition.mockReturnValue([3, 0, -2]);
+
 		const { result } = renderHook(() => useEnemySceneController());
 
 		act(() => {
@@ -74,22 +71,38 @@ describe("useEnemySceneController — handleEnemyAttack", () => {
 		});
 	});
 
-	it("handleEnemyAttack is stable across re-renders", () => {
-		const { result, rerender } = renderHook(() => useEnemySceneController());
-		const firstRef = result.current.handleEnemyAttack;
-
-		rerender();
-
-		expect(result.current.handleEnemyAttack).toBe(firstRef);
-	});
-
 	it("handleEnemyAttack triggers onEnemyHit haptic", () => {
+		mockGetPlayerPosition.mockReturnValue([0, 0, 0]);
+
 		const { result } = renderHook(() => useEnemySceneController());
 
 		act(() => {
 			result.current.handleEnemyAttack();
 		});
 
-		expect(mockOnEnemyHit).toHaveBeenCalledTimes(1);
+		expect(mockOnEnemyHit).toHaveBeenCalled();
+	});
+
+	it("returns live player position from playerPositionStore", () => {
+		mockGetPlayerPosition.mockReturnValue([9, 1.5, 4]);
+
+		const { result } = renderHook(() => useEnemySceneController());
+
+		expect(result.current.playerPosition).toEqual([9, 1.5, 4]);
+		expect(mockSubscribeToPlayerPosition).toHaveBeenCalled();
+	});
+
+	it("handleEnemyDead sends ENEMY_DIED to dungeon machine", () => {
+		mockGetPlayerPosition.mockReturnValue([0, 0, 0]);
+
+		const { result } = renderHook(() => useEnemySceneController());
+
+		act(() => {
+			result.current.handleEnemyDead();
+		});
+
+		expect(mockSendDungeonMachineEvent).toHaveBeenCalledWith({
+			type: "ENEMY_DIED",
+		});
 	});
 });

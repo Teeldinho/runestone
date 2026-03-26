@@ -8,6 +8,7 @@ export {
 export {
 	createGameMachine,
 	DungeonGameMachineProvider,
+	useDoorwayNavigation,
 	useGameMachine,
 	useGameMachineRuntime,
 	usePlayerInput,

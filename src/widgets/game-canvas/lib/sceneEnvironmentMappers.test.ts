@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import { CORRIDOR_ENTITY_CONFIG } from "@/entities/corridor";
 import { ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
+import {
+	ENEMY_SPAWN_HEIGHT_OFFSET,
+	ENEMY_SPAWN_OFFSET_XZ,
+} from "@/entities/enemy";
 import type { DungeonCorridorLayout, DungeonRoomLayout } from "@/entities/room";
 import { ROOM_ENTITY_CONFIG } from "@/entities/room";
 
@@ -57,6 +61,7 @@ describe("sceneEnvironmentMappers", () => {
 			{
 				roomId: ROOM_IDS.ENTRANCE,
 				position: [0, 0, -40],
+				lockedDoorSides: [],
 				labelSettings: {
 					isVisible: true,
 					position: [0, ROOM_ENTITY_CONFIG.LABEL.HEIGHT_OFFSET, -40],
@@ -67,12 +72,34 @@ describe("sceneEnvironmentMappers", () => {
 			{
 				roomId: ROOM_IDS.LIBRARY,
 				position: [0, 0, -20],
+				lockedDoorSides: [],
 				labelSettings: {
 					isVisible: true,
 					position: [0, ROOM_ENTITY_CONFIG.LABEL.HEIGHT_OFFSET, -20],
 					text: ROOM_LABELS[ROOM_IDS.LIBRARY],
 				},
 				wallOpenings: ["north"],
+			},
+		]);
+	});
+
+	it("injects locked doorway sides per room", () => {
+		expect(
+			createSceneRoomMeshSettings(
+				ROOM_LAYOUT_FIXTURE,
+				CORRIDOR_LAYOUT_FIXTURE,
+				{
+					[ROOM_IDS.ENTRANCE]: ["south"],
+				},
+			),
+		).toMatchObject([
+			{
+				roomId: ROOM_IDS.ENTRANCE,
+				lockedDoorSides: ["south"],
+			},
+			{
+				roomId: ROOM_IDS.LIBRARY,
+				lockedDoorSides: [],
 			},
 		]);
 	});
@@ -110,9 +137,11 @@ describe("sceneEnvironmentMappers", () => {
 		expect(enemies[1].id).toBe(`${ROOM_IDS.GUARD_ROOM}-enemy-2`);
 		expect(enemies[0].roomId).toBe(ROOM_IDS.GUARD_ROOM);
 		expect(enemies[1].roomId).toBe(ROOM_IDS.GUARD_ROOM);
-		expect(enemies[0].position[0]).toBe(-2);
-		expect(enemies[0].position[2]).toBe(2);
-		expect(enemies[1].position[0]).toBe(2);
-		expect(enemies[1].position[2]).toBe(-2);
+		expect(enemies[0].position[0]).toBe(-ENEMY_SPAWN_OFFSET_XZ);
+		expect(enemies[0].position[1]).toBe(ENEMY_SPAWN_HEIGHT_OFFSET);
+		expect(enemies[0].position[2]).toBe(ENEMY_SPAWN_OFFSET_XZ);
+		expect(enemies[1].position[0]).toBe(ENEMY_SPAWN_OFFSET_XZ);
+		expect(enemies[1].position[1]).toBe(ENEMY_SPAWN_HEIGHT_OFFSET);
+		expect(enemies[1].position[2]).toBe(-ENEMY_SPAWN_OFFSET_XZ);
 	});
 });

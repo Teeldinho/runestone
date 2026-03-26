@@ -2,6 +2,10 @@ export {
 	ENEMY_ENTITY_CONFIG,
 	ENEMY_GLOW_COLORS_BY_STATE,
 	ENEMY_GLOW_EMISSIVE_INTENSITY_BY_STATE,
+	ENEMY_PATROL_RADIUS,
+	ENEMY_PATROL_REACH_THRESHOLD,
+	ENEMY_SPAWN_HEIGHT_OFFSET,
+	ENEMY_SPAWN_OFFSET_XZ,
 } from "./enemyEntityConfig";
 export type { EnemyEvent } from "./enemyEvents";
 export { ENEMY_EVENTS } from "./enemyEvents";

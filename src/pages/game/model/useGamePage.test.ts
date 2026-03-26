@@ -1,12 +1,11 @@
 // @vitest-environment happy-dom
 
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { DungeonContext } from "@/entities/dungeon";
 import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
 import { useAudioController } from "@/features/audio-manager";
-import { CAMERA_MODES, useCameraSystem } from "@/features/camera-system";
 import { useGameMachine } from "@/features/dungeon-navigation";
 import { useStateVisualizer } from "@/features/state-visualizer";
 import { GAME_PAGE_COPY } from "@/pages/game/config";
@@ -24,16 +23,6 @@ vi.mock("@/features/audio-manager", () => ({
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachine: vi.fn(),
 }));
-
-vi.mock("@/features/camera-system", async (importOriginal) => {
-	const actual =
-		await importOriginal<typeof import("@/features/camera-system")>();
-
-	return {
-		...actual,
-		useCameraSystem: vi.fn(),
-	};
-});
 
 vi.mock("@/features/state-visualizer", () => ({
 	useStateVisualizer: vi.fn(),
@@ -73,7 +62,10 @@ vi.mock("@/entities/dungeon", async (importOriginal) => {
 
 vi.mock("@/entities/room", () => ({
 	createDungeonFloorLayout: vi.fn(() => ({
-		rooms: [{ roomId: "entrance", position: [0, 0, 0], isInitial: true }],
+		rooms: [
+			{ roomId: "entrance", position: [0, 0, 0], isInitial: true },
+			{ roomId: "guardRoom", position: [20, 0, 0], isInitial: false },
+		],
 		corridors: [],
 		transitions: [],
 	})),
@@ -105,17 +97,6 @@ describe("useGamePage", () => {
 			},
 		} as unknown as ReturnType<typeof useGameMachine>);
 
-		vi.mocked(useCameraSystem).mockReturnValue({
-			cameraStateSnapshot: {
-				fov: 58,
-				mode: CAMERA_MODES.FREE_ORBITAL,
-				position: [10, 10, 10],
-				target: [0, 0, 0],
-				zoom: 1,
-			},
-			handleCameraModeSwitch: vi.fn(),
-		} as unknown as ReturnType<typeof useCameraSystem>);
-
 		vi.mocked(useStateVisualizer).mockReturnValue({
 			edges: [],
 			nodes: [],
@@ -135,9 +116,6 @@ describe("useGamePage", () => {
 		expect(result.current.hasTreasureKeyLabel).toBe(
 			GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 		);
-		expect(result.current.cameraStateSnapshot.mode).toBe(
-			CAMERA_MODES.FREE_ORBITAL,
-		);
 		expect(result.current.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
 		expect(result.current.currentRoomLabel).toBe("Entrance");
 		expect(result.current.isAudioMuted).toBe(false);
@@ -145,5 +123,50 @@ describe("useGamePage", () => {
 		expect(
 			vi.mocked(useAudioController)().handleAudioPlayRequest,
 		).toHaveBeenCalled();
+	});
+});
+
+describe("dungeon reset teleport", () => {
+	it("teleports player to entrance when dungeon run resets", async () => {
+		const { setPlayerTeleportTarget } = await import(
+			"@/shared/lib/playerPositionStore"
+		);
+		const resetDungeonMachine = vi.fn();
+
+		const machineContext: DungeonContext = {
+			currentFloorId: FLOOR_IDS.FLOOR_ONE,
+			currentRoomId: ROOM_IDS.ENTRANCE,
+			discoveredRooms: [ROOM_IDS.ENTRANCE],
+			hasTreasureKey: false,
+			enemiesRemaining: 0,
+		};
+
+		vi.mocked(useGameMachine).mockReturnValue({
+			actionButtons: [],
+			currentRoomLabel: "Entrance",
+			discoveredRoomLabels: ["Entrance"],
+			handleDungeonRunReset: resetDungeonMachine,
+			handleDungeonEventSend: vi.fn(),
+			snapshot: { context: machineContext, value: ROOM_IDS.ENTRANCE },
+		} as unknown as ReturnType<typeof useGameMachine>);
+
+		vi.mocked(useStateVisualizer).mockReturnValue({
+			edges: [],
+			nodes: [],
+			positionedNodes: [],
+		} as unknown as ReturnType<typeof useStateVisualizer>);
+
+		const { result } = renderHook(() => useGamePage());
+
+		act(() => {
+			result.current.handleDungeonRunReset();
+		});
+
+		expect(resetDungeonMachine).toHaveBeenCalledTimes(1);
+		expect(setPlayerTeleportTarget).toHaveBeenCalledWith(
+			0,
+			expect.any(Number),
+			0,
+		);
 	});
 });

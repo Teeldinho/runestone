@@ -4,6 +4,10 @@ import {
 } from "@/entities/corridor";
 import { ROOM_LABELS, type RoomId } from "@/entities/dungeon";
 import {
+	ENEMY_SPAWN_HEIGHT_OFFSET,
+	ENEMY_SPAWN_OFFSET_XZ,
+} from "@/entities/enemy";
+import {
 	type DungeonCorridorLayout,
 	type DungeonRoomLayout,
 	getRoomLabelPosition,
@@ -17,6 +21,7 @@ type SceneRoomMeshSettings = {
 	position: Vector3Tuple;
 	labelSettings: RoomLabelSettings;
 	wallOpenings: WallOpening[];
+	lockedDoorSides: WallOpening[];
 };
 
 type WallOpening = "north" | "south" | "east" | "west";
@@ -75,12 +80,14 @@ const computeWallOpenings = (
 export const createSceneRoomMeshSettings = (
 	rooms: readonly DungeonRoomLayout[],
 	corridors: readonly DungeonCorridorLayout[] = [],
+	lockedDoorSidesByRoomId: Partial<Record<string, readonly WallOpening[]>> = {},
 ): SceneRoomMeshSettings[] => {
 	return rooms.map((room) => ({
 		roomId: room.roomId,
 		position: room.position,
 		labelSettings: createSceneRoomLabelSettings(room.roomId, room.position),
 		wallOpenings: computeWallOpenings(room.roomId, room.position, corridors),
+		lockedDoorSides: [...(lockedDoorSidesByRoomId[room.roomId] ?? [])],
 	}));
 };
 
@@ -135,12 +142,20 @@ export const createSceneEnemyMeshSettings = (
 		{
 			id: `${guardRoomId}-enemy-1`,
 			roomId: guardRoomId,
-			position: [rx - 2, ry, rz + 2] as [number, number, number],
+			position: [
+				rx - ENEMY_SPAWN_OFFSET_XZ,
+				ry + ENEMY_SPAWN_HEIGHT_OFFSET,
+				rz + ENEMY_SPAWN_OFFSET_XZ,
+			] as [number, number, number],
 		},
 		{
 			id: `${guardRoomId}-enemy-2`,
 			roomId: guardRoomId,
-			position: [rx + 2, ry, rz - 2] as [number, number, number],
+			position: [
+				rx + ENEMY_SPAWN_OFFSET_XZ,
+				ry + ENEMY_SPAWN_HEIGHT_OFFSET,
+				rz - ENEMY_SPAWN_OFFSET_XZ,
+			] as [number, number, number],
 		},
 	];
 };

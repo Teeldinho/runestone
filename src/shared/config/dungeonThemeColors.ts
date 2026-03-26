@@ -1,0 +1,14 @@
+export const DUNGEON_THEME_COLORS = {
+	STONE_BASE: "#4a596b",
+	STONE_DETAIL: "#5f7085",
+	TORCH_LIGHT: "#ffbb7a",
+	TORCH_FLAME: "#ffb347",
+	FOG_BASE: "#06090f",
+	RUNE_SEALED: "#ff2ecf",
+	RUNE_OPEN: "#f5c451",
+	RUNE_ACTIVE: "#00d7ff",
+	CORRIDOR_SURFACE_BASE: "#2b3746",
+	DOORWAY_GATE: "#7b8ea3",
+	DOORWAY_GATE_EMISSIVE: "#2f3a45",
+	ROOM_LABEL: "#a5f3fc",
+} as const;

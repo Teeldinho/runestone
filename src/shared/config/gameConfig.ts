@@ -1,3 +1,5 @@
+import { CAMERA_MODES } from "./cameraModesConfig";
+
 export const ROOM_CONFIG = {
 	WIDTH: 12,
 	HEIGHT: 6,
@@ -31,7 +33,7 @@ export const PLAYER_CONFIG = {
 
 export const ENEMY_CONFIG = {
 	MAX_HP: 45,
-	DETECTION_RADIUS: 7,
+	DETECTION_RADIUS: 4,
 	ATTACK_RADIUS: 1.5,
 	PATROL_SPEED: 1.5,
 	CHASE_SPEED: 2.8,
@@ -39,16 +41,27 @@ export const ENEMY_CONFIG = {
 	ATTACK_DAMAGE: 8,
 } as const;
 
+export const RELATIVE_CAMERA_MODES = [
+	CAMERA_MODES.THIRD_PERSON,
+	CAMERA_MODES.FIRST_PERSON,
+] as const;
+
 export const CAMERA_CONFIG = {
 	THIRD_PERSON: {
 		FOV: 65,
-		OFFSET: [0, 2.5, -4.8],
+		OFFSET: [0, 2.2, -3.8],
 		LERP_SPEED: 5,
+		ORBIT: {
+			MAX_DISTANCE: 8,
+			MIN_DISTANCE: 2.4,
+			MAX_POLAR_ANGLE: Math.PI * 0.48,
+			MIN_POLAR_ANGLE: 0.2,
+		},
 	},
 	TOP_DOWN: {
 		FOV: 60,
 		HEIGHT: 35,
-		DISTANCE: 6,
+		DISTANCE: 0,
 		MIN_ZOOM: 0.7,
 		MAX_ZOOM: 1.6,
 		PAN_SPEED: 1.3,

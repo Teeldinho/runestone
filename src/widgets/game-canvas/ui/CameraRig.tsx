@@ -63,7 +63,7 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 				CAMERA_CONFIG.TOP_DOWN.HEIGHT,
 				pz + CAMERA_CONFIG.TOP_DOWN.DISTANCE,
 			);
-			targetLookAt.current.set(px, 0, pz);
+			targetLookAt.current.set(px, py, pz);
 		} else {
 			const [sx, sy, sz] = cameraStateSnapshot.position;
 			targetPosition.current.set(sx, sy, sz);
@@ -92,7 +92,11 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 				camera.lookAt(targetLookAt.current);
 			}
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON) {
+			const [ox, oy, oz] = CAMERA_CONFIG.THIRD_PERSON.OFFSET;
 			if (thirdPersonOrbitRef.current) {
+				if (isModeChange) {
+					camera.position.set(px + ox, py + oy, pz + oz);
+				}
 				thirdPersonOrbitRef.current.target.set(px, py + 1, pz);
 				thirdPersonOrbitRef.current.update();
 			} else if (isModeChange) {
@@ -139,23 +143,10 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 				enablePan
 				enableZoom
 				enableRotate
-				maxDistance={12}
-				minDistance={3}
-				maxPolarAngle={Math.PI * 0.48}
-				minPolarAngle={0.2}
-			/>
-		);
-	}
-
-	if (mode === CAMERA_MODES.TOP_DOWN) {
-		return (
-			<OrbitControls
-				makeDefault
-				enableRotate={false}
-				enablePan
-				enableZoom
-				maxDistance={45}
-				minDistance={20}
+				maxDistance={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MAX_DISTANCE}
+				minDistance={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MIN_DISTANCE}
+				maxPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MAX_POLAR_ANGLE}
+				minPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MIN_POLAR_ANGLE}
 			/>
 		);
 	}

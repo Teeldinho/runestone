@@ -4,6 +4,7 @@ import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import type * as THREE from "three";
+import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 import {
 	PLAYER_ANIMATION_PATHS,
@@ -27,7 +28,7 @@ export function PlayerMesh() {
 	);
 	const { animations: generalAnims } = useGLTF(PLAYER_ANIMATION_PATHS.GENERAL);
 
-	const clonedScene = useMemo(() => scene.clone(), [scene]);
+	const clonedScene = useMemo(() => skeletonClone(scene), [scene]);
 	const allAnims = useMemo(
 		() => [...moveAnims, ...generalAnims],
 		[moveAnims, generalAnims],
@@ -47,14 +48,22 @@ export function PlayerMesh() {
 	return (
 		<RigidBody
 			ref={rigidBodyRef as RefObject<RapierRigidBody>}
+			ccd
 			colliders={false}
+			linearDamping={PLAYER_ENTITY_CONFIG.PHYSICS.LINEAR_DAMPING}
 			lockRotations
 			position={meshSettings.position}
 			type="dynamic"
 		>
-			<CapsuleCollider args={[0.55, 0.35]} />
+			<CapsuleCollider
+				args={[
+					PLAYER_ENTITY_CONFIG.CAPSULE.HALF_HEIGHT,
+					PLAYER_ENTITY_CONFIG.CAPSULE.RADIUS,
+				]}
+			/>
 			<group ref={groupRef}>
 				<primitive
+					frustumCulled={false}
 					object={clonedScene}
 					position={[0, PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y, 0]}
 					scale={PLAYER_GLTF_CONFIG.CHARACTER.SCALE}

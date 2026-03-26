@@ -24,8 +24,8 @@ describe("corridorGeometry", () => {
 			yOffset: CORRIDOR_ENTITY_CONFIG.SURFACE.Y_OFFSET,
 		});
 
-		expect(eastPosition).toEqual([10, -0.1, 0]);
-		expect(northPosition).toEqual([0, -0.1, -10]);
+		expect(eastPosition).toEqual([10, -0.12, 0]);
+		expect(northPosition).toEqual([0, -0.12, -10]);
 	});
 
 	it("returns mesh rotation aligned to corridor direction", () => {
@@ -54,22 +54,22 @@ describe("corridorGeometry", () => {
 		expect(corridorSettings).toEqual([
 			{
 				id: CORRIDOR_DIRECTIONS.NORTH,
-				position: [0, -0.1, -10],
+				position: [0, -0.12, -10],
 				rotationYRad: 0,
 			},
 			{
 				id: CORRIDOR_DIRECTIONS.EAST,
-				position: [10, -0.1, 0],
+				position: [10, -0.12, 0],
 				rotationYRad: Math.PI / 2,
 			},
 			{
 				id: CORRIDOR_DIRECTIONS.SOUTH,
-				position: [0, -0.1, 10],
+				position: [0, -0.12, 10],
 				rotationYRad: 0,
 			},
 			{
 				id: CORRIDOR_DIRECTIONS.WEST,
-				position: [-10, -0.1, 0],
+				position: [-10, -0.12, 0],
 				rotationYRad: Math.PI / 2,
 			},
 		]);

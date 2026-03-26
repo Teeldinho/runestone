@@ -1,3 +1,5 @@
+export type { CameraMode } from "./cameraModesConfig";
+export { CAMERA_MODES } from "./cameraModesConfig";
 export type { ChainMultiplier, ScoreValueKey, StorageKey } from "./constants";
 export {
 	CAMERA_DEFAULT_ZOOM,
@@ -13,6 +15,7 @@ export {
 	WORLD_SCALE_FACTOR,
 } from "./constants";
 export { CONVEX_LOCAL_URL, QUERY_CLIENT_DEFAULTS } from "./convexConfig";
+export { DUNGEON_THEME_COLORS } from "./dungeonThemeColors";
 export { EASING_COEFFICIENTS } from "./easingConfig";
 export type {
 	CameraConfig,
@@ -26,6 +29,7 @@ export {
 	ENEMY_CONFIG,
 	GAME_CANVAS_CONFIG,
 	PLAYER_CONFIG,
+	RELATIVE_CAMERA_MODES,
 	ROOM_CONFIG,
 } from "./gameConfig";
 export { GRAPH_LAYOUT_DEFAULTS } from "./graphLayoutConfig";

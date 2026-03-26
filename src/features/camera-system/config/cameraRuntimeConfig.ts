@@ -10,6 +10,8 @@ type CameraStateTargets = {
 	PLAYER_HEAD_FORWARD: Vector3Tuple;
 };
 
+export const CAMERA_MACHINE_ID = "camera";
+
 export const CAMERA_HOTKEY_EVENT_TYPE = "keydown";
 
 export const CAMERA_HOTKEY_VALUES = [

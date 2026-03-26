@@ -20,7 +20,6 @@ export const usePlayerMeshViewModel = (): UsePlayerMeshViewModelResult => {
 	] as PlayerHealthState;
 	const meshSettings = usePlayerMesh({ healthState });
 	const { rigidBodyRef } = usePlayerPhysics({
-		position: snapshot.context.position,
 		velocity: snapshot.context.velocity,
 		isSprinting: snapshot.context.isSprinting,
 	});
