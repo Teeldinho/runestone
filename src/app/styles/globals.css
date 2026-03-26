@@ -37,13 +37,16 @@
 	--dungeon-gold: #d97706;
 	--dungeon-gold-dim: #92400e;
 	--dungeon-rune: #00d7ff;
-	--color-dungeon-stone-base: #0d1117;
-	--color-dungeon-stone-detail: #1b2430;
-	--color-dungeon-torch: #ffb347;
-	--color-dungeon-fog: #06090f;
-	--color-dungeon-rune-sealed: #ff2ecf;
-	--color-dungeon-rune-open: #f5c451;
-	--color-dungeon-rune-active: #00d7ff;
+	--dungeon-stone-base: #4a596b;
+	--dungeon-stone-detail: #5f7085;
+	--dungeon-torch: #ffbb7a;
+	--dungeon-fog: #06090f;
+	--dungeon-rune-sealed: #ff2ecf;
+	--dungeon-rune-open: #f5c451;
+	--dungeon-rune-active: #00d7ff;
+	--dungeon-corridor-base: #2b3746;
+	--dungeon-doorway-gate: #7b8ea3;
+	--dungeon-doorway-gate-emissive: #2f3a45;
 }
 
 @theme inline {
@@ -76,6 +79,16 @@
 	--color-panel-border: var(--panel-border);
 	--color-panel-title: var(--panel-title);
 	--color-panel-body: var(--panel-body);
+	--color-dungeon-stone-base: var(--dungeon-stone-base);
+	--color-dungeon-stone-detail: var(--dungeon-stone-detail);
+	--color-dungeon-torch: var(--dungeon-torch);
+	--color-dungeon-fog: var(--dungeon-fog);
+	--color-dungeon-rune-sealed: var(--dungeon-rune-sealed);
+	--color-dungeon-rune-open: var(--dungeon-rune-open);
+	--color-dungeon-rune-active: var(--dungeon-rune-active);
+	--color-dungeon-corridor-base: var(--dungeon-corridor-base);
+	--color-dungeon-doorway-gate: var(--dungeon-doorway-gate);
+	--color-dungeon-doorway-gate-emissive: var(--dungeon-doorway-gate-emissive);
 }
 
 * {

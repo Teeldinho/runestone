@@ -35,12 +35,10 @@ const toLineNumber = (sourceText, index) =>
 const allowLiteralColorsIn = new Set([
 	GLOBALS_RELATIVE_PATH,
 	MANIFEST_RELATIVE_PATH,
-	// Three.js cannot resolve CSS var() - these config files provide hex literals for R3F materials
-	"src/entities/dungeon/config/dungeonConfig.ts",
+	// Three.js cannot resolve CSS var() - theme hex literals stay in shared token config
+	"src/shared/config/dungeonThemeColors.ts",
 	"src/entities/enemy/config/enemyEntityConfig.ts",
 	"src/entities/player/config/playerConfig.ts",
-	"src/entities/corridor/config/corridorConfig.ts",
-	"src/entities/room/config/roomConfig.ts",
 ]);
 
 const isTestFile = (relativePath) => /\.test\.[^.]+$/.test(relativePath);
