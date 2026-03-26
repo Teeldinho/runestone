@@ -62,6 +62,7 @@ describe("sceneEnvironmentMappers", () => {
 				roomId: ROOM_IDS.ENTRANCE,
 				position: [0, 0, -40],
 				lockedDoorSides: [],
+				showTreasureKey: false,
 				labelSettings: {
 					isVisible: true,
 					position: [0, ROOM_ENTITY_CONFIG.LABEL.HEIGHT_OFFSET, -40],
@@ -73,6 +74,7 @@ describe("sceneEnvironmentMappers", () => {
 				roomId: ROOM_IDS.LIBRARY,
 				position: [0, 0, -20],
 				lockedDoorSides: [],
+				showTreasureKey: false,
 				labelSettings: {
 					isVisible: true,
 					position: [0, ROOM_ENTITY_CONFIG.LABEL.HEIGHT_OFFSET, -20],
@@ -122,7 +124,7 @@ describe("sceneEnvironmentMappers", () => {
 
 	it("returns empty array when guard room is not found", () => {
 		expect(
-			createSceneEnemyMeshSettings(ROOM_LAYOUT_FIXTURE, ROOM_IDS.GUARD_ROOM),
+			createSceneEnemyMeshSettings(ROOM_LAYOUT_FIXTURE, ROOM_IDS.GUARD_ROOM, 2),
 		).toEqual([]);
 	});
 
@@ -130,6 +132,7 @@ describe("sceneEnvironmentMappers", () => {
 		const enemies = createSceneEnemyMeshSettings(
 			GUARD_ROOM_FIXTURE,
 			ROOM_IDS.GUARD_ROOM,
+			2,
 		);
 
 		expect(enemies).toHaveLength(2);
@@ -137,11 +140,22 @@ describe("sceneEnvironmentMappers", () => {
 		expect(enemies[1].id).toBe(`${ROOM_IDS.GUARD_ROOM}-enemy-2`);
 		expect(enemies[0].roomId).toBe(ROOM_IDS.GUARD_ROOM);
 		expect(enemies[1].roomId).toBe(ROOM_IDS.GUARD_ROOM);
-		expect(enemies[0].position[0]).toBe(-ENEMY_SPAWN_OFFSET_XZ);
+		expect(enemies[0].position[0]).toBe(0);
 		expect(enemies[0].position[1]).toBe(ENEMY_SPAWN_HEIGHT_OFFSET);
-		expect(enemies[0].position[2]).toBe(ENEMY_SPAWN_OFFSET_XZ);
-		expect(enemies[1].position[0]).toBe(ENEMY_SPAWN_OFFSET_XZ);
+		expect(enemies[0].position[2]).toBe(0);
+		expect(enemies[1].position[0]).toBe(ENEMY_SPAWN_OFFSET_XZ / 2);
 		expect(enemies[1].position[1]).toBe(ENEMY_SPAWN_HEIGHT_OFFSET);
-		expect(enemies[1].position[2]).toBe(-ENEMY_SPAWN_OFFSET_XZ);
+		expect(enemies[1].position[2]).toBe(-ENEMY_SPAWN_OFFSET_XZ / 2);
+		expect(enemies[0].patrolCenter).toEqual([0, ENEMY_SPAWN_HEIGHT_OFFSET, 0]);
+		expect(enemies[1].patrolCenter).toEqual([0, ENEMY_SPAWN_HEIGHT_OFFSET, 0]);
+	});
+
+	it("caps enemy settings by requested enemy count", () => {
+		expect(
+			createSceneEnemyMeshSettings(GUARD_ROOM_FIXTURE, ROOM_IDS.GUARD_ROOM, 1),
+		).toHaveLength(1);
+		expect(
+			createSceneEnemyMeshSettings(GUARD_ROOM_FIXTURE, ROOM_IDS.GUARD_ROOM, 0),
+		).toHaveLength(0);
 	});
 });

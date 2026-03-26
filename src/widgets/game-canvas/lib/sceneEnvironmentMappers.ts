@@ -22,6 +22,7 @@ type SceneRoomMeshSettings = {
 	labelSettings: RoomLabelSettings;
 	wallOpenings: WallOpening[];
 	lockedDoorSides: WallOpening[];
+	showTreasureKey: boolean;
 };
 
 type WallOpening = "north" | "south" | "east" | "west";
@@ -88,6 +89,7 @@ export const createSceneRoomMeshSettings = (
 		labelSettings: createSceneRoomLabelSettings(room.roomId, room.position),
 		wallOpenings: computeWallOpenings(room.roomId, room.position, corridors),
 		lockedDoorSides: [...(lockedDoorSidesByRoomId[room.roomId] ?? [])],
+		showTreasureKey: false,
 	}));
 };
 
@@ -125,11 +127,13 @@ type EnemyMeshSettings = {
 	id: string;
 	roomId: string;
 	position: Vector3Tuple;
+	patrolCenter: Vector3Tuple;
 };
 
 export const createSceneEnemyMeshSettings = (
 	rooms: readonly DungeonRoomLayout[],
 	guardRoomId: string,
+	enemyCount: number,
 ): EnemyMeshSettings[] => {
 	const guardRoom = rooms.find((room) => room.roomId === guardRoomId);
 
@@ -138,26 +142,28 @@ export const createSceneEnemyMeshSettings = (
 	}
 
 	const [rx, ry, rz] = guardRoom.position;
-	return [
+	const centerY = ry + ENEMY_SPAWN_HEIGHT_OFFSET;
+	const spawnOffset = ENEMY_SPAWN_OFFSET_XZ / 2;
+	const enemySettings: EnemyMeshSettings[] = [
 		{
 			id: `${guardRoomId}-enemy-1`,
 			roomId: guardRoomId,
-			position: [
-				rx - ENEMY_SPAWN_OFFSET_XZ,
-				ry + ENEMY_SPAWN_HEIGHT_OFFSET,
-				rz + ENEMY_SPAWN_OFFSET_XZ,
-			] as [number, number, number],
+			position: [rx, centerY, rz] as [number, number, number],
+			patrolCenter: [rx, centerY, rz] as [number, number, number],
 		},
 		{
 			id: `${guardRoomId}-enemy-2`,
 			roomId: guardRoomId,
-			position: [
-				rx + ENEMY_SPAWN_OFFSET_XZ,
-				ry + ENEMY_SPAWN_HEIGHT_OFFSET,
-				rz - ENEMY_SPAWN_OFFSET_XZ,
-			] as [number, number, number],
+			position: [rx + spawnOffset, centerY, rz - spawnOffset] as [
+				number,
+				number,
+				number,
+			],
+			patrolCenter: [rx, centerY, rz] as [number, number, number],
 		},
 	];
+
+	return enemySettings.slice(0, Math.max(0, enemyCount));
 };
 
 export type { EnemyMeshSettings, SceneRoomMeshSettings, WallOpening };

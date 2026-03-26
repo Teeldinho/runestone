@@ -38,6 +38,7 @@ export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
 					id={enemy.id}
 					roomId={enemy.roomId}
 					position={enemy.position}
+					patrolCenter={enemy.patrolCenter}
 					playerPosition={playerPosition}
 					onDead={handleEnemyDead}
 					onAttack={handleEnemyAttack}

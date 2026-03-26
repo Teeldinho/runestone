@@ -1,21 +1,23 @@
 // @vitest-environment happy-dom
 
 import { renderHook } from "@testing-library/react";
-import { afterAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { PLAYER_ENTITY_CONFIG } from "@/entities/player";
 
 import { useSceneEnvironmentSettings } from "./useSceneEnvironmentSettings";
 
+const mockRuntimeContext = vi.hoisted(() => ({
+	currentRoomId: "entrance",
+	hasTreasureKey: false,
+	enemiesRemaining: 1,
+}));
+
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachineRuntime: () => ({
 		snapshot: {
-			context: {
-				currentRoomId: ROOM_IDS.ENTRANCE,
-				hasTreasureKey: false,
-				enemiesRemaining: 1,
-			},
+			context: mockRuntimeContext,
 		},
 	}),
 }));
@@ -29,6 +31,12 @@ afterAll(() => {
 });
 
 describe("useSceneEnvironmentSettings", () => {
+	beforeEach(() => {
+		mockRuntimeContext.currentRoomId = ROOM_IDS.ENTRANCE;
+		mockRuntimeContext.hasTreasureKey = false;
+		mockRuntimeContext.enemiesRemaining = 1;
+	});
+
 	it("returns machine-derived room mesh settings for all floor-one rooms", () => {
 		const { result } = renderHook(() => useSceneEnvironmentSettings());
 
@@ -87,5 +95,39 @@ describe("useSceneEnvironmentSettings", () => {
 			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
 			-40,
 		]);
+	});
+
+	it("renders scene enemy count from machine context", () => {
+		mockRuntimeContext.enemiesRemaining = 1;
+		const { result, rerender } = renderHook(() =>
+			useSceneEnvironmentSettings(),
+		);
+
+		expect(result.current.enemyMeshSettings).toHaveLength(1);
+
+		mockRuntimeContext.enemiesRemaining = 0;
+		rerender();
+
+		expect(result.current.enemyMeshSettings).toHaveLength(0);
+	});
+
+	it("shows guard-room treasure key only before pickup", () => {
+		const { result, rerender } = renderHook(() =>
+			useSceneEnvironmentSettings(),
+		);
+		const guardRoomBeforePickup = result.current.roomMeshSettings.find(
+			(room) => room.roomId === ROOM_IDS.GUARD_ROOM,
+		);
+
+		expect(guardRoomBeforePickup?.showTreasureKey).toBe(true);
+
+		mockRuntimeContext.hasTreasureKey = true;
+		rerender();
+
+		const guardRoomAfterPickup = result.current.roomMeshSettings.find(
+			(room) => room.roomId === ROOM_IDS.GUARD_ROOM,
+		);
+
+		expect(guardRoomAfterPickup?.showTreasureKey).toBe(false);
 	});
 });
