@@ -1,11 +1,11 @@
 import { ROOM_CONFIG } from "@/shared/config";
 
 export const ROOM_LIGHT_CONFIG = {
-	INTENSITY: 3,
-	DISTANCE: 20,
+	INTENSITY: 3.6,
+	DISTANCE: 22,
 	DECAY: 2,
 	HEIGHT: 3.0,
-	COLOR: "#ffb347",
+	COLOR: "#ffbb7a",
 } as const;
 
 export const ROOM_KINDS = {
@@ -65,6 +65,15 @@ export const ROOM_ENTITY_CONFIG = {
 		width: ROOM_CONFIG.WIDTH,
 		height: ROOM_CONFIG.HEIGHT,
 		depth: ROOM_CONFIG.DEPTH,
+	},
+	DOORWAY_GATE: {
+		WIDTH: 2.7,
+		HEIGHT: 3.2,
+		THICKNESS: 0.35,
+		POSITION_Y: 1.6,
+		COLOR: "#7b8ea3",
+		EMISSIVE: "#2f3a45",
+		EMISSIVE_INTENSITY: 0.28,
 	},
 	ORIGIN: [0, 0, 0] as const,
 	TORCH: {

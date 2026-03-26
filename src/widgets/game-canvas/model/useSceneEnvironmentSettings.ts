@@ -1,8 +1,13 @@
 import { useMemo } from "react";
 import type { CorridorMeshSettings } from "@/entities/corridor";
-import { createFloorOneMachine, ROOM_IDS } from "@/entities/dungeon";
+import {
+	createFloorOneMachine,
+	FLOOR_ONE_MACHINE_RULES,
+	ROOM_IDS,
+} from "@/entities/dungeon";
 import { type PlayerMeshSettings, usePlayerMesh } from "@/entities/player";
 import { createDungeonFloorLayout } from "@/entities/room";
+import { useGameMachineRuntime } from "@/features/dungeon-navigation";
 import {
 	createSceneCorridorMeshSettings,
 	createSceneEnemyMeshSettings,
@@ -22,15 +27,28 @@ type SceneEnvironmentSettingsViewModel = {
 export const useSceneEnvironmentSettings =
 	(): SceneEnvironmentSettingsViewModel => {
 		const defaultPlayerMeshSettings = usePlayerMesh();
+		const { snapshot } = useGameMachineRuntime();
 
 		return useMemo(() => {
 			const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
+			const lockedDoorSidesByRoomId = {
+				[ROOM_IDS.GUARD_ROOM]:
+					snapshot.context.hasTreasureKey &&
+					snapshot.context.enemiesRemaining ===
+						FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING
+						? ([] as const)
+						: (["south"] as const),
+				[ROOM_IDS.TREASURY]: snapshot.context.hasTreasureKey
+					? ([] as const)
+					: (["south"] as const),
+			};
 			const corridorMeshSettings = createSceneCorridorMeshSettings(
 				floorLayout.corridors,
 			);
 			const roomMeshSettings = createSceneRoomMeshSettings(
 				floorLayout.rooms,
 				floorLayout.corridors,
+				lockedDoorSidesByRoomId,
 			);
 			const enemyMeshSettings = createSceneEnemyMeshSettings(
 				floorLayout.rooms,
@@ -52,7 +70,11 @@ export const useSceneEnvironmentSettings =
 				playerMeshSettings,
 				roomMeshSettings,
 			};
-		}, [defaultPlayerMeshSettings]);
+		}, [
+			defaultPlayerMeshSettings,
+			snapshot.context.enemiesRemaining,
+			snapshot.context.hasTreasureKey,
+		]);
 	};
 
 export type { SceneEnvironmentSettingsViewModel, SceneRoomMeshSettings };

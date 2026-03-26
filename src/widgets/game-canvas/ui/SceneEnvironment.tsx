@@ -26,6 +26,7 @@ export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
 			{roomMeshSettings.map((room) => (
 				<RoomMesh
 					key={room.roomId}
+					lockedDoorSides={room.lockedDoorSides}
 					position={room.position}
 					surface={environment}
 					wallOpenings={room.wallOpenings}

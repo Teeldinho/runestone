@@ -6,6 +6,7 @@ import { ROOM_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 import {
+	ROOM_ENTITY_CONFIG,
 	ROOM_FLOOR_COLLIDER,
 	ROOM_GLTF_CONFIG,
 	ROOM_LIGHT_CONFIG,
@@ -19,6 +20,7 @@ type RoomMeshProps = {
 	position: Vector3Tuple;
 	surface: RoomSurfaceSettings;
 	wallOpenings?: WallOpening[];
+	lockedDoorSides?: WallOpening[];
 	isTreasury?: boolean;
 	showGrid?: boolean;
 };
@@ -38,11 +40,13 @@ export function RoomMesh({
 	position,
 	surface,
 	wallOpenings = [],
+	lockedDoorSides = [],
 	isTreasury = false,
 	showGrid = false,
 }: RoomMeshProps) {
 	const { rune, grid, pillar } = surface;
 	const hasOpening = (side: WallOpening) => wallOpenings.includes(side);
+	const isDoorLocked = (side: WallOpening) => lockedDoorSides.includes(side);
 
 	const floorScene = useGLTF(ROOM_GLTF_CONFIG.FLOOR_TILE.PATH).scene;
 	const wallScene = useGLTF(ROOM_GLTF_CONFIG.WALL.PATH).scene;
@@ -139,13 +143,56 @@ export function RoomMesh({
 			{[-4, 0, 4].map((x) => {
 				if (hasOpening("north") && x === 0) {
 					return (
-						<primitive
-							key="doorway-north"
-							object={doorwayScene.clone()}
-							position={[0, WALL_Y, -HALF_DEPTH]}
-							rotation={[0, 0, 0]}
-							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
-						/>
+						<group key="doorway-north">
+							<primitive
+								object={doorwayScene.clone()}
+								position={[0, WALL_Y, -HALF_DEPTH]}
+								rotation={[0, 0, 0]}
+								scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
+							/>
+							{isDoorLocked("north") && (
+								<RigidBody type="fixed" colliders={false}>
+									<CuboidCollider
+										args={[
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.WIDTH / 2,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.HEIGHT / 2,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.THICKNESS / 2,
+										]}
+										position={[
+											0,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.POSITION_Y,
+											-HALF_DEPTH,
+										]}
+									/>
+									<mesh
+										castShadow
+										receiveShadow
+										position={[
+											0,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.POSITION_Y,
+											-HALF_DEPTH,
+										]}
+									>
+										<boxGeometry
+											args={[
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.WIDTH,
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.HEIGHT,
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.THICKNESS,
+											]}
+										/>
+										<meshStandardMaterial
+											color={ROOM_ENTITY_CONFIG.DOORWAY_GATE.COLOR}
+											emissive={ROOM_ENTITY_CONFIG.DOORWAY_GATE.EMISSIVE}
+											emissiveIntensity={
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.EMISSIVE_INTENSITY
+											}
+											roughness={0.45}
+											metalness={0.55}
+										/>
+									</mesh>
+								</RigidBody>
+							)}
+						</group>
 					);
 				}
 				return (
@@ -182,13 +229,56 @@ export function RoomMesh({
 			{[-4, 0, 4].map((x) => {
 				if (hasOpening("south") && x === 0) {
 					return (
-						<primitive
-							key="doorway-south"
-							object={doorwayScene.clone()}
-							position={[0, WALL_Y, HALF_DEPTH]}
-							rotation={[0, Math.PI, 0]}
-							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
-						/>
+						<group key="doorway-south">
+							<primitive
+								object={doorwayScene.clone()}
+								position={[0, WALL_Y, HALF_DEPTH]}
+								rotation={[0, Math.PI, 0]}
+								scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
+							/>
+							{isDoorLocked("south") && (
+								<RigidBody type="fixed" colliders={false}>
+									<CuboidCollider
+										args={[
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.WIDTH / 2,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.HEIGHT / 2,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.THICKNESS / 2,
+										]}
+										position={[
+											0,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.POSITION_Y,
+											HALF_DEPTH,
+										]}
+									/>
+									<mesh
+										castShadow
+										receiveShadow
+										position={[
+											0,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.POSITION_Y,
+											HALF_DEPTH,
+										]}
+									>
+										<boxGeometry
+											args={[
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.WIDTH,
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.HEIGHT,
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.THICKNESS,
+											]}
+										/>
+										<meshStandardMaterial
+											color={ROOM_ENTITY_CONFIG.DOORWAY_GATE.COLOR}
+											emissive={ROOM_ENTITY_CONFIG.DOORWAY_GATE.EMISSIVE}
+											emissiveIntensity={
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.EMISSIVE_INTENSITY
+											}
+											roughness={0.45}
+											metalness={0.55}
+										/>
+									</mesh>
+								</RigidBody>
+							)}
+						</group>
 					);
 				}
 				return (
@@ -226,13 +316,56 @@ export function RoomMesh({
 			{[-4, 0, 4].map((z) => {
 				if (hasOpening("east") && z === 0) {
 					return (
-						<primitive
-							key="doorway-east"
-							object={doorwayScene.clone()}
-							position={[HALF_WIDTH, WALL_Y, 0]}
-							rotation={[0, -Math.PI / 2, 0]}
-							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
-						/>
+						<group key="doorway-east">
+							<primitive
+								object={doorwayScene.clone()}
+								position={[HALF_WIDTH, WALL_Y, 0]}
+								rotation={[0, -Math.PI / 2, 0]}
+								scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
+							/>
+							{isDoorLocked("east") && (
+								<RigidBody type="fixed" colliders={false}>
+									<CuboidCollider
+										args={[
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.THICKNESS / 2,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.HEIGHT / 2,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.WIDTH / 2,
+										]}
+										position={[
+											HALF_WIDTH,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.POSITION_Y,
+											0,
+										]}
+									/>
+									<mesh
+										castShadow
+										receiveShadow
+										position={[
+											HALF_WIDTH,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.POSITION_Y,
+											0,
+										]}
+									>
+										<boxGeometry
+											args={[
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.THICKNESS,
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.HEIGHT,
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.WIDTH,
+											]}
+										/>
+										<meshStandardMaterial
+											color={ROOM_ENTITY_CONFIG.DOORWAY_GATE.COLOR}
+											emissive={ROOM_ENTITY_CONFIG.DOORWAY_GATE.EMISSIVE}
+											emissiveIntensity={
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.EMISSIVE_INTENSITY
+											}
+											roughness={0.45}
+											metalness={0.55}
+										/>
+									</mesh>
+								</RigidBody>
+							)}
+						</group>
 					);
 				}
 				return (
@@ -270,13 +403,56 @@ export function RoomMesh({
 			{[-4, 0, 4].map((z) => {
 				if (hasOpening("west") && z === 0) {
 					return (
-						<primitive
-							key="doorway-west"
-							object={doorwayScene.clone()}
-							position={[-HALF_WIDTH, WALL_Y, 0]}
-							rotation={[0, Math.PI / 2, 0]}
-							scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
-						/>
+						<group key="doorway-west">
+							<primitive
+								object={doorwayScene.clone()}
+								position={[-HALF_WIDTH, WALL_Y, 0]}
+								rotation={[0, Math.PI / 2, 0]}
+								scale={ROOM_GLTF_CONFIG.WALL_DOORWAY.SCALE}
+							/>
+							{isDoorLocked("west") && (
+								<RigidBody type="fixed" colliders={false}>
+									<CuboidCollider
+										args={[
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.THICKNESS / 2,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.HEIGHT / 2,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.WIDTH / 2,
+										]}
+										position={[
+											-HALF_WIDTH,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.POSITION_Y,
+											0,
+										]}
+									/>
+									<mesh
+										castShadow
+										receiveShadow
+										position={[
+											-HALF_WIDTH,
+											ROOM_ENTITY_CONFIG.DOORWAY_GATE.POSITION_Y,
+											0,
+										]}
+									>
+										<boxGeometry
+											args={[
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.THICKNESS,
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.HEIGHT,
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.WIDTH,
+											]}
+										/>
+										<meshStandardMaterial
+											color={ROOM_ENTITY_CONFIG.DOORWAY_GATE.COLOR}
+											emissive={ROOM_ENTITY_CONFIG.DOORWAY_GATE.EMISSIVE}
+											emissiveIntensity={
+												ROOM_ENTITY_CONFIG.DOORWAY_GATE.EMISSIVE_INTENSITY
+											}
+											roughness={0.45}
+											metalness={0.55}
+										/>
+									</mesh>
+								</RigidBody>
+							)}
+						</group>
 					);
 				}
 				return (

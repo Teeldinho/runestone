@@ -61,6 +61,7 @@ describe("sceneEnvironmentMappers", () => {
 			{
 				roomId: ROOM_IDS.ENTRANCE,
 				position: [0, 0, -40],
+				lockedDoorSides: [],
 				labelSettings: {
 					isVisible: true,
 					position: [0, ROOM_ENTITY_CONFIG.LABEL.HEIGHT_OFFSET, -40],
@@ -71,12 +72,34 @@ describe("sceneEnvironmentMappers", () => {
 			{
 				roomId: ROOM_IDS.LIBRARY,
 				position: [0, 0, -20],
+				lockedDoorSides: [],
 				labelSettings: {
 					isVisible: true,
 					position: [0, ROOM_ENTITY_CONFIG.LABEL.HEIGHT_OFFSET, -20],
 					text: ROOM_LABELS[ROOM_IDS.LIBRARY],
 				},
 				wallOpenings: ["north"],
+			},
+		]);
+	});
+
+	it("injects locked doorway sides per room", () => {
+		expect(
+			createSceneRoomMeshSettings(
+				ROOM_LAYOUT_FIXTURE,
+				CORRIDOR_LAYOUT_FIXTURE,
+				{
+					[ROOM_IDS.ENTRANCE]: ["south"],
+				},
+			),
+		).toMatchObject([
+			{
+				roomId: ROOM_IDS.ENTRANCE,
+				lockedDoorSides: ["south"],
+			},
+			{
+				roomId: ROOM_IDS.LIBRARY,
+				lockedDoorSides: [],
 			},
 		]);
 	});

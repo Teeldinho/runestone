@@ -8,6 +8,18 @@ import { PLAYER_ENTITY_CONFIG } from "@/entities/player";
 
 import { useSceneEnvironmentSettings } from "./useSceneEnvironmentSettings";
 
+vi.mock("@/features/dungeon-navigation", () => ({
+	useGameMachineRuntime: () => ({
+		snapshot: {
+			context: {
+				currentRoomId: ROOM_IDS.ENTRANCE,
+				hasTreasureKey: false,
+				enemiesRemaining: 1,
+			},
+		},
+	}),
+}));
+
 const consoleWarnSpy = vi.hoisted(() => {
 	return vi.spyOn(console, "warn").mockImplementation(() => {});
 });
@@ -39,6 +51,11 @@ describe("useSceneEnvironmentSettings", () => {
 				result.current.roomMeshSettings.map((room) => room.position.join(":")),
 			).size,
 		).toBe(5);
+		expect(
+			result.current.roomMeshSettings.find(
+				(room) => room.roomId === ROOM_IDS.GUARD_ROOM,
+			)?.lockedDoorSides,
+		).toEqual(["south"]);
 	});
 
 	it("returns corridor mesh settings for adjacent generated transitions", () => {

@@ -21,6 +21,7 @@ type SceneRoomMeshSettings = {
 	position: Vector3Tuple;
 	labelSettings: RoomLabelSettings;
 	wallOpenings: WallOpening[];
+	lockedDoorSides: WallOpening[];
 };
 
 type WallOpening = "north" | "south" | "east" | "west";
@@ -79,12 +80,14 @@ const computeWallOpenings = (
 export const createSceneRoomMeshSettings = (
 	rooms: readonly DungeonRoomLayout[],
 	corridors: readonly DungeonCorridorLayout[] = [],
+	lockedDoorSidesByRoomId: Partial<Record<string, readonly WallOpening[]>> = {},
 ): SceneRoomMeshSettings[] => {
 	return rooms.map((room) => ({
 		roomId: room.roomId,
 		position: room.position,
 		labelSettings: createSceneRoomLabelSettings(room.roomId, room.position),
 		wallOpenings: computeWallOpenings(room.roomId, room.position, corridors),
+		lockedDoorSides: [...(lockedDoorSidesByRoomId[room.roomId] ?? [])],
 	}));
 };
 

@@ -26,7 +26,7 @@ export const CORRIDOR_ENTITY_CONFIG = {
 		HORIZONTAL_ROTATION_Y_RAD: Math.PI / 2,
 	},
 	SURFACE: {
-		BASE_COLOR: "#1b2430",
+		BASE_COLOR: "#2b3746",
 		METALNESS: 0.14,
 		ROUGHNESS: 0.86,
 		SLAB_HEIGHT: 0.24,
@@ -40,8 +40,8 @@ export const CORRIDOR_FLOOR_COLLIDER = {
 } as const;
 
 export const CORRIDOR_LIGHT_CONFIG = {
-	INTENSITY: 4,
+	INTENSITY: 4.6,
 	DECAY: 2,
 	HEIGHT: 2.0,
-	COLOR: "#ffb347",
+	COLOR: "#ffbb7a",
 } as const;
