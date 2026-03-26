@@ -22,6 +22,7 @@ type RoomMeshProps = {
 	wallOpenings?: WallOpening[];
 	lockedDoorSides?: WallOpening[];
 	isTreasury?: boolean;
+	showTreasureKey?: boolean;
 	showGrid?: boolean;
 };
 
@@ -42,6 +43,7 @@ export function RoomMesh({
 	wallOpenings = [],
 	lockedDoorSides = [],
 	isTreasury = false,
+	showTreasureKey = false,
 	showGrid = false,
 }: RoomMeshProps) {
 	const { rune, grid, pillar } = surface;
@@ -137,6 +139,76 @@ export function RoomMesh({
 					position={[0, 0, -HALF_DEPTH * 0.5]}
 					scale={ROOM_GLTF_CONFIG.CHEST.SCALE}
 				/>
+			)}
+
+			{showTreasureKey && (
+				<group position={[0, ROOM_ENTITY_CONFIG.TREASURE_KEY.HEIGHT, 0]}>
+					<mesh
+						rotation={[Math.PI / 2, 0, 0]}
+						position={[-ROOM_ENTITY_CONFIG.TREASURE_KEY.SHAFT_LENGTH / 2, 0, 0]}
+					>
+						<torusGeometry
+							args={[
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.RING_RADIUS,
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.RING_TUBE_RADIUS,
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.RING_RADIAL_SEGMENTS,
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.RING_TUBULAR_SEGMENTS,
+							]}
+						/>
+						<meshStandardMaterial
+							color={ROOM_ENTITY_CONFIG.TREASURE_KEY.COLOR}
+							emissive={ROOM_ENTITY_CONFIG.TREASURE_KEY.COLOR}
+							emissiveIntensity={
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.EMISSIVE_INTENSITY
+							}
+							metalness={0.8}
+							roughness={0.25}
+						/>
+					</mesh>
+					<mesh rotation={[0, 0, Math.PI / 2]}>
+						<cylinderGeometry
+							args={[
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.SHAFT_RADIUS,
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.SHAFT_RADIUS,
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.SHAFT_LENGTH,
+								12,
+							]}
+						/>
+						<meshStandardMaterial
+							color={ROOM_ENTITY_CONFIG.TREASURE_KEY.COLOR}
+							emissive={ROOM_ENTITY_CONFIG.TREASURE_KEY.COLOR}
+							emissiveIntensity={
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.EMISSIVE_INTENSITY
+							}
+							metalness={0.85}
+							roughness={0.2}
+						/>
+					</mesh>
+					<mesh
+						position={[
+							ROOM_ENTITY_CONFIG.TREASURE_KEY.SHAFT_LENGTH / 2,
+							-ROOM_ENTITY_CONFIG.TREASURE_KEY.TOOTH_HEIGHT / 2,
+							0,
+						]}
+					>
+						<boxGeometry
+							args={[
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.TOOTH_WIDTH,
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.TOOTH_HEIGHT,
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.TOOTH_DEPTH,
+							]}
+						/>
+						<meshStandardMaterial
+							color={ROOM_ENTITY_CONFIG.TREASURE_KEY.COLOR}
+							emissive={ROOM_ENTITY_CONFIG.TREASURE_KEY.COLOR}
+							emissiveIntensity={
+								ROOM_ENTITY_CONFIG.TREASURE_KEY.EMISSIVE_INTENSITY
+							}
+							metalness={0.8}
+							roughness={0.25}
+						/>
+					</mesh>
+				</group>
 			)}
 
 			{/* North wall — tiled segments */}
