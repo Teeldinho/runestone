@@ -126,11 +126,12 @@ describe("useGamePage", () => {
 	});
 });
 
-describe("room transition teleport", () => {
-	it("calls setPlayerTeleportTarget when currentRoomId changes", async () => {
+describe("dungeon reset teleport", () => {
+	it("teleports player to entrance when dungeon run resets", async () => {
 		const { setPlayerTeleportTarget } = await import(
 			"@/shared/lib/playerPositionStore"
 		);
+		const resetDungeonMachine = vi.fn();
 
 		const machineContext: DungeonContext = {
 			currentFloorId: FLOOR_IDS.FLOOR_ONE,
@@ -144,7 +145,7 @@ describe("room transition teleport", () => {
 			actionButtons: [],
 			currentRoomLabel: "Entrance",
 			discoveredRoomLabels: ["Entrance"],
-			handleDungeonRunReset: vi.fn(),
+			handleDungeonRunReset: resetDungeonMachine,
 			handleDungeonEventSend: vi.fn(),
 			snapshot: { context: machineContext, value: ROOM_IDS.ENTRANCE },
 		} as unknown as ReturnType<typeof useGameMachine>);
@@ -155,28 +156,15 @@ describe("room transition teleport", () => {
 			positionedNodes: [],
 		} as unknown as ReturnType<typeof useStateVisualizer>);
 
-		const { rerender } = renderHook(() => useGamePage());
-
-		const updatedContext: DungeonContext = {
-			...machineContext,
-			currentRoomId: ROOM_IDS.GUARD_ROOM,
-		};
-
-		vi.mocked(useGameMachine).mockReturnValue({
-			actionButtons: [],
-			currentRoomLabel: "Guard Room",
-			discoveredRoomLabels: ["Entrance", "Guard Room"],
-			handleDungeonRunReset: vi.fn(),
-			handleDungeonEventSend: vi.fn(),
-			snapshot: { context: updatedContext, value: ROOM_IDS.GUARD_ROOM },
-		} as unknown as ReturnType<typeof useGameMachine>);
+		const { result } = renderHook(() => useGamePage());
 
 		act(() => {
-			rerender();
+			result.current.handleDungeonRunReset();
 		});
 
+		expect(resetDungeonMachine).toHaveBeenCalledTimes(1);
 		expect(setPlayerTeleportTarget).toHaveBeenCalledWith(
-			20,
+			0,
 			expect.any(Number),
 			0,
 		);

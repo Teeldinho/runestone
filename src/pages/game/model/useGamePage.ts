@@ -49,20 +49,6 @@ export const useGamePage = (): GamePageViewModel => {
 		handleAudioPlayRequest();
 	}, [handleAudioPlayRequest]);
 
-	useEffect(() => {
-		const layout = createDungeonFloorLayout(createFloorOneMachine());
-		const room = layout.rooms.find(
-			(r) => r.roomId === snapshot.context.currentRoomId,
-		);
-		if (room) {
-			setPlayerTeleportTarget(
-				room.position[0],
-				PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
-				room.position[2],
-			);
-		}
-	}, [snapshot.context.currentRoomId]);
-
 	const entrancePosition = useMemo(() => {
 		const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
 		const entrance = floorLayout.rooms.find(

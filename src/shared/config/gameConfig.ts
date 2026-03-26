@@ -49,11 +49,11 @@ export const RELATIVE_CAMERA_MODES = [
 export const CAMERA_CONFIG = {
 	THIRD_PERSON: {
 		FOV: 65,
-		OFFSET: [0, 2.5, -4.8],
+		OFFSET: [0, 2.2, -3.8],
 		LERP_SPEED: 5,
 		ORBIT: {
-			MAX_DISTANCE: 12,
-			MIN_DISTANCE: 3,
+			MAX_DISTANCE: 8,
+			MIN_DISTANCE: 2.4,
 			MAX_POLAR_ANGLE: Math.PI * 0.48,
 			MIN_POLAR_ANGLE: 0.2,
 		},
@@ -61,7 +61,7 @@ export const CAMERA_CONFIG = {
 	TOP_DOWN: {
 		FOV: 60,
 		HEIGHT: 35,
-		DISTANCE: 6,
+		DISTANCE: 0,
 		MIN_ZOOM: 0.7,
 		MAX_ZOOM: 1.6,
 		PAN_SPEED: 1.3,

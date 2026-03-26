@@ -63,7 +63,7 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 				CAMERA_CONFIG.TOP_DOWN.HEIGHT,
 				pz + CAMERA_CONFIG.TOP_DOWN.DISTANCE,
 			);
-			targetLookAt.current.set(px, 0, pz);
+			targetLookAt.current.set(px, py, pz);
 		} else {
 			const [sx, sy, sz] = cameraStateSnapshot.position;
 			targetPosition.current.set(sx, sy, sz);
