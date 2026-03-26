@@ -1,3 +1,11 @@
+export {
+	DOORWAY_INTERACTIONS_BY_ROOM,
+	DOORWAY_NAVIGATION_CONFIG,
+	type DoorGuard,
+	type DoorSide,
+	type DoorwayInteraction,
+	type DoorwayInteractionsByRoom,
+} from "./doorwayNavigationConfig";
 export { DUNGEON_INITIAL_CONTEXT } from "./dungeonContextConfig";
 export {
 	NAVIGATION_ACTION_EVENTS,
