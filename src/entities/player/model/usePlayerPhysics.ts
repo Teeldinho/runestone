@@ -12,9 +12,12 @@ import {
 import type { Vector3Tuple } from "@/shared/types";
 
 import { PLAYER_ENTITY_CONFIG } from "../config";
+import {
+	normalizeMovementVelocity,
+	rotateVelocityByCameraAzimuth,
+} from "../lib";
 
 type UsePlayerPhysicsInput = {
-	position: Vector3Tuple;
 	velocity: Vector3Tuple;
 	isSprinting: boolean;
 };
@@ -60,16 +63,18 @@ export const usePlayerPhysics = ({
 			const isRelativeMode = (
 				RELATIVE_CAMERA_MODES as ReadonlyArray<string>
 			).includes(mode);
+			const normalizedVelocity = normalizeMovementVelocity(velocity);
 
-			let vx = velocity[0] * speed;
-			let vz = velocity[2] * speed;
+			let vx = normalizedVelocity[0] * speed;
+			let vz = normalizedVelocity[2] * speed;
 
 			if (isRelativeMode) {
-				const azimuth = getCameraAzimuth();
-				const cos = Math.cos(azimuth);
-				const sin = Math.sin(azimuth);
-				vx = (velocity[0] * cos + velocity[2] * sin) * speed;
-				vz = (-velocity[0] * sin + velocity[2] * cos) * speed;
+				const [rotatedX, , rotatedZ] = rotateVelocityByCameraAzimuth(
+					normalizedVelocity,
+					getCameraAzimuth(),
+				);
+				vx = rotatedX * speed;
+				vz = rotatedZ * speed;
 			}
 
 			body.setLinvel(
@@ -80,7 +85,11 @@ export const usePlayerPhysics = ({
 				},
 				true,
 			);
+			return;
 		}
+
+		const currentLinvel = body.linvel();
+		body.setLinvel({ x: 0, y: currentLinvel.y, z: 0 }, true);
 	});
 
 	return { rigidBodyRef };

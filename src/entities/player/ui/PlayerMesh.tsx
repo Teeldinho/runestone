@@ -4,6 +4,7 @@ import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import type * as THREE from "three";
+import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 import {
 	PLAYER_ANIMATION_PATHS,
@@ -27,7 +28,7 @@ export function PlayerMesh() {
 	);
 	const { animations: generalAnims } = useGLTF(PLAYER_ANIMATION_PATHS.GENERAL);
 
-	const clonedScene = useMemo(() => scene.clone(), [scene]);
+	const clonedScene = useMemo(() => skeletonClone(scene), [scene]);
 	const allAnims = useMemo(
 		() => [...moveAnims, ...generalAnims],
 		[moveAnims, generalAnims],

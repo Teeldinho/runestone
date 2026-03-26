@@ -2,7 +2,7 @@ export const PLAYER_GLTF_CONFIG = {
 	CHARACTER: {
 		PATH: "/models/adventurers/Knight.glb",
 		SCALE: [0.72, 0.72, 0.72] as const,
-		POSITION_Y: -0.9,
+		POSITION_Y: 0.365,
 	},
 } as const;
 

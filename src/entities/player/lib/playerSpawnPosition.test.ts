@@ -86,7 +86,7 @@ describe("player spawn position calculations", () => {
 
 describe("updated config values", () => {
 	it("has correct GLTF POSITION_Y to prevent ground burial", () => {
-		expect(PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y).toBeCloseTo(-0.9, 2);
+		expect(PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y).toBeCloseTo(0.365, 3);
 		expect(PLAYER_GLTF_CONFIG.CHARACTER.SCALE).toEqual([0.72, 0.72, 0.72]);
 	});
 
