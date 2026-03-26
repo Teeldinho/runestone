@@ -1,5 +1,5 @@
 import { useSelector } from "@xstate/react";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createActor } from "xstate";
 import {
 	CAMERA_EVENTS,
@@ -14,10 +14,11 @@ import type { CameraMachineEvent, CameraStateSnapshot } from "./types";
 const cameraMachine = createCameraMachine();
 
 export const useCameraMachine = () => {
-	const actorRef = useRef(createActor(cameraMachine).start());
-	const actor = actorRef.current;
+	const [actor] = useState(() => createActor(cameraMachine));
 
 	useEffect(() => {
+		actor.start();
+
 		return () => {
 			actor.stop();
 		};

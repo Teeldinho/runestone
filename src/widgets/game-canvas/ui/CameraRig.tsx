@@ -126,11 +126,21 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 			<OrbitControls
 				makeDefault
 				enablePan
+				enableRotate
+				enableZoom
 				maxDistance={CAMERA_CONFIG.FREE_ORBITAL.MAX_DISTANCE}
 				maxPolarAngle={CAMERA_CONFIG.FREE_ORBITAL.MAX_POLAR_ANGLE}
 				minDistance={CAMERA_CONFIG.FREE_ORBITAL.MIN_DISTANCE}
 				minPolarAngle={CAMERA_CONFIG.FREE_ORBITAL.MIN_POLAR_ANGLE}
-				target={[0, 0, 0]}
+				panSpeed={CAMERA_CONFIG.FREE_ORBITAL.PAN_SPEED}
+				rotateSpeed={CAMERA_CONFIG.FREE_ORBITAL.ROTATE_SPEED}
+				screenSpacePanning
+				zoomSpeed={CAMERA_CONFIG.FREE_ORBITAL.ZOOM_SPEED}
+				mouseButtons={{
+					LEFT: THREE.MOUSE.PAN,
+					MIDDLE: THREE.MOUSE.DOLLY,
+					RIGHT: THREE.MOUSE.ROTATE,
+				}}
 			/>
 		);
 	}
