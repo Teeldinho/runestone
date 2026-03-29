@@ -6,7 +6,7 @@ import { useGameMachineRuntime } from "@/features/dungeon-navigation";
 import { useHaptics } from "@/features/haptics-feedback";
 import { ENEMY_CONFIG } from "@/shared/config";
 import {
-	getPlayerPosition,
+	getPlayerPositionSnapshot,
 	subscribeToPlayerPosition,
 } from "@/shared/lib/playerPositionStore";
 import type { Vector3Tuple } from "@/shared/types";
@@ -23,8 +23,8 @@ export const useEnemySceneController = (): UseEnemySceneControllerResult => {
 	const { onEnemyHit } = useHaptics();
 	const playerPosition = useSyncExternalStore(
 		subscribeToPlayerPosition,
-		getPlayerPosition,
-		getPlayerPosition,
+		getPlayerPositionSnapshot,
+		getPlayerPositionSnapshot,
 	);
 
 	const handleEnemyDead = useCallback(() => {
