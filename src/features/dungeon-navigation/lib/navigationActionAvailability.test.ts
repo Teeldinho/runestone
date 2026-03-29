@@ -211,13 +211,6 @@ describe("getNavigationActionDisabled — RETURN_TO_ENTRANCE", () => {
 		).toBe(false);
 	});
 
-	it("is enabled when in guard room", () => {
-		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.GUARD_ROOM };
-		expect(
-			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_ENTRANCE, ctx),
-		).toBe(false);
-	});
-
 	it("is disabled when in entrance", () => {
 		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.ENTRANCE };
 		expect(
@@ -225,10 +218,26 @@ describe("getNavigationActionDisabled — RETURN_TO_ENTRANCE", () => {
 		).toBe(true);
 	});
 
-	it("is disabled when in treasury", () => {
-		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.TREASURY };
+	it("is disabled when in guard room", () => {
+		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.GUARD_ROOM };
 		expect(
 			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_ENTRANCE, ctx),
+		).toBe(true);
+	});
+});
+
+describe("getNavigationActionDisabled — RETURN_TO_LIBRARY", () => {
+	it("is enabled when in guard room", () => {
+		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.GUARD_ROOM };
+		expect(
+			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_LIBRARY, ctx),
+		).toBe(false);
+	});
+
+	it("is disabled when in library", () => {
+		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.LIBRARY };
+		expect(
+			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_LIBRARY, ctx),
 		).toBe(true);
 	});
 });
@@ -236,13 +245,6 @@ describe("getNavigationActionDisabled — RETURN_TO_ENTRANCE", () => {
 describe("getNavigationActionDisabled — RETURN_TO_GUARD_ROOM", () => {
 	it("is enabled when in treasury", () => {
 		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.TREASURY };
-		expect(
-			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM, ctx),
-		).toBe(false);
-	});
-
-	it("is enabled when in exit", () => {
-		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.EXIT };
 		expect(
 			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM, ctx),
 		).toBe(false);
@@ -259,6 +261,22 @@ describe("getNavigationActionDisabled — RETURN_TO_GUARD_ROOM", () => {
 		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.LIBRARY };
 		expect(
 			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM, ctx),
+		).toBe(true);
+	});
+});
+
+describe("getNavigationActionDisabled — RETURN_TO_TREASURY", () => {
+	it("is enabled when in exit", () => {
+		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.EXIT };
+		expect(
+			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_TREASURY, ctx),
+		).toBe(false);
+	});
+
+	it("is disabled when in treasury", () => {
+		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.TREASURY };
+		expect(
+			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_TREASURY, ctx),
 		).toBe(true);
 	});
 });

@@ -40,7 +40,7 @@ export const DOORWAY_INTERACTIONS_BY_ROOM: DoorwayInteractionsByRoom = {
 	},
 	[ROOM_IDS.GUARD_ROOM]: {
 		north: {
-			successEvent: DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
+			successEvent: DUNGEON_EVENTS.RETURN_TO_LIBRARY,
 			guard: "none",
 		},
 		south: {
@@ -62,7 +62,7 @@ export const DOORWAY_INTERACTIONS_BY_ROOM: DoorwayInteractionsByRoom = {
 	},
 	[ROOM_IDS.EXIT]: {
 		north: {
-			successEvent: DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM,
+			successEvent: DUNGEON_EVENTS.RETURN_TO_TREASURY,
 			guard: "none",
 		},
 	},

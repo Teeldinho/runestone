@@ -67,10 +67,10 @@ export const createFloorOneMachine = (options?: {
 							updateFloorOneContextRoom(context, ROOM_IDS.TREASURY),
 						),
 					},
-					[DUNGEON_EVENTS.RETURN_TO_ENTRANCE]: {
-						target: ROOM_IDS.ENTRANCE,
+					[DUNGEON_EVENTS.RETURN_TO_LIBRARY]: {
+						target: ROOM_IDS.LIBRARY,
 						actions: assign(({ context }) =>
-							updateFloorOneContextRoom(context, ROOM_IDS.ENTRANCE),
+							updateFloorOneContextRoom(context, ROOM_IDS.LIBRARY),
 						),
 					},
 				},
@@ -94,10 +94,10 @@ export const createFloorOneMachine = (options?: {
 			},
 			[ROOM_IDS.EXIT]: {
 				on: {
-					[DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM]: {
-						target: ROOM_IDS.GUARD_ROOM,
+					[DUNGEON_EVENTS.RETURN_TO_TREASURY]: {
+						target: ROOM_IDS.TREASURY,
 						actions: assign(({ context }) =>
-							updateFloorOneContextRoom(context, ROOM_IDS.GUARD_ROOM),
+							updateFloorOneContextRoom(context, ROOM_IDS.TREASURY),
 						),
 					},
 				},

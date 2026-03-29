@@ -52,7 +52,20 @@ describe("createFloorOneMachine", () => {
 		expect(actor.getSnapshot().value).toBe(ROOM_IDS.GUARD_ROOM);
 	});
 
-	it("allows RETURN_TO_GUARD_ROOM from EXIT state", () => {
+	it("allows RETURN_TO_LIBRARY from GUARD_ROOM", () => {
+		const actor = createActor(createFloorOneMachine()).start();
+
+		actor.send({ type: DUNGEON_EVENTS.ENTER_LIBRARY });
+		actor.send({ type: DUNGEON_EVENTS.ENTER_GUARD_ROOM });
+
+		expect(actor.getSnapshot().value).toBe(ROOM_IDS.GUARD_ROOM);
+
+		actor.send({ type: DUNGEON_EVENTS.RETURN_TO_LIBRARY });
+
+		expect(actor.getSnapshot().value).toBe(ROOM_IDS.LIBRARY);
+	});
+
+	it("allows RETURN_TO_TREASURY from EXIT state", () => {
 		const actor = createActor(createFloorOneMachine()).start();
 
 		actor.send({ type: DUNGEON_EVENTS.ENTER_LIBRARY });
@@ -64,8 +77,8 @@ describe("createFloorOneMachine", () => {
 
 		expect(actor.getSnapshot().value).toBe(ROOM_IDS.EXIT);
 
-		actor.send({ type: DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM });
+		actor.send({ type: DUNGEON_EVENTS.RETURN_TO_TREASURY });
 
-		expect(actor.getSnapshot().value).toBe(ROOM_IDS.GUARD_ROOM);
+		expect(actor.getSnapshot().value).toBe(ROOM_IDS.TREASURY);
 	});
 });
