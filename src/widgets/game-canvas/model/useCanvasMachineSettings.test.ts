@@ -135,6 +135,18 @@ describe("useCanvasMachineSettings", () => {
 		expect(result.current.camera.zoom).toBe(1.25);
 	});
 
+	it("derives playerSpawnPosition from the current room", () => {
+		const machineRuntime = createMachineRuntime({
+			currentRoomId: ROOM_IDS.GUARD_ROOM,
+		});
+
+		const { result } = renderHook(() =>
+			useCanvasMachineSettings(machineRuntime),
+		);
+
+		expect(result.current.playerSpawnPosition).toEqual([0, 0.9, 0]);
+	});
+
 	it("returns isPostprocessingEnabled as false when postprocessingEnabled prop is false", () => {
 		const machineRuntime = createMachineRuntime();
 

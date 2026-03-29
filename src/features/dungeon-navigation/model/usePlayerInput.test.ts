@@ -104,12 +104,36 @@ describe("usePlayerInput", () => {
 		});
 	});
 
-	it("ignores non-WASD keys", () => {
+	it("accepts arrow keys with the same behavior as WASD", () => {
+		renderHook(() => usePlayerInput({ sendPlayerEvent }));
+
+		window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp" }));
+		window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+
+		expect(sendPlayerEvent).toHaveBeenLastCalledWith({
+			type: PLAYER_EVENTS.MOVE,
+			velocity: [1, 0, -1],
+			isSprinting: false,
+		});
+	});
+
+	it("accepts uppercase movement keys", () => {
+		renderHook(() => usePlayerInput({ sendPlayerEvent }));
+
+		window.dispatchEvent(new KeyboardEvent("keydown", { key: "W" }));
+
+		expect(sendPlayerEvent).toHaveBeenCalledWith({
+			type: PLAYER_EVENTS.MOVE,
+			velocity: [0, 0, -1],
+			isSprinting: false,
+		});
+	});
+
+	it("ignores non-movement keys", () => {
 		renderHook(() => usePlayerInput({ sendPlayerEvent }));
 
 		window.dispatchEvent(new KeyboardEvent("keydown", { key: "e" }));
 		window.dispatchEvent(new KeyboardEvent("keydown", { key: "Space" }));
-		window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp" }));
 
 		expect(sendPlayerEvent).not.toHaveBeenCalled();
 	});

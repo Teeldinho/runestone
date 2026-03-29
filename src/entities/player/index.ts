@@ -5,10 +5,15 @@ export {
 	PLAYER_MACHINE_DEFAULTS,
 	PLAYER_MACHINE_RUNTIME_ERRORS,
 	PLAYER_MOVEMENT_DIRECTIONS,
+	PLAYER_MOVEMENT_KEY_ALIASES,
 	PLAYER_MOVEMENT_KEYS,
 	PLAYER_STATES,
 } from "./config";
-export { createPlayerMeshSettings, getPlayerSpawnPosition } from "./lib";
+export {
+	createPlayerMeshSettings,
+	getPlayerSpawnPosition,
+	rotateVelocityByCameraAzimuth,
+} from "./lib";
 export type {
 	PlayerDieEvent,
 	PlayerHealEvent,

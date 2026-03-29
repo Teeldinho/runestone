@@ -10,6 +10,7 @@ const mockSendPlayerMachineEvent = vi.fn();
 const mockSendDungeonMachineEvent = vi.fn();
 const mockOnEnemyHit = vi.fn();
 const mockGetPlayerPosition = vi.fn();
+const mockGetPlayerPositionSnapshot = vi.fn();
 const mockSubscribeToPlayerPosition = vi.fn();
 
 vi.mock("@/entities/player", () => ({
@@ -43,6 +44,7 @@ vi.mock("@/features/haptics-feedback", () => ({
 
 vi.mock("@/shared/lib/playerPositionStore", () => ({
 	getPlayerPosition: () => mockGetPlayerPosition(),
+	getPlayerPositionSnapshot: () => mockGetPlayerPositionSnapshot(),
 	subscribeToPlayerPosition: (listener: () => void) => {
 		mockSubscribeToPlayerPosition(listener);
 		return () => {};
@@ -84,12 +86,13 @@ describe("useEnemySceneController", () => {
 	});
 
 	it("returns live player position from playerPositionStore", () => {
-		mockGetPlayerPosition.mockReturnValue([9, 1.5, 4]);
+		mockGetPlayerPositionSnapshot.mockReturnValue([9, 1.5, 4]);
 
 		const { result } = renderHook(() => useEnemySceneController());
 
 		expect(result.current.playerPosition).toEqual([9, 1.5, 4]);
 		expect(mockSubscribeToPlayerPosition).toHaveBeenCalled();
+		expect(mockGetPlayerPositionSnapshot).toHaveBeenCalled();
 	});
 
 	it("handleEnemyDead sends ENEMY_DIED to dungeon machine", () => {

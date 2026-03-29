@@ -1,6 +1,5 @@
-import { useSelector } from "@xstate/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { createActor } from "xstate";
+import { useMachine } from "@xstate/react";
+import { useCallback, useEffect, useMemo } from "react";
 import {
 	CAMERA_EVENTS,
 	CAMERA_HOTKEY_EVENT_TYPE,
@@ -14,46 +13,34 @@ import type { CameraMachineEvent, CameraStateSnapshot } from "./types";
 const cameraMachine = createCameraMachine();
 
 export const useCameraMachine = () => {
-	const [actor] = useState(() => createActor(cameraMachine));
-
-	useEffect(() => {
-		actor.start();
-
-		return () => {
-			actor.stop();
-		};
-	}, [actor]);
-
-	const mode = useSelector(
-		actor,
-		(snapshot) => snapshot.value as CameraStateSnapshot["mode"],
-	);
+	const [snapshot, send, actor] = useMachine(cameraMachine);
+	const mode = snapshot.value as CameraStateSnapshot["mode"];
 
 	const cameraStateSnapshot = useMemo<CameraStateSnapshot>(() => {
 		return createCameraStateSnapshot(mode as CameraStateSnapshot["mode"]);
 	}, [mode]);
 
 	const switchToThirdPerson = useCallback(() => {
-		actor.send({ type: "SWITCH_TO_THIRD_PERSON" });
-	}, [actor]);
+		send({ type: "SWITCH_TO_THIRD_PERSON" });
+	}, [send]);
 
 	const switchToTopDown = useCallback(() => {
-		actor.send({ type: "SWITCH_TO_TOP_DOWN" });
-	}, [actor]);
+		send({ type: "SWITCH_TO_TOP_DOWN" });
+	}, [send]);
 
 	const switchToFirstPerson = useCallback(() => {
-		actor.send({ type: "SWITCH_TO_FIRST_PERSON" });
-	}, [actor]);
+		send({ type: "SWITCH_TO_FIRST_PERSON" });
+	}, [send]);
 
 	const switchToFreeOrbital = useCallback(() => {
-		actor.send({ type: "SWITCH_TO_FREE_ORBITAL" });
-	}, [actor]);
+		send({ type: "SWITCH_TO_FREE_ORBITAL" });
+	}, [send]);
 
 	const handleCameraModeSwitch = useCallback(
 		(event: CameraMachineEvent) => {
-			actor.send(event as CameraMachineEvent);
+			send(event as CameraMachineEvent);
 		},
-		[actor],
+		[send],
 	);
 
 	// Listen for camera mode keyboard hotkeys.
@@ -63,7 +50,7 @@ export const useCameraMachine = () => {
 				return;
 			}
 
-			actor.send({
+			send({
 				type: CAMERA_EVENTS.HOTKEY,
 				hotkey: event.key as CameraHotkey,
 			});
@@ -73,7 +60,7 @@ export const useCameraMachine = () => {
 		return () => {
 			window.removeEventListener(CAMERA_HOTKEY_EVENT_TYPE, handleHotkey);
 		};
-	}, [actor]);
+	}, [send]);
 
 	return useMemo(
 		() => ({

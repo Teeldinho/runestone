@@ -1,12 +1,20 @@
 import {
 	PLAYER_MOVEMENT_DIRECTIONS,
-	PLAYER_MOVEMENT_KEYS,
+	PLAYER_MOVEMENT_KEY_ALIASES,
 	type PlayerMovementKey,
 } from "@/entities/player";
 import type { Vector3Tuple } from "@/shared/types";
 
-export const isMovementKey = (key: string): key is PlayerMovementKey =>
-	Object.values(PLAYER_MOVEMENT_KEYS).includes(key as PlayerMovementKey);
+export const getMovementKey = (key: string): PlayerMovementKey | null => {
+	return (
+		PLAYER_MOVEMENT_KEY_ALIASES[
+			key as keyof typeof PLAYER_MOVEMENT_KEY_ALIASES
+		] ?? null
+	);
+};
+
+export const isMovementKey = (key: string): boolean =>
+	getMovementKey(key) !== null;
 
 export const computeVelocity = (
 	pressedKeys: Set<PlayerMovementKey>,

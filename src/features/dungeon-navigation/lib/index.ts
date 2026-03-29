@@ -8,4 +8,8 @@ export {
 	updateDungeonContextRoom,
 } from "./dungeonContext";
 export { getNavigationActionDisabled } from "./navigationActionAvailability";
-export { computeVelocity, isMovementKey } from "./playerInputHelpers";
+export {
+	computeVelocity,
+	getMovementKey,
+	isMovementKey,
+} from "./playerInputHelpers";

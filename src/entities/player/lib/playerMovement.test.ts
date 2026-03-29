@@ -53,5 +53,16 @@ describe("playerMovement", () => {
 			expect(x).toBeCloseTo(-1, 6);
 			expect(z).toBeCloseTo(0, 6);
 		});
+
+		it("preserves movement magnitude at arbitrary camera headings", () => {
+			const arbitraryAzimuth = (37 * Math.PI) / 180;
+			const [x, y, z] = rotateVelocityByCameraAzimuth(
+				[1, 0, -1],
+				arbitraryAzimuth,
+			);
+
+			expect(y).toBe(0);
+			expect(Math.hypot(x, z)).toBeCloseTo(Math.hypot(1, -1), 6);
+		});
 	});
 });

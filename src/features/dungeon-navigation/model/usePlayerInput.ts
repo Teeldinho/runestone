@@ -6,7 +6,7 @@ import {
 	type PlayerMovementKey,
 } from "@/entities/player";
 
-import { computeVelocity, isMovementKey } from "../lib/playerInputHelpers";
+import { computeVelocity, getMovementKey } from "../lib/playerInputHelpers";
 
 type UsePlayerInputOptions = {
 	sendPlayerEvent: (event: PlayerMachineEvent) => void;
@@ -19,10 +19,11 @@ export const usePlayerInput = ({
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
-			if (!isMovementKey(event.key)) return;
-			if (pressedKeysRef.current.has(event.key)) return;
+			const movementKey = getMovementKey(event.key);
+			if (!movementKey) return;
+			if (pressedKeysRef.current.has(movementKey)) return;
 
-			pressedKeysRef.current.add(event.key);
+			pressedKeysRef.current.add(movementKey);
 
 			sendPlayerEvent({
 				type: PLAYER_EVENTS.MOVE,
@@ -32,9 +33,10 @@ export const usePlayerInput = ({
 		};
 
 		const handleKeyUp = (event: KeyboardEvent) => {
-			if (!isMovementKey(event.key)) return;
+			const movementKey = getMovementKey(event.key);
+			if (!movementKey) return;
 
-			pressedKeysRef.current.delete(event.key);
+			pressedKeysRef.current.delete(movementKey);
 
 			if (pressedKeysRef.current.size === 0) {
 				sendPlayerEvent({ type: PLAYER_EVENTS.STOP });

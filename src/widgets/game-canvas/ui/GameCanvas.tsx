@@ -44,6 +44,7 @@ export function GameCanvas({
 		fog,
 		lighting,
 		postprocessing,
+		playerSpawnPosition,
 		renderer,
 		isPostprocessingEnabled,
 	} = canvasSettings;
@@ -82,7 +83,10 @@ export function GameCanvas({
 			>
 				<PerformanceMonitor />
 				<AdaptiveDpr pixelated />
-				<CameraRig cameraStateSnapshot={cameraStateSnapshot} />
+				<CameraRig
+					cameraStateSnapshot={cameraStateSnapshot}
+					playerSpawnPosition={playerSpawnPosition}
+				/>
 				<Suspense fallback={null}>
 					<SceneFog fog={fog} />
 					<SceneLighting lighting={lighting} />
@@ -101,7 +105,10 @@ export function GameCanvas({
 						</EffectComposer>
 					)}
 					<Physics>
-						<SceneEnvironment environment={environment} />
+						<SceneEnvironment
+							environment={environment}
+							playerSpawnPosition={playerSpawnPosition}
+						/>
 					</Physics>
 				</Suspense>
 			</Canvas>

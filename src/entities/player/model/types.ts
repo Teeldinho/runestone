@@ -1,3 +1,4 @@
+import type { CameraMode } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 import type { PLAYER_EVENTS } from "../config/playerEvents";
 import type { PlayerHealthState } from "../config/playerStates";
@@ -36,6 +37,16 @@ export type PlayerMeshSettings = {
 
 export type UsePlayerMeshInput = {
 	healthState?: PlayerHealthState;
+	position?: Vector3Tuple;
+};
+
+export type PlayerAvatarVisibility = {
+	isAuraVisible: boolean;
+	isAvatarVisible: boolean;
+};
+
+export type ResolvePlayerAvatarVisibilityInput = {
+	cameraMode: CameraMode | string;
 };
 
 // Player machine context — source of truth for all player state
