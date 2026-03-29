@@ -22,15 +22,35 @@ describe("playerMovement", () => {
 	});
 
 	describe("rotateVelocityByCameraAzimuth", () => {
-		it("keeps direction when azimuth is zero", () => {
-			expect(rotateVelocityByCameraAzimuth([0, 0, -1], 0)).toEqual([0, 0, -1]);
+		it("keeps forward movement aligned when camera faces world north", () => {
+			const [x, y, z] = rotateVelocityByCameraAzimuth([0, 0, -1], Math.PI);
+
+			expect(y).toBe(0);
+			expect(x).toBeCloseTo(0, 6);
+			expect(z).toBeCloseTo(-1, 6);
 		});
 
-		it("rotates forward movement with camera yaw", () => {
+		it("maps forward movement to world east when camera faces east", () => {
 			const [x, y, z] = rotateVelocityByCameraAzimuth([0, 0, -1], Math.PI / 2);
 
 			expect(y).toBe(0);
 			expect(x).toBeCloseTo(1, 6);
+			expect(z).toBeCloseTo(0, 6);
+		});
+
+		it("maps forward movement to world south when camera faces south", () => {
+			const [x, y, z] = rotateVelocityByCameraAzimuth([0, 0, -1], 0);
+
+			expect(y).toBe(0);
+			expect(x).toBeCloseTo(0, 6);
+			expect(z).toBeCloseTo(1, 6);
+		});
+
+		it("maps forward movement to world west when camera faces west", () => {
+			const [x, y, z] = rotateVelocityByCameraAzimuth([0, 0, -1], -Math.PI / 2);
+
+			expect(y).toBe(0);
+			expect(x).toBeCloseTo(-1, 6);
 			expect(z).toBeCloseTo(0, 6);
 		});
 	});
