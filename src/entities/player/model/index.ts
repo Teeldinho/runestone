@@ -6,6 +6,7 @@ export {
 	usePlayerMachineRuntime,
 } from "./playerMachineRuntime";
 export type {
+	PlayerAvatarVisibility,
 	PlayerDieEvent,
 	PlayerHealEvent,
 	PlayerHealthState,
@@ -20,6 +21,7 @@ export type {
 	PlayerStats,
 	PlayerStopEvent,
 	PlayerTakeDamageEvent,
+	ResolvePlayerAvatarVisibilityInput,
 	UsePlayerMeshInput,
 } from "./types";
 export { usePlayerMesh } from "./usePlayerMesh";

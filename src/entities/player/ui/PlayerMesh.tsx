@@ -5,6 +5,7 @@ import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import type * as THREE from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
+import type { Vector3Tuple } from "@/shared/types";
 
 import {
 	PLAYER_ANIMATION_PATHS,
@@ -17,9 +18,18 @@ useGLTF.preload(PLAYER_GLTF_CONFIG.CHARACTER.PATH);
 useGLTF.preload(PLAYER_ANIMATION_PATHS.MOVEMENT_BASIC);
 useGLTF.preload(PLAYER_ANIMATION_PATHS.GENERAL);
 
-export function PlayerMesh() {
-	const { meshSettings, rigidBodyRef, animationName } =
-		usePlayerMeshViewModel();
+type PlayerMeshProps = {
+	initialPosition?: Vector3Tuple;
+};
+
+export function PlayerMesh({ initialPosition }: PlayerMeshProps) {
+	const {
+		isAuraVisible,
+		isAvatarVisible,
+		meshSettings,
+		rigidBodyRef,
+		animationName,
+	} = usePlayerMeshViewModel({ initialPosition });
 
 	const groupRef = useRef<THREE.Group>(null);
 	const { scene } = useGLTF(PLAYER_GLTF_CONFIG.CHARACTER.PATH);
@@ -62,32 +72,36 @@ export function PlayerMesh() {
 				]}
 			/>
 			<group ref={groupRef}>
-				<primitive
-					frustumCulled={false}
-					object={clonedScene}
-					position={[0, PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y, 0]}
-					scale={PLAYER_GLTF_CONFIG.CHARACTER.SCALE}
-				/>
-				<mesh
-					position={[0, PLAYER_ENTITY_CONFIG.AURA.OFFSET_Y, 0]}
-					rotation={[PLAYER_ENTITY_CONFIG.AURA.ROTATION_X_RAD, 0, 0]}
-				>
-					<torusGeometry
-						args={[
-							PLAYER_ENTITY_CONFIG.AURA.RADIUS,
-							PLAYER_ENTITY_CONFIG.AURA.TUBE_RADIUS,
-							PLAYER_ENTITY_CONFIG.AURA.RADIAL_SEGMENTS,
-							PLAYER_ENTITY_CONFIG.AURA.TUBULAR_SEGMENTS,
-						]}
+				{isAvatarVisible && (
+					<primitive
+						frustumCulled={false}
+						object={clonedScene}
+						position={[0, PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y, 0]}
+						scale={PLAYER_GLTF_CONFIG.CHARACTER.SCALE}
 					/>
-					<meshStandardMaterial
-						color={meshSettings.auraColor}
-						emissive={meshSettings.auraColor}
-						emissiveIntensity={meshSettings.auraEmissiveIntensity}
-						opacity={PLAYER_ENTITY_CONFIG.AURA.MATERIAL_OPACITY}
-						transparent
-					/>
-				</mesh>
+				)}
+				{isAuraVisible && (
+					<mesh
+						position={[0, PLAYER_ENTITY_CONFIG.AURA.OFFSET_Y, 0]}
+						rotation={[PLAYER_ENTITY_CONFIG.AURA.ROTATION_X_RAD, 0, 0]}
+					>
+						<torusGeometry
+							args={[
+								PLAYER_ENTITY_CONFIG.AURA.RADIUS,
+								PLAYER_ENTITY_CONFIG.AURA.TUBE_RADIUS,
+								PLAYER_ENTITY_CONFIG.AURA.RADIAL_SEGMENTS,
+								PLAYER_ENTITY_CONFIG.AURA.TUBULAR_SEGMENTS,
+							]}
+						/>
+						<meshStandardMaterial
+							color={meshSettings.auraColor}
+							emissive={meshSettings.auraColor}
+							emissiveIntensity={meshSettings.auraEmissiveIntensity}
+							opacity={PLAYER_ENTITY_CONFIG.AURA.MATERIAL_OPACITY}
+							transparent
+						/>
+					</mesh>
+				)}
 			</group>
 		</RigidBody>
 	);

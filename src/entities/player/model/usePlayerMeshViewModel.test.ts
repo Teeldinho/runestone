@@ -1,12 +1,26 @@
 // @vitest-environment happy-dom
 
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { PLAYER_ENTITY_CONFIG, PLAYER_STATES } from "../config";
 
+const mockGetCameraMode = vi.fn(() => "thirdPerson");
+const cameraModeListeners = new Set<() => void>();
+
 vi.mock("@react-three/fiber", () => ({
 	useFrame: vi.fn(),
+}));
+
+vi.mock("@/shared/lib/cameraModeStore", () => ({
+	getCameraMode: () => mockGetCameraMode(),
+	subscribeToCameraMode: (listener: () => void) => {
+		cameraModeListeners.add(listener);
+
+		return () => {
+			cameraModeListeners.delete(listener);
+		};
+	},
 }));
 
 vi.mock("./playerMachineRuntime", () => ({
@@ -36,7 +50,18 @@ import { usePlayerMachineRuntime } from "./playerMachineRuntime";
 import { usePlayerMeshViewModel } from "./usePlayerMeshViewModel";
 
 describe("usePlayerMeshViewModel", () => {
+	it("hides the avatar in first-person mode", () => {
+		mockGetCameraMode.mockReturnValue("firstPerson");
+
+		const { result } = renderHook(() => usePlayerMeshViewModel());
+
+		expect(result.current.isAvatarVisible).toBe(false);
+		expect(result.current.isAuraVisible).toBe(false);
+	});
+
 	it("returns mesh settings reflecting alive health state", () => {
+		mockGetCameraMode.mockReturnValue("thirdPerson");
+
 		const { result } = renderHook(() => usePlayerMeshViewModel());
 
 		expect(result.current.meshSettings).toEqual({
@@ -47,6 +72,8 @@ describe("usePlayerMeshViewModel", () => {
 	});
 
 	it("returns mesh settings reflecting damaged health state", () => {
+		mockGetCameraMode.mockReturnValue("thirdPerson");
+
 		vi.mocked(usePlayerMachineRuntime).mockReturnValueOnce({
 			snapshot: {
 				value: {
@@ -75,9 +102,30 @@ describe("usePlayerMeshViewModel", () => {
 	});
 
 	it("returns a rigidBodyRef initialised to null", () => {
+		mockGetCameraMode.mockReturnValue("thirdPerson");
+
 		const { result } = renderHook(() => usePlayerMeshViewModel());
 
 		expect(result.current.rigidBodyRef).toBeDefined();
 		expect(result.current.rigidBodyRef.current).toBeNull();
+	});
+
+	it("updates avatar visibility when the camera mode changes after mount", () => {
+		mockGetCameraMode.mockReturnValue("thirdPerson");
+
+		const { result } = renderHook(() => usePlayerMeshViewModel());
+
+		expect(result.current.isAvatarVisible).toBe(true);
+
+		mockGetCameraMode.mockReturnValue("firstPerson");
+
+		act(() => {
+			for (const listener of cameraModeListeners) {
+				listener();
+			}
+		});
+
+		expect(result.current.isAvatarVisible).toBe(false);
+		expect(result.current.isAuraVisible).toBe(false);
 	});
 });

@@ -12,4 +12,5 @@ export {
 	normalizeMovementVelocity,
 	rotateVelocityByCameraAzimuth,
 } from "./playerMovement";
+export { resolvePlayerAvatarVisibility } from "./playerVisibility";
 export { selectPlayerAnimation } from "./selectPlayerAnimation";

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import {
+	createFloorOneMachine,
 	DUNGEON_RUNE_STATES,
 	DUNGEON_THEME,
 	type DungeonContext,
@@ -8,8 +9,11 @@ import {
 	FLOOR_ONE_MACHINE_RULES,
 	ROOM_IDS,
 } from "@/entities/dungeon";
+import { PLAYER_ENTITY_CONFIG } from "@/entities/player";
+import { createDungeonFloorLayout } from "@/entities/room";
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
+import type { Vector3Tuple } from "@/shared/types";
 
 import {
 	CANVAS_FOG_DENSITY_MULTIPLIERS_BY_ROOM,
@@ -17,6 +21,7 @@ import {
 	CANVAS_RUNE_EMISSIVE_MULTIPLIERS,
 	CANVAS_TORCH_INTENSITY_CONFIG,
 } from "../config";
+import { getRoomWorldPosition } from "../lib";
 
 import { useCanvasSettings } from "./useCanvasSettings";
 
@@ -56,6 +61,10 @@ export const useCanvasMachineSettings = (
 	postprocessingEnabled?: boolean,
 ) => {
 	const baseCanvasSettings = useCanvasSettings();
+	const floorRooms = useMemo(
+		() => createDungeonFloorLayout(createFloorOneMachine()).rooms,
+		[],
+	);
 
 	return useMemo(() => {
 		const runeState = getRuneState(machineRuntime);
@@ -69,6 +78,17 @@ export const useCanvasMachineSettings = (
 			CANVAS_TORCH_INTENSITY_CONFIG.MIN,
 			CANVAS_TORCH_INTENSITY_CONFIG.MAX,
 		);
+		const playerSpawnPosition =
+			getRoomWorldPosition(
+				floorRooms,
+				machineRuntime.currentRoomId,
+				PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+			) ??
+			([
+				0,
+				PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+				0,
+			] as Vector3Tuple);
 
 		return {
 			...baseCanvasSettings,
@@ -105,10 +125,12 @@ export const useCanvasMachineSettings = (
 			isPostprocessingEnabled:
 				baseCanvasSettings.postprocessing.enabled &&
 				(postprocessingEnabled ?? true),
+			playerSpawnPosition,
 		};
 	}, [
 		baseCanvasSettings,
 		cameraStateSnapshot,
+		floorRooms,
 		machineRuntime,
 		postprocessingEnabled,
 	]);

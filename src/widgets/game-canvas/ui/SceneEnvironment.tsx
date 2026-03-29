@@ -2,6 +2,7 @@ import { CorridorMesh } from "@/entities/corridor";
 import { EnemyMesh } from "@/entities/enemy";
 import { PlayerMesh } from "@/entities/player";
 import { RoomLabel, RoomMesh } from "@/entities/room";
+import type { Vector3Tuple } from "@/shared/types";
 import {
 	type CanvasEnvironmentSettings,
 	useEnemySceneController,
@@ -10,9 +11,13 @@ import {
 
 type SceneEnvironmentProps = {
 	environment: CanvasEnvironmentSettings;
+	playerSpawnPosition: Vector3Tuple;
 };
 
-export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
+export function SceneEnvironment({
+	environment,
+	playerSpawnPosition,
+}: SceneEnvironmentProps) {
 	const { corridorMeshSettings, roomMeshSettings, enemyMeshSettings } =
 		useSceneEnvironmentSettings();
 	const { playerPosition, handleEnemyDead, handleEnemyAttack } =
@@ -46,7 +51,7 @@ export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
 					onAttack={handleEnemyAttack}
 				/>
 			))}
-			<PlayerMesh />
+			<PlayerMesh initialPosition={playerSpawnPosition} />
 			{roomMeshSettings.map((room) => (
 				<RoomLabel key={`${room.roomId}:label`} settings={room.labelSettings} />
 			))}

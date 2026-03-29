@@ -11,9 +11,16 @@ export const usePlayerMesh = (
 		input.healthState ?? PLAYER_ENTITY_CONFIG.DEFAULTS.HEALTH_STATE;
 
 	return useMemo(() => {
-		return createPlayerMeshSettings({
+		const meshSettings = createPlayerMeshSettings({
 			healthState,
 			origin: PLAYER_ENTITY_CONFIG.ORIGIN,
 		});
-	}, [healthState]);
+
+		return input.position
+			? {
+					...meshSettings,
+					position: input.position,
+				}
+			: meshSettings;
+	}, [healthState, input.position]);
 };
