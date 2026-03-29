@@ -43,6 +43,7 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 		setCameraMode(cameraStateSnapshot.mode);
 
 		const isModeChange = cameraStateSnapshot.mode !== prevModeRef.current;
+		const transitionAlpha = isModeChange ? 1 : LERP_ALPHA;
 		prevModeRef.current = cameraStateSnapshot.mode;
 
 		const [px, py, pz] = getPlayerPosition();
@@ -76,18 +77,10 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 			cameraStateSnapshot.mode !== CAMERA_MODES.FIRST_PERSON &&
 			cameraStateSnapshot.mode !== CAMERA_MODES.THIRD_PERSON
 		) {
-			if (isModeChange) {
-				camera.position.copy(targetPosition.current);
-			} else {
-				camera.position.lerp(targetPosition.current, LERP_ALPHA);
-			}
+			camera.position.lerp(targetPosition.current, transitionAlpha);
 			camera.lookAt(targetLookAt.current);
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
-			if (isModeChange) {
-				camera.position.copy(targetPosition.current);
-			} else {
-				camera.position.lerp(targetPosition.current, LERP_ALPHA);
-			}
+			camera.position.lerp(targetPosition.current, transitionAlpha);
 			if (!pointerLockRef.current?.isLocked) {
 				camera.lookAt(targetLookAt.current);
 			}
@@ -114,7 +107,7 @@ export function CameraRig({ cameraStateSnapshot }: CameraRigProps) {
 		const fovDiff = Math.abs(perspCamera.fov - cameraStateSnapshot.fov);
 		if (fovDiff > 0.01) {
 			perspCamera.fov +=
-				(cameraStateSnapshot.fov - perspCamera.fov) * LERP_ALPHA;
+				(cameraStateSnapshot.fov - perspCamera.fov) * transitionAlpha;
 			perspCamera.updateProjectionMatrix();
 		}
 	});
