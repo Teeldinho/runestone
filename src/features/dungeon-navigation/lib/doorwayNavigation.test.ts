@@ -65,6 +65,22 @@ describe("resolveDoorwayNavigationEvent", () => {
 		});
 	});
 
+	it("uses adjacent return event for guard-room north doorway", () => {
+		expect(
+			resolveDoorwayNavigationEvent({
+				currentRoomId: ROOM_IDS.GUARD_ROOM,
+				roomCenterPosition: [0, 0, 0],
+				playerPosition: [0, 0, -6],
+				hasTreasureKey: true,
+				enemiesRemaining: FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING,
+			}),
+		).toEqual({
+			eventType: "RETURN_TO_LIBRARY",
+			isLocked: false,
+			doorSide: "north",
+		});
+	});
+
 	it("returns locked exit attempt when treasury exit remains sealed", () => {
 		expect(
 			resolveDoorwayNavigationEvent({
@@ -78,6 +94,22 @@ describe("resolveDoorwayNavigationEvent", () => {
 			eventType: "LOCKED_EXIT_ATTEMPT",
 			isLocked: true,
 			doorSide: "south",
+		});
+	});
+
+	it("uses adjacent return event for exit north doorway", () => {
+		expect(
+			resolveDoorwayNavigationEvent({
+				currentRoomId: ROOM_IDS.EXIT,
+				roomCenterPosition: [0, 0, 40],
+				playerPosition: [0, 0, 34],
+				hasTreasureKey: true,
+				enemiesRemaining: FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING,
+			}),
+		).toEqual({
+			eventType: "RETURN_TO_TREASURY",
+			isLocked: false,
+			doorSide: "north",
 		});
 	});
 });

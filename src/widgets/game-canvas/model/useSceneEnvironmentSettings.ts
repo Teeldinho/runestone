@@ -49,10 +49,17 @@ export const useSceneEnvironmentSettings =
 				floorLayout.rooms,
 				floorLayout.corridors,
 				lockedDoorSidesByRoomId,
-			);
+			).map((roomMeshSetting) => ({
+				...roomMeshSetting,
+				isTreasury: roomMeshSetting.roomId === ROOM_IDS.TREASURY,
+				showTreasureKey:
+					roomMeshSetting.roomId === ROOM_IDS.GUARD_ROOM &&
+					!snapshot.context.hasTreasureKey,
+			}));
 			const enemyMeshSettings = createSceneEnemyMeshSettings(
 				floorLayout.rooms,
 				ROOM_IDS.GUARD_ROOM,
+				snapshot.context.enemiesRemaining,
 			);
 			const playerPosition = createSceneSpawnPosition(
 				floorLayout.rooms,

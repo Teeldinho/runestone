@@ -26,8 +26,10 @@ export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
 			{roomMeshSettings.map((room) => (
 				<RoomMesh
 					key={room.roomId}
+					isTreasury={room.isTreasury}
 					lockedDoorSides={room.lockedDoorSides}
 					position={room.position}
+					showTreasureKey={room.showTreasureKey}
 					surface={environment}
 					wallOpenings={room.wallOpenings}
 				/>
@@ -38,6 +40,7 @@ export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
 					id={enemy.id}
 					roomId={enemy.roomId}
 					position={enemy.position}
+					patrolCenter={enemy.patrolCenter}
 					playerPosition={playerPosition}
 					onDead={handleEnemyDead}
 					onAttack={handleEnemyAttack}

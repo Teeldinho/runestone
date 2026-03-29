@@ -38,4 +38,26 @@ describe("useCameraMachine", () => {
 
 		expect(result.current.mode).toBe(CAMERA_MODES.FIRST_PERSON);
 	});
+
+	it("continues responding to camera events after rerender", () => {
+		const { result, rerender } = renderHook(() => useCameraMachine());
+
+		act(() => {
+			result.current.handleCameraModeSwitch({
+				type: CAMERA_EVENTS.SWITCH_TO_THIRD_PERSON,
+			});
+		});
+
+		rerender();
+
+		act(() => {
+			window.dispatchEvent(
+				new KeyboardEvent("keydown", {
+					key: CAMERA_HOTKEYS.TOP_DOWN,
+				}),
+			);
+		});
+
+		expect(result.current.mode).toBe(CAMERA_MODES.TOP_DOWN);
+	});
 });

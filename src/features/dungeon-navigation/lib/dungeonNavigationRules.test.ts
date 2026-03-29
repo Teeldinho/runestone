@@ -174,7 +174,21 @@ describe("dungeon navigation rules", () => {
 		expect(
 			getNavigationActionDisabled(
 				DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
-				createDungeonContext({ currentRoomId: ROOM_IDS.TREASURY }),
+				createDungeonContext({ currentRoomId: ROOM_IDS.GUARD_ROOM }),
+			),
+		).toBe(true);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.RETURN_TO_LIBRARY,
+				createDungeonContext({ currentRoomId: ROOM_IDS.GUARD_ROOM }),
+			),
+		).toBe(false);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.RETURN_TO_LIBRARY,
+				createDungeonContext({ currentRoomId: ROOM_IDS.LIBRARY }),
 			),
 		).toBe(true);
 
@@ -188,7 +202,21 @@ describe("dungeon navigation rules", () => {
 		expect(
 			getNavigationActionDisabled(
 				DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM,
-				createDungeonContext({ currentRoomId: ROOM_IDS.LIBRARY }),
+				createDungeonContext({ currentRoomId: ROOM_IDS.EXIT }),
+			),
+		).toBe(true);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.RETURN_TO_TREASURY,
+				createDungeonContext({ currentRoomId: ROOM_IDS.EXIT }),
+			),
+		).toBe(false);
+
+		expect(
+			getNavigationActionDisabled(
+				DUNGEON_EVENTS.RETURN_TO_TREASURY,
+				createDungeonContext({ currentRoomId: ROOM_IDS.TREASURY }),
 			),
 		).toBe(true);
 

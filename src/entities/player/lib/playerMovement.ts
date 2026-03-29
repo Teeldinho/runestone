@@ -18,8 +18,9 @@ export const rotateVelocityByCameraAzimuth = (
 	azimuth: number,
 ): Vector3Tuple => {
 	const [x, y, z] = velocity;
-	const cos = Math.cos(azimuth);
-	const sin = Math.sin(azimuth);
+	const relativeAzimuth = Math.PI - azimuth;
+	const cos = Math.cos(relativeAzimuth);
+	const sin = Math.sin(relativeAzimuth);
 
 	return [x * cos - z * sin, y, x * sin + z * cos];
 };

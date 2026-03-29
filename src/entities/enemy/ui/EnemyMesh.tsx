@@ -26,6 +26,7 @@ type EnemyMeshProps = {
 	id: string;
 	roomId: string;
 	position: Vector3Tuple;
+	patrolCenter: Vector3Tuple;
 	playerPosition: Vector3Tuple;
 	onDead: () => void;
 	onAttack: () => void;
@@ -35,6 +36,7 @@ export function EnemyMesh({
 	id,
 	roomId,
 	position,
+	patrolCenter,
 	playerPosition,
 	onDead,
 	onAttack,
@@ -54,10 +56,14 @@ export function EnemyMesh({
 	const { getNextPosition } = useEnemyMovement({
 		behaviorState,
 		playerPosition,
-		patrolCenter: position,
+		patrolCenter,
 	});
 
 	useFrame((_, delta) => {
+		if (delta <= Number.EPSILON) {
+			return;
+		}
+
 		const body = rigidBodyRef.current;
 		if (!body) return;
 		const current = body.translation();
