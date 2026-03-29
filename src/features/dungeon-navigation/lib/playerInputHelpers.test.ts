@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import { PLAYER_MOVEMENT_KEYS } from "@/entities/player";
 
-import { computeVelocity, isMovementKey } from "./playerInputHelpers";
+import {
+	computeVelocity,
+	getMovementKey,
+	isMovementKey,
+} from "./playerInputHelpers";
 
 describe("isMovementKey", () => {
 	it("returns true for each WASD movement key", () => {
@@ -12,11 +16,42 @@ describe("isMovementKey", () => {
 		expect(isMovementKey(PLAYER_MOVEMENT_KEYS.RIGHT)).toBe(true);
 	});
 
+	it("returns true for arrow keys and uppercase movement keys", () => {
+		expect(isMovementKey("ArrowUp")).toBe(true);
+		expect(isMovementKey("ArrowDown")).toBe(true);
+		expect(isMovementKey("ArrowLeft")).toBe(true);
+		expect(isMovementKey("ArrowRight")).toBe(true);
+		expect(isMovementKey("W")).toBe(true);
+		expect(isMovementKey("A")).toBe(true);
+		expect(isMovementKey("S")).toBe(true);
+		expect(isMovementKey("D")).toBe(true);
+	});
+
 	it("returns false for non-movement keys", () => {
 		expect(isMovementKey("e")).toBe(false);
 		expect(isMovementKey("Space")).toBe(false);
-		expect(isMovementKey("ArrowUp")).toBe(false);
 		expect(isMovementKey("")).toBe(false);
+	});
+});
+
+describe("getMovementKey", () => {
+	it("normalizes arrow keys to canonical movement keys", () => {
+		expect(getMovementKey("ArrowUp")).toBe(PLAYER_MOVEMENT_KEYS.FORWARD);
+		expect(getMovementKey("ArrowDown")).toBe(PLAYER_MOVEMENT_KEYS.BACKWARD);
+		expect(getMovementKey("ArrowLeft")).toBe(PLAYER_MOVEMENT_KEYS.LEFT);
+		expect(getMovementKey("ArrowRight")).toBe(PLAYER_MOVEMENT_KEYS.RIGHT);
+	});
+
+	it("normalizes uppercase WASD keys to canonical movement keys", () => {
+		expect(getMovementKey("W")).toBe(PLAYER_MOVEMENT_KEYS.FORWARD);
+		expect(getMovementKey("A")).toBe(PLAYER_MOVEMENT_KEYS.LEFT);
+		expect(getMovementKey("S")).toBe(PLAYER_MOVEMENT_KEYS.BACKWARD);
+		expect(getMovementKey("D")).toBe(PLAYER_MOVEMENT_KEYS.RIGHT);
+	});
+
+	it("returns null for non-movement keys", () => {
+		expect(getMovementKey("e")).toBeNull();
+		expect(getMovementKey("Space")).toBeNull();
 	});
 });
 

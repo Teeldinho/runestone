@@ -14,6 +14,7 @@ export {
 export type { PlayerMovementKey } from "./playerMovementConfig";
 export {
 	PLAYER_MOVEMENT_DIRECTIONS,
+	PLAYER_MOVEMENT_KEY_ALIASES,
 	PLAYER_MOVEMENT_KEYS,
 } from "./playerMovementConfig";
 export type { PlayerHealthState } from "./playerStates";
