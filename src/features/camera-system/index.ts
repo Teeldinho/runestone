@@ -11,6 +11,7 @@ export {
 	CAMERA_MACHINE_ID,
 	CAMERA_MODES,
 } from "./config";
+export { createCameraStateSnapshot, resolveCameraAzimuth } from "./lib";
 export { useCameraSystem } from "./model";
 export { createCameraMachine } from "./model/cameraMachine";
 export type {
