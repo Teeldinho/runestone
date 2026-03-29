@@ -13,6 +13,7 @@ import {
 	getRoomLabelPosition,
 	ROOM_ENTITY_CONFIG,
 	type RoomLabelSettings,
+	type RoomWallOpening,
 } from "@/entities/room";
 import type { Vector3Tuple } from "@/shared/types";
 
@@ -20,12 +21,11 @@ type SceneRoomMeshSettings = {
 	roomId: string;
 	position: Vector3Tuple;
 	labelSettings: RoomLabelSettings;
-	wallOpenings: WallOpening[];
-	lockedDoorSides: WallOpening[];
+	wallOpenings: RoomWallOpening[];
+	lockedDoorSides: RoomWallOpening[];
+	isTreasury: boolean;
 	showTreasureKey: boolean;
 };
-
-type WallOpening = "north" | "south" | "east" | "west";
 
 const createSceneRoomLabelSettings = (
 	roomId: string,
@@ -49,8 +49,8 @@ const computeWallOpenings = (
 	roomId: string,
 	roomPosition: Vector3Tuple,
 	corridors: readonly DungeonCorridorLayout[],
-): WallOpening[] => {
-	const openings: WallOpening[] = [];
+): RoomWallOpening[] => {
+	const openings: RoomWallOpening[] = [];
 
 	for (const corridor of corridors) {
 		if (corridor.sourceRoomId !== roomId && corridor.targetRoomId !== roomId) {
@@ -81,7 +81,9 @@ const computeWallOpenings = (
 export const createSceneRoomMeshSettings = (
 	rooms: readonly DungeonRoomLayout[],
 	corridors: readonly DungeonCorridorLayout[] = [],
-	lockedDoorSidesByRoomId: Partial<Record<string, readonly WallOpening[]>> = {},
+	lockedDoorSidesByRoomId: Partial<
+		Record<string, readonly RoomWallOpening[]>
+	> = {},
 ): SceneRoomMeshSettings[] => {
 	return rooms.map((room) => ({
 		roomId: room.roomId,
@@ -89,6 +91,7 @@ export const createSceneRoomMeshSettings = (
 		labelSettings: createSceneRoomLabelSettings(room.roomId, room.position),
 		wallOpenings: computeWallOpenings(room.roomId, room.position, corridors),
 		lockedDoorSides: [...(lockedDoorSidesByRoomId[room.roomId] ?? [])],
+		isTreasury: false,
 		showTreasureKey: false,
 	}));
 };
@@ -166,4 +169,4 @@ export const createSceneEnemyMeshSettings = (
 	return enemySettings.slice(0, Math.max(0, enemyCount));
 };
 
-export type { EnemyMeshSettings, SceneRoomMeshSettings, WallOpening };
+export type { EnemyMeshSettings, SceneRoomMeshSettings };

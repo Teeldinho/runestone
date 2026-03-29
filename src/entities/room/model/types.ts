@@ -6,6 +6,8 @@ export type RoomKind = (typeof ROOM_KINDS)[keyof typeof ROOM_KINDS];
 export type RoomDoorGuard =
 	(typeof ROOM_DOOR_GUARDS)[keyof typeof ROOM_DOOR_GUARDS];
 
+export type RoomWallOpening = "north" | "south" | "east" | "west";
+
 export type RoomNode = {
 	id: string;
 	name: string;

@@ -28,5 +28,6 @@ export type {
 	RoomNode,
 	RoomSurfaceSettings,
 	RoomTorchSettings,
+	RoomWallOpening,
 } from "./model";
 export { RoomLabel, RoomMesh, TorchLight } from "./ui";

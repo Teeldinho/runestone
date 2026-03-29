@@ -12,15 +12,13 @@ import {
 	ROOM_LIGHT_CONFIG,
 } from "../config";
 import { getColumnPlacements, getFloorTilePositions } from "../lib";
-import type { RoomSurfaceSettings } from "../model";
-
-type WallOpening = "north" | "south" | "east" | "west";
+import type { RoomSurfaceSettings, RoomWallOpening } from "../model";
 
 type RoomMeshProps = {
 	position: Vector3Tuple;
 	surface: RoomSurfaceSettings;
-	wallOpenings?: WallOpening[];
-	lockedDoorSides?: WallOpening[];
+	wallOpenings?: RoomWallOpening[];
+	lockedDoorSides?: RoomWallOpening[];
 	isTreasury?: boolean;
 	showTreasureKey?: boolean;
 	showGrid?: boolean;
@@ -47,8 +45,9 @@ export function RoomMesh({
 	showGrid = false,
 }: RoomMeshProps) {
 	const { rune, grid, pillar } = surface;
-	const hasOpening = (side: WallOpening) => wallOpenings.includes(side);
-	const isDoorLocked = (side: WallOpening) => lockedDoorSides.includes(side);
+	const hasOpening = (side: RoomWallOpening) => wallOpenings.includes(side);
+	const isDoorLocked = (side: RoomWallOpening) =>
+		lockedDoorSides.includes(side);
 
 	const floorScene = useGLTF(ROOM_GLTF_CONFIG.FLOOR_TILE.PATH).scene;
 	const wallScene = useGLTF(ROOM_GLTF_CONFIG.WALL.PATH).scene;

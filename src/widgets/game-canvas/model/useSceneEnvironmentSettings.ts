@@ -51,6 +51,7 @@ export const useSceneEnvironmentSettings =
 				lockedDoorSidesByRoomId,
 			).map((roomMeshSetting) => ({
 				...roomMeshSetting,
+				isTreasury: roomMeshSetting.roomId === ROOM_IDS.TREASURY,
 				showTreasureKey:
 					roomMeshSetting.roomId === ROOM_IDS.GUARD_ROOM &&
 					!snapshot.context.hasTreasureKey,

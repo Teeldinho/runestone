@@ -118,8 +118,12 @@ describe("useSceneEnvironmentSettings", () => {
 		const guardRoomBeforePickup = result.current.roomMeshSettings.find(
 			(room) => room.roomId === ROOM_IDS.GUARD_ROOM,
 		);
+		const treasuryRoom = result.current.roomMeshSettings.find(
+			(room) => room.roomId === ROOM_IDS.TREASURY,
+		);
 
 		expect(guardRoomBeforePickup?.showTreasureKey).toBe(true);
+		expect(treasuryRoom?.isTreasury).toBe(true);
 
 		mockRuntimeContext.hasTreasureKey = true;
 		rerender();

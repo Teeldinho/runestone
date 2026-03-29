@@ -1,5 +1,4 @@
 import { CorridorMesh } from "@/entities/corridor";
-import { ROOM_IDS } from "@/entities/dungeon";
 import { EnemyMesh } from "@/entities/enemy";
 import { PlayerMesh } from "@/entities/player";
 import { RoomLabel, RoomMesh } from "@/entities/room";
@@ -27,7 +26,7 @@ export function SceneEnvironment({ environment }: SceneEnvironmentProps) {
 			{roomMeshSettings.map((room) => (
 				<RoomMesh
 					key={room.roomId}
-					isTreasury={room.roomId === ROOM_IDS.TREASURY}
+					isTreasury={room.isTreasury}
 					lockedDoorSides={room.lockedDoorSides}
 					position={room.position}
 					showTreasureKey={room.showTreasureKey}

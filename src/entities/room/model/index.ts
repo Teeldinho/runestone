@@ -5,4 +5,5 @@ export type {
 	RoomNode,
 	RoomSurfaceSettings,
 	RoomTorchSettings,
+	RoomWallOpening,
 } from "./types";
