@@ -12,6 +12,7 @@ export type {
 } from "./useCanvasSettings";
 export { useCanvasSettings } from "./useCanvasSettings";
 export { useEnemySceneController } from "./useEnemySceneController";
+export { useFirstPersonLockHint } from "./useFirstPersonLockHint";
 export { useGameOverState } from "./useGameOverState";
 export { useGameSideEffects } from "./useGameSideEffects";
 export { usePlayerSceneController } from "./usePlayerSceneController";

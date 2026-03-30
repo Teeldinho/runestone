@@ -1,11 +1,9 @@
 import { useMachine } from "@xstate/react";
 import { useEffect, useMemo } from "react";
-
 import { ENEMY_CONFIG, XSTATE_ACTOR_STATUS } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 import {
-	ENEMY_EVENTS,
 	ENEMY_GLOW_COLORS_BY_STATE,
 	ENEMY_GLOW_EMISSIVE_INTENSITY_BY_STATE,
 	ENEMY_MACHINE_STATES,
@@ -18,7 +16,6 @@ type UseEnemyMeshViewModelInput = {
 	id: string;
 	roomId: string;
 	position: Vector3Tuple;
-	playerPosition: Vector3Tuple;
 	onDead: () => void;
 	onAttack: () => void;
 };
@@ -36,7 +33,6 @@ export const useEnemyMeshViewModel = ({
 	id,
 	roomId,
 	position,
-	playerPosition,
 	onDead,
 	onAttack,
 }: UseEnemyMeshViewModelInput): UseEnemyMeshViewModelResult => {
@@ -46,13 +42,6 @@ export const useEnemyMeshViewModel = ({
 	});
 
 	const behaviorState = snapshot.value as EnemyBehaviorState;
-
-	useEffect(() => {
-		send({
-			type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
-			position: playerPosition,
-		});
-	}, [send, playerPosition]);
 
 	useEffect(() => {
 		if (snapshot.status === XSTATE_ACTOR_STATUS.DONE) {

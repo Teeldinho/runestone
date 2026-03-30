@@ -20,8 +20,7 @@ export function SceneEnvironment({
 }: SceneEnvironmentProps) {
 	const { corridorMeshSettings, roomMeshSettings, enemyMeshSettings } =
 		useSceneEnvironmentSettings();
-	const { playerPosition, handleEnemyDead, handleEnemyAttack } =
-		useEnemySceneController();
+	const { handleEnemyDead, handleEnemyAttack } = useEnemySceneController();
 
 	return (
 		<>
@@ -46,7 +45,6 @@ export function SceneEnvironment({
 					roomId={enemy.roomId}
 					position={enemy.position}
 					patrolCenter={enemy.patrolCenter}
-					playerPosition={playerPosition}
 					onDead={handleEnemyDead}
 					onAttack={handleEnemyAttack}
 				/>

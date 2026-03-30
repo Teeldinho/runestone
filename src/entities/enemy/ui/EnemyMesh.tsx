@@ -7,11 +7,13 @@ import { useEffect, useMemo, useRef } from "react";
 import type * as THREE from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
+import { getPlayerPosition } from "@/shared/lib/playerPositionStore";
 import type { Vector3Tuple } from "@/shared/types";
 
 import {
 	ENEMY_ANIMATION_PATHS,
 	ENEMY_ENTITY_CONFIG,
+	ENEMY_EVENTS,
 	ENEMY_GLTF_CONFIG,
 } from "../config";
 import { useEnemyMeshViewModel } from "../model/useEnemyMeshViewModel";
@@ -27,7 +29,6 @@ type EnemyMeshProps = {
 	roomId: string;
 	position: Vector3Tuple;
 	patrolCenter: Vector3Tuple;
-	playerPosition: Vector3Tuple;
 	onDead: () => void;
 	onAttack: () => void;
 };
@@ -37,31 +38,53 @@ export function EnemyMesh({
 	roomId,
 	position,
 	patrolCenter,
-	playerPosition,
 	onDead,
 	onAttack,
 }: EnemyMeshProps) {
 	const rigidBodyRef = useRef<RapierRigidBody>(null);
 	const groupRef = useRef<THREE.Group>(null);
 
-	const { glowSettings, animationName, behaviorState } = useEnemyMeshViewModel({
-		id,
-		roomId,
-		position,
-		playerPosition,
-		onDead,
-		onAttack,
-	});
+	const { glowSettings, animationName, behaviorState, send } =
+		useEnemyMeshViewModel({
+			id,
+			roomId,
+			position,
+			onDead,
+			onAttack,
+		});
 
 	const { getNextPosition } = useEnemyMovement({
 		behaviorState,
-		playerPosition,
+		getPlayerPosition,
 		patrolCenter,
 	});
+	const lastPlayerPositionRef = useRef<Vector3Tuple>([
+		getPlayerPosition()[0],
+		getPlayerPosition()[1],
+		getPlayerPosition()[2],
+	]);
 
 	useFrame((_, delta) => {
 		if (delta <= Number.EPSILON) {
 			return;
+		}
+
+		const playerPosition = getPlayerPosition();
+		const [lastX, lastY, lastZ] = lastPlayerPositionRef.current;
+		if (
+			playerPosition[0] !== lastX ||
+			playerPosition[1] !== lastY ||
+			playerPosition[2] !== lastZ
+		) {
+			send({
+				type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
+				position: playerPosition,
+			});
+			lastPlayerPositionRef.current = [
+				playerPosition[0],
+				playerPosition[1],
+				playerPosition[2],
+			];
 		}
 
 		const body = rigidBodyRef.current;
