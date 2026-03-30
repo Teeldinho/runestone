@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
-import { renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { act, renderHook } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
 	DUNGEON_EVENTS,
@@ -12,10 +12,12 @@ import {
 
 const mockSendDungeonMachineEvent = vi.fn();
 
-const { mockSnapshotGetter, mockPlayerPositionGetter } = vi.hoisted(() => ({
-	mockSnapshotGetter: vi.fn(),
-	mockPlayerPositionGetter: vi.fn(),
-}));
+const { mockSnapshotGetter, mockPlayerPositionGetter, positionListeners } =
+	vi.hoisted(() => ({
+		mockSnapshotGetter: vi.fn(),
+		mockPlayerPositionGetter: vi.fn(),
+		positionListeners: new Set<() => void>(),
+	}));
 
 vi.mock("@/features/dungeon-navigation/model/gameMachineRuntime", () => ({
 	useGameMachineRuntime: () => ({
@@ -26,6 +28,13 @@ vi.mock("@/features/dungeon-navigation/model/gameMachineRuntime", () => ({
 
 vi.mock("@/shared/lib/playerPositionStore", () => ({
 	getPlayerPosition: () => mockPlayerPositionGetter(),
+	subscribeToPlayerPosition: (listener: () => void) => {
+		positionListeners.add(listener);
+
+		return () => {
+			positionListeners.delete(listener);
+		};
+	},
 }));
 
 import { useDoorwayNavigation } from "./useDoorwayNavigation";
@@ -47,20 +56,24 @@ const createSnapshot = (
 
 describe("useDoorwayNavigation", () => {
 	beforeEach(() => {
-		vi.useFakeTimers();
 		vi.clearAllMocks();
+		positionListeners.clear();
 		mockSnapshotGetter.mockReturnValue(createSnapshot(ROOM_IDS.ENTRANCE));
 		mockPlayerPositionGetter.mockReturnValue([0, 0, -34]);
 	});
 
-	afterEach(() => {
-		vi.useRealTimers();
-	});
+	const notifyPlayerPosition = () => {
+		for (const listener of positionListeners) {
+			listener();
+		}
+	};
 
 	it("sends a room transition event when player reaches an open doorway", () => {
 		renderHook(() => useDoorwayNavigation());
 
-		vi.advanceTimersByTime(200);
+		act(() => {
+			notifyPlayerPosition();
+		});
 
 		expect(mockSendDungeonMachineEvent).toHaveBeenCalledWith({
 			type: DUNGEON_EVENTS.ENTER_LIBRARY,
@@ -73,7 +86,9 @@ describe("useDoorwayNavigation", () => {
 
 		renderHook(() => useDoorwayNavigation());
 
-		vi.advanceTimersByTime(200);
+		act(() => {
+			notifyPlayerPosition();
+		});
 
 		expect(mockSendDungeonMachineEvent).toHaveBeenCalledWith({
 			type: DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT,
@@ -88,10 +103,64 @@ describe("useDoorwayNavigation", () => {
 
 		renderHook(() => useDoorwayNavigation());
 
-		vi.advanceTimersByTime(200);
+		act(() => {
+			notifyPlayerPosition();
+		});
 
 		expect(mockSendDungeonMachineEvent).toHaveBeenCalledWith({
 			type: DUNGEON_EVENTS.ENTER_TREASURY,
 		});
+	});
+
+	it("does not immediately trigger the reverse doorway after entering a room", () => {
+		vi.useFakeTimers();
+
+		const { rerender } = renderHook(() => useDoorwayNavigation());
+
+		act(() => {
+			notifyPlayerPosition();
+		});
+
+		expect(mockSendDungeonMachineEvent).toHaveBeenCalledWith({
+			type: DUNGEON_EVENTS.ENTER_LIBRARY,
+		});
+
+		mockSendDungeonMachineEvent.mockClear();
+		mockSnapshotGetter.mockReturnValue(createSnapshot(ROOM_IDS.LIBRARY));
+		mockPlayerPositionGetter.mockReturnValue([0, 0, 6]);
+
+		rerender();
+
+		act(() => {
+			notifyPlayerPosition();
+		});
+
+		expect(mockSendDungeonMachineEvent).not.toHaveBeenCalled();
+
+		mockPlayerPositionGetter.mockReturnValue([0, 0, 14.8]);
+
+		act(() => {
+			notifyPlayerPosition();
+		});
+
+		expect(mockSendDungeonMachineEvent).not.toHaveBeenCalled();
+
+		vi.advanceTimersByTime(300);
+
+		mockPlayerPositionGetter.mockReturnValue([0, 0, 20]);
+
+		act(() => {
+			notifyPlayerPosition();
+		});
+
+		mockPlayerPositionGetter.mockReturnValue([0, 0, 14.8]);
+
+		act(() => {
+			notifyPlayerPosition();
+		});
+
+		expect(mockSendDungeonMachineEvent).not.toHaveBeenCalled();
+
+		vi.useRealTimers();
 	});
 });

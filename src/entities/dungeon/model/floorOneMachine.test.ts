@@ -21,6 +21,7 @@ describe("createFloorOneMachine", () => {
 			discoveredRooms: [ROOM_IDS.ENTRANCE],
 			hasTreasureKey: false,
 			enemiesRemaining: DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
+			lastDoorwayFeedback: null,
 		});
 	});
 
@@ -50,6 +51,19 @@ describe("createFloorOneMachine", () => {
 		actor.send({ type: DUNGEON_EVENTS.ENTER_TREASURY });
 
 		expect(actor.getSnapshot().value).toBe(ROOM_IDS.GUARD_ROOM);
+	});
+
+	it("records locked doorway feedback without changing rooms", () => {
+		const actor = createActor(createFloorOneMachine()).start();
+
+		actor.send({ type: DUNGEON_EVENTS.ENTER_LIBRARY });
+		actor.send({ type: DUNGEON_EVENTS.ENTER_GUARD_ROOM });
+		actor.send({ type: DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT });
+
+		expect(actor.getSnapshot().value).toBe(ROOM_IDS.GUARD_ROOM);
+		expect(actor.getSnapshot().context.lastDoorwayFeedback).toBe(
+			DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT,
+		);
 	});
 
 	it("allows RETURN_TO_LIBRARY from GUARD_ROOM", () => {
