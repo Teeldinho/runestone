@@ -9,10 +9,6 @@ import { ENEMY_CONFIG } from "@/shared/config";
 const mockSendPlayerMachineEvent = vi.fn();
 const mockSendDungeonMachineEvent = vi.fn();
 const mockOnEnemyHit = vi.fn();
-const mockGetPlayerPosition = vi.fn();
-const mockGetPlayerPositionSnapshot = vi.fn();
-const mockSubscribeToPlayerPosition = vi.fn();
-
 vi.mock("@/entities/player", () => ({
 	PLAYER_EVENTS: {
 		TAKE_DAMAGE: "TAKE_DAMAGE",
@@ -42,15 +38,6 @@ vi.mock("@/features/haptics-feedback", () => ({
 	}),
 }));
 
-vi.mock("@/shared/lib/playerPositionStore", () => ({
-	getPlayerPosition: () => mockGetPlayerPosition(),
-	getPlayerPositionSnapshot: () => mockGetPlayerPositionSnapshot(),
-	subscribeToPlayerPosition: (listener: () => void) => {
-		mockSubscribeToPlayerPosition(listener);
-		return () => {};
-	},
-}));
-
 import { useEnemySceneController } from "./useEnemySceneController";
 
 describe("useEnemySceneController", () => {
@@ -59,8 +46,6 @@ describe("useEnemySceneController", () => {
 	});
 
 	it("handleEnemyAttack sends TAKE_DAMAGE with ATTACK_DAMAGE amount", () => {
-		mockGetPlayerPosition.mockReturnValue([3, 0, -2]);
-
 		const { result } = renderHook(() => useEnemySceneController());
 
 		act(() => {
@@ -74,8 +59,6 @@ describe("useEnemySceneController", () => {
 	});
 
 	it("handleEnemyAttack triggers onEnemyHit haptic", () => {
-		mockGetPlayerPosition.mockReturnValue([0, 0, 0]);
-
 		const { result } = renderHook(() => useEnemySceneController());
 
 		act(() => {
@@ -85,19 +68,7 @@ describe("useEnemySceneController", () => {
 		expect(mockOnEnemyHit).toHaveBeenCalled();
 	});
 
-	it("returns live player position from playerPositionStore", () => {
-		mockGetPlayerPositionSnapshot.mockReturnValue([9, 1.5, 4]);
-
-		const { result } = renderHook(() => useEnemySceneController());
-
-		expect(result.current.playerPosition).toEqual([9, 1.5, 4]);
-		expect(mockSubscribeToPlayerPosition).toHaveBeenCalled();
-		expect(mockGetPlayerPositionSnapshot).toHaveBeenCalled();
-	});
-
 	it("handleEnemyDead sends ENEMY_DIED to dungeon machine", () => {
-		mockGetPlayerPosition.mockReturnValue([0, 0, 0]);
-
 		const { result } = renderHook(() => useEnemySceneController());
 
 		act(() => {
