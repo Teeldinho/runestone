@@ -12,7 +12,7 @@ import { computeEnemyMovement } from "../lib/computeEnemyMovement";
 
 type UseEnemyMovementInput = {
 	behaviorState: EnemyBehaviorState;
-	playerPosition: Vector3Tuple;
+	getPlayerPosition: () => Vector3Tuple;
 	patrolCenter: Vector3Tuple;
 };
 
@@ -35,7 +35,7 @@ const pickPatrolWaypoint = (center: Vector3Tuple): Vector3Tuple => {
 
 export const useEnemyMovement = ({
 	behaviorState,
-	playerPosition,
+	getPlayerPosition,
 	patrolCenter,
 }: UseEnemyMovementInput): UseEnemyMovementResult => {
 	const waypointRef = useRef<Vector3Tuple>(pickPatrolWaypoint(patrolCenter));
@@ -46,7 +46,7 @@ export const useEnemyMovement = ({
 				return computeEnemyMovement({
 					behaviorState,
 					currentPosition,
-					targetPosition: playerPosition,
+					targetPosition: getPlayerPosition(),
 					delta,
 				});
 			}
@@ -68,7 +68,7 @@ export const useEnemyMovement = ({
 
 			return currentPosition;
 		},
-		[behaviorState, playerPosition, patrolCenter],
+		[behaviorState, getPlayerPosition, patrolCenter],
 	);
 
 	return { getNextPosition };

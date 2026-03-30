@@ -6,7 +6,7 @@ import {
 	ROOM_IDS,
 	type RoomId,
 } from "../config";
-import type { DungeonMachineContext } from "../model/types";
+import type { DoorwayFeedback, DungeonMachineContext } from "../model/types";
 
 const addDiscoveredRoom = (
 	discoveredRooms: DungeonMachineContext["discoveredRooms"],
@@ -29,7 +29,17 @@ export const createFloorOneContext = (
 		[DUNGEON_CONTEXT_KEYS.HAS_TREASURE_KEY]: false,
 		[DUNGEON_CONTEXT_KEYS.ENEMIES_REMAINING]:
 			DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
+		[DUNGEON_CONTEXT_KEYS.LAST_DOORWAY_FEEDBACK]: null,
 		...contextOverrides,
+	};
+};
+
+export const clearFloorOneDoorwayFeedback = (
+	context: DungeonMachineContext,
+): DungeonMachineContext => {
+	return {
+		...context,
+		[DUNGEON_CONTEXT_KEYS.LAST_DOORWAY_FEEDBACK]: null,
 	};
 };
 
@@ -38,7 +48,7 @@ export const updateFloorOneContextRoom = (
 	nextRoomId: RoomId,
 ): DungeonMachineContext => {
 	return {
-		...context,
+		...clearFloorOneDoorwayFeedback(context),
 		[DUNGEON_CONTEXT_KEYS.CURRENT_ROOM_ID]: nextRoomId,
 		[DUNGEON_CONTEXT_KEYS.DISCOVERED_ROOMS]: addDiscoveredRoom(
 			context.discoveredRooms,
@@ -63,8 +73,18 @@ export const markFloorOneTreasureKeyCollected = (
 	context: DungeonMachineContext,
 ): DungeonMachineContext => {
 	return {
-		...context,
+		...clearFloorOneDoorwayFeedback(context),
 		[DUNGEON_CONTEXT_KEYS.HAS_TREASURE_KEY]: true,
+	};
+};
+
+export const setFloorOneDoorwayFeedback = (
+	context: DungeonMachineContext,
+	feedback: DoorwayFeedback,
+): DungeonMachineContext => {
+	return {
+		...context,
+		[DUNGEON_CONTEXT_KEYS.LAST_DOORWAY_FEEDBACK]: feedback,
 	};
 };
 

@@ -85,8 +85,11 @@ describe("player spawn position calculations", () => {
 });
 
 describe("updated config values", () => {
-	it("has correct GLTF POSITION_Y to prevent ground burial", () => {
-		expect(PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y).toBeCloseTo(0.365, 3);
+	it("has correct GLTF POSITION_Y to keep the avatar grounded", () => {
+		expect(PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y).toBeCloseTo(
+			-PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+			3,
+		);
 		expect(PLAYER_GLTF_CONFIG.CHARACTER.SCALE).toEqual([0.72, 0.72, 0.72]);
 	});
 

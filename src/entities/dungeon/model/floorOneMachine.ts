@@ -7,6 +7,7 @@ import {
 	createFloorOneContext,
 	decrementFloorOneEnemies,
 	markFloorOneTreasureKeyCollected,
+	setFloorOneDoorwayFeedback,
 	updateFloorOneContextRoom,
 } from "../lib";
 import type { DungeonMachineContext, DungeonMachineEvent } from "./types";
@@ -67,6 +68,14 @@ export const createFloorOneMachine = (options?: {
 							updateFloorOneContextRoom(context, ROOM_IDS.TREASURY),
 						),
 					},
+					[DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT]: {
+						actions: assign(({ context }) =>
+							setFloorOneDoorwayFeedback(
+								context,
+								DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT,
+							),
+						),
+					},
 					[DUNGEON_EVENTS.RETURN_TO_LIBRARY]: {
 						target: ROOM_IDS.LIBRARY,
 						actions: assign(({ context }) =>
@@ -82,6 +91,14 @@ export const createFloorOneMachine = (options?: {
 						guard: ({ context }) => canEnterFloorOneExit(context),
 						actions: assign(({ context }) =>
 							updateFloorOneContextRoom(context, ROOM_IDS.EXIT),
+						),
+					},
+					[DUNGEON_EVENTS.LOCKED_EXIT_ATTEMPT]: {
+						actions: assign(({ context }) =>
+							setFloorOneDoorwayFeedback(
+								context,
+								DUNGEON_EVENTS.LOCKED_EXIT_ATTEMPT,
+							),
 						),
 					},
 					[DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM]: {

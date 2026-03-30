@@ -11,6 +11,7 @@ const mockOnRoomEnter = vi.fn();
 const mockOnTransition = vi.fn();
 const mockOnFloorComplete = vi.fn();
 const mockOnPlayerDeath = vi.fn();
+const mockOnGuardFail = vi.fn();
 const mockHandleSoundEffectPlay = vi.fn();
 const mockMutate = vi.fn();
 const mockSetPlayerTeleportTarget = vi.fn();
@@ -41,7 +42,7 @@ vi.mock("@/entities/room", async (importOriginal) => {
 				{
 					roomId: "entrance",
 					label: "Entrance",
-					position: [-20, 0, 0] as [number, number, number],
+					position: [0, 0, 0] as [number, number, number],
 					isInitial: true,
 					isFinal: false,
 				},
@@ -55,7 +56,7 @@ vi.mock("@/entities/room", async (importOriginal) => {
 				{
 					roomId: "guard_room",
 					label: "Guard Room",
-					position: [20, 0, 20] as [number, number, number],
+					position: [0, 0, 40] as [number, number, number],
 					isInitial: false,
 					isFinal: false,
 				},
@@ -66,12 +67,18 @@ vi.mock("@/entities/room", async (importOriginal) => {
 	};
 });
 
-vi.mock("@/features/dungeon-navigation", () => ({
-	useGameMachineRuntime: () => ({
-		snapshot: mockSnapshotGetter(),
-		sendDungeonMachineEvent: vi.fn(),
-	}),
-}));
+vi.mock("@/features/dungeon-navigation", async (importOriginal) => {
+	const original =
+		await importOriginal<typeof import("@/features/dungeon-navigation")>();
+
+	return {
+		...original,
+		useGameMachineRuntime: () => ({
+			snapshot: mockSnapshotGetter(),
+			sendDungeonMachineEvent: vi.fn(),
+		}),
+	};
+});
 
 vi.mock("@/features/haptics-feedback", () => ({
 	useHaptics: () => ({
@@ -79,7 +86,7 @@ vi.mock("@/features/haptics-feedback", () => ({
 		onTransition: mockOnTransition,
 		onFloorComplete: mockOnFloorComplete,
 		onPlayerDeath: mockOnPlayerDeath,
-		onGuardFail: vi.fn(),
+		onGuardFail: mockOnGuardFail,
 	}),
 }));
 
@@ -89,6 +96,7 @@ vi.mock("@/features/audio-manager", () => ({
 	}),
 	AUDIO_SPRITE_IDS: {
 		DOOR_OPEN: "DOOR_OPEN",
+		DOOR_LOCKED: "DOOR_LOCKED",
 		ACHIEVEMENT: "ACHIEVEMENT",
 		PLAYER_HIT: "PLAYER_HIT",
 	},
@@ -121,6 +129,10 @@ const createMockSnapshot = (
 	roomId: RoomId = ROOM_IDS.ENTRANCE,
 	status: "active" | "done" = "active",
 	discoveredRooms: RoomId[] = [ROOM_IDS.ENTRANCE],
+	lastDoorwayFeedback:
+		| "LOCKED_DOOR_ATTEMPT"
+		| "LOCKED_EXIT_ATTEMPT"
+		| null = null,
 ) => ({
 	value: roomId,
 	context: {
@@ -129,6 +141,7 @@ const createMockSnapshot = (
 		discoveredRooms,
 		hasTreasureKey: false,
 		enemiesRemaining: 1,
+		lastDoorwayFeedback,
 	},
 	status,
 });
@@ -227,7 +240,7 @@ describe("useGameSideEffects — haptics and audio", () => {
 		expect(mockSetPlayerTeleportTarget).toHaveBeenCalledWith(
 			0,
 			expect.any(Number),
-			20,
+			14.8,
 		);
 	});
 
@@ -235,13 +248,13 @@ describe("useGameSideEffects — haptics and audio", () => {
 		renderHook(() => useGameSideEffects());
 
 		expect(mockSetPlayerTeleportTarget).toHaveBeenCalledWith(
-			-20,
+			0,
 			expect.any(Number),
 			0,
 		);
 	});
 
-	it("calls onTransition on every snapshot change", () => {
+	it("calls onTransition when the room changes", () => {
 		const { rerender } = renderHook(() => useGameSideEffects());
 
 		act(() => {
@@ -255,6 +268,47 @@ describe("useGameSideEffects — haptics and audio", () => {
 		rerender();
 
 		expect(mockOnTransition).toHaveBeenCalledTimes(2);
+	});
+
+	it("does not call onTransition when non-room state changes", () => {
+		const { rerender } = renderHook(() => useGameSideEffects());
+		vi.clearAllMocks();
+
+		act(() => {
+			mockSnapshotGetter.mockReturnValue(
+				createMockSnapshot(
+					ROOM_IDS.ENTRANCE,
+					"active",
+					[ROOM_IDS.ENTRANCE],
+					"LOCKED_DOOR_ATTEMPT",
+				),
+			);
+		});
+		rerender();
+
+		expect(mockOnTransition).not.toHaveBeenCalled();
+	});
+
+	it("plays locked-door feedback when doorway feedback changes", () => {
+		const { rerender } = renderHook(() => useGameSideEffects());
+		vi.clearAllMocks();
+
+		act(() => {
+			mockSnapshotGetter.mockReturnValue(
+				createMockSnapshot(
+					ROOM_IDS.GUARD_ROOM,
+					"active",
+					[ROOM_IDS.ENTRANCE, ROOM_IDS.LIBRARY, ROOM_IDS.GUARD_ROOM],
+					"LOCKED_DOOR_ATTEMPT",
+				),
+			);
+		});
+		rerender();
+
+		expect(mockOnGuardFail).toHaveBeenCalledTimes(1);
+		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith(
+			AUDIO_SPRITE_IDS.DOOR_LOCKED,
+		);
 	});
 });
 

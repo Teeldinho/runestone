@@ -1,8 +1,10 @@
+import { PLAYER_ENTITY_CONFIG } from "./playerConfig";
+
 export const PLAYER_GLTF_CONFIG = {
 	CHARACTER: {
 		PATH: "/models/adventurers/Knight.glb",
 		SCALE: [0.72, 0.72, 0.72] as const,
-		POSITION_Y: 0.365,
+		POSITION_Y: -PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
 	},
 } as const;
 

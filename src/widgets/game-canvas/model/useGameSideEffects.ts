@@ -16,13 +16,22 @@ import { useHaptics } from "@/features/haptics-feedback";
 import { SCORE_VALUES } from "@/shared/config";
 import { setPlayerTeleportTarget } from "@/shared/lib/playerPositionStore";
 
-import { getRoomWorldPosition, shouldSubmitFloorScore } from "../lib";
+import {
+	getDoorwayArrivalPosition,
+	getRoomWorldPosition,
+	shouldSubmitFloorScore,
+} from "../lib";
 
 export const useGameSideEffects = (): void => {
 	const { snapshot } = useGameMachineRuntime();
 	const { snapshot: playerSnapshot } = usePlayerMachineRuntime();
-	const { onRoomEnter, onTransition, onFloorComplete, onPlayerDeath } =
-		useHaptics();
+	const {
+		onGuardFail,
+		onRoomEnter,
+		onTransition,
+		onFloorComplete,
+		onPlayerDeath,
+	} = useHaptics();
 	const { handleSoundEffectPlay } = useAudioController();
 	const submitScore = useSubmitDungeonScore();
 	const { authenticatedProfile } = useAuthContext();
@@ -34,15 +43,16 @@ export const useGameSideEffects = (): void => {
 
 	const startTimeMsRef = useRef(Date.now());
 	const prevRoomRef = useRef<RoomId | null>(null);
+	const previousDoorwayFeedbackRef =
+		useRef<typeof snapshot.context.lastDoorwayFeedback>(null);
 	const hasSubmittedRef = useRef(false);
 	const hasTriggeredDeathRef = useRef(false);
 
 	useEffect(() => {
-		onTransition();
-
 		const currentRoom = snapshot.context.currentRoomId;
 
 		if (currentRoom !== prevRoomRef.current) {
+			onTransition();
 			onRoomEnter();
 			handleSoundEffectPlay(AUDIO_SPRITE_IDS.DOOR_OPEN);
 
@@ -52,12 +62,49 @@ export const useGameSideEffects = (): void => {
 				PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
 			);
 			if (roomPosition) {
-				setPlayerTeleportTarget(...roomPosition);
+				const previousRoomPosition = prevRoomRef.current
+					? getRoomWorldPosition(
+							floorRooms,
+							prevRoomRef.current,
+							PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+						)
+					: null;
+				setPlayerTeleportTarget(
+					...getDoorwayArrivalPosition({
+						currentRoomPosition: roomPosition,
+						previousRoomPosition,
+						spawnHeightOffset:
+							PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+					}),
+				);
 			}
 
 			prevRoomRef.current = currentRoom;
 		}
-	}, [snapshot, onTransition, onRoomEnter, handleSoundEffectPlay, floorRooms]);
+	}, [
+		snapshot.context.currentRoomId,
+		onTransition,
+		onRoomEnter,
+		handleSoundEffectPlay,
+		floorRooms,
+	]);
+
+	useEffect(() => {
+		if (
+			snapshot.context.lastDoorwayFeedback &&
+			snapshot.context.lastDoorwayFeedback !==
+				previousDoorwayFeedbackRef.current
+		) {
+			onGuardFail();
+			handleSoundEffectPlay(AUDIO_SPRITE_IDS.DOOR_LOCKED);
+		}
+
+		previousDoorwayFeedbackRef.current = snapshot.context.lastDoorwayFeedback;
+	}, [
+		snapshot.context.lastDoorwayFeedback,
+		onGuardFail,
+		handleSoundEffectPlay,
+	]);
 
 	useEffect(() => {
 		if (

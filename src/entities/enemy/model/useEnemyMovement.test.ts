@@ -15,7 +15,7 @@ describe("useEnemyMovement", () => {
 		const { result } = renderHook(() =>
 			useEnemyMovement({
 				behaviorState: ENEMY_MACHINE_STATES.DEAD,
-				playerPosition: [0, SPAWN_Y, 0],
+				getPlayerPosition: () => [0, SPAWN_Y, 0],
 				patrolCenter: [0, SPAWN_Y, 0],
 			}),
 		);
@@ -28,7 +28,7 @@ describe("useEnemyMovement", () => {
 		const { result } = renderHook(() =>
 			useEnemyMovement({
 				behaviorState: ENEMY_MACHINE_STATES.ATTACK,
-				playerPosition: [0, SPAWN_Y, 0],
+				getPlayerPosition: () => [0, SPAWN_Y, 0],
 				patrolCenter: [0, SPAWN_Y, 0],
 			}),
 		);
@@ -42,7 +42,7 @@ describe("useEnemyMovement", () => {
 		const { result } = renderHook(() =>
 			useEnemyMovement({
 				behaviorState: ENEMY_MACHINE_STATES.CHASE,
-				playerPosition: player,
+				getPlayerPosition: () => player,
 				patrolCenter: [0, SPAWN_Y, 0],
 			}),
 		);
@@ -56,7 +56,7 @@ describe("useEnemyMovement", () => {
 		const { result } = renderHook(() =>
 			useEnemyMovement({
 				behaviorState: ENEMY_MACHINE_STATES.PATROL,
-				playerPosition: [0, SPAWN_Y, 0],
+				getPlayerPosition: () => [0, SPAWN_Y, 0],
 				patrolCenter: [0, SPAWN_Y, 0],
 			}),
 		);

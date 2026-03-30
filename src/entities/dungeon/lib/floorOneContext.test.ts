@@ -10,8 +10,10 @@ import {
 import {
 	canEnterFloorOneExit,
 	canEnterFloorOneTreasury,
+	clearFloorOneDoorwayFeedback,
 	createFloorOneContext,
 	decrementFloorOneEnemies,
+	setFloorOneDoorwayFeedback,
 	updateFloorOneContextRoom,
 } from "./floorOneContext";
 
@@ -23,6 +25,7 @@ describe("floorOneContext", () => {
 			discoveredRooms: [ROOM_IDS.ENTRANCE],
 			hasTreasureKey: false,
 			enemiesRemaining: DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
+			lastDoorwayFeedback: null,
 		});
 	});
 
@@ -47,6 +50,18 @@ describe("floorOneContext", () => {
 			ROOM_IDS.ENTRANCE,
 			ROOM_IDS.LIBRARY,
 		]);
+	});
+
+	it("tracks and clears doorway feedback in context", () => {
+		const withFeedback = setFloorOneDoorwayFeedback(
+			createFloorOneContext(),
+			"LOCKED_DOOR_ATTEMPT",
+		);
+
+		expect(withFeedback.lastDoorwayFeedback).toBe("LOCKED_DOOR_ATTEMPT");
+		expect(clearFloorOneDoorwayFeedback(withFeedback).lastDoorwayFeedback).toBe(
+			null,
+		);
 	});
 
 	it("decrements remaining enemies and clamps at zero", () => {
