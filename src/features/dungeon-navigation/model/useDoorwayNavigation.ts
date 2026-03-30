@@ -2,11 +2,18 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { createFloorOneMachine, type RoomId } from "@/entities/dungeon";
 import { createDungeonFloorLayout } from "@/entities/room";
-import { getPlayerPosition } from "@/shared/lib/playerPositionStore";
+import {
+	getPlayerPosition,
+	subscribeToPlayerPosition,
+} from "@/shared/lib/playerPositionStore";
 import type { Vector3Tuple } from "@/shared/types";
 
 import { DOORWAY_NAVIGATION_CONFIG } from "../config";
-import { resolveDoorwayNavigationEvent } from "../lib";
+import {
+	checkPlayerWithinRoomBounds,
+	resolveDoorwayEntrySide,
+	resolveDoorwayNavigationEvent,
+} from "../lib";
 import { useGameMachineRuntime } from "./gameMachineRuntime";
 
 export const useDoorwayNavigation = (): void => {
@@ -25,9 +32,33 @@ export const useDoorwayNavigation = (): void => {
 	}, []);
 
 	const lastDoorwayTriggerKeyRef = useRef<string | null>(null);
+	const blockedDoorwayKeyRef = useRef<string | null>(null);
 	const lastTriggerAtMsRef = useRef(0);
+	const previousRoomIdRef = useRef<RoomId | null>(
+		snapshot.context.currentRoomId as RoomId,
+	);
 
 	useEffect(() => {
+		const currentRoomId = snapshot.context.currentRoomId as RoomId;
+		if (previousRoomIdRef.current !== currentRoomId) {
+			const currentRoomPosition = roomPositionById[currentRoomId];
+			const previousRoomPosition = previousRoomIdRef.current
+				? roomPositionById[previousRoomIdRef.current]
+				: null;
+			const blockedDoorwaySide =
+				currentRoomPosition && previousRoomPosition
+					? resolveDoorwayEntrySide({
+							currentRoomPosition,
+							previousRoomPosition,
+						})
+					: null;
+
+			blockedDoorwayKeyRef.current = blockedDoorwaySide
+				? `${currentRoomId}:${blockedDoorwaySide}`
+				: null;
+			previousRoomIdRef.current = currentRoomId;
+		}
+
 		const runDoorwayCheck = () => {
 			const currentRoomId = snapshot.context.currentRoomId as RoomId;
 			const roomCenterPosition = roomPositionById[currentRoomId];
@@ -42,9 +73,23 @@ export const useDoorwayNavigation = (): void => {
 				hasTreasureKey: snapshot.context.hasTreasureKey,
 				enemiesRemaining: snapshot.context.enemiesRemaining,
 			});
+			const isPlayerInsideCurrentRoom = checkPlayerWithinRoomBounds({
+				roomCenterPosition,
+				playerPosition: getPlayerPosition(),
+			});
 
 			if (!doorwayEvent) {
 				lastDoorwayTriggerKeyRef.current = null;
+				if (blockedDoorwayKeyRef.current && isPlayerInsideCurrentRoom) {
+					blockedDoorwayKeyRef.current = null;
+				}
+				return;
+			}
+
+			if (
+				blockedDoorwayKeyRef.current ===
+				`${currentRoomId}:${doorwayEvent.doorSide}`
+			) {
 				return;
 			}
 
@@ -67,13 +112,11 @@ export const useDoorwayNavigation = (): void => {
 			sendDungeonMachineEvent({ type: doorwayEvent.eventType });
 		};
 
-		const intervalId = window.setInterval(
-			runDoorwayCheck,
-			DOORWAY_NAVIGATION_CONFIG.CHECK_INTERVAL_MS,
-		);
+		const unsubscribe = subscribeToPlayerPosition(runDoorwayCheck);
+		runDoorwayCheck();
 
 		return () => {
-			window.clearInterval(intervalId);
+			unsubscribe();
 		};
 	}, [
 		roomPositionById,

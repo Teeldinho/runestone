@@ -1,6 +1,8 @@
 import {
+	canEnterFloorOneExit,
+	canEnterFloorOneTreasury,
+	createFloorOneContext,
 	type DungeonEvent,
-	FLOOR_ONE_MACHINE_RULES,
 	type RoomId,
 } from "@/entities/dungeon";
 import { ROOM_CONFIG } from "@/shared/config";
@@ -25,6 +27,18 @@ type DoorwayNavigationEvent = {
 	eventType: DungeonEvent;
 	isLocked: boolean;
 	doorSide: DoorSide;
+};
+
+const isPlayerWithinRoomBounds = (localX: number, localZ: number): boolean => {
+	const roomHalfWidth = ROOM_CONFIG.WIDTH / 2;
+	const roomHalfDepth = ROOM_CONFIG.DEPTH / 2;
+
+	return (
+		Math.abs(localX) <=
+			roomHalfWidth + DOORWAY_NAVIGATION_CONFIG.DOOR_PROXIMITY_THRESHOLD &&
+		Math.abs(localZ) <=
+			roomHalfDepth + DOORWAY_NAVIGATION_CONFIG.DOOR_PROXIMITY_THRESHOLD
+	);
 };
 
 const resolveNearDoorSide = (
@@ -68,6 +82,7 @@ const resolveNearDoorSide = (
 };
 
 const isDoorGuardOpen = (
+	currentRoomId: RoomId,
 	doorGuard: DoorGuard,
 	hasTreasureKey: boolean,
 	enemiesRemaining: number,
@@ -76,14 +91,17 @@ const isDoorGuardOpen = (
 		return true;
 	}
 
+	const guardContext = createFloorOneContext({
+		currentRoomId,
+		hasTreasureKey,
+		enemiesRemaining,
+	});
+
 	if (doorGuard === "treasury") {
-		return (
-			hasTreasureKey &&
-			enemiesRemaining === FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING
-		);
+		return canEnterFloorOneTreasury(guardContext);
 	}
 
-	return hasTreasureKey;
+	return canEnterFloorOneExit(guardContext);
 };
 
 export const resolveDoorwayNavigationEvent = ({
@@ -109,7 +127,12 @@ export const resolveDoorwayNavigationEvent = ({
 	}
 
 	if (
-		isDoorGuardOpen(doorwayInteraction.guard, hasTreasureKey, enemiesRemaining)
+		isDoorGuardOpen(
+			currentRoomId,
+			doorwayInteraction.guard,
+			hasTreasureKey,
+			enemiesRemaining,
+		)
 	) {
 		return {
 			eventType: doorwayInteraction.successEvent,
@@ -127,6 +150,19 @@ export const resolveDoorwayNavigationEvent = ({
 		isLocked: true,
 		doorSide,
 	};
+};
+
+export const checkPlayerWithinRoomBounds = ({
+	roomCenterPosition,
+	playerPosition,
+}: Pick<
+	ResolveDoorwayNavigationInput,
+	"roomCenterPosition" | "playerPosition"
+>): boolean => {
+	const localX = playerPosition[0] - roomCenterPosition[0];
+	const localZ = playerPosition[2] - roomCenterPosition[2];
+
+	return isPlayerWithinRoomBounds(localX, localZ);
 };
 
 export type { DoorwayNavigationEvent, ResolveDoorwayNavigationInput };

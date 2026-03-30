@@ -9,4 +9,5 @@ export const DUNGEON_CONTEXT_KEYS = {
 	DISCOVERED_ROOMS: "discoveredRooms",
 	HAS_TREASURE_KEY: "hasTreasureKey",
 	ENEMIES_REMAINING: "enemiesRemaining",
+	LAST_DOORWAY_FEEDBACK: "lastDoorwayFeedback",
 } as const;

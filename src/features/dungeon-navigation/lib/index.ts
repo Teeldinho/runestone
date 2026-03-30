@@ -1,4 +1,5 @@
 export {
+	checkPlayerWithinRoomBounds,
 	type DoorwayNavigationEvent,
 	type ResolveDoorwayNavigationInput,
 	resolveDoorwayNavigationEvent,
@@ -13,3 +14,4 @@ export {
 	getMovementKey,
 	isMovementKey,
 } from "./playerInputHelpers";
+export { resolveDoorwayEntrySide } from "./resolveDoorwayEntrySide";
