@@ -43,6 +43,8 @@ type UseCameraRigViewModelResult = {
 	freeOrbitalOrbitRef: RefObject<OrbitControlsHandle | null>;
 	handleFirstPersonLock: () => void;
 	handleFirstPersonUnlock: () => void;
+	handleOrbitStart: () => void;
+	handleOrbitEnd: () => void;
 	mode: CameraStateSnapshot["mode"] | undefined;
 	pointerLockRef: RefObject<PointerLockControlsHandle | null>;
 	thirdPersonOrbitRef: RefObject<OrbitControlsHandle | null>;
@@ -64,6 +66,7 @@ export const useCameraRigViewModel = ({
 	const needsFreeOrbitalSyncRef = useRef(false);
 	const needsThirdPersonSyncRef = useRef(false);
 	const needsTopDownSyncRef = useRef(false);
+	const isUserInteractingRef = useRef(false);
 
 	useEffect(() => {
 		if (!mode) {
@@ -85,6 +88,12 @@ export const useCameraRigViewModel = ({
 
 	const handleFirstPersonLock = useCallback(() => {}, []);
 	const handleFirstPersonUnlock = useCallback(() => {}, []);
+	const handleOrbitStart = useCallback(() => {
+		isUserInteractingRef.current = true;
+	}, []);
+	const handleOrbitEnd = useCallback(() => {
+		isUserInteractingRef.current = false;
+	}, []);
 
 	useFrame(() => {
 		if (!cameraStateSnapshot) {
@@ -162,14 +171,13 @@ export const useCameraRigViewModel = ({
 			camera.position.set(...position);
 			setOrbitTarget(freeOrbitalOrbitRef.current, lookAt);
 			needsFreeOrbitalSyncRef.current = false;
-		} else {
-			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
-
+		} else if (!isUserInteractingRef.current) {
 			const nextTarget = new THREE.Vector3(...lookAt);
 			if (
 				freeOrbitalOrbitRef.current.target.distanceTo(nextTarget) >=
 				CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE
 			) {
+				setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
 				const desiredCameraPosition = getPreservedOrbitCameraPosition({
 					cameraPosition: camera.position.toArray() as Vector3Tuple,
 					currentTarget:
@@ -212,6 +220,8 @@ export const useCameraRigViewModel = ({
 		freeOrbitalOrbitRef,
 		handleFirstPersonLock,
 		handleFirstPersonUnlock,
+		handleOrbitEnd,
+		handleOrbitStart,
 		mode,
 		pointerLockRef,
 		thirdPersonOrbitRef,

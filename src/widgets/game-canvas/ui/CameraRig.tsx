@@ -23,6 +23,8 @@ export function CameraRig({
 		freeOrbitalOrbitRef,
 		handleFirstPersonLock,
 		handleFirstPersonUnlock,
+		handleOrbitEnd,
+		handleOrbitStart,
 		mode,
 		pointerLockRef,
 		thirdPersonOrbitRef,
@@ -49,6 +51,8 @@ export function CameraRig({
 				rotateSpeed={CAMERA_CONFIG.FREE_ORBITAL.ROTATE_SPEED}
 				screenSpacePanning
 				zoomSpeed={CAMERA_CONFIG.FREE_ORBITAL.ZOOM_SPEED}
+				onStart={handleOrbitStart}
+				onEnd={handleOrbitEnd}
 				mouseButtons={{
 					LEFT: THREE.MOUSE.PAN,
 					MIDDLE: THREE.MOUSE.DOLLY,
