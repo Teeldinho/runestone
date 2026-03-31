@@ -15,4 +15,4 @@ export const DUNGEON_THEME_COLORS = {
 	HEMISPHERE_GROUND: "#2b2018",
 } as const;
 
-export const DUNGEON_HEMISPHERE_INTENSITY = 0.4;
+export const DUNGEON_HEMISPHERE_INTENSITY = 0.5;
