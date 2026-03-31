@@ -14,6 +14,7 @@ export function SceneLighting({ lighting }: SceneLightingProps) {
 				color={lighting.ambient.color}
 				intensity={lighting.ambient.intensity}
 			/>
+			<hemisphereLight args={["#3a4a5c", "#2b2018", 0.4]} />
 
 			{torchSettings.map((torchSetting) => (
 				<TorchLight
