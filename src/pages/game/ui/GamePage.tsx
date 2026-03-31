@@ -49,7 +49,7 @@ export function GamePage() {
 					<span className="rune-text">Floor I</span>
 				</div>
 				<div className="flex items-center gap-4">
-					<span className="flex items-center gap-2">
+					<span className="flex shrink-0 items-center gap-2 whitespace-nowrap">
 						<span className="rune-text">Room:</span>
 						<span
 							className="rune-value"
