@@ -71,7 +71,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 58,
 					mode: CAMERA_MODES.FREE_ORBITAL,
-					position: [0, 25, 25],
+					position: [0, 18, 18],
 					target: [0, 0, 0],
 					zoom: 1,
 				},
@@ -89,7 +89,7 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([10, 25.9, 20]);
+		expect(mockCamera.position.toArray()).toEqual([10, 18.9, 13]);
 		expect(freeOrbitalControls.target.toArray()).toEqual([10, 0.9, -5]);
 	});
 
@@ -99,7 +99,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 58,
 					mode: CAMERA_MODES.FREE_ORBITAL,
-					position: [0, 25, 25],
+					position: [0, 18, 18],
 					target: [0, 0, 0],
 					zoom: 1,
 				},
@@ -122,7 +122,7 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([10, 25.9, 20]);
+		expect(mockCamera.position.toArray()).toEqual([10, 18.9, 13]);
 		expect(freeOrbitalControls.target.toArray()).toEqual([10, 0.9, -5]);
 	});
 
@@ -147,7 +147,7 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([3, 35, -7]);
+		expect(mockCamera.position.toArray()).toEqual([3, 20, -7]);
 		expect(mockCamera.up.toArray()).toEqual([0, 0, -1]);
 	});
 
