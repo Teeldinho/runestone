@@ -1,7 +1,7 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import type { RapierRigidBody } from "@react-three/rapier";
-import { RigidBody } from "@react-three/rapier";
+import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import type * as THREE from "three";
@@ -16,6 +16,7 @@ import {
 	ENEMY_EVENTS,
 	ENEMY_GLTF_CONFIG,
 } from "../config";
+import { shouldSyncEnemyPlayerPosition } from "../lib";
 import { useEnemyMeshViewModel } from "../model/useEnemyMeshViewModel";
 import { useEnemyMovement } from "../model/useEnemyMovement";
 
@@ -63,18 +64,25 @@ export function EnemyMesh({
 		getPlayerPosition()[1],
 		getPlayerPosition()[2],
 	]);
+	const elapsedSincePlayerSyncMsRef = useRef(0);
 
 	useFrame((_, delta) => {
 		if (delta <= Number.EPSILON) {
 			return;
 		}
 
+		elapsedSincePlayerSyncMsRef.current += delta * 1000;
 		const playerPosition = getPlayerPosition();
-		const [lastX, lastY, lastZ] = lastPlayerPositionRef.current;
 		if (
-			playerPosition[0] !== lastX ||
-			playerPosition[1] !== lastY ||
-			playerPosition[2] !== lastZ
+			shouldSyncEnemyPlayerPosition({
+				elapsedMs: elapsedSincePlayerSyncMsRef.current,
+				lastSentPosition: lastPlayerPositionRef.current,
+				nextPosition: playerPosition,
+				positionThreshold:
+					ENEMY_ENTITY_CONFIG.PLAYER_TRACKING.POSITION_THRESHOLD,
+				updateIntervalMs:
+					ENEMY_ENTITY_CONFIG.PLAYER_TRACKING.UPDATE_INTERVAL_MS,
+			})
 		) {
 			send({
 				type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
@@ -85,6 +93,7 @@ export function EnemyMesh({
 				playerPosition[1],
 				playerPosition[2],
 			];
+			elapsedSincePlayerSyncMsRef.current = 0;
 		}
 
 		const body = rigidBodyRef.current;
@@ -131,12 +140,18 @@ export function EnemyMesh({
 	return (
 		<RigidBody
 			ref={rigidBodyRef as RefObject<RapierRigidBody>}
-			colliders="hull"
+			colliders={false}
 			linearDamping={ENEMY_ENTITY_CONFIG.PHYSICS.LINEAR_DAMPING}
 			lockRotations
 			position={position}
 			type="dynamic"
 		>
+			<CapsuleCollider
+				args={[
+					ENEMY_ENTITY_CONFIG.COLLIDER.HALF_HEIGHT,
+					ENEMY_ENTITY_CONFIG.COLLIDER.RADIUS,
+				]}
+			/>
 			<group ref={groupRef}>
 				<primitive
 					frustumCulled={false}

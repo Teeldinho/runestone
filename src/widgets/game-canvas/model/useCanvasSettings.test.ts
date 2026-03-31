@@ -39,6 +39,9 @@ describe("useCanvasSettings", () => {
 		expect(result.current.renderer.shadowsEnabled).toBe(
 			GAME_CANVAS_CONFIG.RENDERER.SHADOWS_ENABLED,
 		);
+		expect(result.current.postprocessing.enabled).toBe(
+			GAME_CANVAS_CONFIG.POSTPROCESSING.ENABLED_DEFAULT,
+		);
 	});
 
 	it("returns grouped environment values from scene config constants", () => {

@@ -95,8 +95,8 @@ export const GAME_CANVAS_CONFIG = {
 		FAR: 120,
 	},
 	RENDERER: {
-		DPR_RANGE: [1, 2] as const,
-		SHADOWS_ENABLED: true,
+		DPR_RANGE: [0.75, 1.25] as const,
+		SHADOWS_ENABLED: false,
 	},
 	UI: {
 		CANVAS_HEIGHT_PX: 420,
@@ -141,7 +141,7 @@ export const GAME_CANVAS_CONFIG = {
 			OFFSET: 0.3,
 			DARKNESS: 0.3,
 		},
-		ENABLED_DEFAULT: true,
+		ENABLED_DEFAULT: false,
 	} as const,
 } as const;
 
