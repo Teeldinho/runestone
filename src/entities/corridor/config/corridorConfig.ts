@@ -14,6 +14,30 @@ export const CORRIDOR_DIRECTION_ORDER = [
 	CORRIDOR_DIRECTIONS.WEST,
 ] as const;
 
+export const CORRIDOR_GLTF_CONFIG = {
+	WALL: {
+		PATH: "/models/dungeon/wall.gltf",
+		SCALE: [1, 1, 1] as const,
+	},
+	WALL_CRACKED: {
+		PATH: "/models/dungeon/wall_cracked.gltf",
+		SCALE: [1, 1, 1] as const,
+	},
+	WALL_SHELVES: {
+		PATH: "/models/dungeon/wall_shelves.gltf",
+		SCALE: [1, 1, 1] as const,
+	},
+	FLOOR_TILE: {
+		PATH: "/models/dungeon/floor_tile_small.gltf",
+		TILE_SIZE: 1,
+		SCALE: [1, 1, 1] as const,
+	},
+	TORCH: {
+		PATH: "/models/dungeon/torch_mounted.gltf",
+		SCALE: [1, 1, 1] as const,
+	},
+} as const;
+
 export const CORRIDOR_ENTITY_CONFIG = {
 	DIMENSIONS: {
 		width: CORRIDOR_CONFIG.WIDTH,
@@ -45,3 +69,6 @@ export const CORRIDOR_LIGHT_CONFIG = {
 	HEIGHT: 2.0,
 	COLOR: DUNGEON_THEME_COLORS.TORCH_LIGHT,
 } as const;
+
+export const CORRIDOR_HALF_WIDTH = CORRIDOR_CONFIG.WIDTH / 2;
+export const CORRIDOR_WALL_Y = 0;

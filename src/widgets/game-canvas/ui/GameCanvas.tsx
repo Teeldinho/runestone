@@ -81,6 +81,7 @@ export function GameCanvas({
 					zoom: camera.zoom,
 				}}
 				dpr={renderer.dprRange}
+				onContextMenu={(event) => event.preventDefault()}
 				shadows={renderer.shadowsEnabled}
 				style={{ width: "100%", height: "100%" }}
 			>

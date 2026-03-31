@@ -15,7 +15,10 @@ export {
 	WORLD_SCALE_FACTOR,
 } from "./constants";
 export { CONVEX_LOCAL_URL, QUERY_CLIENT_DEFAULTS } from "./convexConfig";
-export { DUNGEON_THEME_COLORS } from "./dungeonThemeColors";
+export {
+	DUNGEON_HEMISPHERE_INTENSITY,
+	DUNGEON_THEME_COLORS,
+} from "./dungeonThemeColors";
 export { EASING_COEFFICIENTS } from "./easingConfig";
 export type {
 	CameraConfig,

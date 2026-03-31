@@ -23,9 +23,12 @@ export function CameraRig({
 		freeOrbitalOrbitRef,
 		handleFirstPersonLock,
 		handleFirstPersonUnlock,
+		handleOrbitEnd,
+		handleOrbitStart,
 		mode,
 		pointerLockRef,
 		thirdPersonOrbitRef,
+		topDownOrbitRef,
 	} = useCameraRigViewModel({
 		cameraStateSnapshot,
 		playerSpawnPosition,
@@ -48,6 +51,8 @@ export function CameraRig({
 				rotateSpeed={CAMERA_CONFIG.FREE_ORBITAL.ROTATE_SPEED}
 				screenSpacePanning
 				zoomSpeed={CAMERA_CONFIG.FREE_ORBITAL.ZOOM_SPEED}
+				onStart={handleOrbitStart}
+				onEnd={handleOrbitEnd}
 				mouseButtons={{
 					LEFT: THREE.MOUSE.PAN,
 					MIDDLE: THREE.MOUSE.DOLLY,
@@ -82,6 +87,28 @@ export function CameraRig({
 				selector="#game-canvas-fp-lock"
 				onLock={handleFirstPersonLock}
 				onUnlock={handleFirstPersonUnlock}
+			/>
+		);
+	}
+
+	if (mode === CAMERA_MODES.TOP_DOWN) {
+		const topDownPolarAngle = Math.PI / 2;
+
+		return (
+			<OrbitControls
+				key={controlKey}
+				ref={topDownOrbitRef as React.RefObject<never>}
+				makeDefault
+				enablePan={false}
+				enableRotate={false}
+				enableZoom
+				maxDistance={CAMERA_CONFIG.TOP_DOWN.MAX_DISTANCE}
+				maxPolarAngle={topDownPolarAngle}
+				minDistance={CAMERA_CONFIG.TOP_DOWN.MIN_DISTANCE}
+				minPolarAngle={topDownPolarAngle}
+				minAzimuthAngle={0}
+				maxAzimuthAngle={0}
+				zoomSpeed={CAMERA_CONFIG.TOP_DOWN.ZOOM_SPEED}
 			/>
 		);
 	}

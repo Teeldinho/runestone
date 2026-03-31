@@ -43,9 +43,12 @@ type UseCameraRigViewModelResult = {
 	freeOrbitalOrbitRef: RefObject<OrbitControlsHandle | null>;
 	handleFirstPersonLock: () => void;
 	handleFirstPersonUnlock: () => void;
+	handleOrbitStart: () => void;
+	handleOrbitEnd: () => void;
 	mode: CameraStateSnapshot["mode"] | undefined;
 	pointerLockRef: RefObject<PointerLockControlsHandle | null>;
 	thirdPersonOrbitRef: RefObject<OrbitControlsHandle | null>;
+	topDownOrbitRef: RefObject<OrbitControlsHandle | null>;
 };
 
 export const useCameraRigViewModel = ({
@@ -58,9 +61,12 @@ export const useCameraRigViewModel = ({
 	const previousModeRef = useRef<string | undefined>(undefined);
 	const pointerLockRef = useRef<PointerLockControlsHandle>(null);
 	const thirdPersonOrbitRef = useRef<OrbitControlsHandle>(null);
+	const topDownOrbitRef = useRef<OrbitControlsHandle>(null);
 	const freeOrbitalOrbitRef = useRef<OrbitControlsHandle>(null);
 	const needsFreeOrbitalSyncRef = useRef(false);
 	const needsThirdPersonSyncRef = useRef(false);
+	const needsTopDownSyncRef = useRef(false);
+	const isUserInteractingRef = useRef(false);
 
 	useEffect(() => {
 		if (!mode) {
@@ -77,10 +83,17 @@ export const useCameraRigViewModel = ({
 
 		needsThirdPersonSyncRef.current = mode === CAMERA_MODES.THIRD_PERSON;
 		needsFreeOrbitalSyncRef.current = mode === CAMERA_MODES.FREE_ORBITAL;
+		needsTopDownSyncRef.current = mode === CAMERA_MODES.TOP_DOWN;
 	}, [mode]);
 
 	const handleFirstPersonLock = useCallback(() => {}, []);
 	const handleFirstPersonUnlock = useCallback(() => {}, []);
+	const handleOrbitStart = useCallback(() => {
+		isUserInteractingRef.current = true;
+	}, []);
+	const handleOrbitEnd = useCallback(() => {
+		isUserInteractingRef.current = false;
+	}, []);
 
 	useFrame(() => {
 		if (!cameraStateSnapshot) {
@@ -101,8 +114,19 @@ export const useCameraRigViewModel = ({
 
 		if (cameraStateSnapshot.mode === CAMERA_MODES.TOP_DOWN) {
 			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.TOP_DOWN);
-			camera.position.set(...position);
-			camera.lookAt(...lookAt);
+			if (!topDownOrbitRef.current) {
+				if (isModeChange) {
+					camera.position.set(...position);
+					camera.lookAt(...lookAt);
+				}
+			} else if (needsTopDownSyncRef.current) {
+				camera.position.set(...position);
+				setOrbitTarget(topDownOrbitRef.current, lookAt);
+				needsTopDownSyncRef.current = false;
+			} else {
+				topDownOrbitRef.current.target.set(...lookAt);
+				topDownOrbitRef.current.update();
+			}
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
 			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
 			camera.position.lerp(new THREE.Vector3(...position), transitionAlpha);
@@ -147,14 +171,13 @@ export const useCameraRigViewModel = ({
 			camera.position.set(...position);
 			setOrbitTarget(freeOrbitalOrbitRef.current, lookAt);
 			needsFreeOrbitalSyncRef.current = false;
-		} else {
-			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
-
+		} else if (!isUserInteractingRef.current) {
 			const nextTarget = new THREE.Vector3(...lookAt);
 			if (
 				freeOrbitalOrbitRef.current.target.distanceTo(nextTarget) >=
 				CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE
 			) {
+				setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
 				const desiredCameraPosition = getPreservedOrbitCameraPosition({
 					cameraPosition: camera.position.toArray() as Vector3Tuple,
 					currentTarget:
@@ -197,9 +220,12 @@ export const useCameraRigViewModel = ({
 		freeOrbitalOrbitRef,
 		handleFirstPersonLock,
 		handleFirstPersonUnlock,
+		handleOrbitEnd,
+		handleOrbitStart,
 		mode,
 		pointerLockRef,
 		thirdPersonOrbitRef,
+		topDownOrbitRef,
 	};
 };
 

@@ -1,4 +1,8 @@
 import { TorchLight } from "@/entities/room";
+import {
+	DUNGEON_HEMISPHERE_INTENSITY,
+	DUNGEON_THEME_COLORS,
+} from "@/shared/config";
 import { type CanvasLightingSettings, useSceneLighting } from "../model";
 
 type SceneLightingProps = {
@@ -13,6 +17,13 @@ export function SceneLighting({ lighting }: SceneLightingProps) {
 			<ambientLight
 				color={lighting.ambient.color}
 				intensity={lighting.ambient.intensity}
+			/>
+			<hemisphereLight
+				args={[
+					DUNGEON_THEME_COLORS.HEMISPHERE_SKY,
+					DUNGEON_THEME_COLORS.HEMISPHERE_GROUND,
+					DUNGEON_HEMISPHERE_INTENSITY,
+				]}
 			/>
 
 			{torchSettings.map((torchSetting) => (
