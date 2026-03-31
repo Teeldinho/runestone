@@ -1,5 +1,9 @@
 import { Volume2, VolumeX } from "lucide-react";
 import { useCameraMachine } from "@/features/camera-system";
+import {
+	InteractionPrompt,
+	useInteractionCandidates,
+} from "@/features/dungeon-navigation";
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
 import { ScrollArea } from "@/shared/ui";
@@ -27,6 +31,11 @@ export function GamePage() {
 	} = useGamePage();
 	const settings = useSettingsForm();
 	const { cameraStateSnapshot, handleCameraModeSwitch } = useCameraMachine();
+	const interactionCandidates = useInteractionCandidates({
+		currentRoomId: canvasMachineRuntime.currentRoomId,
+		hasTreasureKey: canvasMachineRuntime.hasTreasureKey,
+		enemiesRemaining: canvasMachineRuntime.enemiesRemaining,
+	});
 
 	return (
 		<main
@@ -90,6 +99,7 @@ export function GamePage() {
 								machineRuntime={canvasMachineRuntime}
 								postprocessingEnabled={settings.postprocessingEnabled}
 							/>
+							<InteractionPrompt candidates={interactionCandidates} />
 						</div>
 
 						<div

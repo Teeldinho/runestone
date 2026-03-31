@@ -5,4 +5,5 @@ export {
 } from "./gameMachineRuntime";
 export { useDoorwayNavigation } from "./useDoorwayNavigation";
 export { useGameMachine } from "./useGameMachine";
+export { useInteractionCandidates } from "./useInteractionCandidates";
 export { usePlayerInput } from "./usePlayerInput";

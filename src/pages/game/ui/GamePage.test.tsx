@@ -71,6 +71,16 @@ vi.mock("@/widgets/hud", () => ({
 	GameHud: () => <div data-testid="hud-widget-marker" />,
 }));
 
+vi.mock("@/features/dungeon-navigation", () => ({
+	useInteractionCandidates: vi.fn(() => ({
+		interactPrompt: null,
+		attackPrompt: null,
+		hasInteract: false,
+		hasAttack: false,
+	})),
+	InteractionPrompt: () => <div data-testid="interaction-prompt" />,
+}));
+
 describe("GamePage", () => {
 	it("renders the HUD widget composition", () => {
 		render(<GamePage />);

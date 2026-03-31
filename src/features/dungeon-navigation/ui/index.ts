@@ -1,1 +1,1 @@
-export {};
+export { InteractionPrompt } from "./InteractionPrompt";
