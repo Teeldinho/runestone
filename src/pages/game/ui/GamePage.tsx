@@ -2,7 +2,9 @@ import { Volume2, VolumeX } from "lucide-react";
 import { useCameraMachine } from "@/features/camera-system";
 import {
 	InteractionPrompt,
+	useGameMachineRuntime,
 	useInteractionCandidates,
+	useInteractionInput,
 } from "@/features/dungeon-navigation";
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
@@ -31,10 +33,15 @@ export function GamePage() {
 	} = useGamePage();
 	const settings = useSettingsForm();
 	const { cameraStateSnapshot, handleCameraModeSwitch } = useCameraMachine();
+	const { sendDungeonMachineEvent } = useGameMachineRuntime();
 	const interactionCandidates = useInteractionCandidates({
 		currentRoomId: canvasMachineRuntime.currentRoomId,
 		hasTreasureKey: canvasMachineRuntime.hasTreasureKey,
 		enemiesRemaining: canvasMachineRuntime.enemiesRemaining,
+	});
+	useInteractionInput({
+		candidates: interactionCandidates,
+		sendDungeonMachineEvent,
 	});
 
 	return (

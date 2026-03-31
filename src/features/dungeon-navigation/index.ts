@@ -20,6 +20,7 @@ export {
 	useGameMachine,
 	useGameMachineRuntime,
 	useInteractionCandidates,
+	useInteractionInput,
 	usePlayerInput,
 } from "./model";
 export type {

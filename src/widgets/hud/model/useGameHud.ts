@@ -1,8 +1,15 @@
 import { useMemo } from "react";
 
+import { DUNGEON_EVENTS } from "@/entities/dungeon";
+
 import { HUD_COPY, HUD_DISPLAY_VARIANTS } from "../config";
 
 import type { GameHudViewModel, HudActionButton } from "./types";
+
+const SIDEBAR_EXCLUDED_EVENTS = new Set<string>([
+	DUNGEON_EVENTS.PICK_UP_KEY,
+	DUNGEON_EVENTS.ENEMY_DIED,
+]);
 
 type UseGameHudParams = {
 	actionButtons: HudActionButton[];
@@ -29,7 +36,9 @@ export const useGameHud = ({
 }: UseGameHudParams): GameHudViewModel => {
 	return useMemo(
 		() => ({
-			actionButtons,
+			actionButtons: actionButtons.filter(
+				(button) => !SIDEBAR_EXCLUDED_EVENTS.has(button.eventType),
+			),
 			discoveredRoomLabels,
 			handleDungeonRunReset,
 			machineSnapshotEntries: [

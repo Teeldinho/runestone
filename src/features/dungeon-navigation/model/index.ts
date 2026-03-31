@@ -6,4 +6,5 @@ export {
 export { useDoorwayNavigation } from "./useDoorwayNavigation";
 export { useGameMachine } from "./useGameMachine";
 export { useInteractionCandidates } from "./useInteractionCandidates";
+export { useInteractionInput } from "./useInteractionInput";
 export { usePlayerInput } from "./usePlayerInput";
