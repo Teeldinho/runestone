@@ -1,19 +1,57 @@
+import { useGLTF } from "@react-three/drei";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
+import { useMemo } from "react";
+
+import { CORRIDOR_CONFIG } from "@/shared/config";
 
 import {
 	CORRIDOR_ENTITY_CONFIG,
 	CORRIDOR_FLOOR_COLLIDER,
+	CORRIDOR_GLTF_CONFIG,
 	CORRIDOR_LIGHT_CONFIG,
 } from "../config";
+import { getCorridorFloorTilePositions } from "../lib";
 import type { CorridorMeshSettings } from "../model";
 
 type CorridorMeshProps = {
 	settings: CorridorMeshSettings;
 };
 
-const HALF_WIDTH = CORRIDOR_ENTITY_CONFIG.DIMENSIONS.width / 2;
+const HALF_WIDTH = CORRIDOR_CONFIG.WIDTH / 2;
+const WALL_Y = 0;
+
+useGLTF.preload(CORRIDOR_GLTF_CONFIG.WALL.PATH);
+useGLTF.preload(CORRIDOR_GLTF_CONFIG.WALL_CRACKED.PATH);
+useGLTF.preload(CORRIDOR_GLTF_CONFIG.WALL_SHELVES.PATH);
+useGLTF.preload(CORRIDOR_GLTF_CONFIG.FLOOR_TILE.PATH);
+useGLTF.preload(CORRIDOR_GLTF_CONFIG.TORCH.PATH);
 
 export function CorridorMesh({ settings }: CorridorMeshProps) {
+	const wallScene = useGLTF(CORRIDOR_GLTF_CONFIG.WALL.PATH).scene;
+	const wallCrackedScene = useGLTF(
+		CORRIDOR_GLTF_CONFIG.WALL_CRACKED.PATH,
+	).scene;
+	const wallShelvesScene = useGLTF(
+		CORRIDOR_GLTF_CONFIG.WALL_SHELVES.PATH,
+	).scene;
+	const floorScene = useGLTF(CORRIDOR_GLTF_CONFIG.FLOOR_TILE.PATH).scene;
+	const torchScene = useGLTF(CORRIDOR_GLTF_CONFIG.TORCH.PATH).scene;
+
+	const floorTilePositions = useMemo(
+		() =>
+			getCorridorFloorTilePositions(
+				CORRIDOR_CONFIG.WIDTH,
+				CORRIDOR_CONFIG.DEPTH,
+				CORRIDOR_GLTF_CONFIG.FLOOR_TILE.TILE_SIZE,
+			),
+		[],
+	);
+
+	const isCrackedWall = settings.id.endsWith("-wall-cracked");
+	const wallVariationScene = isCrackedWall
+		? wallCrackedScene
+		: wallShelvesScene;
+
 	return (
 		<group
 			position={settings.position}
@@ -26,85 +64,90 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 				position={[0, CORRIDOR_LIGHT_CONFIG.HEIGHT, 0]}
 			/>
 
-			{/* Floor - visual */}
-			<mesh castShadow receiveShadow>
-				<boxGeometry
-					args={[
-						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.width,
-						CORRIDOR_ENTITY_CONFIG.SURFACE.SLAB_HEIGHT,
-						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth,
-					]}
+			{/* Floor tiles — GLTF */}
+			{floorTilePositions.map(([x, , z]) => (
+				<primitive
+					key={`floor-${x}-${z}`}
+					object={floorScene.clone()}
+					position={[x, 0, z]}
+					receiveShadow
+					scale={CORRIDOR_GLTF_CONFIG.FLOOR_TILE.SCALE}
 				/>
-				<meshStandardMaterial
-					color={CORRIDOR_ENTITY_CONFIG.SURFACE.BASE_COLOR}
-					metalness={CORRIDOR_ENTITY_CONFIG.SURFACE.METALNESS}
-					roughness={CORRIDOR_ENTITY_CONFIG.SURFACE.ROUGHNESS}
-				/>
-			</mesh>
+			))}
 
-			{/* Floor - physics collider */}
+			{/* Floor — physics collider */}
 			<RigidBody type="fixed" colliders={false}>
 				<CuboidCollider
 					args={[
-						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.width / 2,
+						CORRIDOR_CONFIG.WIDTH / 2,
 						CORRIDOR_FLOOR_COLLIDER.HALF_HEIGHT,
-						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth / 2,
+						CORRIDOR_CONFIG.DEPTH / 2,
 					]}
 					position={[0, CORRIDOR_FLOOR_COLLIDER.POSITION_Y, 0]}
 				/>
 			</RigidBody>
 
-			{/* Left wall */}
-			<RigidBody type="fixed" colliders="cuboid">
-				<mesh
+			{/* Left wall — GLTF with variation */}
+			<RigidBody type="fixed" colliders={false}>
+				<primitive
+					object={wallVariationScene.clone()}
+					position={[-HALF_WIDTH, WALL_Y, 0]}
+					rotation={[0, -Math.PI / 2, 0]}
 					castShadow
+					receiveShadow
+				/>
+				<mesh
+					visible={false}
 					position={[
 						-HALF_WIDTH,
 						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT / 2,
 						0,
 					]}
-					receiveShadow
 				>
 					<boxGeometry
 						args={[
 							0.2,
 							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT,
-							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth,
+							CORRIDOR_CONFIG.DEPTH,
 						]}
-					/>
-					<meshStandardMaterial
-						color={CORRIDOR_ENTITY_CONFIG.SURFACE.BASE_COLOR}
-						metalness={CORRIDOR_ENTITY_CONFIG.SURFACE.METALNESS}
-						roughness={CORRIDOR_ENTITY_CONFIG.SURFACE.ROUGHNESS}
 					/>
 				</mesh>
 			</RigidBody>
 
-			{/* Right wall */}
-			<RigidBody type="fixed" colliders="cuboid">
-				<mesh
+			{/* Right wall — GLTF */}
+			<RigidBody type="fixed" colliders={false}>
+				<primitive
+					object={wallScene.clone()}
+					position={[HALF_WIDTH, WALL_Y, 0]}
+					rotation={[0, Math.PI / 2, 0]}
 					castShadow
+					receiveShadow
+				/>
+				<mesh
+					visible={false}
 					position={[
 						HALF_WIDTH,
 						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT / 2,
 						0,
 					]}
-					receiveShadow
 				>
 					<boxGeometry
 						args={[
 							0.2,
 							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT,
-							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.depth,
+							CORRIDOR_CONFIG.DEPTH,
 						]}
-					/>
-					<meshStandardMaterial
-						color={CORRIDOR_ENTITY_CONFIG.SURFACE.BASE_COLOR}
-						metalness={CORRIDOR_ENTITY_CONFIG.SURFACE.METALNESS}
-						roughness={CORRIDOR_ENTITY_CONFIG.SURFACE.ROUGHNESS}
 					/>
 				</mesh>
 			</RigidBody>
+
+			{/* Torch — left wall midpoint */}
+			<primitive
+				object={torchScene.clone()}
+				position={[-HALF_WIDTH + 0.15, CORRIDOR_LIGHT_CONFIG.HEIGHT, 0]}
+				rotation={[0, -Math.PI / 2, 0]}
+				scale={CORRIDOR_GLTF_CONFIG.TORCH.SCALE}
+			/>
 		</group>
 	);
 }

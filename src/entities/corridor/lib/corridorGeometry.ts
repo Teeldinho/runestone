@@ -1,3 +1,5 @@
+import type { Vector3Tuple } from "@/shared/types";
+
 import {
 	CORRIDOR_DIRECTION_ORDER,
 	CORRIDOR_DIRECTIONS,
@@ -62,4 +64,21 @@ export const createCorridorMeshSettings = ({
 			rotationYRad: getCorridorRotationY(direction),
 		};
 	});
+};
+
+export const getCorridorFloorTilePositions = (
+	width: number,
+	depth: number,
+	tileSize: number,
+): Vector3Tuple[] => {
+	const positions: Vector3Tuple[] = [];
+	const halfTile = tileSize / 2;
+
+	for (let x = -width / 2 + halfTile; x < width / 2; x += tileSize) {
+		for (let z = -depth / 2 + halfTile; z < depth / 2; z += tileSize) {
+			positions.push([x, 0, z]);
+		}
+	}
+
+	return positions;
 };
