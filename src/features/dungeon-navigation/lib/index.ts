@@ -8,6 +8,7 @@ export {
 	createInitialDungeonContext,
 	updateDungeonContextRoom,
 } from "./dungeonContext";
+export { resolveInteractionCandidates } from "./interactionResolver";
 export { getNavigationActionDisabled } from "./navigationActionAvailability";
 export {
 	computeVelocity,
