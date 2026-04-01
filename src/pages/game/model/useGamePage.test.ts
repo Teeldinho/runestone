@@ -83,6 +83,10 @@ describe("useGamePage", () => {
 			discoveredRooms: [ROOM_IDS.ENTRANCE],
 			hasTreasureKey: false,
 			enemiesRemaining: 1,
+			openedDoors: [],
+			nearInteractable: null,
+			nearInteractableType: null,
+			lastTransition: null,
 		};
 
 		vi.mocked(useGameMachine).mockReturnValue({
@@ -139,6 +143,10 @@ describe("dungeon reset teleport", () => {
 			discoveredRooms: [ROOM_IDS.ENTRANCE],
 			hasTreasureKey: false,
 			enemiesRemaining: 0,
+			openedDoors: [],
+			nearInteractable: null,
+			nearInteractableType: null,
+			lastTransition: null,
 		};
 
 		vi.mocked(useGameMachine).mockReturnValue({

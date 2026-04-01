@@ -8,6 +8,17 @@ export {
 } from "./doorwayNavigationConfig";
 export { DUNGEON_INITIAL_CONTEXT } from "./dungeonContextConfig";
 export {
+	ATTACK_KEY_LABEL,
+	ATTACK_PROMPT,
+	EMPTY_INTERACTION_CANDIDATES,
+	INTERACTION_CONFIG,
+	INTERACTION_KEY_LABEL,
+	INTERACTION_KEYS,
+	INTERACTION_PROMPTS,
+	MOVEMENT_KEYS_LABEL,
+} from "./interactionConfig";
+export {
+	DOOR_TRANSITION_MAP,
 	NAVIGATION_ACTION_EVENTS,
 	NAVIGATION_ACTION_LABELS,
 	type NavigationActionEvent,

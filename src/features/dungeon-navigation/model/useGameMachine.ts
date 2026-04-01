@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 
 import type { DungeonEvent } from "@/entities/dungeon";
-import { ROOM_LABELS } from "@/entities/dungeon";
+import { DUNGEON_EVENTS, ROOM_LABELS } from "@/entities/dungeon";
 
 import {
 	DUNGEON_MACHINE_SYSTEM_EVENTS,
@@ -9,6 +9,7 @@ import {
 	NAVIGATION_ACTION_LABELS,
 	type NavigationActionEvent,
 } from "../config";
+import { getDoorKeyForNavigationEvent } from "../lib/getDoorKeyForNavigationEvent";
 import { getNavigationActionDisabled } from "../lib/navigationActionAvailability";
 import { useGameMachineRuntime } from "./gameMachineRuntime";
 
@@ -29,6 +30,20 @@ export const useGameMachine = () => {
 		[sendDungeonMachineEvent],
 	);
 
+	const handleDoorTransition = useCallback(
+		(eventType: NavigationActionEvent) => {
+			const doorKey = getDoorKeyForNavigationEvent(eventType);
+			if (doorKey && !snapshot.context.openedDoors.includes(doorKey)) {
+				sendDungeonMachineEvent({
+					type: DUNGEON_EVENTS.OPEN_DOOR,
+					doorKey,
+				});
+			}
+			sendDungeonMachineEvent({ type: eventType });
+		},
+		[snapshot.context.openedDoors, sendDungeonMachineEvent],
+	);
+
 	const handleDungeonRunReset = useCallback(() => {
 		sendDungeonMachineEvent({
 			type: DUNGEON_MACHINE_SYSTEM_EVENTS.RESET_DUNGEON_RUN,
@@ -41,9 +56,9 @@ export const useGameMachine = () => {
 				eventType,
 				label: NAVIGATION_ACTION_LABELS[eventType],
 				isDisabled: getNavigationActionDisabled(eventType, snapshot.context),
-				handleDungeonActionTrigger: () => handleDungeonEventSend(eventType),
+				handleDungeonActionTrigger: () => handleDoorTransition(eventType),
 			})),
-		[snapshot.context, handleDungeonEventSend],
+		[snapshot.context, handleDoorTransition],
 	);
 
 	const currentRoomLabel = ROOM_LABELS[snapshot.context.currentRoomId];

@@ -9,6 +9,8 @@ import {
 	useSceneEnvironmentSettings,
 } from "../model";
 
+import { WorldInteractionPrompt } from "./WorldInteractionPrompt";
+
 type SceneEnvironmentProps = {
 	environment: CanvasEnvironmentSettings;
 	playerSpawnPosition: Vector3Tuple;
@@ -32,6 +34,7 @@ export function SceneEnvironment({
 					key={room.roomId}
 					isTreasury={room.isTreasury}
 					lockedDoorSides={room.lockedDoorSides}
+					openedDoorSides={room.openedDoorSides}
 					position={room.position}
 					showTreasureKey={room.showTreasureKey}
 					surface={environment}
@@ -53,6 +56,7 @@ export function SceneEnvironment({
 			{roomMeshSettings.map((room) => (
 				<RoomLabel key={`${room.roomId}:label`} settings={room.labelSettings} />
 			))}
+			<WorldInteractionPrompt />
 		</>
 	);
 }

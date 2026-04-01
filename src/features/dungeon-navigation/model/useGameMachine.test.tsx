@@ -28,9 +28,12 @@ describe("useGameMachine", () => {
 		const { result } = renderHook(() => useGameMachine(), {
 			wrapper: gameMachineRuntimeWrapper,
 		});
+		const libraryAction = result.current.actionButtons.find(
+			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+		);
 
 		act(() => {
-			result.current.handleDungeonEventSend(DUNGEON_EVENTS.ENTER_LIBRARY);
+			libraryAction?.handleDungeonActionTrigger();
 		});
 
 		expect(result.current.snapshot.value).toBe(ROOM_IDS.LIBRARY);
@@ -40,9 +43,12 @@ describe("useGameMachine", () => {
 		const { result } = renderHook(() => useGameMachine(), {
 			wrapper: gameMachineRuntimeWrapper,
 		});
+		const libraryAction = result.current.actionButtons.find(
+			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+		);
 
 		act(() => {
-			result.current.handleDungeonEventSend(DUNGEON_EVENTS.ENTER_LIBRARY);
+			libraryAction?.handleDungeonActionTrigger();
 			result.current.handleDungeonRunReset();
 		});
 
@@ -69,7 +75,7 @@ describe("useGameMachine", () => {
 		expect(defaultGuardRoomAction?.isDisabled).toBe(true);
 
 		act(() => {
-			result.current.handleDungeonEventSend(DUNGEON_EVENTS.ENTER_LIBRARY);
+			defaultLibraryAction?.handleDungeonActionTrigger();
 		});
 
 		const libraryGuardRoomAction = result.current.actionButtons.find(

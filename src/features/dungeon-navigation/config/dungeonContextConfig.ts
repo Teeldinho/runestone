@@ -7,4 +7,8 @@ export const DUNGEON_INITIAL_CONTEXT: DungeonContext = {
 	discoveredRooms: [ROOM_IDS.ENTRANCE],
 	hasTreasureKey: false,
 	enemiesRemaining: DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
+	openedDoors: [],
+	nearInteractable: null,
+	nearInteractableType: null,
+	lastTransition: null,
 };

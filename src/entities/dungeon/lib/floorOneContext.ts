@@ -30,6 +30,10 @@ export const createFloorOneContext = (
 		[DUNGEON_CONTEXT_KEYS.ENEMIES_REMAINING]:
 			DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
 		[DUNGEON_CONTEXT_KEYS.LAST_DOORWAY_FEEDBACK]: null,
+		[DUNGEON_CONTEXT_KEYS.OPENED_DOORS]: [],
+		[DUNGEON_CONTEXT_KEYS.NEAR_INTERACTABLE]: null,
+		[DUNGEON_CONTEXT_KEYS.NEAR_INTERACTABLE_TYPE]: null,
+		[DUNGEON_CONTEXT_KEYS.LAST_TRANSITION]: null,
 		...contextOverrides,
 	};
 };
@@ -101,4 +105,58 @@ export const canEnterFloorOneExit = (
 	context: DungeonMachineContext,
 ): boolean => {
 	return context.hasTreasureKey;
+};
+
+export const openFloorOneDoor = (
+	context: DungeonMachineContext,
+	doorKey: string,
+): DungeonMachineContext => {
+	if (context.openedDoors.includes(doorKey as never)) {
+		return context;
+	}
+	return {
+		...context,
+		[DUNGEON_CONTEXT_KEYS.OPENED_DOORS]: [
+			...context.openedDoors,
+			doorKey as never,
+		],
+	};
+};
+
+export const setFloorOneNearInteractable = (
+	context: DungeonMachineContext,
+	doorKey: string,
+	interactableType: string,
+): DungeonMachineContext => {
+	return {
+		...context,
+		[DUNGEON_CONTEXT_KEYS.NEAR_INTERACTABLE]: doorKey as never,
+		[DUNGEON_CONTEXT_KEYS.NEAR_INTERACTABLE_TYPE]: interactableType as never,
+	};
+};
+
+export const clearFloorOneNearInteractable = (
+	context: DungeonMachineContext,
+): DungeonMachineContext => {
+	return {
+		...context,
+		[DUNGEON_CONTEXT_KEYS.NEAR_INTERACTABLE]: null,
+		[DUNGEON_CONTEXT_KEYS.NEAR_INTERACTABLE_TYPE]: null,
+	};
+};
+
+export const trackFloorOneTransition = (
+	context: DungeonMachineContext,
+	fromRoom: RoomId,
+	toRoom: RoomId,
+	doorSide: string,
+): DungeonMachineContext => {
+	return {
+		...context,
+		[DUNGEON_CONTEXT_KEYS.LAST_TRANSITION]: {
+			fromRoom,
+			toRoom,
+			doorSide,
+		},
+	};
 };

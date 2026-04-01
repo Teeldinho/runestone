@@ -48,4 +48,5 @@ todos.json
 .trae/
 .zencoder/
 .opencode/
+.claude/
 skills-lock.json

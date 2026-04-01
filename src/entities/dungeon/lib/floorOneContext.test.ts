@@ -26,6 +26,10 @@ describe("floorOneContext", () => {
 			hasTreasureKey: false,
 			enemiesRemaining: DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
 			lastDoorwayFeedback: null,
+			lastTransition: null,
+			nearInteractable: null,
+			nearInteractableType: null,
+			openedDoors: [],
 		});
 	});
 

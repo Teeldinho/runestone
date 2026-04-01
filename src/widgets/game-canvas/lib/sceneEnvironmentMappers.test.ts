@@ -62,6 +62,7 @@ describe("sceneEnvironmentMappers", () => {
 				roomId: ROOM_IDS.ENTRANCE,
 				position: [0, 0, -40],
 				lockedDoorSides: [],
+				openedDoorSides: [],
 				isTreasury: false,
 				showTreasureKey: false,
 				labelSettings: {
@@ -75,6 +76,7 @@ describe("sceneEnvironmentMappers", () => {
 				roomId: ROOM_IDS.LIBRARY,
 				position: [0, 0, -20],
 				lockedDoorSides: [],
+				openedDoorSides: [],
 				isTreasury: false,
 				showTreasureKey: false,
 				labelSettings: {

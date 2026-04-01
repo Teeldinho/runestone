@@ -4,6 +4,7 @@ import {
 	createFloorOneContext,
 	createFloorOneMachine,
 	type DungeonContext,
+	FLOOR_ONE_GUARDS,
 } from "@/entities/dungeon";
 import {
 	DUNGEON_MACHINE_SYSTEM_EVENTS,
@@ -22,6 +23,7 @@ export const createGameMachine = (options?: {
 			context: {} as DungeonContext,
 			events: {} as GameMachineEvent,
 		},
+		guards: FLOOR_ONE_GUARDS,
 	}).createMachine({
 		id: "dungeonNavigationMachine",
 		initial: floorOneMachine.config.initial as DungeonContext["currentRoomId"],
