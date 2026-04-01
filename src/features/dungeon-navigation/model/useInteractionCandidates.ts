@@ -1,4 +1,4 @@
-import { useCallback, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 
 import {
 	createFloorOneMachine,
@@ -113,18 +113,36 @@ export const useInteractionCandidates = (
 ): InteractionCandidatesViewModel => {
 	const { currentRoomId, hasTreasureKey, enemiesRemaining } = input;
 
-	const subscribe = useCallback(
-		(callback: () => void) => subscribeToPlayerPosition(callback),
-		[],
+	const [candidates, setCandidates] = useState<InteractionCandidatesViewModel>(
+		EMPTY_INTERACTION_CANDIDATES,
 	);
 
-	const snapshot = useSyncExternalStore(
-		subscribe,
-		() => computeCandidates(currentRoomId, hasTreasureKey, enemiesRemaining),
-		() => EMPTY_INTERACTION_CANDIDATES,
-	);
+	useEffect(() => {
+		const compute = () =>
+			computeCandidates(currentRoomId, hasTreasureKey, enemiesRemaining);
 
-	return snapshot;
+		const updateIfChanged = () => {
+			setCandidates((prev) => {
+				const next = compute();
+				if (
+					prev.interactPrompt === next.interactPrompt &&
+					prev.attackPrompt === next.attackPrompt
+				) {
+					return prev;
+				}
+				return next;
+			});
+		};
+
+		updateIfChanged();
+
+		const unsubscribe = subscribeToPlayerPosition(updateIfChanged);
+		return () => {
+			unsubscribe?.();
+		};
+	}, [currentRoomId, hasTreasureKey, enemiesRemaining]);
+
+	return candidates;
 };
 
 export type { InteractionCandidatesViewModel };
