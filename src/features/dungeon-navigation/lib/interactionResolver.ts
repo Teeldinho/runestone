@@ -1,15 +1,20 @@
-import { DUNGEON_EVENTS, ROOM_IDS, type RoomId } from "@/entities/dungeon";
+import {
+	type DoorStateKey,
+	DUNGEON_EVENTS,
+	ROOM_IDS,
+	type RoomId,
+} from "@/entities/dungeon";
 import { ENEMY_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 import { DOORWAY_INTERACTIONS_BY_ROOM } from "../config";
-import { getDoorwayDetection } from "./doorwayDetectionStore";
 
 type InteractType = "key" | "guarded-door" | "door" | "exit";
 
 type InteractCandidate = {
 	type: InteractType;
 	event: (typeof DUNGEON_EVENTS)[keyof typeof DUNGEON_EVENTS];
+	doorKey?: DoorStateKey;
 };
 
 type AttackCandidate = {
@@ -28,6 +33,8 @@ type ResolveInput = {
 	enemiesRemaining: number;
 	playerPosition: Vector3Tuple;
 	enemyPositions: readonly Vector3Tuple[];
+	openedDoors: DoorStateKey[];
+	nearInteractable: DoorStateKey | null;
 };
 
 const distance = (a: Vector3Tuple, b: Vector3Tuple): number => {
@@ -40,7 +47,8 @@ const distance = (a: Vector3Tuple, b: Vector3Tuple): number => {
 const resolveInteractCandidate = (
 	input: ResolveInput,
 ): InteractCandidate | null => {
-	const { currentRoomId, hasTreasureKey } = input;
+	const { currentRoomId, hasTreasureKey, openedDoors, nearInteractable } =
+		input;
 
 	if (currentRoomId === ROOM_IDS.GUARD_ROOM && !hasTreasureKey) {
 		return {
@@ -49,17 +57,29 @@ const resolveInteractCandidate = (
 		};
 	}
 
-	const doorwayDetection = getDoorwayDetection();
+	const roomDoors = DOORWAY_INTERACTIONS_BY_ROOM[currentRoomId];
+	if (!roomDoors) return null;
 
-	if (doorwayDetection && !doorwayDetection.isLocked) {
-		const roomDoors = DOORWAY_INTERACTIONS_BY_ROOM[currentRoomId];
-		const doorConfig = roomDoors?.[doorwayDetection.doorSide];
+	for (const [doorSide, doorConfig] of Object.entries(roomDoors)) {
+		const doorKey = `${currentRoomId}:${doorSide}` as DoorStateKey;
 
-		if (doorConfig) {
-			const isGuarded = doorConfig.guard !== "none";
+		const isNearThisDoor = nearInteractable === doorKey;
+		const isDoorOpen = openedDoors.includes(doorKey);
+		const isGuarded = doorConfig.guard !== "none";
+
+		if (isNearThisDoor && (!isGuarded || isDoorOpen)) {
 			return {
 				type: isGuarded ? "guarded-door" : "door",
-				event: doorwayDetection.eventType,
+				event: doorConfig.successEvent,
+				doorKey,
+			};
+		}
+
+		if (isGuarded && isDoorOpen) {
+			return {
+				type: "guarded-door",
+				event: doorConfig.successEvent,
+				doorKey,
 			};
 		}
 	}
@@ -98,4 +118,11 @@ export const resolveInteractionCandidates = (
 		interact: resolveInteractCandidate(input),
 		attack: resolveAttackCandidate(input),
 	};
+};
+
+export type {
+	AttackCandidate,
+	InteractCandidate,
+	InteractionCandidates,
+	ResolveInput,
 };

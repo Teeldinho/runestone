@@ -1,16 +1,16 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
-import { DUNGEON_EVENTS, ROOM_IDS } from "@/entities/dungeon";
+import { buildDoorKey, DUNGEON_EVENTS, ROOM_IDS } from "@/entities/dungeon";
 import { ENEMY_CONFIG } from "@/shared/config";
 
-import { setDoorwayDetection } from "./doorwayDetectionStore";
 import { resolveInteractionCandidates } from "./interactionResolver";
 
-describe("resolveInteractionCandidates", () => {
-	afterEach(() => {
-		setDoorwayDetection(null);
-	});
+const defaultCandidates = {
+	openedDoors: [],
+	nearInteractable: null,
+};
 
+describe("resolveInteractionCandidates", () => {
 	describe("key pickup", () => {
 		it("returns key candidate when in guard room and key not collected", () => {
 			const result = resolveInteractionCandidates({
@@ -19,6 +19,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [[2, 1, 0]],
+				...defaultCandidates,
 			});
 
 			expect(result.interact).not.toBeNull();
@@ -33,6 +34,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [[2, 1, 0]],
+				...defaultCandidates,
 			});
 
 			const keyCandidate =
@@ -47,6 +49,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
+				...defaultCandidates,
 			});
 
 			const keyCandidate =
@@ -56,19 +59,15 @@ describe("resolveInteractionCandidates", () => {
 	});
 
 	describe("guarded door", () => {
-		it("returns guarded door candidate when treasury guard is met", () => {
-			setDoorwayDetection({
-				eventType: DUNGEON_EVENTS.ENTER_TREASURY,
-				doorSide: "south",
-				isLocked: false,
-			});
-
+		it("returns guarded door candidate when door is opened", () => {
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.GUARD_ROOM,
 				hasTreasureKey: true,
 				enemiesRemaining: 0,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
+				openedDoors: [buildDoorKey(ROOM_IDS.GUARD_ROOM, "south")],
+				nearInteractable: buildDoorKey(ROOM_IDS.GUARD_ROOM, "south"),
 			});
 
 			expect(result.interact).not.toBeNull();
@@ -76,32 +75,29 @@ describe("resolveInteractionCandidates", () => {
 			expect(result.interact?.event).toBe(DUNGEON_EVENTS.ENTER_TREASURY);
 		});
 
-		it("returns locked feedback when treasury guard is not met", () => {
+		it("returns null when guarded door is not opened", () => {
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.GUARD_ROOM,
 				hasTreasureKey: false,
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [[2, 1, 0]],
+				...defaultCandidates,
 			});
 
 			expect(result.interact).not.toBeNull();
 			expect(result.interact?.type).toBe("key");
 		});
 
-		it("returns guarded door for exit when treasury guard is met", () => {
-			setDoorwayDetection({
-				eventType: DUNGEON_EVENTS.ENTER_EXIT,
-				doorSide: "south",
-				isLocked: false,
-			});
-
+		it("returns guarded door for exit when door is opened", () => {
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.TREASURY,
 				hasTreasureKey: true,
 				enemiesRemaining: 0,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
+				openedDoors: [buildDoorKey(ROOM_IDS.TREASURY, "south")],
+				nearInteractable: buildDoorKey(ROOM_IDS.TREASURY, "south"),
 			});
 
 			expect(result.interact).not.toBeNull();
@@ -112,18 +108,14 @@ describe("resolveInteractionCandidates", () => {
 
 	describe("unguarded door", () => {
 		it("returns unguarded door candidate when near an unguarded door", () => {
-			setDoorwayDetection({
-				eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
-				doorSide: "south",
-				isLocked: false,
-			});
-
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.ENTRANCE,
 				hasTreasureKey: false,
 				enemiesRemaining: 0,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
+				openedDoors: [],
+				nearInteractable: buildDoorKey(ROOM_IDS.ENTRANCE, "south"),
 			});
 
 			expect(result.interact).not.toBeNull();
@@ -138,6 +130,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 0,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
+				...defaultCandidates,
 			});
 
 			expect(result.interact).toBeNull();
@@ -152,6 +145,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [[0, 1, ENEMY_CONFIG.ATTACK_RADIUS - 0.1]],
+				...defaultCandidates,
 			});
 
 			expect(result.attack).not.toBeNull();
@@ -165,6 +159,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [[0, 1, ENEMY_CONFIG.ATTACK_RADIUS + 1]],
+				...defaultCandidates,
 			});
 
 			expect(result.attack).toBeNull();
@@ -177,6 +172,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 0,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
+				...defaultCandidates,
 			});
 
 			expect(result.attack).toBeNull();
@@ -189,6 +185,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
+				...defaultCandidates,
 			});
 
 			expect(result.attack).toBeNull();
@@ -204,6 +201,7 @@ describe("resolveInteractionCandidates", () => {
 					[0, 1, 0.5],
 					[0, 1, 1.0],
 				],
+				...defaultCandidates,
 			});
 
 			expect(result.attack).not.toBeNull();
@@ -219,6 +217,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 0,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
+				...defaultCandidates,
 			});
 
 			expect(result.interact?.type).toBe("key");
@@ -231,6 +230,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [[0, 1, 0.5]],
+				...defaultCandidates,
 			});
 
 			expect(result.interact?.type).toBe("key");
@@ -246,6 +246,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 0,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
+				...defaultCandidates,
 			});
 
 			expect(result.interact).toBeNull();
@@ -259,6 +260,7 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 0,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
+				...defaultCandidates,
 			});
 
 			expect(result.interact).toBeNull();

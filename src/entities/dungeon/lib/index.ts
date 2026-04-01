@@ -13,4 +13,7 @@ export {
 	trackFloorOneTransition,
 	updateFloorOneContextRoom,
 } from "./floorOneContext";
-export { canEnterRoomViaDoor, isDoorOpened } from "./floorOneGuards";
+export {
+	canEnterRoomViaDoor,
+	isDoorOpened,
+} from "./floorOneMachineGuards";

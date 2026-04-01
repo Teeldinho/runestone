@@ -1,17 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { CorridorMeshSettings } from "@/entities/corridor";
 import {
 	createFloorOneMachine,
 	FLOOR_ONE_MACHINE_RULES,
 	ROOM_IDS,
-	type RoomId,
 } from "@/entities/dungeon";
 import { type PlayerMeshSettings, usePlayerMesh } from "@/entities/player";
 import {
 	createDungeonFloorLayout,
-	isDoorOpened,
 	type RoomWallOpening,
-	subscribeToDoorOpenState,
 } from "@/entities/room";
 import { useGameMachineRuntime } from "@/features/dungeon-navigation";
 import {
@@ -33,8 +30,12 @@ type SceneEnvironmentSettingsViewModel = {
 const getOpenedDoorSidesForRoom = (
 	roomId: string,
 	wallOpenings: RoomWallOpening[],
+	openedDoors: string[],
 ): RoomWallOpening[] => {
-	return wallOpenings.filter((side) => isDoorOpened(roomId as RoomId, side));
+	return wallOpenings.filter((side) => {
+		const doorKey = `${roomId}:${side}` as const;
+		return openedDoors.includes(doorKey);
+	});
 };
 
 export const useSceneEnvironmentSettings =
@@ -42,15 +43,8 @@ export const useSceneEnvironmentSettings =
 		const defaultPlayerMeshSettings = usePlayerMesh();
 		const { snapshot } = useGameMachineRuntime();
 
-		const [, forceUpdate] = useState(0);
-
-		useEffect(() => {
-			return subscribeToDoorOpenState(() => {
-				forceUpdate((n) => n + 1);
-			});
-		}, []);
-
 		return useMemo(() => {
+			const openedDoors = snapshot.context.openedDoors;
 			const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
 			const lockedDoorSidesByRoomId = {
 				[ROOM_IDS.GUARD_ROOM]:
@@ -75,6 +69,7 @@ export const useSceneEnvironmentSettings =
 				openedDoorSides: getOpenedDoorSidesForRoom(
 					roomMeshSetting.roomId,
 					roomMeshSetting.wallOpenings,
+					openedDoors,
 				),
 				isTreasury: roomMeshSetting.roomId === ROOM_IDS.TREASURY,
 				showTreasureKey:
@@ -106,6 +101,7 @@ export const useSceneEnvironmentSettings =
 			defaultPlayerMeshSettings,
 			snapshot.context.enemiesRemaining,
 			snapshot.context.hasTreasureKey,
+			snapshot.context.openedDoors,
 		]);
 	};
 

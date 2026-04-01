@@ -1,17 +1,19 @@
 import { useCallback, useEffect, useRef } from "react";
 
-import type { DungeonEvent } from "@/entities/dungeon";
-import { DUNGEON_EVENTS, type RoomId } from "@/entities/dungeon";
-import { markDoorOpened } from "@/entities/room";
+import type { DoorStateKey, DungeonEvent } from "@/entities/dungeon";
+import { buildDoorKey, DUNGEON_EVENTS, type RoomId } from "@/entities/dungeon";
 
 import { INTERACTION_KEYS } from "../config";
-import { getDoorwayDetection } from "../lib";
+import { useGameMachineRuntime } from "./gameMachineRuntime";
 import type { InteractionCandidatesViewModel } from "./useInteractionCandidates";
 
 type UseInteractionInputOptions = {
 	candidates: InteractionCandidatesViewModel;
 	currentRoomId: RoomId;
-	sendDungeonMachineEvent: (event: { type: DungeonEvent }) => void;
+	sendDungeonMachineEvent: (event: {
+		type: DungeonEvent;
+		doorKey?: DoorStateKey;
+	}) => void;
 };
 
 export const useInteractionInput = ({
@@ -19,6 +21,8 @@ export const useInteractionInput = ({
 	currentRoomId,
 	sendDungeonMachineEvent,
 }: UseInteractionInputOptions): void => {
+	const { snapshot } = useGameMachineRuntime();
+	const openedDoors = snapshot.context.openedDoors;
 	const cooldownRef = useRef(false);
 
 	const handleInteract = useCallback(() => {
@@ -32,21 +36,28 @@ export const useInteractionInput = ({
 		}, 280);
 
 		if (candidates.interactEvent) {
-			const doorwayDetection = getDoorwayDetection();
+			const doorKey = candidates.interactEvent.includes("south")
+				? buildDoorKey(currentRoomId, "south")
+				: candidates.interactEvent.includes("north")
+					? buildDoorKey(currentRoomId, "north")
+					: candidates.interactEvent.includes("east")
+						? buildDoorKey(currentRoomId, "east")
+						: candidates.interactEvent.includes("west")
+							? buildDoorKey(currentRoomId, "west")
+							: null;
 
-			if (
-				doorwayDetection &&
-				!doorwayDetection.isLocked &&
-				doorwayDetection.eventType === candidates.interactEvent
-			) {
-				markDoorOpened(currentRoomId, doorwayDetection.doorSide);
+			if (doorKey && !openedDoors.includes(doorKey)) {
+				sendDungeonMachineEvent({
+					type: DUNGEON_EVENTS.OPEN_DOOR,
+					doorKey,
+				});
 			}
 
 			sendDungeonMachineEvent({
 				type: candidates.interactEvent as DungeonEvent,
 			});
 		}
-	}, [candidates, currentRoomId, sendDungeonMachineEvent]);
+	}, [candidates, currentRoomId, openedDoors, sendDungeonMachineEvent]);
 
 	const handleAttack = useCallback(() => {
 		if (cooldownRef.current || !candidates.hasAttack) {

@@ -1,4 +1,5 @@
 export type {
+	DoorStateKey,
 	DungeonEvent,
 	DungeonEventObject,
 	DungeonRuneState,
@@ -17,6 +18,7 @@ export {
 	ROOM_LABELS,
 } from "./config";
 export {
+	buildDoorKey,
 	canEnterFloorOneExit,
 	canEnterFloorOneTreasury,
 	createFloorOneContext,

@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useRef } from "react";
 
-import { createFloorOneMachine, type RoomId } from "@/entities/dungeon";
+import {
+	buildDoorKey,
+	createFloorOneMachine,
+	type DoorStateKey,
+	DUNGEON_EVENTS,
+	type RoomId,
+} from "@/entities/dungeon";
 import { createDungeonFloorLayout } from "@/entities/room";
 import {
 	getPlayerPosition,
@@ -13,12 +19,11 @@ import {
 	checkPlayerWithinRoomBounds,
 	resolveDoorwayEntrySide,
 	resolveDoorwayNavigationEvent,
-	setDoorwayDetection,
 } from "../lib";
 import { useGameMachineRuntime } from "./gameMachineRuntime";
 
 export const useDoorwayNavigation = (): void => {
-	const { snapshot } = useGameMachineRuntime();
+	const { snapshot, sendDungeonMachineEvent } = useGameMachineRuntime();
 
 	const roomPositionById = useMemo(() => {
 		const layout = createDungeonFloorLayout(createFloorOneMachine());
@@ -38,6 +43,9 @@ export const useDoorwayNavigation = (): void => {
 	const previousRoomIdRef = useRef<RoomId | null>(
 		snapshot.context.currentRoomId as RoomId,
 	);
+	const lastSentNearInteractableRef = useRef<DoorStateKey | null>(null);
+
+	const send = sendDungeonMachineEvent;
 
 	useEffect(() => {
 		const currentRoomId = snapshot.context.currentRoomId as RoomId;
@@ -64,6 +72,13 @@ export const useDoorwayNavigation = (): void => {
 			const currentRoomId = snapshot.context.currentRoomId as RoomId;
 			const roomCenterPosition = roomPositionById[currentRoomId];
 			if (!roomCenterPosition) {
+				if (lastSentNearInteractableRef.current) {
+					send({
+						type: DUNGEON_EVENTS.LEFT_INTERACTABLE,
+						doorKey: lastSentNearInteractableRef.current,
+					});
+					lastSentNearInteractableRef.current = null;
+				}
 				return;
 			}
 
@@ -81,7 +96,13 @@ export const useDoorwayNavigation = (): void => {
 
 			if (!doorwayEvent) {
 				lastDoorwayTriggerKeyRef.current = null;
-				setDoorwayDetection(null);
+				if (lastSentNearInteractableRef.current) {
+					send({
+						type: DUNGEON_EVENTS.LEFT_INTERACTABLE,
+						doorKey: lastSentNearInteractableRef.current,
+					});
+					lastSentNearInteractableRef.current = null;
+				}
 				if (blockedDoorwayKeyRef.current && isPlayerInsideCurrentRoom) {
 					blockedDoorwayKeyRef.current = null;
 				}
@@ -111,11 +132,23 @@ export const useDoorwayNavigation = (): void => {
 			lastDoorwayTriggerKeyRef.current = doorwayTriggerKey;
 			lastTriggerAtMsRef.current = now;
 
-			setDoorwayDetection({
-				eventType: doorwayEvent.eventType,
-				doorSide: doorwayEvent.doorSide,
-				isLocked: doorwayEvent.isLocked,
-			});
+			const doorKey = buildDoorKey(currentRoomId, doorwayEvent.doorSide);
+			const interactableType = doorwayEvent.isLocked ? "door" : "door";
+
+			if (lastSentNearInteractableRef.current !== doorKey) {
+				if (lastSentNearInteractableRef.current) {
+					send({
+						type: DUNGEON_EVENTS.LEFT_INTERACTABLE,
+						doorKey: lastSentNearInteractableRef.current,
+					});
+				}
+				send({
+					type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+					doorKey,
+					interactableType,
+				});
+				lastSentNearInteractableRef.current = doorKey;
+			}
 		};
 
 		const unsubscribe = subscribeToPlayerPosition(runDoorwayCheck);
@@ -123,12 +156,12 @@ export const useDoorwayNavigation = (): void => {
 
 		return () => {
 			unsubscribe();
-			setDoorwayDetection(null);
 		};
 	}, [
 		roomPositionById,
 		snapshot.context.currentRoomId,
 		snapshot.context.enemiesRemaining,
 		snapshot.context.hasTreasureKey,
+		send,
 	]);
 };

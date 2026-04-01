@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import type { DungeonEvent } from "@/entities/dungeon";
+import type { DoorStateKey, DungeonEvent } from "@/entities/dungeon";
 import {
 	createFloorOneMachine,
 	ROOM_IDS,
@@ -10,6 +10,7 @@ import {
 	createDungeonFloorLayout,
 	type DungeonRoomLayout,
 } from "@/entities/room";
+import { useGameMachineRuntime } from "@/features/dungeon-navigation";
 import { ENEMY_CONFIG } from "@/shared/config";
 import {
 	getPlayerPosition,
@@ -18,10 +19,7 @@ import {
 import type { Vector3Tuple } from "@/shared/types";
 
 import { EMPTY_INTERACTION_CANDIDATES, INTERACTION_PROMPTS } from "../config";
-import {
-	resolveInteractionCandidates,
-	subscribeToDoorwayDetection,
-} from "../lib";
+import { resolveInteractionCandidates } from "../lib";
 
 type InteractionCandidatesViewModel = {
 	interactPrompt: string | null;
@@ -76,6 +74,8 @@ const computeCandidates = (
 	currentRoomId: RoomId,
 	hasTreasureKey: boolean,
 	enemiesRemaining: number,
+	openedDoors: DoorStateKey[],
+	nearInteractable: DoorStateKey | null,
 ): InteractionCandidatesViewModel => {
 	const playerPosition = getPlayerPosition();
 	const enemyPositions = getEnemyPositions(
@@ -90,6 +90,8 @@ const computeCandidates = (
 		enemiesRemaining,
 		playerPosition,
 		enemyPositions,
+		openedDoors,
+		nearInteractable,
 	});
 
 	const interactEvent = candidates.interact?.event ?? null;
@@ -118,14 +120,24 @@ export const useInteractionCandidates = (
 	input: UseInteractionCandidatesInput,
 ): InteractionCandidatesViewModel => {
 	const { currentRoomId, hasTreasureKey, enemiesRemaining } = input;
+	const { snapshot } = useGameMachineRuntime();
 
 	const [candidates, setCandidates] = useState<InteractionCandidatesViewModel>(
 		EMPTY_INTERACTION_CANDIDATES,
 	);
 
 	useEffect(() => {
+		const openedDoors = snapshot.context.openedDoors;
+		const nearInteractable = snapshot.context.nearInteractable;
+
 		const compute = () =>
-			computeCandidates(currentRoomId, hasTreasureKey, enemiesRemaining);
+			computeCandidates(
+				currentRoomId,
+				hasTreasureKey,
+				enemiesRemaining,
+				openedDoors,
+				nearInteractable,
+			);
 
 		const updateIfChanged = () => {
 			setCandidates((prev) => {
@@ -143,13 +155,17 @@ export const useInteractionCandidates = (
 		updateIfChanged();
 
 		const unsubPosition = subscribeToPlayerPosition(updateIfChanged);
-		const unsubDoorway = subscribeToDoorwayDetection(updateIfChanged);
 
 		return () => {
 			unsubPosition?.();
-			unsubDoorway?.();
 		};
-	}, [currentRoomId, hasTreasureKey, enemiesRemaining]);
+	}, [
+		currentRoomId,
+		hasTreasureKey,
+		enemiesRemaining,
+		snapshot.context.openedDoors,
+		snapshot.context.nearInteractable,
+	]);
 
 	return candidates;
 };
