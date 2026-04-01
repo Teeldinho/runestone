@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef } from "react";
-import { CORRIDOR_DIRECTIONS } from "@/entities/corridor";
-import type { DoorStateKey, DungeonEvent } from "@/entities/dungeon";
-import { buildDoorKey, DUNGEON_EVENTS, type RoomId } from "@/entities/dungeon";
 
-import { INTERACTION_KEYS } from "../config";
+import type { DoorStateKey, DungeonEvent } from "@/entities/dungeon";
+import { DUNGEON_EVENTS, type RoomId } from "@/entities/dungeon";
+
+import { INTERACTION_KEYS, type NavigationActionEvent } from "../config";
+import { getDoorKeyForNavigationEvent } from "../lib/getDoorKeyForNavigationEvent";
 import { useGameMachineRuntime } from "./gameMachineRuntime";
 import type { InteractionCandidatesViewModel } from "./useInteractionCandidates";
 
@@ -36,15 +37,9 @@ export const useInteractionInput = ({
 		}, 280);
 
 		if (candidates.interactEvent) {
-			const doorKey = candidates.interactEvent.includes("south")
-				? buildDoorKey(currentRoomId, CORRIDOR_DIRECTIONS.SOUTH)
-				: candidates.interactEvent.includes("north")
-					? buildDoorKey(currentRoomId, CORRIDOR_DIRECTIONS.NORTH)
-					: candidates.interactEvent.includes("east")
-						? buildDoorKey(currentRoomId, CORRIDOR_DIRECTIONS.EAST)
-						: candidates.interactEvent.includes("west")
-							? buildDoorKey(currentRoomId, CORRIDOR_DIRECTIONS.WEST)
-							: null;
+			const doorKey = getDoorKeyForNavigationEvent(
+				candidates.interactEvent as NavigationActionEvent,
+			);
 
 			if (doorKey && !openedDoors.includes(doorKey)) {
 				sendDungeonMachineEvent({

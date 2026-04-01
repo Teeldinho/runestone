@@ -63,18 +63,19 @@ const resolveInteractCandidate = (
 	for (const [doorSide, doorConfig] of Object.entries(roomDoors)) {
 		const doorKey = `${currentRoomId}:${doorSide}` as DoorStateKey;
 
-		const isNearThisDoor = nearInteractable === doorKey;
+		if (nearInteractable !== doorKey) {
+			continue;
+		}
+
 		const isDoorOpen = openedDoors.includes(doorKey);
 		const isGuarded = doorConfig.guard !== "none";
 
-		if (isNearThisDoor || !isGuarded) {
-			if (!isGuarded || isDoorOpen) {
-				return {
-					type: isGuarded ? "guarded-door" : "door",
-					event: doorConfig.successEvent,
-					doorKey,
-				};
-			}
+		if (!isGuarded || isDoorOpen) {
+			return {
+				type: isGuarded ? "guarded-door" : "door",
+				event: doorConfig.successEvent,
+				doorKey,
+			};
 		}
 	}
 
