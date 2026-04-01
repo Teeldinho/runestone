@@ -19,12 +19,11 @@ const PROMPT_STYLE: React.CSSProperties = {
 	fontFamily: "Space Grotesk, sans-serif",
 	fontWeight: 500,
 	borderRadius: "4px",
-	border: "1px solid rgba(245, 196, 81, 0.3)",
-	background: "rgba(6, 9, 15, 0.85)",
-	color: "white",
+	border: "1px solid var(--panel-border)",
+	background: "var(--panel)",
+	color: "var(--foreground)",
 	pointerEvents: "none",
 	whiteSpace: "nowrap",
-	backdropFilter: "blur(8px)",
 	marginTop: "0.25rem",
 };
 
@@ -38,9 +37,9 @@ const KEY_STYLE: React.CSSProperties = {
 	fontSize: "0.7rem",
 	fontWeight: 700,
 	borderRadius: "3px",
-	border: "1px solid #f5c451",
-	color: "#f5c451",
-	background: "rgba(245, 196, 81, 0.1)",
+	border: "1px solid var(--dungeon-gold)",
+	color: "var(--dungeon-gold)",
+	background: "color-mix(in srgb, var(--dungeon-gold) 10%, transparent)",
 };
 
 export function WorldInteractionPrompt() {
