@@ -10,8 +10,6 @@ import {
 	type RoomId,
 } from "@/entities/dungeon";
 
-const mockSendDungeonMachineEvent = vi.fn();
-
 const { mockSnapshotGetter, mockPlayerPositionGetter, positionListeners } =
 	vi.hoisted(() => ({
 		mockSnapshotGetter: vi.fn(),
@@ -22,7 +20,6 @@ const { mockSnapshotGetter, mockPlayerPositionGetter, positionListeners } =
 vi.mock("@/features/dungeon-navigation/model/gameMachineRuntime", () => ({
 	useGameMachineRuntime: () => ({
 		snapshot: mockSnapshotGetter(),
-		sendDungeonMachineEvent: mockSendDungeonMachineEvent,
 	}),
 }));
 
@@ -37,6 +34,7 @@ vi.mock("@/shared/lib/playerPositionStore", () => ({
 	},
 }));
 
+import { getDoorwayDetection } from "../lib/doorwayDetectionStore";
 import { useDoorwayNavigation } from "./useDoorwayNavigation";
 
 const createSnapshot = (
@@ -68,19 +66,20 @@ describe("useDoorwayNavigation", () => {
 		}
 	};
 
-	it("sends a room transition event when player reaches an open doorway", () => {
+	it("sets doorway detection when player reaches an open doorway", () => {
 		renderHook(() => useDoorwayNavigation());
 
 		act(() => {
 			notifyPlayerPosition();
 		});
 
-		expect(mockSendDungeonMachineEvent).toHaveBeenCalledWith({
-			type: DUNGEON_EVENTS.ENTER_LIBRARY,
-		});
+		const detection = getDoorwayDetection();
+		expect(detection).not.toBeNull();
+		expect(detection?.eventType).toBe(DUNGEON_EVENTS.ENTER_LIBRARY);
+		expect(detection?.isLocked).toBe(false);
 	});
 
-	it("sends locked-door attempt and feedback when guard conditions fail", () => {
+	it("sets locked-door detection when guard conditions fail", () => {
 		mockSnapshotGetter.mockReturnValue(createSnapshot(ROOM_IDS.GUARD_ROOM));
 		mockPlayerPositionGetter.mockReturnValue([0, 0, 6]);
 
@@ -90,12 +89,13 @@ describe("useDoorwayNavigation", () => {
 			notifyPlayerPosition();
 		});
 
-		expect(mockSendDungeonMachineEvent).toHaveBeenCalledWith({
-			type: DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT,
-		});
+		const detection = getDoorwayDetection();
+		expect(detection).not.toBeNull();
+		expect(detection?.eventType).toBe(DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT);
+		expect(detection?.isLocked).toBe(true);
 	});
 
-	it("sends guarded transition when the treasury door is unlocked", () => {
+	it("sets guarded transition detection when the treasury door is unlocked", () => {
 		mockSnapshotGetter.mockReturnValue(
 			createSnapshot(ROOM_IDS.GUARD_ROOM, true, 0),
 		);
@@ -107,27 +107,23 @@ describe("useDoorwayNavigation", () => {
 			notifyPlayerPosition();
 		});
 
-		expect(mockSendDungeonMachineEvent).toHaveBeenCalledWith({
-			type: DUNGEON_EVENTS.ENTER_TREASURY,
-		});
+		const detection = getDoorwayDetection();
+		expect(detection).not.toBeNull();
+		expect(detection?.eventType).toBe(DUNGEON_EVENTS.ENTER_TREASURY);
+		expect(detection?.isLocked).toBe(false);
 	});
 
-	it("does not immediately trigger the reverse doorway after entering a room", () => {
-		vi.useFakeTimers();
-
+	it("clears detection when player is inside room bounds", () => {
 		const { rerender } = renderHook(() => useDoorwayNavigation());
 
 		act(() => {
 			notifyPlayerPosition();
 		});
 
-		expect(mockSendDungeonMachineEvent).toHaveBeenCalledWith({
-			type: DUNGEON_EVENTS.ENTER_LIBRARY,
-		});
+		expect(getDoorwayDetection()).not.toBeNull();
 
-		mockSendDungeonMachineEvent.mockClear();
 		mockSnapshotGetter.mockReturnValue(createSnapshot(ROOM_IDS.LIBRARY));
-		mockPlayerPositionGetter.mockReturnValue([0, 0, 6]);
+		mockPlayerPositionGetter.mockReturnValue([0, 0, 0]);
 
 		rerender();
 
@@ -135,32 +131,6 @@ describe("useDoorwayNavigation", () => {
 			notifyPlayerPosition();
 		});
 
-		expect(mockSendDungeonMachineEvent).not.toHaveBeenCalled();
-
-		mockPlayerPositionGetter.mockReturnValue([0, 0, 14.8]);
-
-		act(() => {
-			notifyPlayerPosition();
-		});
-
-		expect(mockSendDungeonMachineEvent).not.toHaveBeenCalled();
-
-		vi.advanceTimersByTime(300);
-
-		mockPlayerPositionGetter.mockReturnValue([0, 0, 20]);
-
-		act(() => {
-			notifyPlayerPosition();
-		});
-
-		mockPlayerPositionGetter.mockReturnValue([0, 0, 14.8]);
-
-		act(() => {
-			notifyPlayerPosition();
-		});
-
-		expect(mockSendDungeonMachineEvent).not.toHaveBeenCalled();
-
-		vi.useRealTimers();
+		expect(getDoorwayDetection()).toBeNull();
 	});
 });
