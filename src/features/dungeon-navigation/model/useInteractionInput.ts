@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-
+import { CORRIDOR_DIRECTIONS } from "@/entities/corridor";
 import type { DoorStateKey, DungeonEvent } from "@/entities/dungeon";
 import { buildDoorKey, DUNGEON_EVENTS, type RoomId } from "@/entities/dungeon";
 
@@ -37,13 +37,13 @@ export const useInteractionInput = ({
 
 		if (candidates.interactEvent) {
 			const doorKey = candidates.interactEvent.includes("south")
-				? buildDoorKey(currentRoomId, "south")
+				? buildDoorKey(currentRoomId, CORRIDOR_DIRECTIONS.SOUTH)
 				: candidates.interactEvent.includes("north")
-					? buildDoorKey(currentRoomId, "north")
+					? buildDoorKey(currentRoomId, CORRIDOR_DIRECTIONS.NORTH)
 					: candidates.interactEvent.includes("east")
-						? buildDoorKey(currentRoomId, "east")
+						? buildDoorKey(currentRoomId, CORRIDOR_DIRECTIONS.EAST)
 						: candidates.interactEvent.includes("west")
-							? buildDoorKey(currentRoomId, "west")
+							? buildDoorKey(currentRoomId, CORRIDOR_DIRECTIONS.WEST)
 							: null;
 
 			if (doorKey && !openedDoors.includes(doorKey)) {
