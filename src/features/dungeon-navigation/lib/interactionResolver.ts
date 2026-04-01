@@ -67,20 +67,14 @@ const resolveInteractCandidate = (
 		const isDoorOpen = openedDoors.includes(doorKey);
 		const isGuarded = doorConfig.guard !== "none";
 
-		if (isNearThisDoor && (!isGuarded || isDoorOpen)) {
-			return {
-				type: isGuarded ? "guarded-door" : "door",
-				event: doorConfig.successEvent,
-				doorKey,
-			};
-		}
-
-		if (isGuarded && isDoorOpen && isNearThisDoor) {
-			return {
-				type: "guarded-door",
-				event: doorConfig.successEvent,
-				doorKey,
-			};
+		if (isNearThisDoor || !isGuarded) {
+			if (!isGuarded || isDoorOpen) {
+				return {
+					type: isGuarded ? "guarded-door" : "door",
+					event: doorConfig.successEvent,
+					doorKey,
+				};
+			}
 		}
 	}
 
