@@ -1,12 +1,18 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CorridorMeshSettings } from "@/entities/corridor";
 import {
 	createFloorOneMachine,
 	FLOOR_ONE_MACHINE_RULES,
 	ROOM_IDS,
+	type RoomId,
 } from "@/entities/dungeon";
 import { type PlayerMeshSettings, usePlayerMesh } from "@/entities/player";
-import { createDungeonFloorLayout } from "@/entities/room";
+import {
+	createDungeonFloorLayout,
+	isDoorOpened,
+	type RoomWallOpening,
+	subscribeToDoorOpenState,
+} from "@/entities/room";
 import { useGameMachineRuntime } from "@/features/dungeon-navigation";
 import {
 	createSceneCorridorMeshSettings,
@@ -24,10 +30,25 @@ type SceneEnvironmentSettingsViewModel = {
 	roomMeshSettings: SceneRoomMeshSettings[];
 };
 
+const getOpenedDoorSidesForRoom = (
+	roomId: string,
+	wallOpenings: RoomWallOpening[],
+): RoomWallOpening[] => {
+	return wallOpenings.filter((side) => isDoorOpened(roomId as RoomId, side));
+};
+
 export const useSceneEnvironmentSettings =
 	(): SceneEnvironmentSettingsViewModel => {
 		const defaultPlayerMeshSettings = usePlayerMesh();
 		const { snapshot } = useGameMachineRuntime();
+
+		const [, forceUpdate] = useState(0);
+
+		useEffect(() => {
+			return subscribeToDoorOpenState(() => {
+				forceUpdate((n) => n + 1);
+			});
+		}, []);
 
 		return useMemo(() => {
 			const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
@@ -51,6 +72,10 @@ export const useSceneEnvironmentSettings =
 				lockedDoorSidesByRoomId,
 			).map((roomMeshSetting) => ({
 				...roomMeshSetting,
+				openedDoorSides: getOpenedDoorSidesForRoom(
+					roomMeshSetting.roomId,
+					roomMeshSetting.wallOpenings,
+				),
 				isTreasury: roomMeshSetting.roomId === ROOM_IDS.TREASURY,
 				showTreasureKey:
 					roomMeshSetting.roomId === ROOM_IDS.GUARD_ROOM &&

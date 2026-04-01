@@ -1,7 +1,7 @@
 import { DUNGEON_EVENTS } from "@/entities/dungeon";
 
 export const INTERACTION_CONFIG = {
-	INTERACT_RADIUS: 1.5,
+	INTERACT_RADIUS: 2.5,
 	ATTACK_RADIUS: 1.5,
 } as const;
 

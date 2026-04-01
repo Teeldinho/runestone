@@ -34,6 +34,7 @@ export function SceneEnvironment({
 					key={room.roomId}
 					isTreasury={room.isTreasury}
 					lockedDoorSides={room.lockedDoorSides}
+					openedDoorSides={room.openedDoorSides}
 					position={room.position}
 					showTreasureKey={room.showTreasureKey}
 					surface={environment}

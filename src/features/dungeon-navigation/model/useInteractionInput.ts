@@ -1,18 +1,22 @@
 import { useCallback, useEffect, useRef } from "react";
 
 import type { DungeonEvent } from "@/entities/dungeon";
-import { DUNGEON_EVENTS } from "@/entities/dungeon";
+import { DUNGEON_EVENTS, type RoomId } from "@/entities/dungeon";
+import { markDoorOpened } from "@/entities/room";
 
 import { INTERACTION_KEYS } from "../config";
+import { getDoorwayDetection } from "../lib";
 import type { InteractionCandidatesViewModel } from "./useInteractionCandidates";
 
 type UseInteractionInputOptions = {
 	candidates: InteractionCandidatesViewModel;
+	currentRoomId: RoomId;
 	sendDungeonMachineEvent: (event: { type: DungeonEvent }) => void;
 };
 
 export const useInteractionInput = ({
 	candidates,
+	currentRoomId,
 	sendDungeonMachineEvent,
 }: UseInteractionInputOptions): void => {
 	const cooldownRef = useRef(false);
@@ -28,11 +32,21 @@ export const useInteractionInput = ({
 		}, 280);
 
 		if (candidates.interactEvent) {
+			const doorwayDetection = getDoorwayDetection();
+
+			if (
+				doorwayDetection &&
+				!doorwayDetection.isLocked &&
+				doorwayDetection.eventType === candidates.interactEvent
+			) {
+				markDoorOpened(currentRoomId, doorwayDetection.doorSide);
+			}
+
 			sendDungeonMachineEvent({
 				type: candidates.interactEvent as DungeonEvent,
 			});
 		}
-	}, [candidates, sendDungeonMachineEvent]);
+	}, [candidates, currentRoomId, sendDungeonMachineEvent]);
 
 	const handleAttack = useCallback(() => {
 		if (cooldownRef.current || !candidates.hasAttack) {

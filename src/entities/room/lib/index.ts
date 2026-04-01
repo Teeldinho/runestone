@@ -1,3 +1,9 @@
+export {
+	isDoorOpened,
+	markDoorOpened,
+	resetDoorOpenStore,
+	subscribeToDoorOpenState,
+} from "./doorOpenStore";
 export type {
 	DungeonCorridorLayout,
 	DungeonFloorLayout,

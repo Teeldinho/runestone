@@ -20,6 +20,10 @@ export {
 	getRoomCorridorAnchors,
 	getRoomLabelPosition,
 	getRoomTorchPositions,
+	isDoorOpened,
+	markDoorOpened,
+	resetDoorOpenStore,
+	subscribeToDoorOpenState,
 } from "./lib";
 export type {
 	RoomDoorGuard,

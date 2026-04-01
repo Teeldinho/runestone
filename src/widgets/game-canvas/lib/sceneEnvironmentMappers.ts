@@ -23,6 +23,7 @@ type SceneRoomMeshSettings = {
 	labelSettings: RoomLabelSettings;
 	wallOpenings: RoomWallOpening[];
 	lockedDoorSides: RoomWallOpening[];
+	openedDoorSides: RoomWallOpening[];
 	isTreasury: boolean;
 	showTreasureKey: boolean;
 };
@@ -91,6 +92,7 @@ export const createSceneRoomMeshSettings = (
 		labelSettings: createSceneRoomLabelSettings(room.roomId, room.position),
 		wallOpenings: computeWallOpenings(room.roomId, room.position, corridors),
 		lockedDoorSides: [...(lockedDoorSidesByRoomId[room.roomId] ?? [])],
+		openedDoorSides: [],
 		isTreasury: false,
 		showTreasureKey: false,
 	}));
