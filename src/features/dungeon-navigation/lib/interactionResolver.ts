@@ -75,7 +75,7 @@ const resolveInteractCandidate = (
 			};
 		}
 
-		if (isGuarded && isDoorOpen) {
+		if (isGuarded && isDoorOpen && isNearThisDoor) {
 			return {
 				type: "guarded-door",
 				event: doorConfig.successEvent,
