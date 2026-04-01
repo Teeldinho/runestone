@@ -38,9 +38,11 @@ describe("GameMachineProvider", () => {
 		);
 
 		act(() => {
-			result.current.primaryRuntime.handleDungeonEventSend(
-				DUNGEON_EVENTS.ENTER_LIBRARY,
+			const libraryAction = result.current.primaryRuntime.actionButtons.find(
+				(actionButton) =>
+					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
 			);
+			libraryAction?.handleDungeonActionTrigger();
 		});
 
 		expect(result.current.primaryRuntime.snapshot.value).toBe(ROOM_IDS.LIBRARY);

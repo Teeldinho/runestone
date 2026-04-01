@@ -1,4 +1,4 @@
-import { assign, setup } from "xstate";
+import { and, assign, setup } from "xstate";
 
 import { DUNGEON_EVENTS, ROOM_IDS } from "../config";
 import {
@@ -164,10 +164,13 @@ export const createFloorOneMachine = (options?: {
 					},
 					[DUNGEON_EVENTS.ENTER_TREASURY]: {
 						target: ROOM_IDS.TREASURY,
-						guard: {
-							type: "doorIsOpened",
-							params: { doorKey: buildDoorKey(ROOM_IDS.GUARD_ROOM, "south") },
-						},
+						guard: and([
+							{
+								type: "doorIsOpened",
+								params: { doorKey: buildDoorKey(ROOM_IDS.GUARD_ROOM, "south") },
+							},
+							{ type: "treasuryCanBeEntered" },
+						]),
 						actions: [
 							assign(({ context }) =>
 								openFloorOneDoor(
@@ -237,10 +240,13 @@ export const createFloorOneMachine = (options?: {
 				on: {
 					[DUNGEON_EVENTS.ENTER_EXIT]: {
 						target: ROOM_IDS.EXIT,
-						guard: {
-							type: "doorIsOpened",
-							params: { doorKey: buildDoorKey(ROOM_IDS.TREASURY, "south") },
-						},
+						guard: and([
+							{
+								type: "doorIsOpened",
+								params: { doorKey: buildDoorKey(ROOM_IDS.TREASURY, "south") },
+							},
+							{ type: "exitCanBeEntered" },
+						]),
 						actions: [
 							assign(({ context }) =>
 								openFloorOneDoor(

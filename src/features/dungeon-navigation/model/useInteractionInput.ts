@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
 import type { DoorStateKey, DungeonEvent } from "@/entities/dungeon";
-import { DUNGEON_EVENTS, type RoomId } from "@/entities/dungeon";
+import { DUNGEON_EVENTS } from "@/entities/dungeon";
 
 import { INTERACTION_KEYS, type NavigationActionEvent } from "../config";
 import { getDoorKeyForNavigationEvent } from "../lib/getDoorKeyForNavigationEvent";
@@ -10,7 +10,6 @@ import type { InteractionCandidatesViewModel } from "./useInteractionCandidates"
 
 type UseInteractionInputOptions = {
 	candidates: InteractionCandidatesViewModel;
-	currentRoomId: RoomId;
 	sendDungeonMachineEvent: (event: {
 		type: DungeonEvent;
 		doorKey?: DoorStateKey;
@@ -19,7 +18,6 @@ type UseInteractionInputOptions = {
 
 export const useInteractionInput = ({
 	candidates,
-	currentRoomId,
 	sendDungeonMachineEvent,
 }: UseInteractionInputOptions): void => {
 	const { snapshot } = useGameMachineRuntime();
@@ -52,7 +50,7 @@ export const useInteractionInput = ({
 				type: candidates.interactEvent as DungeonEvent,
 			});
 		}
-	}, [candidates, currentRoomId, openedDoors, sendDungeonMachineEvent]);
+	}, [candidates, openedDoors, sendDungeonMachineEvent]);
 
 	const handleAttack = useCallback(() => {
 		if (cooldownRef.current || !candidates.hasAttack) {

@@ -40,7 +40,6 @@ export function GamePage() {
 	});
 	useInteractionInput({
 		candidates: interactionCandidates,
-		currentRoomId: canvasMachineRuntime.currentRoomId,
 		sendDungeonMachineEvent,
 	});
 

@@ -12,6 +12,7 @@ const mockRuntimeContext = vi.hoisted(() => ({
 	currentRoomId: "entrance",
 	hasTreasureKey: false,
 	enemiesRemaining: 1,
+	openedDoors: [],
 }));
 
 vi.mock("@/features/dungeon-navigation", () => ({
@@ -35,6 +36,7 @@ describe("useSceneEnvironmentSettings", () => {
 		mockRuntimeContext.currentRoomId = ROOM_IDS.ENTRANCE;
 		mockRuntimeContext.hasTreasureKey = false;
 		mockRuntimeContext.enemiesRemaining = 1;
+		mockRuntimeContext.openedDoors = [];
 	});
 
 	it("returns machine-derived room mesh settings for all floor-one rooms", () => {

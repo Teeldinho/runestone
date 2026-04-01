@@ -44,7 +44,7 @@ export const useSceneEnvironmentSettings =
 		const { snapshot } = useGameMachineRuntime();
 
 		return useMemo(() => {
-			const openedDoors = snapshot.context.openedDoors;
+			const openedDoors = snapshot.context.openedDoors ?? [];
 			const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
 			const lockedDoorSidesByRoomId = {
 				[ROOM_IDS.GUARD_ROOM]:
