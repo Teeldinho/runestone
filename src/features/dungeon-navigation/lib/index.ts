@@ -1,4 +1,9 @@
 export {
+	getDoorwayDetection,
+	setDoorwayDetection,
+	subscribeToDoorwayDetection,
+} from "./doorwayDetectionStore";
+export {
 	checkPlayerWithinRoomBounds,
 	type DoorwayNavigationEvent,
 	type ResolveDoorwayNavigationInput,

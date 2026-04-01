@@ -16,6 +16,10 @@ export const INTERACTION_PROMPTS = {
 	[DUNGEON_EVENTS.ENTER_GUARD_ROOM]: "Enter Guard Room",
 	[DUNGEON_EVENTS.ENTER_TREASURY]: "Enter Treasury",
 	[DUNGEON_EVENTS.ENTER_EXIT]: "Exit Floor",
+	[DUNGEON_EVENTS.RETURN_TO_ENTRANCE]: "Return to Entrance",
+	[DUNGEON_EVENTS.RETURN_TO_LIBRARY]: "Return to Library",
+	[DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM]: "Return to Guard Room",
+	[DUNGEON_EVENTS.RETURN_TO_TREASURY]: "Return to Treasury",
 	[DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT]: "Locked",
 	[DUNGEON_EVENTS.LOCKED_EXIT_ATTEMPT]: "Locked",
 } as const;
@@ -28,6 +32,7 @@ export const MOVEMENT_KEYS_LABEL = "WASD / Arrow keys";
 
 export const EMPTY_INTERACTION_CANDIDATES = {
 	interactPrompt: null,
+	interactEvent: null,
 	attackPrompt: null,
 	hasInteract: false,
 	hasAttack: false,

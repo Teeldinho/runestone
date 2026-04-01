@@ -13,11 +13,12 @@ import {
 	checkPlayerWithinRoomBounds,
 	resolveDoorwayEntrySide,
 	resolveDoorwayNavigationEvent,
+	setDoorwayDetection,
 } from "../lib";
 import { useGameMachineRuntime } from "./gameMachineRuntime";
 
 export const useDoorwayNavigation = (): void => {
-	const { snapshot, sendDungeonMachineEvent } = useGameMachineRuntime();
+	const { snapshot } = useGameMachineRuntime();
 
 	const roomPositionById = useMemo(() => {
 		const layout = createDungeonFloorLayout(createFloorOneMachine());
@@ -80,6 +81,7 @@ export const useDoorwayNavigation = (): void => {
 
 			if (!doorwayEvent) {
 				lastDoorwayTriggerKeyRef.current = null;
+				setDoorwayDetection(null);
 				if (blockedDoorwayKeyRef.current && isPlayerInsideCurrentRoom) {
 					blockedDoorwayKeyRef.current = null;
 				}
@@ -109,7 +111,11 @@ export const useDoorwayNavigation = (): void => {
 			lastDoorwayTriggerKeyRef.current = doorwayTriggerKey;
 			lastTriggerAtMsRef.current = now;
 
-			sendDungeonMachineEvent({ type: doorwayEvent.eventType });
+			setDoorwayDetection({
+				eventType: doorwayEvent.eventType,
+				doorSide: doorwayEvent.doorSide,
+				isLocked: doorwayEvent.isLocked,
+			});
 		};
 
 		const unsubscribe = subscribeToPlayerPosition(runDoorwayCheck);
@@ -117,10 +123,10 @@ export const useDoorwayNavigation = (): void => {
 
 		return () => {
 			unsubscribe();
+			setDoorwayDetection(null);
 		};
 	}, [
 		roomPositionById,
-		sendDungeonMachineEvent,
 		snapshot.context.currentRoomId,
 		snapshot.context.enemiesRemaining,
 		snapshot.context.hasTreasureKey,

@@ -18,11 +18,7 @@ export const useInteractionInput = ({
 	const cooldownRef = useRef(false);
 
 	const handleInteract = useCallback(() => {
-		if (
-			cooldownRef.current ||
-			!candidates.hasInteract ||
-			!candidates.interactPrompt
-		) {
+		if (cooldownRef.current || !candidates.hasInteract) {
 			return;
 		}
 
@@ -31,12 +27,10 @@ export const useInteractionInput = ({
 			cooldownRef.current = false;
 		}, 280);
 
-		if (candidates.interactPrompt === "Pick Up Key") {
-			sendDungeonMachineEvent({ type: DUNGEON_EVENTS.PICK_UP_KEY });
-		} else if (candidates.interactPrompt === "Enter Treasury") {
-			sendDungeonMachineEvent({ type: DUNGEON_EVENTS.ENTER_TREASURY });
-		} else if (candidates.interactPrompt === "Exit Floor") {
-			sendDungeonMachineEvent({ type: DUNGEON_EVENTS.ENTER_EXIT });
+		if (candidates.interactEvent) {
+			sendDungeonMachineEvent({
+				type: candidates.interactEvent as DungeonEvent,
+			});
 		}
 	}, [candidates, sendDungeonMachineEvent]);
 

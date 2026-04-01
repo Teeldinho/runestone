@@ -74,6 +74,7 @@ vi.mock("@/widgets/hud", () => ({
 vi.mock("@/features/dungeon-navigation", () => ({
 	useInteractionCandidates: vi.fn(() => ({
 		interactPrompt: null,
+		interactEvent: null,
 		attackPrompt: null,
 		hasInteract: false,
 		hasAttack: false,

@@ -1,11 +1,16 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import { DUNGEON_EVENTS, ROOM_IDS } from "@/entities/dungeon";
 import { ENEMY_CONFIG } from "@/shared/config";
 
+import { setDoorwayDetection } from "./doorwayDetectionStore";
 import { resolveInteractionCandidates } from "./interactionResolver";
 
 describe("resolveInteractionCandidates", () => {
+	afterEach(() => {
+		setDoorwayDetection(null);
+	});
+
 	describe("key pickup", () => {
 		it("returns key candidate when in guard room and key not collected", () => {
 			const result = resolveInteractionCandidates({
@@ -52,6 +57,12 @@ describe("resolveInteractionCandidates", () => {
 
 	describe("guarded door", () => {
 		it("returns guarded door candidate when treasury guard is met", () => {
+			setDoorwayDetection({
+				eventType: DUNGEON_EVENTS.ENTER_TREASURY,
+				doorSide: "south",
+				isLocked: false,
+			});
+
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.GUARD_ROOM,
 				hasTreasureKey: true,
@@ -79,6 +90,12 @@ describe("resolveInteractionCandidates", () => {
 		});
 
 		it("returns guarded door for exit when treasury guard is met", () => {
+			setDoorwayDetection({
+				eventType: DUNGEON_EVENTS.ENTER_EXIT,
+				doorSide: "south",
+				isLocked: false,
+			});
+
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.TREASURY,
 				hasTreasureKey: true,
@@ -90,6 +107,40 @@ describe("resolveInteractionCandidates", () => {
 			expect(result.interact).not.toBeNull();
 			expect(result.interact?.type).toBe("guarded-door");
 			expect(result.interact?.event).toBe(DUNGEON_EVENTS.ENTER_EXIT);
+		});
+	});
+
+	describe("unguarded door", () => {
+		it("returns unguarded door candidate when near an unguarded door", () => {
+			setDoorwayDetection({
+				eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
+				doorSide: "south",
+				isLocked: false,
+			});
+
+			const result = resolveInteractionCandidates({
+				currentRoomId: ROOM_IDS.ENTRANCE,
+				hasTreasureKey: false,
+				enemiesRemaining: 0,
+				playerPosition: [0, 1, 0],
+				enemyPositions: [],
+			});
+
+			expect(result.interact).not.toBeNull();
+			expect(result.interact?.type).toBe("door");
+			expect(result.interact?.event).toBe(DUNGEON_EVENTS.ENTER_LIBRARY);
+		});
+
+		it("returns null when no doorway is detected", () => {
+			const result = resolveInteractionCandidates({
+				currentRoomId: ROOM_IDS.ENTRANCE,
+				hasTreasureKey: false,
+				enemiesRemaining: 0,
+				playerPosition: [0, 1, 0],
+				enemyPositions: [],
+			});
+
+			expect(result.interact).toBeNull();
 		});
 	});
 

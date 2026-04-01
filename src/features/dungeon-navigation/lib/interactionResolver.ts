@@ -3,6 +3,7 @@ import { ENEMY_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 import { DOORWAY_INTERACTIONS_BY_ROOM } from "../config";
+import { getDoorwayDetection } from "./doorwayDetectionStore";
 
 type InteractType = "key" | "guarded-door" | "door" | "exit";
 
@@ -36,17 +37,10 @@ const distance = (a: Vector3Tuple, b: Vector3Tuple): number => {
 	return Math.sqrt(dx * dx + dy * dy + dz * dz);
 };
 
-const canEnterTreasury = (
-	hasTreasureKey: boolean,
-	enemiesRemaining: number,
-): boolean => hasTreasureKey && enemiesRemaining === 0;
-
-const canEnterExit = (hasTreasureKey: boolean): boolean => hasTreasureKey;
-
 const resolveInteractCandidate = (
 	input: ResolveInput,
 ): InteractCandidate | null => {
-	const { currentRoomId, hasTreasureKey, enemiesRemaining } = input;
+	const { currentRoomId, hasTreasureKey } = input;
 
 	if (currentRoomId === ROOM_IDS.GUARD_ROOM && !hasTreasureKey) {
 		return {
@@ -55,35 +49,18 @@ const resolveInteractCandidate = (
 		};
 	}
 
-	const roomDoors = DOORWAY_INTERACTIONS_BY_ROOM[currentRoomId];
-	if (!roomDoors) {
-		return null;
-	}
+	const doorwayDetection = getDoorwayDetection();
 
-	const doorEntries = Object.values(roomDoors);
+	if (doorwayDetection && !doorwayDetection.isLocked) {
+		const roomDoors = DOORWAY_INTERACTIONS_BY_ROOM[currentRoomId];
+		const doorConfig = roomDoors?.[doorwayDetection.doorSide];
 
-	for (const door of doorEntries) {
-		if (door.guard === "treasury") {
-			if (canEnterTreasury(hasTreasureKey, enemiesRemaining)) {
-				return {
-					type: "guarded-door",
-					event: door.successEvent,
-				};
-			}
-			continue;
-		}
-
-		if (door.guard === "exit") {
-			if (canEnterExit(hasTreasureKey)) {
-				return {
-					type: "guarded-door",
-					event: door.successEvent,
-				};
-			}
-			continue;
-		}
-
-		if (door.guard === "none") {
+		if (doorConfig) {
+			const isGuarded = doorConfig.guard !== "none";
+			return {
+				type: isGuarded ? "guarded-door" : "door",
+				event: doorwayDetection.eventType,
+			};
 		}
 	}
 

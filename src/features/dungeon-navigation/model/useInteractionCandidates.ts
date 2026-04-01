@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import type { DungeonEvent } from "@/entities/dungeon";
 import {
 	createFloorOneMachine,
 	ROOM_IDS,
@@ -16,11 +17,15 @@ import {
 } from "@/shared/lib/playerPositionStore";
 import type { Vector3Tuple } from "@/shared/types";
 
-import { EMPTY_INTERACTION_CANDIDATES } from "../config";
-import { resolveInteractionCandidates } from "../lib";
+import { EMPTY_INTERACTION_CANDIDATES, INTERACTION_PROMPTS } from "../config";
+import {
+	resolveInteractionCandidates,
+	subscribeToDoorwayDetection,
+} from "../lib";
 
 type InteractionCandidatesViewModel = {
 	interactPrompt: string | null;
+	interactEvent: (DungeonEvent & string) | null;
 	attackPrompt: string | null;
 	hasInteract: boolean;
 	hasAttack: boolean;
@@ -51,21 +56,20 @@ const getEnemyPositions = (
 };
 
 const getPromptText = (
-	type: string | null,
-	currentRoomId: RoomId,
+	candidateType: string | null,
+	candidateEvent: string | null,
 ): string | null => {
-	if (type === "key") {
+	if (!candidateEvent) {
+		return null;
+	}
+
+	if (candidateType === "key") {
 		return "Pick Up Key";
 	}
-	if (type === "guarded-door") {
-		if (currentRoomId === ROOM_IDS.GUARD_ROOM) {
-			return "Enter Treasury";
-		}
-		if (currentRoomId === ROOM_IDS.TREASURY) {
-			return "Exit Floor";
-		}
-	}
-	return null;
+
+	const prompt =
+		INTERACTION_PROMPTS[candidateEvent as keyof typeof INTERACTION_PROMPTS];
+	return prompt ?? null;
 };
 
 const computeCandidates = (
@@ -88,14 +92,16 @@ const computeCandidates = (
 		enemyPositions,
 	});
 
+	const interactEvent = candidates.interact?.event ?? null;
 	const interactPrompt = candidates.interact
-		? getPromptText(candidates.interact.type, currentRoomId)
+		? getPromptText(candidates.interact.type, interactEvent)
 		: null;
 
 	const attackPrompt = candidates.attack ? "Attack" : null;
 
 	return {
 		interactPrompt,
+		interactEvent: interactEvent as (DungeonEvent & string) | null,
 		attackPrompt,
 		hasInteract: interactPrompt !== null,
 		hasAttack: attackPrompt !== null,
@@ -136,9 +142,12 @@ export const useInteractionCandidates = (
 
 		updateIfChanged();
 
-		const unsubscribe = subscribeToPlayerPosition(updateIfChanged);
+		const unsubPosition = subscribeToPlayerPosition(updateIfChanged);
+		const unsubDoorway = subscribeToDoorwayDetection(updateIfChanged);
+
 		return () => {
-			unsubscribe?.();
+			unsubPosition?.();
+			unsubDoorway?.();
 		};
 	}, [currentRoomId, hasTreasureKey, enemiesRemaining]);
 
