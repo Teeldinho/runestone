@@ -22,5 +22,6 @@ export type {
 export { DUNGEON_EVENTS } from "./dungeonEvents";
 export {
 	DUNGEON_CONTEXT_KEYS,
+	FLOOR_ONE_GUARDS,
 	FLOOR_ONE_MACHINE_RULES,
 } from "./floorOneMachineConfig";

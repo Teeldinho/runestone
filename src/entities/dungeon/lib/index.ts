@@ -1,3 +1,4 @@
+export { FLOOR_ONE_GUARDS } from "../config";
 export { buildDoorKey } from "./doorKeyHelpers";
 export {
 	canEnterFloorOneExit,
