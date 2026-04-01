@@ -1,5 +1,5 @@
-import type { DoorStateKey } from "@/entities/dungeon";
-import type { NavigationActionEvent } from "../config/navigationActions";
+import { buildDoorKey, type DoorStateKey } from "@/entities/dungeon";
+import { DOOR_TRANSITION_MAP, type NavigationActionEvent } from "../config";
 
 export const getDoorKeyForNavigationEvent = (
 	eventType: NavigationActionEvent,

@@ -5,11 +5,11 @@ import { DUNGEON_EVENTS, ROOM_LABELS } from "@/entities/dungeon";
 
 import {
 	DUNGEON_MACHINE_SYSTEM_EVENTS,
-	getDoorKeyForEvent,
 	NAVIGATION_ACTION_EVENTS,
 	NAVIGATION_ACTION_LABELS,
 	type NavigationActionEvent,
 } from "../config";
+import { getDoorKeyForNavigationEvent } from "../lib/getDoorKeyForNavigationEvent";
 import { getNavigationActionDisabled } from "../lib/navigationActionAvailability";
 import { useGameMachineRuntime } from "./gameMachineRuntime";
 
@@ -31,8 +31,8 @@ export const useGameMachine = () => {
 	);
 
 	const handleDoorTransition = useCallback(
-		(eventType: DungeonEvent) => {
-			const doorKey = getDoorKeyForEvent(eventType);
+		(eventType: NavigationActionEvent) => {
+			const doorKey = getDoorKeyForNavigationEvent(eventType);
 			if (doorKey && !snapshot.context.openedDoors.includes(doorKey)) {
 				sendDungeonMachineEvent({
 					type: DUNGEON_EVENTS.OPEN_DOOR,
