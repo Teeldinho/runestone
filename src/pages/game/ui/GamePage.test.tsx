@@ -84,7 +84,6 @@ vi.mock("@/features/dungeon-navigation", () => ({
 		sendDungeonMachineEvent: vi.fn(),
 		snapshot: {},
 	})),
-	InteractionPrompt: () => <div data-testid="interaction-prompt" />,
 }));
 
 describe("GamePage", () => {

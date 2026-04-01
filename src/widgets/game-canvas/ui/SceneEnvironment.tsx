@@ -9,6 +9,8 @@ import {
 	useSceneEnvironmentSettings,
 } from "../model";
 
+import { WorldInteractionPrompt } from "./WorldInteractionPrompt";
+
 type SceneEnvironmentProps = {
 	environment: CanvasEnvironmentSettings;
 	playerSpawnPosition: Vector3Tuple;
@@ -53,6 +55,7 @@ export function SceneEnvironment({
 			{roomMeshSettings.map((room) => (
 				<RoomLabel key={`${room.roomId}:label`} settings={room.labelSettings} />
 			))}
+			<WorldInteractionPrompt />
 		</>
 	);
 }

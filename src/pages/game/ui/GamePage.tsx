@@ -1,7 +1,6 @@
 import { Volume2, VolumeX } from "lucide-react";
 import { useCameraMachine } from "@/features/camera-system";
 import {
-	InteractionPrompt,
 	useGameMachineRuntime,
 	useInteractionCandidates,
 	useInteractionInput,
@@ -106,7 +105,6 @@ export function GamePage() {
 								machineRuntime={canvasMachineRuntime}
 								postprocessingEnabled={settings.postprocessingEnabled}
 							/>
-							<InteractionPrompt candidates={interactionCandidates} />
 						</div>
 
 						<div
