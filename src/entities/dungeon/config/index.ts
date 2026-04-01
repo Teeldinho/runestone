@@ -12,7 +12,13 @@ export {
 	ROOM_IDS,
 	ROOM_LABELS,
 } from "./dungeonConfig";
-export type { DungeonEvent, DungeonEventObject } from "./dungeonEvents";
+export type {
+	DoorSide,
+	DoorStateKey,
+	DungeonEvent,
+	DungeonEventObject,
+	InteractionType,
+} from "./dungeonEvents";
 export { DUNGEON_EVENTS } from "./dungeonEvents";
 export {
 	DUNGEON_CONTEXT_KEYS,

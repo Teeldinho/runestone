@@ -14,6 +14,10 @@ const baseContext = {
 	discoveredRooms: [ROOM_IDS.ENTRANCE],
 	hasTreasureKey: false,
 	enemiesRemaining: 1,
+	openedDoors: [],
+	nearInteractable: null,
+	nearInteractableType: null,
+	lastTransition: null,
 };
 
 describe("getNavigationActionDisabled — ENTER_LIBRARY", () => {

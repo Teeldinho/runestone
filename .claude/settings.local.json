@@ -36,7 +36,15 @@
       "Bash(cp ~/Documents/Runes/KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_CombatMelee.glb public/models/animations/)",
       "Bash(npx steiger:*)",
       "Bash(ls /Users/tshepang/Documents/GitHub/runestone/node_modules/three/examples/jsm/utils/SkeletonUtils*)",
-      "Bash(ls /Users/tshepang/Documents/GitHub/runestone/node_modules/three/src/helpers/SkeletonHelper*)"
+      "Bash(ls /Users/tshepang/Documents/GitHub/runestone/node_modules/three/src/helpers/SkeletonHelper*)",
+      "Bash(./node_modules/.bin/vitest run:*)",
+      "Bash(node_modules/.bin/vitest run:*)",
+      "Bash(ls node_modules/.bin/vi*)",
+      "Bash(npm list:*)",
+      "Bash(npm install:*)",
+      "Bash(echo \"--- CI EXIT: $?\" ---)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(echo \"EXIT=$?\")"
     ]
   }
 }

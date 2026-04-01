@@ -22,6 +22,10 @@ const createDungeonContext = (
 	discoveredRooms: [ROOM_IDS.ENTRANCE],
 	hasTreasureKey: false,
 	enemiesRemaining: DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
+	openedDoors: [],
+	nearInteractable: null,
+	nearInteractableType: null,
+	lastTransition: null,
 	...overrides,
 });
 

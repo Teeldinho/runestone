@@ -21,6 +21,7 @@ export {
 	canEnterFloorOneTreasury,
 	createFloorOneContext,
 	decrementFloorOneEnemies,
+	FLOOR_ONE_GUARDS,
 	markFloorOneTreasureKeyCollected,
 	updateFloorOneContextRoom,
 } from "./lib";

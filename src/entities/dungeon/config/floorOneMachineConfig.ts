@@ -10,4 +10,8 @@ export const DUNGEON_CONTEXT_KEYS = {
 	HAS_TREASURE_KEY: "hasTreasureKey",
 	ENEMIES_REMAINING: "enemiesRemaining",
 	LAST_DOORWAY_FEEDBACK: "lastDoorwayFeedback",
+	OPENED_DOORS: "openedDoors",
+	NEAR_INTERACTABLE: "nearInteractable",
+	NEAR_INTERACTABLE_TYPE: "nearInteractableType",
+	LAST_TRANSITION: "lastTransition",
 } as const;
