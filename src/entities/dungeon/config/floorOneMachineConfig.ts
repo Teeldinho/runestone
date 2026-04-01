@@ -1,4 +1,5 @@
-import type { DoorStateKey } from "../model/types";
+import { isDoorOpened } from "../lib/floorOneMachineGuards";
+import type { DoorStateKey, DungeonMachineContext } from "../model/types";
 
 export const FLOOR_ONE_MACHINE_RULES = {
 	ENEMY_DECREMENT: 1,
@@ -19,10 +20,14 @@ export const DUNGEON_CONTEXT_KEYS = {
 } as const;
 
 export const FLOOR_ONE_GUARDS = {
-	doorIsOpened: {} as {
-		type: "doorIsOpened";
-		params: { doorKey: DoorStateKey };
+	doorIsOpened: (
+		{ context }: { context: DungeonMachineContext },
+		params: { doorKey: DoorStateKey },
+	) => isDoorOpened(context, params.doorKey),
+	treasuryCanBeEntered: ({ context }: { context: DungeonMachineContext }) => {
+		const { hasTreasureKey, enemiesRemaining } = context;
+		return hasTreasureKey && enemiesRemaining === 0;
 	},
-	treasuryCanBeEntered: {} as { type: "treasuryCanBeEntered" },
-	exitCanBeEntered: {} as { type: "exitCanBeEntered" },
+	exitCanBeEntered: ({ context }: { context: DungeonMachineContext }) =>
+		context.hasTreasureKey,
 } as const;
