@@ -1,4 +1,4 @@
-import type { DungeonContext } from "@/entities/dungeon";
+import type { RoomId } from "@/entities/dungeon";
 
 import { MACHINE_GRAPH_ROOM_IDS, MACHINE_GRAPH_TRANSITIONS } from "../config";
 import type { MachineGraphEdge, MachineGraphNode } from "../model/types";
@@ -13,13 +13,13 @@ type MachineGraphSnapshot = {
 };
 
 export const createMachineGraphSnapshot = (
-	context: DungeonContext,
+	currentRoomId: RoomId,
 ): MachineGraphSnapshot => {
 	const nodes = MACHINE_GRAPH_ROOM_IDS.map((roomId) => ({
 		id: roomId,
 		label: getMachineGraphRoomLabel(roomId),
 		kind: getMachineGraphNodeKind(roomId),
-		isActive: context.currentRoomId === roomId,
+		isActive: currentRoomId === roomId,
 	}));
 
 	const edges = MACHINE_GRAPH_TRANSITIONS.map((transition) => ({

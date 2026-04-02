@@ -1,26 +1,11 @@
 import { describe, expect, it } from "vitest";
-import type { DungeonContext } from "@/entities/dungeon";
-import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
+import { ROOM_IDS } from "@/entities/dungeon";
 
 import { createMachineGraphSnapshot } from "./createMachineGraphSnapshot";
 
-const createDungeonContext = (
-	overrides?: Partial<DungeonContext>,
-): DungeonContext => ({
-	currentFloorId: FLOOR_IDS.FLOOR_ONE,
-	currentRoomId: ROOM_IDS.ENTRANCE,
-	discoveredRooms: [ROOM_IDS.ENTRANCE],
-	hasTreasureKey: false,
-	enemiesRemaining: 1,
-	nearInteractable: null,
-	nearInteractableType: null,
-	lastTransition: null,
-	...overrides,
-});
-
 describe("createMachineGraphSnapshot", () => {
 	it("returns all room nodes with active state metadata", () => {
-		const snapshot = createMachineGraphSnapshot(createDungeonContext());
+		const snapshot = createMachineGraphSnapshot(ROOM_IDS.ENTRANCE);
 
 		expect(snapshot.nodes).toHaveLength(5);
 
@@ -44,16 +29,7 @@ describe("createMachineGraphSnapshot", () => {
 	});
 
 	it("includes guarded and unguarded transitions", () => {
-		const snapshot = createMachineGraphSnapshot(
-			createDungeonContext({
-				currentRoomId: ROOM_IDS.GUARD_ROOM,
-				discoveredRooms: [
-					ROOM_IDS.ENTRANCE,
-					ROOM_IDS.LIBRARY,
-					ROOM_IDS.GUARD_ROOM,
-				],
-			}),
-		);
+		const snapshot = createMachineGraphSnapshot(ROOM_IDS.GUARD_ROOM);
 
 		expect(snapshot.edges).toContainEqual({
 			id: `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.TREASURY}`,

@@ -34,11 +34,14 @@ type GamePageViewModel = {
 
 export const useGamePage = (): GamePageViewModel => {
 	const {
+		activeStateLabel,
 		actionButtons,
 		currentRoomLabel,
+		currentRoomId,
 		discoveredRoomLabels,
+		enemiesRemaining,
 		handleDungeonRunReset: resetDungeonMachine,
-		snapshot,
+		hasTreasureKey,
 	} = useGameMachine();
 	const { snapshot: playerSnapshot, sendPlayerMachineEvent } =
 		usePlayerMachineRuntime();
@@ -74,24 +77,24 @@ export const useGamePage = (): GamePageViewModel => {
 	}, [sendPlayerMachineEvent, resetDungeonMachine, entrancePosition]);
 
 	const { edges, positionedNodes } = useStateVisualizer({
-		context: snapshot.context,
+		currentRoomId,
 	});
 
 	return {
 		actionButtons,
-		activeStateLabel: String(snapshot.value),
+		activeStateLabel,
 		canvasMachineRuntime: {
-			currentRoomId: snapshot.context.currentRoomId,
-			enemiesRemaining: snapshot.context.enemiesRemaining,
-			hasTreasureKey: snapshot.context.hasTreasureKey,
+			currentRoomId,
+			enemiesRemaining,
+			hasTreasureKey,
 		},
 		currentRoomLabel,
 		discoveredRoomLabels,
-		enemiesRemaining: snapshot.context.enemiesRemaining,
+		enemiesRemaining,
 		graphEdges: edges,
 		graphNodes: positionedNodes,
 		handleAudioMuteToggle,
-		hasTreasureKeyLabel: snapshot.context.hasTreasureKey
+		hasTreasureKeyLabel: hasTreasureKey
 			? GAME_PAGE_COPY.TREASURE_KEY_STATUS.ACQUIRED
 			: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 		handleDungeonRunReset,

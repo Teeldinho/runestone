@@ -80,10 +80,7 @@ vi.mock("@/features/dungeon-navigation", () => ({
 		hasAttack: false,
 	})),
 	useInteractionInput: vi.fn(),
-	useGameMachineRuntime: vi.fn(() => ({
-		sendDungeonMachineEvent: vi.fn(),
-		snapshot: {},
-	})),
+	useSendDungeonMachineEvent: vi.fn(() => vi.fn()),
 }));
 
 describe("GamePage", () => {

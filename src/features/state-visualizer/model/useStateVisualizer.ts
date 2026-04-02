@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import type { DungeonContext } from "@/entities/dungeon";
+import type { RoomId } from "@/entities/dungeon";
 import { getGraphLayout } from "@/shared/lib";
 
 import { MACHINE_GRAPH_LAYOUT } from "../config";
@@ -11,7 +11,7 @@ import {
 import type { PositionedMachineGraphNode } from "./types";
 
 type UseStateVisualizerInput = {
-	context: DungeonContext;
+	currentRoomId: RoomId;
 };
 
 type StateVisualizerResult = MachineGraphSnapshot & {
@@ -19,11 +19,11 @@ type StateVisualizerResult = MachineGraphSnapshot & {
 };
 
 export const useStateVisualizer = ({
-	context,
+	currentRoomId,
 }: UseStateVisualizerInput): StateVisualizerResult => {
 	const graphSnapshot = useMemo(
-		() => createMachineGraphSnapshot(context),
-		[context],
+		() => createMachineGraphSnapshot(currentRoomId),
+		[currentRoomId],
 	);
 
 	const layout = useMemo(
