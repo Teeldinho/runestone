@@ -37,10 +37,16 @@ vi.mock("@/shared/lib/playerPositionStore", () => ({
 	getPlayerPosition: () => mockGetPlayerPosition(),
 }));
 
-vi.mock("@/features/dungeon-navigation", () => ({
-	selectLastTransition: "selectLastTransition",
-	useGameMachineSelector: () => mockLastTransition(),
-}));
+vi.mock("@/features/dungeon-navigation", async (importOriginal) => {
+	const original =
+		await importOriginal<typeof import("@/features/dungeon-navigation")>();
+
+	return {
+		...original,
+		selectLastTransition: "selectLastTransition",
+		useGameMachineSelector: () => mockLastTransition(),
+	};
+});
 
 import { useCameraRigViewModel } from "./useCameraRigViewModel";
 
@@ -195,7 +201,7 @@ describe("useCameraRigViewModel", () => {
 		expect(mockCamera.position.z).toBeCloseTo(-3.8, 6);
 	});
 
-	it("resets third-person opposite the doorway used to enter the room", () => {
+	it("keeps third-person behind north-entry travel while clamped inside the room", () => {
 		mockHasPlayerPosition.mockReturnValue(true);
 		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
 		mockLastTransition.mockReturnValue({
@@ -233,7 +239,9 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([10, 3.1, 3.8]);
+		expect(mockCamera.position.x).toBe(10);
+		expect(mockCamera.position.y).toBeCloseTo(3.1, 6);
+		expect(mockCamera.position.z).toBeCloseTo(-0.6, 6);
 		expect(thirdPersonControls.target.toArray()).toEqual([
 			10,
 			0.9 + PLAYER_EYE_HEIGHT,
