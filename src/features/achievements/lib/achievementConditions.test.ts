@@ -17,7 +17,6 @@ const makeContext = (
 	discoveredRooms: [ROOM_IDS.ENTRANCE],
 	hasTreasureKey: false,
 	enemiesRemaining: 3,
-	openedDoors: [],
 	nearInteractable: null,
 	nearInteractableType: null,
 	lastTransition: null,

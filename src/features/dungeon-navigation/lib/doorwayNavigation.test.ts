@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { FLOOR_ONE_MACHINE_RULES, ROOM_IDS } from "@/entities/dungeon";
+import {
+	DOOR_SIDES,
+	DUNGEON_EVENTS,
+	FLOOR_ONE_MACHINE_RULES,
+	ROOM_IDS,
+} from "@/entities/dungeon";
 
 import { resolveDoorwayNavigationEvent } from "./doorwayNavigation";
 
@@ -27,9 +32,9 @@ describe("resolveDoorwayNavigationEvent", () => {
 				enemiesRemaining: 1,
 			}),
 		).toEqual({
-			eventType: "ENTER_LIBRARY",
+			eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
 			isLocked: false,
-			doorSide: "south",
+			doorSide: DOOR_SIDES.SOUTH,
 		});
 	});
 
@@ -43,9 +48,9 @@ describe("resolveDoorwayNavigationEvent", () => {
 				enemiesRemaining: 1,
 			}),
 		).toEqual({
-			eventType: "LOCKED_DOOR_ATTEMPT",
+			eventType: DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT,
 			isLocked: true,
-			doorSide: "south",
+			doorSide: DOOR_SIDES.SOUTH,
 		});
 	});
 
@@ -59,9 +64,9 @@ describe("resolveDoorwayNavigationEvent", () => {
 				enemiesRemaining: FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING,
 			}),
 		).toEqual({
-			eventType: "ENTER_TREASURY",
+			eventType: DUNGEON_EVENTS.ENTER_TREASURY,
 			isLocked: false,
-			doorSide: "south",
+			doorSide: DOOR_SIDES.SOUTH,
 		});
 	});
 
@@ -75,9 +80,9 @@ describe("resolveDoorwayNavigationEvent", () => {
 				enemiesRemaining: FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING,
 			}),
 		).toEqual({
-			eventType: "RETURN_TO_LIBRARY",
+			eventType: DUNGEON_EVENTS.RETURN_TO_LIBRARY,
 			isLocked: false,
-			doorSide: "north",
+			doorSide: DOOR_SIDES.NORTH,
 		});
 	});
 
@@ -91,9 +96,9 @@ describe("resolveDoorwayNavigationEvent", () => {
 				enemiesRemaining: FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING,
 			}),
 		).toEqual({
-			eventType: "LOCKED_EXIT_ATTEMPT",
+			eventType: DUNGEON_EVENTS.LOCKED_EXIT_ATTEMPT,
 			isLocked: true,
-			doorSide: "south",
+			doorSide: DOOR_SIDES.SOUTH,
 		});
 	});
 
@@ -107,9 +112,9 @@ describe("resolveDoorwayNavigationEvent", () => {
 				enemiesRemaining: FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING,
 			}),
 		).toEqual({
-			eventType: "RETURN_TO_TREASURY",
+			eventType: DUNGEON_EVENTS.RETURN_TO_TREASURY,
 			isLocked: false,
-			doorSide: "north",
+			doorSide: DOOR_SIDES.NORTH,
 		});
 	});
 });

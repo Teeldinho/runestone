@@ -29,7 +29,6 @@ describe("floorOneContext", () => {
 			lastTransition: null,
 			nearInteractable: null,
 			nearInteractableType: null,
-			openedDoors: [],
 		});
 	});
 

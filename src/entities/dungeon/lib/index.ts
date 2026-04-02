@@ -1,5 +1,4 @@
-export { FLOOR_ONE_GUARDS } from "../config";
-export { buildDoorKey } from "./doorKeyHelpers";
+export { buildDoorKey, parseDoorKey } from "./doorKeyHelpers";
 export {
 	canEnterFloorOneExit,
 	canEnterFloorOneTreasury,
@@ -8,13 +7,14 @@ export {
 	createFloorOneContext,
 	decrementFloorOneEnemies,
 	markFloorOneTreasureKeyCollected,
-	openFloorOneDoor,
 	setFloorOneDoorwayFeedback,
 	setFloorOneNearInteractable,
 	trackFloorOneTransition,
+	transitionFloorOneContextRoom,
 	updateFloorOneContextRoom,
 } from "./floorOneContext";
+export { FLOOR_ONE_GUARD_IMPLEMENTATIONS } from "./floorOneMachineGuardImplementations";
 export {
-	canEnterRoomViaDoor,
-	isDoorOpened,
+	checkFloorOneCanPickUpTreasureKey,
+	checkFloorOneNearInteractable,
 } from "./floorOneMachineGuards";

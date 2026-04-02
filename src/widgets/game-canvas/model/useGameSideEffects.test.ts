@@ -3,7 +3,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RoomId } from "@/entities/dungeon";
-import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
+import { DOOR_SIDES, FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
 import { PLAYER_STATES, type PlayerHealthState } from "@/entities/player";
 import { AUDIO_SPRITE_IDS } from "@/features/audio-manager";
 
@@ -133,6 +133,11 @@ const createMockSnapshot = (
 		| "LOCKED_DOOR_ATTEMPT"
 		| "LOCKED_EXIT_ATTEMPT"
 		| null = null,
+	lastTransition: {
+		fromRoom: RoomId;
+		toRoom: RoomId;
+		doorSide: (typeof DOOR_SIDES)[keyof typeof DOOR_SIDES];
+	} | null = null,
 ) => ({
 	value: roomId,
 	context: {
@@ -142,6 +147,7 @@ const createMockSnapshot = (
 		hasTreasureKey: false,
 		enemiesRemaining: 1,
 		lastDoorwayFeedback,
+		lastTransition,
 	},
 	status,
 });
@@ -198,10 +204,17 @@ describe("useGameSideEffects — haptics and audio", () => {
 
 		act(() => {
 			mockSnapshotGetter.mockReturnValue(
-				createMockSnapshot(ROOM_IDS.LIBRARY, "active", [
-					ROOM_IDS.ENTRANCE,
+				createMockSnapshot(
 					ROOM_IDS.LIBRARY,
-				]),
+					"active",
+					[ROOM_IDS.ENTRANCE, ROOM_IDS.LIBRARY],
+					null,
+					{
+						fromRoom: ROOM_IDS.ENTRANCE,
+						toRoom: ROOM_IDS.LIBRARY,
+						doorSide: DOOR_SIDES.NORTH,
+					},
+				),
 			);
 		});
 		rerender();
@@ -229,10 +242,57 @@ describe("useGameSideEffects — haptics and audio", () => {
 
 		act(() => {
 			mockSnapshotGetter.mockReturnValue(
+				createMockSnapshot(
+					ROOM_IDS.LIBRARY,
+					"active",
+					[ROOM_IDS.ENTRANCE, ROOM_IDS.LIBRARY],
+					null,
+					{
+						fromRoom: ROOM_IDS.ENTRANCE,
+						toRoom: ROOM_IDS.LIBRARY,
+						doorSide: DOOR_SIDES.NORTH,
+					},
+				),
+			);
+		});
+		rerender();
+
+		expect(mockSetPlayerTeleportTarget).toHaveBeenCalledWith(
+			0,
+			expect.any(Number),
+			14.8,
+		);
+	});
+
+	it("waits for transition metadata before applying non-initial doorway arrival", () => {
+		const { rerender } = renderHook(() => useGameSideEffects());
+		vi.clearAllMocks();
+
+		act(() => {
+			mockSnapshotGetter.mockReturnValue(
 				createMockSnapshot(ROOM_IDS.LIBRARY, "active", [
 					ROOM_IDS.ENTRANCE,
 					ROOM_IDS.LIBRARY,
 				]),
+			);
+		});
+		rerender();
+
+		expect(mockSetPlayerTeleportTarget).not.toHaveBeenCalled();
+
+		act(() => {
+			mockSnapshotGetter.mockReturnValue(
+				createMockSnapshot(
+					ROOM_IDS.LIBRARY,
+					"active",
+					[ROOM_IDS.ENTRANCE, ROOM_IDS.LIBRARY],
+					null,
+					{
+						fromRoom: ROOM_IDS.ENTRANCE,
+						toRoom: ROOM_IDS.LIBRARY,
+						doorSide: DOOR_SIDES.NORTH,
+					},
+				),
 			);
 		});
 		rerender();

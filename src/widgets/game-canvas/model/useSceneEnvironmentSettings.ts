@@ -2,14 +2,12 @@ import { useMemo } from "react";
 import type { CorridorMeshSettings } from "@/entities/corridor";
 import {
 	createFloorOneMachine,
+	DOOR_SIDES,
 	FLOOR_ONE_MACHINE_RULES,
 	ROOM_IDS,
 } from "@/entities/dungeon";
 import { type PlayerMeshSettings, usePlayerMesh } from "@/entities/player";
-import {
-	createDungeonFloorLayout,
-	type RoomWallOpening,
-} from "@/entities/room";
+import { createDungeonFloorLayout } from "@/entities/room";
 import { useGameMachineRuntime } from "@/features/dungeon-navigation";
 import {
 	createSceneCorridorMeshSettings,
@@ -27,24 +25,12 @@ type SceneEnvironmentSettingsViewModel = {
 	roomMeshSettings: SceneRoomMeshSettings[];
 };
 
-const getOpenedDoorSidesForRoom = (
-	roomId: string,
-	wallOpenings: RoomWallOpening[],
-	openedDoors: string[],
-): RoomWallOpening[] => {
-	return wallOpenings.filter((side) => {
-		const doorKey = `${roomId}:${side}` as const;
-		return openedDoors.includes(doorKey);
-	});
-};
-
 export const useSceneEnvironmentSettings =
 	(): SceneEnvironmentSettingsViewModel => {
 		const defaultPlayerMeshSettings = usePlayerMesh();
 		const { snapshot } = useGameMachineRuntime();
 
 		return useMemo(() => {
-			const openedDoors = snapshot.context.openedDoors ?? [];
 			const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
 			const lockedDoorSidesByRoomId = {
 				[ROOM_IDS.GUARD_ROOM]:
@@ -52,10 +38,10 @@ export const useSceneEnvironmentSettings =
 					snapshot.context.enemiesRemaining ===
 						FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING
 						? ([] as const)
-						: (["south"] as const),
+						: ([DOOR_SIDES.SOUTH] as const),
 				[ROOM_IDS.TREASURY]: snapshot.context.hasTreasureKey
 					? ([] as const)
-					: (["south"] as const),
+					: ([DOOR_SIDES.SOUTH] as const),
 			};
 			const corridorMeshSettings = createSceneCorridorMeshSettings(
 				floorLayout.corridors,
@@ -66,11 +52,6 @@ export const useSceneEnvironmentSettings =
 				lockedDoorSidesByRoomId,
 			).map((roomMeshSetting) => ({
 				...roomMeshSetting,
-				openedDoorSides: getOpenedDoorSidesForRoom(
-					roomMeshSetting.roomId,
-					roomMeshSetting.wallOpenings,
-					openedDoors,
-				),
 				isTreasury: roomMeshSetting.roomId === ROOM_IDS.TREASURY,
 				showTreasureKey:
 					roomMeshSetting.roomId === ROOM_IDS.GUARD_ROOM &&
@@ -101,7 +82,6 @@ export const useSceneEnvironmentSettings =
 			defaultPlayerMeshSettings,
 			snapshot.context.enemiesRemaining,
 			snapshot.context.hasTreasureKey,
-			snapshot.context.openedDoors,
 		]);
 	};
 

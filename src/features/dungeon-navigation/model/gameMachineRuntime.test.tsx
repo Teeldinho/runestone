@@ -4,7 +4,13 @@ import { act, renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 
-import { buildDoorKey, DUNGEON_EVENTS, ROOM_IDS } from "@/entities/dungeon";
+import {
+	buildDoorKey,
+	DOOR_SIDES,
+	DUNGEON_EVENTS,
+	INTERACTION_TYPES,
+	ROOM_IDS,
+} from "@/entities/dungeon";
 import { GAME_MACHINE_RUNTIME_ERRORS } from "@/features/dungeon-navigation/config";
 
 import {
@@ -32,8 +38,9 @@ describe("useGameMachineRuntime", () => {
 
 		act(() => {
 			result.current.sendDungeonMachineEvent({
-				type: DUNGEON_EVENTS.OPEN_DOOR,
-				doorKey: buildDoorKey(ROOM_IDS.ENTRANCE, "south"),
+				type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+				interactableId: buildDoorKey(ROOM_IDS.ENTRANCE, DOOR_SIDES.SOUTH),
+				interactableType: INTERACTION_TYPES.DOOR,
 			});
 			result.current.sendDungeonMachineEvent({
 				type: DUNGEON_EVENTS.ENTER_LIBRARY,

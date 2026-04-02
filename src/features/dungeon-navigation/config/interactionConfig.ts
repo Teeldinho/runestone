@@ -1,5 +1,7 @@
 import { DUNGEON_EVENTS } from "@/entities/dungeon";
 
+import { DOORWAY_NAVIGATION_CONFIG } from "./doorwayNavigationConfig";
+
 export const INTERACTION_CONFIG = {
 	INTERACT_RADIUS: 2.5,
 	ATTACK_RADIUS: 1.5,
@@ -8,6 +10,19 @@ export const INTERACTION_CONFIG = {
 export const INTERACTION_KEYS = {
 	INTERACT: "f",
 	ATTACK: "e",
+} as const;
+
+export const INTERACTION_COOLDOWN_MS = {
+	INTERACT: DOORWAY_NAVIGATION_CONFIG.TRIGGER_COOLDOWN_MS,
+	ATTACK: 1200,
+} as const;
+
+export const INTERACTION_CANDIDATE_TYPES = {
+	KEY: "key",
+	GUARDED_DOOR: "guarded-door",
+	DOOR: "door",
+	EXIT: "exit",
+	ENEMY: "enemy",
 } as const;
 
 export const INTERACTION_PROMPTS = {
@@ -33,7 +48,9 @@ export const MOVEMENT_KEYS_LABEL = "WASD / Arrow keys";
 export const EMPTY_INTERACTION_CANDIDATES = {
 	interactPrompt: null,
 	interactEvent: null,
+	interactTargetId: null,
 	attackPrompt: null,
+	attackPosition: null,
 	hasInteract: false,
 	hasAttack: false,
 } as const;

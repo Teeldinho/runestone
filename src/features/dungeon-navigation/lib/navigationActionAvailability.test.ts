@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
+	buildDoorKey,
+	DOOR_SIDES,
 	DUNGEON_EVENTS,
+	DUNGEON_INTERACTABLE_IDS,
 	FLOOR_ONE_MACHINE_RULES,
 	ROOM_IDS,
 } from "@/entities/dungeon";
@@ -14,7 +17,6 @@ const baseContext = {
 	discoveredRooms: [ROOM_IDS.ENTRANCE],
 	hasTreasureKey: false,
 	enemiesRemaining: 1,
-	openedDoors: [],
 	nearInteractable: null,
 	nearInteractableType: null,
 	lastTransition: null,
@@ -22,7 +24,11 @@ const baseContext = {
 
 describe("getNavigationActionDisabled — ENTER_LIBRARY", () => {
 	it("is enabled when in entrance", () => {
-		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.ENTRANCE };
+		const ctx = {
+			...baseContext,
+			currentRoomId: ROOM_IDS.ENTRANCE,
+			nearInteractable: buildDoorKey(ROOM_IDS.ENTRANCE, DOOR_SIDES.SOUTH),
+		};
 		expect(getNavigationActionDisabled(DUNGEON_EVENTS.ENTER_LIBRARY, ctx)).toBe(
 			false,
 		);
@@ -38,7 +44,11 @@ describe("getNavigationActionDisabled — ENTER_LIBRARY", () => {
 
 describe("getNavigationActionDisabled — ENTER_GUARD_ROOM", () => {
 	it("is enabled when in library", () => {
-		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.LIBRARY };
+		const ctx = {
+			...baseContext,
+			currentRoomId: ROOM_IDS.LIBRARY,
+			nearInteractable: buildDoorKey(ROOM_IDS.LIBRARY, DOOR_SIDES.SOUTH),
+		};
 		expect(
 			getNavigationActionDisabled(DUNGEON_EVENTS.ENTER_GUARD_ROOM, ctx),
 		).toBe(false);
@@ -58,6 +68,7 @@ describe("getNavigationActionDisabled — PICK_UP_KEY", () => {
 			...baseContext,
 			currentRoomId: ROOM_IDS.GUARD_ROOM,
 			hasTreasureKey: false,
+			nearInteractable: DUNGEON_INTERACTABLE_IDS.TREASURE_KEY,
 		};
 		expect(getNavigationActionDisabled(DUNGEON_EVENTS.PICK_UP_KEY, ctx)).toBe(
 			false,
@@ -129,6 +140,7 @@ describe("getNavigationActionDisabled — ENTER_TREASURY", () => {
 			currentRoomId: ROOM_IDS.GUARD_ROOM,
 			hasTreasureKey: true,
 			enemiesRemaining: 0,
+			nearInteractable: buildDoorKey(ROOM_IDS.GUARD_ROOM, DOOR_SIDES.SOUTH),
 		};
 		expect(
 			getNavigationActionDisabled(DUNGEON_EVENTS.ENTER_TREASURY, ctx),
@@ -178,6 +190,7 @@ describe("getNavigationActionDisabled — ENTER_EXIT", () => {
 			...baseContext,
 			currentRoomId: ROOM_IDS.TREASURY,
 			hasTreasureKey: true,
+			nearInteractable: buildDoorKey(ROOM_IDS.TREASURY, DOOR_SIDES.SOUTH),
 		};
 		expect(getNavigationActionDisabled(DUNGEON_EVENTS.ENTER_EXIT, ctx)).toBe(
 			false,
@@ -209,7 +222,11 @@ describe("getNavigationActionDisabled — ENTER_EXIT", () => {
 
 describe("getNavigationActionDisabled — RETURN_TO_ENTRANCE", () => {
 	it("is enabled when in library", () => {
-		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.LIBRARY };
+		const ctx = {
+			...baseContext,
+			currentRoomId: ROOM_IDS.LIBRARY,
+			nearInteractable: buildDoorKey(ROOM_IDS.LIBRARY, DOOR_SIDES.NORTH),
+		};
 		expect(
 			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_ENTRANCE, ctx),
 		).toBe(false);
@@ -232,7 +249,11 @@ describe("getNavigationActionDisabled — RETURN_TO_ENTRANCE", () => {
 
 describe("getNavigationActionDisabled — RETURN_TO_LIBRARY", () => {
 	it("is enabled when in guard room", () => {
-		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.GUARD_ROOM };
+		const ctx = {
+			...baseContext,
+			currentRoomId: ROOM_IDS.GUARD_ROOM,
+			nearInteractable: buildDoorKey(ROOM_IDS.GUARD_ROOM, DOOR_SIDES.NORTH),
+		};
 		expect(
 			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_LIBRARY, ctx),
 		).toBe(false);
@@ -248,7 +269,11 @@ describe("getNavigationActionDisabled — RETURN_TO_LIBRARY", () => {
 
 describe("getNavigationActionDisabled — RETURN_TO_GUARD_ROOM", () => {
 	it("is enabled when in treasury", () => {
-		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.TREASURY };
+		const ctx = {
+			...baseContext,
+			currentRoomId: ROOM_IDS.TREASURY,
+			nearInteractable: buildDoorKey(ROOM_IDS.TREASURY, DOOR_SIDES.NORTH),
+		};
 		expect(
 			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM, ctx),
 		).toBe(false);
@@ -271,7 +296,11 @@ describe("getNavigationActionDisabled — RETURN_TO_GUARD_ROOM", () => {
 
 describe("getNavigationActionDisabled — RETURN_TO_TREASURY", () => {
 	it("is enabled when in exit", () => {
-		const ctx = { ...baseContext, currentRoomId: ROOM_IDS.EXIT };
+		const ctx = {
+			...baseContext,
+			currentRoomId: ROOM_IDS.EXIT,
+			nearInteractable: buildDoorKey(ROOM_IDS.EXIT, DOOR_SIDES.NORTH),
+		};
 		expect(
 			getNavigationActionDisabled(DUNGEON_EVENTS.RETURN_TO_TREASURY, ctx),
 		).toBe(false);

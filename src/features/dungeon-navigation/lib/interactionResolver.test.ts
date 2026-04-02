@@ -1,25 +1,30 @@
 import { describe, expect, it } from "vitest";
 
-import { buildDoorKey, DUNGEON_EVENTS, ROOM_IDS } from "@/entities/dungeon";
+import {
+	buildDoorKey,
+	DOOR_SIDES,
+	DUNGEON_EVENTS,
+	DUNGEON_INTERACTABLE_IDS,
+	ROOM_IDS,
+} from "@/entities/dungeon";
 import { ENEMY_CONFIG } from "@/shared/config";
 
 import { resolveInteractionCandidates } from "./interactionResolver";
 
 const defaultCandidates = {
-	openedDoors: [],
 	nearInteractable: null,
 };
 
 describe("resolveInteractionCandidates", () => {
 	describe("key pickup", () => {
-		it("returns key candidate when in guard room and key not collected", () => {
+		it("returns key candidate only when the treasure key is the nearby interactable", () => {
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.GUARD_ROOM,
 				hasTreasureKey: false,
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [[2, 1, 0]],
-				...defaultCandidates,
+				nearInteractable: DUNGEON_INTERACTABLE_IDS.TREASURE_KEY,
 			});
 
 			expect(result.interact).not.toBeNull();
@@ -34,12 +39,10 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [[2, 1, 0]],
-				...defaultCandidates,
+				nearInteractable: DUNGEON_INTERACTABLE_IDS.TREASURE_KEY,
 			});
 
-			const keyCandidate =
-				result.interact?.type === "key" ? result.interact : null;
-			expect(keyCandidate).toBeNull();
+			expect(result.interact).toBeNull();
 		});
 
 		it("returns null interact candidate when not in guard room", () => {
@@ -49,64 +52,62 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
-				...defaultCandidates,
+				nearInteractable: DUNGEON_INTERACTABLE_IDS.TREASURE_KEY,
 			});
 
-			const keyCandidate =
-				result.interact?.type === "key" ? result.interact : null;
-			expect(keyCandidate).toBeNull();
+			expect(result.interact).toBeNull();
 		});
 	});
 
-	describe("guarded door", () => {
-		it("returns guarded door candidate when door is opened", () => {
+	describe("doors", () => {
+		it("returns guarded door candidate when treasury guard is satisfied", () => {
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.GUARD_ROOM,
 				hasTreasureKey: true,
 				enemiesRemaining: 0,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
-				openedDoors: [buildDoorKey(ROOM_IDS.GUARD_ROOM, "south")],
-				nearInteractable: buildDoorKey(ROOM_IDS.GUARD_ROOM, "south"),
+				nearInteractable: buildDoorKey(ROOM_IDS.GUARD_ROOM, DOOR_SIDES.SOUTH),
 			});
 
 			expect(result.interact).not.toBeNull();
 			expect(result.interact?.type).toBe("guarded-door");
 			expect(result.interact?.event).toBe(DUNGEON_EVENTS.ENTER_TREASURY);
+			expect(result.interact?.prompt).toBe("Enter Treasury");
 		});
 
-		it("returns null when guarded door is not opened", () => {
+		it("dispatches locked doorway feedback while keeping treasury prompt copy when guard is unmet", () => {
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.GUARD_ROOM,
 				hasTreasureKey: false,
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
-				enemyPositions: [[2, 1, 0]],
-				...defaultCandidates,
+				enemyPositions: [],
+				nearInteractable: buildDoorKey(ROOM_IDS.GUARD_ROOM, DOOR_SIDES.SOUTH),
 			});
 
 			expect(result.interact).not.toBeNull();
-			expect(result.interact?.type).toBe("key");
+			expect(result.interact?.type).toBe("guarded-door");
+			expect(result.interact?.event).toBe(DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT);
+			expect(result.interact?.prompt).toBe("Enter Treasury");
 		});
 
-		it("returns guarded door for exit when door is opened", () => {
+		it("returns exit candidate when the treasury exit is nearby and unlocked", () => {
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.TREASURY,
 				hasTreasureKey: true,
 				enemiesRemaining: 0,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
-				openedDoors: [buildDoorKey(ROOM_IDS.TREASURY, "south")],
-				nearInteractable: buildDoorKey(ROOM_IDS.TREASURY, "south"),
+				nearInteractable: buildDoorKey(ROOM_IDS.TREASURY, DOOR_SIDES.SOUTH),
 			});
 
 			expect(result.interact).not.toBeNull();
-			expect(result.interact?.type).toBe("guarded-door");
+			expect(result.interact?.type).toBe("exit");
 			expect(result.interact?.event).toBe(DUNGEON_EVENTS.ENTER_EXIT);
+			expect(result.interact?.prompt).toBe("Exit Floor");
 		});
-	});
 
-	describe("unguarded door", () => {
 		it("returns unguarded door candidate when near an unguarded door", () => {
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.ENTRANCE,
@@ -114,26 +115,12 @@ describe("resolveInteractionCandidates", () => {
 				enemiesRemaining: 0,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [],
-				openedDoors: [],
-				nearInteractable: buildDoorKey(ROOM_IDS.ENTRANCE, "south"),
+				nearInteractable: buildDoorKey(ROOM_IDS.ENTRANCE, DOOR_SIDES.SOUTH),
 			});
 
 			expect(result.interact).not.toBeNull();
 			expect(result.interact?.type).toBe("door");
 			expect(result.interact?.event).toBe(DUNGEON_EVENTS.ENTER_LIBRARY);
-		});
-
-		it("returns null when no doorway is detected", () => {
-			const result = resolveInteractionCandidates({
-				currentRoomId: ROOM_IDS.ENTRANCE,
-				hasTreasureKey: false,
-				enemiesRemaining: 0,
-				playerPosition: [0, 1, 0],
-				enemyPositions: [],
-				...defaultCandidates,
-			});
-
-			expect(result.interact).toBeNull();
 		});
 	});
 
@@ -209,36 +196,21 @@ describe("resolveInteractionCandidates", () => {
 		});
 	});
 
-	describe("priority", () => {
-		it("key beats guarded door when both are available", () => {
-			const result = resolveInteractionCandidates({
-				currentRoomId: ROOM_IDS.GUARD_ROOM,
-				hasTreasureKey: false,
-				enemiesRemaining: 0,
-				playerPosition: [0, 1, 0],
-				enemyPositions: [],
-				...defaultCandidates,
-			});
-
-			expect(result.interact?.type).toBe("key");
-		});
-
-		it("interact and attack candidates are independent", () => {
+	describe("target consistency", () => {
+		it("keeps interact and attack candidates independent", () => {
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.GUARD_ROOM,
 				hasTreasureKey: false,
 				enemiesRemaining: 1,
 				playerPosition: [0, 1, 0],
 				enemyPositions: [[0, 1, 0.5]],
-				...defaultCandidates,
+				nearInteractable: DUNGEON_INTERACTABLE_IDS.TREASURE_KEY,
 			});
 
 			expect(result.interact?.type).toBe("key");
 			expect(result.attack).not.toBeNull();
 		});
-	});
 
-	describe("no candidates", () => {
 		it("returns null candidates when nothing is available", () => {
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.ENTRANCE,
@@ -251,19 +223,6 @@ describe("resolveInteractionCandidates", () => {
 
 			expect(result.interact).toBeNull();
 			expect(result.attack).toBeNull();
-		});
-
-		it("returns null interact when in room with no doors", () => {
-			const result = resolveInteractionCandidates({
-				currentRoomId: ROOM_IDS.ENTRANCE,
-				hasTreasureKey: false,
-				enemiesRemaining: 0,
-				playerPosition: [0, 1, 0],
-				enemyPositions: [],
-				...defaultCandidates,
-			});
-
-			expect(result.interact).toBeNull();
 		});
 	});
 });

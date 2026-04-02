@@ -1,88 +1,41 @@
 import { useEffect, useState } from "react";
-
-import type { DoorStateKey, DungeonEvent } from "@/entities/dungeon";
-import {
-	createFloorOneMachine,
-	ROOM_IDS,
-	type RoomId,
+import type {
+	DungeonEvent,
+	DungeonInteractableId,
+	RoomId,
 } from "@/entities/dungeon";
-import {
-	createDungeonFloorLayout,
-	type DungeonRoomLayout,
-} from "@/entities/room";
 import { useGameMachineRuntime } from "@/features/dungeon-navigation";
-import { ENEMY_CONFIG } from "@/shared/config";
+import {
+	getEnemyPositions,
+	subscribeToEnemyPositions,
+} from "@/shared/lib/enemyPositionStore";
 import {
 	getPlayerPosition,
 	subscribeToPlayerPosition,
 } from "@/shared/lib/playerPositionStore";
 import type { Vector3Tuple } from "@/shared/types";
 
-import { EMPTY_INTERACTION_CANDIDATES, INTERACTION_PROMPTS } from "../config";
+import { ATTACK_PROMPT, EMPTY_INTERACTION_CANDIDATES } from "../config";
 import { resolveInteractionCandidates } from "../lib";
 
 type InteractionCandidatesViewModel = {
 	interactPrompt: string | null;
 	interactEvent: (DungeonEvent & string) | null;
+	interactTargetId: DungeonInteractableId | null;
 	attackPrompt: string | null;
+	attackPosition: Vector3Tuple | null;
 	hasInteract: boolean;
 	hasAttack: boolean;
-};
-
-const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
-
-const getEnemyPositions = (
-	rooms: readonly DungeonRoomLayout[],
-	guardRoomId: RoomId,
-	enemyCount: number,
-): Vector3Tuple[] => {
-	const guardRoom = rooms.find((room) => room.roomId === guardRoomId);
-	if (!guardRoom || enemyCount <= 0) {
-		return [];
-	}
-
-	const [rx, ry, rz] = guardRoom.position;
-	const spawnOffset = ENEMY_CONFIG.ATTACK_RADIUS * 0.8;
-
-	const positions: Vector3Tuple[] = [[rx, ry + 1, rz]];
-
-	if (enemyCount > 1) {
-		positions.push([rx + spawnOffset, ry + 1, rz - spawnOffset]);
-	}
-
-	return positions.slice(0, enemyCount);
-};
-
-const getPromptText = (
-	candidateType: string | null,
-	candidateEvent: string | null,
-): string | null => {
-	if (!candidateEvent) {
-		return null;
-	}
-
-	if (candidateType === "key") {
-		return "Pick Up Key";
-	}
-
-	const prompt =
-		INTERACTION_PROMPTS[candidateEvent as keyof typeof INTERACTION_PROMPTS];
-	return prompt ?? null;
 };
 
 const computeCandidates = (
 	currentRoomId: RoomId,
 	hasTreasureKey: boolean,
 	enemiesRemaining: number,
-	openedDoors: DoorStateKey[],
-	nearInteractable: DoorStateKey | null,
+	nearInteractable: DungeonInteractableId | null,
 ): InteractionCandidatesViewModel => {
 	const playerPosition = getPlayerPosition();
-	const enemyPositions = getEnemyPositions(
-		floorLayout.rooms,
-		ROOM_IDS.GUARD_ROOM,
-		enemiesRemaining,
-	);
+	const enemyPositions = getEnemyPositions();
 
 	const candidates = resolveInteractionCandidates({
 		currentRoomId,
@@ -90,21 +43,22 @@ const computeCandidates = (
 		enemiesRemaining,
 		playerPosition,
 		enemyPositions,
-		openedDoors,
 		nearInteractable,
 	});
 
 	const interactEvent = candidates.interact?.event ?? null;
-	const interactPrompt = candidates.interact
-		? getPromptText(candidates.interact.type, interactEvent)
-		: null;
+	const interactPrompt = candidates.interact?.prompt ?? null;
+	const interactTargetId = candidates.interact?.interactableId ?? null;
 
-	const attackPrompt = candidates.attack ? "Attack" : null;
+	const attackPrompt = candidates.attack ? ATTACK_PROMPT : null;
+	const attackPosition = candidates.attack?.position ?? null;
 
 	return {
 		interactPrompt,
 		interactEvent: interactEvent as (DungeonEvent & string) | null,
+		interactTargetId,
 		attackPrompt,
+		attackPosition,
 		hasInteract: interactPrompt !== null,
 		hasAttack: attackPrompt !== null,
 	};
@@ -127,7 +81,6 @@ export const useInteractionCandidates = (
 	);
 
 	useEffect(() => {
-		const openedDoors = snapshot.context.openedDoors;
 		const nearInteractable = snapshot.context.nearInteractable;
 
 		const compute = () =>
@@ -135,7 +88,6 @@ export const useInteractionCandidates = (
 				currentRoomId,
 				hasTreasureKey,
 				enemiesRemaining,
-				openedDoors,
 				nearInteractable,
 			);
 
@@ -144,7 +96,12 @@ export const useInteractionCandidates = (
 				const next = compute();
 				if (
 					prev.interactPrompt === next.interactPrompt &&
-					prev.attackPrompt === next.attackPrompt
+					prev.interactEvent === next.interactEvent &&
+					prev.interactTargetId === next.interactTargetId &&
+					prev.attackPrompt === next.attackPrompt &&
+					prev.attackPosition?.[0] === next.attackPosition?.[0] &&
+					prev.attackPosition?.[1] === next.attackPosition?.[1] &&
+					prev.attackPosition?.[2] === next.attackPosition?.[2]
 				) {
 					return prev;
 				}
@@ -155,15 +112,16 @@ export const useInteractionCandidates = (
 		updateIfChanged();
 
 		const unsubPosition = subscribeToPlayerPosition(updateIfChanged);
+		const unsubEnemyPositions = subscribeToEnemyPositions(updateIfChanged);
 
 		return () => {
 			unsubPosition?.();
+			unsubEnemyPositions?.();
 		};
 	}, [
 		currentRoomId,
 		hasTreasureKey,
 		enemiesRemaining,
-		snapshot.context.openedDoors,
 		snapshot.context.nearInteractable,
 	]);
 

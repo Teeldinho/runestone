@@ -1,6 +1,6 @@
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
-import { useSyncExternalStore } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import {
 	getCameraMode,
 	subscribeToCameraMode,
@@ -28,13 +28,18 @@ type UsePlayerMeshViewModelResult = {
 export const usePlayerMeshViewModel = ({
 	initialPosition,
 }: UsePlayerMeshViewModelInput = {}): UsePlayerMeshViewModelResult => {
+	const initialPositionRef = useRef(initialPosition);
+	if (!initialPositionRef.current && initialPosition) {
+		initialPositionRef.current = initialPosition;
+	}
+
 	const { snapshot } = usePlayerMachineRuntime();
 	const healthState = snapshot.value[
 		PLAYER_STATES.REGIONS.HEALTH
 	] as PlayerHealthState;
 	const meshSettings = usePlayerMesh({
 		healthState,
-		position: initialPosition,
+		position: initialPositionRef.current,
 	});
 	const { rigidBodyRef } = usePlayerPhysics({
 		velocity: snapshot.context.velocity,
