@@ -79,14 +79,6 @@ export function RoomMesh({
 
 	return (
 		<group position={position}>
-			<pointLight
-				color={ROOM_LIGHT_CONFIG.COLOR}
-				decay={ROOM_LIGHT_CONFIG.DECAY}
-				distance={ROOM_LIGHT_CONFIG.DISTANCE}
-				intensity={ROOM_LIGHT_CONFIG.INTENSITY}
-				position={[0, ROOM_LIGHT_CONFIG.HEIGHT, 0]}
-			/>
-
 			{/* Floor tiles — GLTF */}
 			{floorTilePositions.map(([x, , z]) => (
 				<primitive
