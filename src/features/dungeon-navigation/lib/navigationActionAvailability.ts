@@ -10,9 +10,14 @@ import {
 
 import type { NavigationActionEvent } from "../config";
 
+type NavigationActionAvailabilityContext = Pick<
+	DungeonContext,
+	"currentRoomId" | "enemiesRemaining" | "hasTreasureKey" | "nearInteractable"
+>;
+
 export const getNavigationActionDisabled = (
 	eventType: NavigationActionEvent,
-	context: DungeonContext,
+	context: NavigationActionAvailabilityContext,
 ): boolean => {
 	switch (eventType) {
 		case DUNGEON_EVENTS.ENTER_LIBRARY:

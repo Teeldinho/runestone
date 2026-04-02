@@ -11,20 +11,20 @@ import {
 import { setPlayerPosition } from "@/shared/lib/playerPositionStore";
 
 const mockRuntimeContext = vi.hoisted(() => ({
+	currentRoomId: null as string | null,
+	enemiesRemaining: 0,
+	hasTreasureKey: false,
 	nearInteractable: null,
 }));
 
-vi.mock("@/features/dungeon-navigation", async (importOriginal) => {
+vi.mock("./gameMachineRuntime", async (importOriginal) => {
 	const original =
-		await importOriginal<typeof import("@/features/dungeon-navigation")>();
+		await importOriginal<typeof import("./gameMachineRuntime")>();
 
 	return {
 		...original,
-		useGameMachineRuntime: () => ({
-			snapshot: {
-				context: mockRuntimeContext,
-			},
-		}),
+		selectInteractionCandidatesContext: vi.fn(),
+		useGameMachineSelector: () => mockRuntimeContext,
 	};
 });
 
@@ -32,6 +32,9 @@ import { useInteractionCandidates } from "./useInteractionCandidates";
 
 describe("useInteractionCandidates", () => {
 	beforeEach(() => {
+		mockRuntimeContext.currentRoomId = ROOM_IDS.GUARD_ROOM;
+		mockRuntimeContext.enemiesRemaining = 1;
+		mockRuntimeContext.hasTreasureKey = true;
 		mockRuntimeContext.nearInteractable = null;
 		clearEnemyPositions();
 		setPlayerPosition(0, 1, 0);
@@ -40,13 +43,7 @@ describe("useInteractionCandidates", () => {
 	it("tracks live enemy positions for attack prompts", async () => {
 		setEnemyPosition("enemy-1", 0, 1, 0.5);
 
-		const { result } = renderHook(() =>
-			useInteractionCandidates({
-				currentRoomId: ROOM_IDS.GUARD_ROOM,
-				hasTreasureKey: true,
-				enemiesRemaining: 1,
-			}),
-		);
+		const { result } = renderHook(() => useInteractionCandidates());
 
 		await waitFor(() => {
 			expect(result.current.hasAttack).toBe(true);

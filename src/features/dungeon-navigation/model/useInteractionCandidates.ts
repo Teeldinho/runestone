@@ -1,10 +1,10 @@
+import { shallowEqual } from "@xstate/react";
 import { useEffect, useState } from "react";
 import type {
 	DungeonEvent,
 	DungeonInteractableId,
 	RoomId,
 } from "@/entities/dungeon";
-import { useGameMachineRuntime } from "@/features/dungeon-navigation";
 import {
 	getEnemyPositions,
 	subscribeToEnemyPositions,
@@ -17,6 +17,10 @@ import type { Vector3Tuple } from "@/shared/types";
 
 import { ATTACK_PROMPT, EMPTY_INTERACTION_CANDIDATES } from "../config";
 import { resolveInteractionCandidates } from "../lib";
+import {
+	selectInteractionCandidatesContext,
+	useGameMachineSelector,
+} from "./gameMachineRuntime";
 
 type InteractionCandidatesViewModel = {
 	interactPrompt: string | null;
@@ -64,25 +68,15 @@ const computeCandidates = (
 	};
 };
 
-type UseInteractionCandidatesInput = {
-	currentRoomId: RoomId;
-	hasTreasureKey: boolean;
-	enemiesRemaining: number;
-};
-
-export const useInteractionCandidates = (
-	input: UseInteractionCandidatesInput,
-): InteractionCandidatesViewModel => {
-	const { currentRoomId, hasTreasureKey, enemiesRemaining } = input;
-	const { snapshot } = useGameMachineRuntime();
+export const useInteractionCandidates = (): InteractionCandidatesViewModel => {
+	const { currentRoomId, enemiesRemaining, hasTreasureKey, nearInteractable } =
+		useGameMachineSelector(selectInteractionCandidatesContext, shallowEqual);
 
 	const [candidates, setCandidates] = useState<InteractionCandidatesViewModel>(
 		EMPTY_INTERACTION_CANDIDATES,
 	);
 
 	useEffect(() => {
-		const nearInteractable = snapshot.context.nearInteractable;
-
 		const compute = () =>
 			computeCandidates(
 				currentRoomId,
@@ -118,12 +112,7 @@ export const useInteractionCandidates = (
 			unsubPosition?.();
 			unsubEnemyPositions?.();
 		};
-	}, [
-		currentRoomId,
-		hasTreasureKey,
-		enemiesRemaining,
-		snapshot.context.nearInteractable,
-	]);
+	}, [currentRoomId, hasTreasureKey, enemiesRemaining, nearInteractable]);
 
 	return candidates;
 };

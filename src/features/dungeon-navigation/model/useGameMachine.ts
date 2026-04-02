@@ -1,3 +1,4 @@
+import { shallowEqual } from "@xstate/react";
 import { useCallback, useMemo } from "react";
 
 import type { DungeonEvent } from "@/entities/dungeon";
@@ -10,7 +11,16 @@ import {
 	type NavigationActionEvent,
 } from "../config";
 import { getNavigationActionDisabled } from "../lib/navigationActionAvailability";
-import { useGameMachineRuntime } from "./gameMachineRuntime";
+import {
+	selectActiveStateLabel,
+	selectCurrentRoomId,
+	selectDiscoveredRooms,
+	selectEnemiesRemaining,
+	selectHasTreasureKey,
+	selectNavigationActionContext,
+	useGameMachineSelector,
+	useSendDungeonMachineEvent,
+} from "./gameMachineRuntime";
 
 type GameActionButton = {
 	eventType: NavigationActionEvent;
@@ -20,7 +30,16 @@ type GameActionButton = {
 };
 
 export const useGameMachine = () => {
-	const { snapshot, sendDungeonMachineEvent } = useGameMachineRuntime();
+	const sendDungeonMachineEvent = useSendDungeonMachineEvent();
+	const activeStateLabel = useGameMachineSelector(selectActiveStateLabel);
+	const currentRoomId = useGameMachineSelector(selectCurrentRoomId);
+	const discoveredRooms = useGameMachineSelector(selectDiscoveredRooms);
+	const enemiesRemaining = useGameMachineSelector(selectEnemiesRemaining);
+	const hasTreasureKey = useGameMachineSelector(selectHasTreasureKey);
+	const navigationActionContext = useGameMachineSelector(
+		selectNavigationActionContext,
+		shallowEqual,
+	);
 
 	const handleDungeonEventSend = useCallback(
 		(eventType: DungeonEvent) => {
@@ -47,23 +66,30 @@ export const useGameMachine = () => {
 			NAVIGATION_ACTION_EVENTS.map((eventType) => ({
 				eventType,
 				label: NAVIGATION_ACTION_LABELS[eventType],
-				isDisabled: getNavigationActionDisabled(eventType, snapshot.context),
+				isDisabled: getNavigationActionDisabled(
+					eventType,
+					navigationActionContext,
+				),
 				handleDungeonActionTrigger: () => handleDoorTransition(eventType),
 			})),
-		[snapshot.context, handleDoorTransition],
+		[navigationActionContext, handleDoorTransition],
 	);
 
-	const currentRoomLabel = ROOM_LABELS[snapshot.context.currentRoomId];
-	const discoveredRoomLabels = snapshot.context.discoveredRooms.map(
+	const currentRoomLabel = ROOM_LABELS[currentRoomId];
+	const discoveredRoomLabels = discoveredRooms.map(
 		(roomId) => ROOM_LABELS[roomId],
 	);
 
 	return {
-		snapshot,
+		activeStateLabel,
 		currentRoomLabel,
+		currentRoomId,
 		discoveredRoomLabels,
+		discoveredRooms,
+		enemiesRemaining,
 		actionButtons,
 		handleDungeonEventSend,
 		handleDungeonRunReset,
+		hasTreasureKey,
 	};
 };
