@@ -26,7 +26,6 @@ import {
 	checkOrbitFollowJump,
 	getCameraRigTargets,
 	getPreservedOrbitCameraPosition,
-	resolveOrbitFollowUpdate,
 	setCameraUp,
 	setOrbitTarget,
 } from "../lib";
@@ -225,28 +224,6 @@ export const useCameraRigViewModel = ({
 			camera.position.set(...desiredCameraPosition);
 			setOrbitTarget(freeOrbitalOrbitRef.current, lookAt);
 			freeOrbitalOrbitRef.current.update();
-		} else if (!isUserInteractingRef.current) {
-			const orbitFollowUpdate = resolveOrbitFollowUpdate({
-				cameraPosition: camera.position,
-				currentTarget: freeOrbitalOrbitRef.current.target,
-				nextTarget: lookAt,
-				recenterDistance: CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE,
-			});
-
-			if (orbitFollowUpdate) {
-				setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
-				lookAtVectorRef.current.set(...orbitFollowUpdate.nextTarget);
-				positionVectorRef.current.set(
-					...orbitFollowUpdate.desiredCameraPosition,
-				);
-
-				freeOrbitalOrbitRef.current.target.lerp(
-					lookAtVectorRef.current,
-					CAMERA_RIG_LERP_ALPHA,
-				);
-				camera.position.lerp(positionVectorRef.current, CAMERA_RIG_LERP_ALPHA);
-				freeOrbitalOrbitRef.current.update();
-			}
 		}
 
 		if (
