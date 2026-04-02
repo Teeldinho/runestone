@@ -1,10 +1,12 @@
+import { DOOR_SIDES, type LastTransition } from "@/entities/dungeon";
 import { DOORWAY_NAVIGATION_CONFIG } from "@/features/dungeon-navigation";
-import { ROOM_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
+
+import { getDoorwayAnchorPosition } from "./getDoorwayAnchorPosition";
 
 type GetDoorwayArrivalPositionInput = {
 	currentRoomPosition: Vector3Tuple;
-	previousRoomPosition: Vector3Tuple | null;
+	lastTransition: LastTransition | null;
 	spawnHeightOffset: number;
 };
 
@@ -13,88 +15,53 @@ const createRoomCenterPosition = (
 	spawnHeightOffset: number,
 ): Vector3Tuple => [currentX, spawnHeightOffset, currentZ];
 
-export const resolveDoorwayEntrySide = ({
-	currentRoomPosition,
-	previousRoomPosition,
-}: {
-	currentRoomPosition: Vector3Tuple;
-	previousRoomPosition: Vector3Tuple | null;
-}): "north" | "south" | "east" | "west" | null => {
-	if (!previousRoomPosition) {
-		return null;
-	}
-
-	const [currentX, , currentZ] = currentRoomPosition;
-	const [previousX, , previousZ] = previousRoomPosition;
-	const deltaX = previousX - currentX;
-	const deltaZ = previousZ - currentZ;
-
-	if (
-		Math.abs(deltaX) <= DOORWAY_NAVIGATION_CONFIG.ENTRY_POSITION_EPSILON &&
-		Math.abs(deltaZ) <= DOORWAY_NAVIGATION_CONFIG.ENTRY_POSITION_EPSILON
-	) {
-		return null;
-	}
-
-	if (Math.abs(deltaX) <= DOORWAY_NAVIGATION_CONFIG.ENTRY_POSITION_EPSILON) {
-		return deltaZ < 0 ? "north" : "south";
-	}
-
-	if (Math.abs(deltaZ) <= DOORWAY_NAVIGATION_CONFIG.ENTRY_POSITION_EPSILON) {
-		return deltaX < 0 ? "west" : "east";
-	}
-
-	return null;
-};
-
 export const getDoorwayArrivalPosition = ({
 	currentRoomPosition,
-	previousRoomPosition,
+	lastTransition,
 	spawnHeightOffset,
 }: GetDoorwayArrivalPositionInput): Vector3Tuple => {
-	const doorwayEntrySide = resolveDoorwayEntrySide({
-		currentRoomPosition,
-		previousRoomPosition,
-	});
+	const doorwayEntrySide = lastTransition?.doorSide ?? null;
 
 	if (!doorwayEntrySide) {
 		return createRoomCenterPosition(currentRoomPosition, spawnHeightOffset);
 	}
 
-	const [currentX, , currentZ] = currentRoomPosition;
+	const doorwayAnchor = getDoorwayAnchorPosition(
+		currentRoomPosition,
+		doorwayEntrySide,
+		spawnHeightOffset,
+	);
 	const arrivalOffset = DOORWAY_NAVIGATION_CONFIG.ARRIVAL_OFFSET;
-	const roomHalfWidth = ROOM_CONFIG.WIDTH / 2;
-	const roomHalfDepth = ROOM_CONFIG.DEPTH / 2;
 
-	if (doorwayEntrySide === "west") {
+	if (doorwayEntrySide === DOOR_SIDES.WEST) {
 		return [
-			currentX - (roomHalfWidth - arrivalOffset),
-			spawnHeightOffset,
-			currentZ,
+			doorwayAnchor[0] + arrivalOffset,
+			doorwayAnchor[1],
+			doorwayAnchor[2],
 		];
 	}
 
-	if (doorwayEntrySide === "east") {
+	if (doorwayEntrySide === DOOR_SIDES.EAST) {
 		return [
-			currentX + (roomHalfWidth - arrivalOffset),
-			spawnHeightOffset,
-			currentZ,
+			doorwayAnchor[0] - arrivalOffset,
+			doorwayAnchor[1],
+			doorwayAnchor[2],
 		];
 	}
 
-	if (doorwayEntrySide === "north") {
+	if (doorwayEntrySide === DOOR_SIDES.NORTH) {
 		return [
-			currentX,
-			spawnHeightOffset,
-			currentZ - (roomHalfDepth - arrivalOffset),
+			doorwayAnchor[0],
+			doorwayAnchor[1],
+			doorwayAnchor[2] + arrivalOffset,
 		];
 	}
 
-	if (doorwayEntrySide === "south") {
+	if (doorwayEntrySide === DOOR_SIDES.SOUTH) {
 		return [
-			currentX,
-			spawnHeightOffset,
-			currentZ + (roomHalfDepth - arrivalOffset),
+			doorwayAnchor[0],
+			doorwayAnchor[1],
+			doorwayAnchor[2] - arrivalOffset,
 		];
 	}
 

@@ -128,4 +128,35 @@ describe("usePlayerMeshViewModel", () => {
 		expect(result.current.isAvatarVisible).toBe(false);
 		expect(result.current.isAuraVisible).toBe(false);
 	});
+
+	it("keeps the initial spawn position stable after mount", () => {
+		mockGetCameraMode.mockReturnValue("thirdPerson");
+
+		const initialPosition: [number, number, number] = [
+			0,
+			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+			0,
+		];
+		const movedRoomPosition: [number, number, number] = [
+			0,
+			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+			20,
+		];
+
+		const { result, rerender } = renderHook(
+			({ position }: { position: readonly [number, number, number] }) =>
+				usePlayerMeshViewModel({
+					initialPosition: [...position],
+				}),
+			{
+				initialProps: { position: initialPosition },
+			},
+		);
+
+		expect(result.current.meshSettings.position).toEqual(initialPosition);
+
+		rerender({ position: movedRoomPosition });
+
+		expect(result.current.meshSettings.position).toEqual(initialPosition);
+	});
 });

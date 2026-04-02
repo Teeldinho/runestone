@@ -43,6 +43,8 @@ export const useGameSideEffects = (): void => {
 
 	const startTimeMsRef = useRef(Date.now());
 	const prevRoomRef = useRef<RoomId | null>(null);
+	const hasAppliedInitialTeleportRef = useRef(false);
+	const lastArrivalKeyRef = useRef<string | null>(null);
 	const previousDoorwayFeedbackRef =
 		useRef<typeof snapshot.context.lastDoorwayFeedback>(null);
 	const hasSubmittedRef = useRef(false);
@@ -56,29 +58,6 @@ export const useGameSideEffects = (): void => {
 			onRoomEnter();
 			handleSoundEffectPlay(AUDIO_SPRITE_IDS.DOOR_OPEN);
 
-			const roomPosition = getRoomWorldPosition(
-				floorRooms,
-				currentRoom,
-				PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
-			);
-			if (roomPosition) {
-				const previousRoomPosition = prevRoomRef.current
-					? getRoomWorldPosition(
-							floorRooms,
-							prevRoomRef.current,
-							PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
-						)
-					: null;
-				setPlayerTeleportTarget(
-					...getDoorwayArrivalPosition({
-						currentRoomPosition: roomPosition,
-						previousRoomPosition,
-						spawnHeightOffset:
-							PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
-					}),
-				);
-			}
-
 			prevRoomRef.current = currentRoom;
 		}
 	}, [
@@ -86,6 +65,46 @@ export const useGameSideEffects = (): void => {
 		onTransition,
 		onRoomEnter,
 		handleSoundEffectPlay,
+	]);
+
+	useEffect(() => {
+		const currentRoom = snapshot.context.currentRoomId;
+		const currentTransition = snapshot.context.lastTransition;
+		const roomPosition = getRoomWorldPosition(
+			floorRooms,
+			currentRoom,
+			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+		);
+
+		if (!roomPosition) {
+			return;
+		}
+
+		const hasTransitionForCurrentRoom =
+			currentTransition?.toRoom === currentRoom;
+		const arrivalKey = hasTransitionForCurrentRoom
+			? `${currentRoom}:${currentTransition.fromRoom}:${currentTransition.toRoom}:${currentTransition.doorSide}`
+			: hasAppliedInitialTeleportRef.current
+				? null
+				: `${currentRoom}:initial`;
+
+		if (!arrivalKey || lastArrivalKeyRef.current === arrivalKey) {
+			return;
+		}
+
+		setPlayerTeleportTarget(
+			...getDoorwayArrivalPosition({
+				currentRoomPosition: roomPosition,
+				lastTransition: hasTransitionForCurrentRoom ? currentTransition : null,
+				spawnHeightOffset: PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+			}),
+		);
+
+		hasAppliedInitialTeleportRef.current = true;
+		lastArrivalKeyRef.current = arrivalKey;
+	}, [
+		snapshot.context.currentRoomId,
+		snapshot.context.lastTransition,
 		floorRooms,
 	]);
 
