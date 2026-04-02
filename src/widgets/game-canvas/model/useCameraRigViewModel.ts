@@ -52,6 +52,24 @@ type UseCameraRigViewModelResult = {
 	topDownOrbitRef: RefObject<OrbitControlsHandle | null>;
 };
 
+const shouldSyncMovementAzimuth = ({
+	isModeChange,
+	isUserInteracting,
+	mode,
+	needsFreeOrbitalSync,
+}: {
+	isModeChange: boolean;
+	isUserInteracting: boolean;
+	mode: CameraStateSnapshot["mode"];
+	needsFreeOrbitalSync: boolean;
+}): boolean => {
+	if (mode !== CAMERA_MODES.FREE_ORBITAL) {
+		return true;
+	}
+
+	return isModeChange || needsFreeOrbitalSync || isUserInteracting;
+};
+
 export const useCameraRigViewModel = ({
 	cameraStateSnapshot,
 	playerSpawnPosition,
@@ -200,13 +218,22 @@ export const useCameraRigViewModel = ({
 			}
 		}
 
-		camera.getWorldDirection(directionRef.current);
-		const nextAzimuth = resolveCameraAzimuth({
-			mode: cameraStateSnapshot.mode,
-			direction: directionRef.current,
-		});
-		if (nextAzimuth !== null) {
-			setCameraAzimuth(nextAzimuth);
+		if (
+			shouldSyncMovementAzimuth({
+				isModeChange,
+				isUserInteracting: isUserInteractingRef.current,
+				mode: cameraStateSnapshot.mode,
+				needsFreeOrbitalSync: needsFreeOrbitalSyncRef.current,
+			})
+		) {
+			camera.getWorldDirection(directionRef.current);
+			const nextAzimuth = resolveCameraAzimuth({
+				mode: cameraStateSnapshot.mode,
+				direction: directionRef.current,
+			});
+			if (nextAzimuth !== null) {
+				setCameraAzimuth(nextAzimuth);
+			}
 		}
 
 		const fovDiff = Math.abs(perspectiveCamera.fov - cameraStateSnapshot.fov);
