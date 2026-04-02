@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+	checkOrbitFollowJump,
 	getPreservedOrbitCameraPosition,
 	resolveOrbitFollowUpdate,
 } from "./cameraRigFollow";
@@ -39,5 +40,22 @@ describe("getPreservedOrbitCameraPosition", () => {
 			desiredCameraPosition: [18, 18.9, 13],
 			nextTarget: [18, 0.9, -5],
 		});
+	});
+
+	it("detects large tracked-target jumps for immediate orbit preservation", () => {
+		expect(
+			checkOrbitFollowJump({
+				jumpDistance: 6,
+				nextTarget: [10, 0.9, 0],
+				previousTarget: [0, 0.9, 0],
+			}),
+		).toBe(true);
+		expect(
+			checkOrbitFollowJump({
+				jumpDistance: 6,
+				nextTarget: [2, 0.9, 0],
+				previousTarget: [0, 0.9, 0],
+			}),
+		).toBe(false);
 	});
 });
