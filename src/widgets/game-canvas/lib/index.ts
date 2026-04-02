@@ -5,7 +5,10 @@ export {
 	getPreservedOrbitCameraPosition,
 	resolveOrbitFollowUpdate,
 } from "./cameraRigFollow";
-export { getCameraRigTargets } from "./cameraRigTargets";
+export {
+	getCameraRigTargets,
+	getThirdPersonTransitionTargets,
+} from "./cameraRigTargets";
 export { createTorchSettings } from "./createTorchSettings";
 export { shouldSubmitFloorScore } from "./floorCompletion";
 export { getDoorwayAnchorPosition } from "./getDoorwayAnchorPosition";

@@ -3,15 +3,16 @@
 import { act, renderHook } from "@testing-library/react";
 import * as THREE from "three";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
+import { DOOR_SIDES, ROOM_IDS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
-import { CAMERA_DEFAULT_ZOOM } from "@/shared/config";
+import { CAMERA_DEFAULT_ZOOM, PLAYER_EYE_HEIGHT } from "@/shared/config";
 
 const frameCallbacks: Array<() => void> = [];
 const mockSetCameraMode = vi.fn();
 const mockSetCameraAzimuth = vi.fn();
 const mockHasPlayerPosition = vi.fn();
 const mockGetPlayerPosition = vi.fn();
+const mockLastTransition = vi.fn();
 
 const mockCamera = new THREE.PerspectiveCamera();
 mockCamera.zoom = CAMERA_DEFAULT_ZOOM;
@@ -36,6 +37,17 @@ vi.mock("@/shared/lib/playerPositionStore", () => ({
 	getPlayerPosition: () => mockGetPlayerPosition(),
 }));
 
+vi.mock("@/features/dungeon-navigation", async (importOriginal) => {
+	const original =
+		await importOriginal<typeof import("@/features/dungeon-navigation")>();
+
+	return {
+		...original,
+		selectLastTransition: "selectLastTransition",
+		useGameMachineSelector: () => mockLastTransition(),
+	};
+});
+
 import { useCameraRigViewModel } from "./useCameraRigViewModel";
 
 describe("useCameraRigViewModel", () => {
@@ -46,6 +58,7 @@ describe("useCameraRigViewModel", () => {
 		mockCamera.up.set(0, 1, 0);
 		mockHasPlayerPosition.mockReturnValue(false);
 		mockGetPlayerPosition.mockReturnValue([0, 0, 0]);
+		mockLastTransition.mockReturnValue(null);
 	});
 
 	it("syncs the camera mode store immediately from the snapshot mode", () => {
@@ -186,6 +199,55 @@ describe("useCameraRigViewModel", () => {
 		expect(thirdPersonControls.target.x).toBeGreaterThan(0);
 		expect(mockCamera.position.x).toBeGreaterThan(0);
 		expect(mockCamera.position.z).toBeCloseTo(-3.8, 6);
+	});
+
+	it("keeps third-person behind north-entry travel while clamped inside the room", () => {
+		mockHasPlayerPosition.mockReturnValue(true);
+		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
+		mockLastTransition.mockReturnValue({
+			fromRoom: ROOM_IDS.ENTRANCE,
+			toRoom: ROOM_IDS.LIBRARY,
+			doorSide: DOOR_SIDES.NORTH,
+		});
+		const { result } = renderHook(() =>
+			useCameraRigViewModel({
+				cameraStateSnapshot: {
+					fov: 65,
+					mode: CAMERA_MODES.THIRD_PERSON,
+					position: [0, 2.2, -3.8],
+					target: [0, 1, 0],
+					zoom: 1,
+				},
+				playerSpawnPosition: [0, 0.9, 0],
+			}),
+		);
+		const thirdPersonControls = {
+			target: new THREE.Vector3(),
+			update: vi.fn(),
+		};
+
+		result.current.thirdPersonOrbitRef.current = thirdPersonControls as never;
+		mockCamera.position.set(6, 5, 6);
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		mockGetPlayerPosition.mockReturnValue([10, 0.9, 0]);
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(mockCamera.position.x).toBe(10);
+		expect(mockCamera.position.y).toBeCloseTo(3.1, 6);
+		expect(mockCamera.position.z).toBeCloseTo(-0.6, 6);
+		expect(thirdPersonControls.target.toArray()).toEqual([
+			10,
+			0.9 + PLAYER_EYE_HEIGHT,
+			0,
+		]);
+		expect(thirdPersonControls.update).toHaveBeenCalled();
 	});
 
 	it("does not rewrite movement azimuth during free-orbital auto-follow", () => {

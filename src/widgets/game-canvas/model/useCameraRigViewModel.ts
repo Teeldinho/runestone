@@ -2,12 +2,15 @@ import { useFrame, useThree } from "@react-three/fiber";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useRef } from "react";
 import * as THREE from "three";
-
 import {
 	CAMERA_MODES,
 	type CameraStateSnapshot,
 	resolveCameraAzimuth,
 } from "@/features/camera-system";
+import {
+	selectLastTransition,
+	useGameMachineSelector,
+} from "@/features/dungeon-navigation";
 import { setCameraMode } from "@/shared/lib/cameraModeStore";
 import { setCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
 import {
@@ -20,12 +23,14 @@ import {
 	CAMERA_RIG_CAMERA_UP,
 	CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE,
 	CAMERA_RIG_LERP_ALPHA,
+	CAMERA_RIG_TRANSITION_JUMP_DISTANCE,
 } from "../config";
 import type { OrbitControlsHandle } from "../lib";
 import {
 	checkOrbitFollowJump,
 	getCameraRigTargets,
 	getPreservedOrbitCameraPosition,
+	getThirdPersonTransitionTargets,
 	setCameraUp,
 	setOrbitTarget,
 } from "../lib";
@@ -75,6 +80,7 @@ export const useCameraRigViewModel = ({
 	playerSpawnPosition,
 }: UseCameraRigViewModelInput): UseCameraRigViewModelResult => {
 	const { camera } = useThree();
+	const lastTransition = useGameMachineSelector(selectLastTransition);
 	const mode = cameraStateSnapshot?.mode;
 	const perspectiveCamera = camera as THREE.PerspectiveCamera;
 	const previousModeRef = useRef<string | undefined>(undefined);
@@ -141,6 +147,15 @@ export const useCameraRigViewModel = ({
 				nextTarget: trackedPlayerPosition,
 				previousTarget: previousTrackedPlayerPositionRef.current,
 			});
+		const isThirdPersonJump =
+			cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON &&
+			!isModeChange &&
+			!needsThirdPersonSyncRef.current &&
+			checkOrbitFollowJump({
+				jumpDistance: CAMERA_RIG_TRANSITION_JUMP_DISTANCE,
+				nextTarget: trackedPlayerPosition,
+				previousTarget: previousTrackedPlayerPositionRef.current,
+			});
 		const transitionAlpha = isModeChange ? 1 : CAMERA_RIG_LERP_ALPHA;
 
 		previousModeRef.current = cameraStateSnapshot.mode;
@@ -177,6 +192,17 @@ export const useCameraRigViewModel = ({
 				camera.position.set(...position);
 				setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
 				needsThirdPersonSyncRef.current = false;
+			} else if (isThirdPersonJump) {
+				const transitionTargets = lastTransition
+					? getThirdPersonTransitionTargets({
+							doorSide: lastTransition.doorSide,
+							playerPosition: trackedPlayerPosition,
+						})
+					: { position, lookAt };
+
+				camera.position.set(...transitionTargets.position);
+				setOrbitTarget(thirdPersonOrbitRef.current, transitionTargets.lookAt);
+				thirdPersonOrbitRef.current.update();
 			} else {
 				const desiredCameraPosition = getPreservedOrbitCameraPosition({
 					cameraPosition: camera.position.toArray() as Vector3Tuple,
