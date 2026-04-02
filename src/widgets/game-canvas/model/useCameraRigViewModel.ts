@@ -23,6 +23,7 @@ import {
 } from "../config";
 import type { OrbitControlsHandle } from "../lib";
 import {
+	checkOrbitFollowJump,
 	getCameraRigTargets,
 	getPreservedOrbitCameraPosition,
 	resolveOrbitFollowUpdate,
@@ -86,6 +87,7 @@ export const useCameraRigViewModel = ({
 	const needsThirdPersonSyncRef = useRef(false);
 	const needsTopDownSyncRef = useRef(false);
 	const isUserInteractingRef = useRef(false);
+	const previousTrackedPlayerPositionRef = useRef<Vector3Tuple | null>(null);
 	const directionRef = useRef(new THREE.Vector3());
 	const lookAtVectorRef = useRef(new THREE.Vector3());
 	const positionVectorRef = useRef(new THREE.Vector3());
@@ -130,6 +132,16 @@ export const useCameraRigViewModel = ({
 			playerPosition: trackedPlayerPosition,
 		});
 		const isModeChange = cameraStateSnapshot.mode !== previousModeRef.current;
+		const isFreeOrbitalJump =
+			cameraStateSnapshot.mode === CAMERA_MODES.FREE_ORBITAL &&
+			!isModeChange &&
+			!needsFreeOrbitalSyncRef.current &&
+			!isUserInteractingRef.current &&
+			checkOrbitFollowJump({
+				jumpDistance: CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE,
+				nextTarget: trackedPlayerPosition,
+				previousTarget: previousTrackedPlayerPositionRef.current,
+			});
 		const transitionAlpha = isModeChange ? 1 : CAMERA_RIG_LERP_ALPHA;
 
 		previousModeRef.current = cameraStateSnapshot.mode;
@@ -194,6 +206,25 @@ export const useCameraRigViewModel = ({
 			camera.position.set(...position);
 			setOrbitTarget(freeOrbitalOrbitRef.current, lookAt);
 			needsFreeOrbitalSyncRef.current = false;
+		} else if (isFreeOrbitalJump) {
+			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
+			const desiredCameraPosition = getPreservedOrbitCameraPosition({
+				cameraPosition: [
+					camera.position.x,
+					camera.position.y,
+					camera.position.z,
+				],
+				currentTarget: [
+					freeOrbitalOrbitRef.current.target.x,
+					freeOrbitalOrbitRef.current.target.y,
+					freeOrbitalOrbitRef.current.target.z,
+				],
+				nextTarget: lookAt,
+			});
+
+			camera.position.set(...desiredCameraPosition);
+			setOrbitTarget(freeOrbitalOrbitRef.current, lookAt);
+			freeOrbitalOrbitRef.current.update();
 		} else if (!isUserInteractingRef.current) {
 			const orbitFollowUpdate = resolveOrbitFollowUpdate({
 				cameraPosition: camera.position,
@@ -242,6 +273,8 @@ export const useCameraRigViewModel = ({
 				(cameraStateSnapshot.fov - perspectiveCamera.fov) * transitionAlpha;
 			perspectiveCamera.updateProjectionMatrix();
 		}
+
+		previousTrackedPlayerPositionRef.current = [...trackedPlayerPosition];
 	});
 
 	return {

@@ -1,6 +1,7 @@
 export type { OrbitControlsHandle } from "./cameraRigControls";
 export { setCameraUp, setOrbitTarget } from "./cameraRigControls";
 export {
+	checkOrbitFollowJump,
 	getPreservedOrbitCameraPosition,
 	resolveOrbitFollowUpdate,
 } from "./cameraRigFollow";

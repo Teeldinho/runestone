@@ -19,6 +19,12 @@ type ResolveOrbitFollowUpdateInput = {
 	recenterDistance: number;
 };
 
+type CheckOrbitFollowJumpInput = {
+	jumpDistance: number;
+	nextTarget: Vector3Tuple;
+	previousTarget: Vector3Tuple | null;
+};
+
 type OrbitFollowUpdate = {
 	desiredCameraPosition: Vector3Tuple;
 	nextTarget: Vector3Tuple;
@@ -68,7 +74,29 @@ export const resolveOrbitFollowUpdate = ({
 	};
 };
 
+export const checkOrbitFollowJump = ({
+	jumpDistance,
+	nextTarget,
+	previousTarget,
+}: CheckOrbitFollowJumpInput): boolean => {
+	if (!previousTarget) {
+		return false;
+	}
+
+	const [nextX, nextY, nextZ] = nextTarget;
+	const [previousX, previousY, previousZ] = previousTarget;
+	const deltaX = nextX - previousX;
+	const deltaY = nextY - previousY;
+	const deltaZ = nextZ - previousZ;
+
+	return (
+		deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ >=
+		jumpDistance * jumpDistance
+	);
+};
+
 export type {
+	CheckOrbitFollowJumpInput,
 	GetPreservedOrbitCameraPositionInput,
 	OrbitFollowUpdate,
 	ResolveOrbitFollowUpdateInput,
