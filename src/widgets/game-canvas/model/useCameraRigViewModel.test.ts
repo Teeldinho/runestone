@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CAMERA_MODES } from "@/features/camera-system";
-import { CAMERA_DEFAULT_ZOOM } from "@/shared/config";
+import { CAMERA_DEFAULT_ZOOM, PLAYER_EYE_HEIGHT } from "@/shared/config";
 
 const frameCallbacks: Array<() => void> = [];
 const mockSetCameraMode = vi.fn();
@@ -186,6 +186,48 @@ describe("useCameraRigViewModel", () => {
 		expect(thirdPersonControls.target.x).toBeGreaterThan(0);
 		expect(mockCamera.position.x).toBeGreaterThan(0);
 		expect(mockCamera.position.z).toBeCloseTo(-3.8, 6);
+	});
+
+	it("resets third-person to the canonical follow offset on large room jumps", () => {
+		mockHasPlayerPosition.mockReturnValue(true);
+		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
+		const { result } = renderHook(() =>
+			useCameraRigViewModel({
+				cameraStateSnapshot: {
+					fov: 65,
+					mode: CAMERA_MODES.THIRD_PERSON,
+					position: [0, 2.2, -3.8],
+					target: [0, 1, 0],
+					zoom: 1,
+				},
+				playerSpawnPosition: [0, 0.9, 0],
+			}),
+		);
+		const thirdPersonControls = {
+			target: new THREE.Vector3(),
+			update: vi.fn(),
+		};
+
+		result.current.thirdPersonOrbitRef.current = thirdPersonControls as never;
+		mockCamera.position.set(6, 5, 6);
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		mockGetPlayerPosition.mockReturnValue([10, 0.9, 0]);
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(mockCamera.position.toArray()).toEqual([10, 3.1, -3.8]);
+		expect(thirdPersonControls.target.toArray()).toEqual([
+			10,
+			0.9 + PLAYER_EYE_HEIGHT,
+			0,
+		]);
+		expect(thirdPersonControls.update).toHaveBeenCalled();
 	});
 
 	it("does not rewrite movement azimuth during free-orbital auto-follow", () => {
