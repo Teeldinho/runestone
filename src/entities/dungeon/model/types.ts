@@ -1,11 +1,13 @@
 import type { FloorId, RoomId } from "@/entities/dungeon/config/dungeonConfig";
 import type {
+	DoorSide,
 	DoorStateKey,
 	DungeonEventObject,
+	DungeonInteractableId,
 	InteractionType,
 } from "@/entities/dungeon/config/dungeonEvents";
 
-export type { DoorStateKey, InteractionType };
+export type { DoorStateKey, DungeonInteractableId, InteractionType };
 
 export type DungeonRuneState = "sealed" | "open" | "active";
 
@@ -17,7 +19,7 @@ export type DoorwayFeedback =
 export type LastTransition = {
 	fromRoom: RoomId;
 	toRoom: RoomId;
-	doorSide: string;
+	doorSide: DoorSide;
 };
 
 export type DungeonMachineContext = {
@@ -27,8 +29,7 @@ export type DungeonMachineContext = {
 	hasTreasureKey: boolean;
 	enemiesRemaining: number;
 	lastDoorwayFeedback?: DoorwayFeedback;
-	openedDoors: DoorStateKey[];
-	nearInteractable: DoorStateKey | null;
+	nearInteractable: DungeonInteractableId | null;
 	nearInteractableType: InteractionType | null;
 	lastTransition: LastTransition | null;
 };

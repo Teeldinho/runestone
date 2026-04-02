@@ -17,11 +17,19 @@ export type {
 	DoorStateKey,
 	DungeonEvent,
 	DungeonEventObject,
+	DungeonInteractableId,
 	InteractionType,
 } from "./dungeonEvents";
-export { DUNGEON_EVENTS } from "./dungeonEvents";
+export {
+	DOOR_SIDES,
+	DUNGEON_EVENTS,
+	DUNGEON_INTERACTABLE_IDS,
+	INTERACTION_TYPES,
+} from "./dungeonEvents";
 export {
 	DUNGEON_CONTEXT_KEYS,
-	FLOOR_ONE_GUARDS,
+	DUNGEON_MACHINE_IDS,
+	FLOOR_ONE_EVENT_DOOR_TRANSITIONS,
+	FLOOR_ONE_GUARD_KEYS,
 	FLOOR_ONE_MACHINE_RULES,
 } from "./floorOneMachineConfig";

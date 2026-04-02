@@ -1,11 +1,21 @@
-import type { DoorStateKey, DungeonMachineContext } from "../model/types";
+import { DUNGEON_INTERACTABLE_IDS, ROOM_IDS } from "@/entities/dungeon/config";
 
-export const isDoorOpened = (
-	context: DungeonMachineContext,
-	doorKey: DoorStateKey,
-): boolean => context.openedDoors.includes(doorKey);
+import type {
+	DungeonInteractableId,
+	DungeonMachineContext,
+} from "../model/types";
 
-export const canEnterRoomViaDoor = (
+export const checkFloorOneNearInteractable = (
 	context: DungeonMachineContext,
-	doorKey: DoorStateKey,
-): boolean => context.openedDoors.includes(doorKey);
+	interactableId: DungeonInteractableId,
+): boolean => context.nearInteractable === interactableId;
+
+export const checkFloorOneCanPickUpTreasureKey = (
+	context: DungeonMachineContext,
+): boolean => {
+	return (
+		context.currentRoomId === ROOM_IDS.GUARD_ROOM &&
+		!context.hasTreasureKey &&
+		context.nearInteractable === DUNGEON_INTERACTABLE_IDS.TREASURE_KEY
+	);
+};

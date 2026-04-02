@@ -1,8 +1,17 @@
-import { DUNGEON_EVENTS, ROOM_IDS, type RoomId } from "@/entities/dungeon";
+import {
+	type DoorSide,
+	DUNGEON_EVENTS,
+	ROOM_IDS,
+	type RoomId,
+} from "@/entities/dungeon";
 
-type DoorSide = "north" | "south" | "east" | "west";
+export const DOOR_GUARDS = {
+	NONE: "none",
+	TREASURY: "treasury",
+	EXIT: "exit",
+} as const;
 
-type DoorGuard = "none" | "treasury" | "exit";
+type DoorGuard = (typeof DOOR_GUARDS)[keyof typeof DOOR_GUARDS];
 
 type DoorwayInteraction = {
 	successEvent: (typeof DUNGEON_EVENTS)[keyof typeof DUNGEON_EVENTS];
@@ -27,45 +36,45 @@ export const DOORWAY_INTERACTIONS_BY_ROOM: DoorwayInteractionsByRoom = {
 	[ROOM_IDS.ENTRANCE]: {
 		south: {
 			successEvent: DUNGEON_EVENTS.ENTER_LIBRARY,
-			guard: "none",
+			guard: DOOR_GUARDS.NONE,
 		},
 	},
 	[ROOM_IDS.LIBRARY]: {
 		north: {
 			successEvent: DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
-			guard: "none",
+			guard: DOOR_GUARDS.NONE,
 		},
 		south: {
 			successEvent: DUNGEON_EVENTS.ENTER_GUARD_ROOM,
-			guard: "none",
+			guard: DOOR_GUARDS.NONE,
 		},
 	},
 	[ROOM_IDS.GUARD_ROOM]: {
 		north: {
 			successEvent: DUNGEON_EVENTS.RETURN_TO_LIBRARY,
-			guard: "none",
+			guard: DOOR_GUARDS.NONE,
 		},
 		south: {
 			successEvent: DUNGEON_EVENTS.ENTER_TREASURY,
 			lockedEvent: DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT,
-			guard: "treasury",
+			guard: DOOR_GUARDS.TREASURY,
 		},
 	},
 	[ROOM_IDS.TREASURY]: {
 		north: {
 			successEvent: DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM,
-			guard: "none",
+			guard: DOOR_GUARDS.NONE,
 		},
 		south: {
 			successEvent: DUNGEON_EVENTS.ENTER_EXIT,
 			lockedEvent: DUNGEON_EVENTS.LOCKED_EXIT_ATTEMPT,
-			guard: "exit",
+			guard: DOOR_GUARDS.EXIT,
 		},
 	},
 	[ROOM_IDS.EXIT]: {
 		north: {
 			successEvent: DUNGEON_EVENTS.RETURN_TO_TREASURY,
-			guard: "none",
+			guard: DOOR_GUARDS.NONE,
 		},
 	},
 } as const;
