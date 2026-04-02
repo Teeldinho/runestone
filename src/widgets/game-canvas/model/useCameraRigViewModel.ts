@@ -20,6 +20,7 @@ import {
 	CAMERA_RIG_CAMERA_UP,
 	CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE,
 	CAMERA_RIG_LERP_ALPHA,
+	CAMERA_RIG_TRANSITION_JUMP_DISTANCE,
 } from "../config";
 import type { OrbitControlsHandle } from "../lib";
 import {
@@ -141,6 +142,15 @@ export const useCameraRigViewModel = ({
 				nextTarget: trackedPlayerPosition,
 				previousTarget: previousTrackedPlayerPositionRef.current,
 			});
+		const isThirdPersonJump =
+			cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON &&
+			!isModeChange &&
+			!needsThirdPersonSyncRef.current &&
+			checkOrbitFollowJump({
+				jumpDistance: CAMERA_RIG_TRANSITION_JUMP_DISTANCE,
+				nextTarget: trackedPlayerPosition,
+				previousTarget: previousTrackedPlayerPositionRef.current,
+			});
 		const transitionAlpha = isModeChange ? 1 : CAMERA_RIG_LERP_ALPHA;
 
 		previousModeRef.current = cameraStateSnapshot.mode;
@@ -177,6 +187,10 @@ export const useCameraRigViewModel = ({
 				camera.position.set(...position);
 				setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
 				needsThirdPersonSyncRef.current = false;
+			} else if (isThirdPersonJump) {
+				camera.position.set(...position);
+				setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
+				thirdPersonOrbitRef.current.update();
 			} else {
 				const desiredCameraPosition = getPreservedOrbitCameraPosition({
 					cameraPosition: camera.position.toArray() as Vector3Tuple,
