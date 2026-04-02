@@ -2,12 +2,15 @@ import { useFrame, useThree } from "@react-three/fiber";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useRef } from "react";
 import * as THREE from "three";
-
 import {
 	CAMERA_MODES,
 	type CameraStateSnapshot,
 	resolveCameraAzimuth,
 } from "@/features/camera-system";
+import {
+	selectLastTransition,
+	useGameMachineSelector,
+} from "@/features/dungeon-navigation";
 import { setCameraMode } from "@/shared/lib/cameraModeStore";
 import { setCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
 import {
@@ -27,6 +30,7 @@ import {
 	checkOrbitFollowJump,
 	getCameraRigTargets,
 	getPreservedOrbitCameraPosition,
+	getThirdPersonTransitionTargets,
 	setCameraUp,
 	setOrbitTarget,
 } from "../lib";
@@ -76,6 +80,7 @@ export const useCameraRigViewModel = ({
 	playerSpawnPosition,
 }: UseCameraRigViewModelInput): UseCameraRigViewModelResult => {
 	const { camera } = useThree();
+	const lastTransition = useGameMachineSelector(selectLastTransition);
 	const mode = cameraStateSnapshot?.mode;
 	const perspectiveCamera = camera as THREE.PerspectiveCamera;
 	const previousModeRef = useRef<string | undefined>(undefined);
@@ -188,8 +193,15 @@ export const useCameraRigViewModel = ({
 				setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
 				needsThirdPersonSyncRef.current = false;
 			} else if (isThirdPersonJump) {
-				camera.position.set(...position);
-				setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
+				const transitionTargets = lastTransition
+					? getThirdPersonTransitionTargets({
+							doorSide: lastTransition.doorSide,
+							playerPosition: trackedPlayerPosition,
+						})
+					: { position, lookAt };
+
+				camera.position.set(...transitionTargets.position);
+				setOrbitTarget(thirdPersonOrbitRef.current, transitionTargets.lookAt);
 				thirdPersonOrbitRef.current.update();
 			} else {
 				const desiredCameraPosition = getPreservedOrbitCameraPosition({

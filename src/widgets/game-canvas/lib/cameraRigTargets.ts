@@ -1,3 +1,4 @@
+import { DOOR_SIDES, type DoorSide } from "@/entities/dungeon";
 import { CAMERA_MODES, type CameraMode } from "@/features/camera-system";
 import { CAMERA_CONFIG, PLAYER_EYE_HEIGHT } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
@@ -10,6 +11,30 @@ type GetCameraRigTargetsInput = {
 type CameraRigTargets = {
 	lookAt: Vector3Tuple;
 	position: Vector3Tuple;
+};
+
+type GetThirdPersonTransitionTargetsInput = {
+	doorSide: DoorSide;
+	playerPosition: Vector3Tuple;
+};
+
+const getThirdPersonTransitionOffset = (doorSide: DoorSide): Vector3Tuple => {
+	const [, offsetY, offsetZ] = CAMERA_CONFIG.THIRD_PERSON.OFFSET;
+	const transitionDistance = Math.abs(offsetZ);
+
+	if (doorSide === DOOR_SIDES.NORTH) {
+		return [0, offsetY, transitionDistance];
+	}
+
+	if (doorSide === DOOR_SIDES.SOUTH) {
+		return [0, offsetY, -transitionDistance];
+	}
+
+	if (doorSide === DOOR_SIDES.EAST) {
+		return [-transitionDistance, offsetY, 0];
+	}
+
+	return [transitionDistance, offsetY, 0];
 };
 
 export const getCameraRigTargets = ({
@@ -49,4 +74,21 @@ export const getCameraRigTargets = ({
 	};
 };
 
-export type { CameraRigTargets, GetCameraRigTargetsInput };
+export const getThirdPersonTransitionTargets = ({
+	doorSide,
+	playerPosition,
+}: GetThirdPersonTransitionTargetsInput): CameraRigTargets => {
+	const [px, py, pz] = playerPosition;
+	const [offsetX, offsetY, offsetZ] = getThirdPersonTransitionOffset(doorSide);
+
+	return {
+		position: [px + offsetX, py + offsetY, pz + offsetZ],
+		lookAt: [px, py + PLAYER_EYE_HEIGHT, pz],
+	};
+};
+
+export type {
+	CameraRigTargets,
+	GetCameraRigTargetsInput,
+	GetThirdPersonTransitionTargetsInput,
+};
