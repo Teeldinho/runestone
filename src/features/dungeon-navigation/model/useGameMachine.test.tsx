@@ -22,15 +22,13 @@ const gameMachineRuntimeWrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe("useGameMachine", () => {
-	it("returns an entrance snapshot by default", () => {
+	it("returns entrance-derived machine view data by default", () => {
 		const { result } = renderHook(() => useGameMachine(), {
 			wrapper: gameMachineRuntimeWrapper,
 		});
 
-		expect(result.current.snapshot.value).toBe(ROOM_IDS.ENTRANCE);
-		expect(result.current.snapshot.context.currentRoomId).toBe(
-			ROOM_IDS.ENTRANCE,
-		);
+		expect(result.current.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
+		expect(result.current.currentRoomId).toBe(ROOM_IDS.ENTRANCE);
 	});
 
 	it("moves machine state through handleDungeonEventSend", () => {
@@ -56,7 +54,8 @@ describe("useGameMachine", () => {
 			libraryAction?.handleDungeonActionTrigger();
 		});
 
-		expect(result.current.gameMachine.snapshot.value).toBe(ROOM_IDS.LIBRARY);
+		expect(result.current.gameMachine.activeStateLabel).toBe(ROOM_IDS.LIBRARY);
+		expect(result.current.gameMachine.currentRoomId).toBe(ROOM_IDS.LIBRARY);
 	});
 
 	it("resets machine state to entrance", () => {
@@ -83,10 +82,10 @@ describe("useGameMachine", () => {
 			result.current.gameMachine.handleDungeonRunReset();
 		});
 
-		expect(result.current.gameMachine.snapshot.value).toBe(ROOM_IDS.ENTRANCE);
-		expect(result.current.gameMachine.snapshot.context.discoveredRooms).toEqual(
-			[ROOM_IDS.ENTRANCE],
-		);
+		expect(result.current.gameMachine.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
+		expect(result.current.gameMachine.discoveredRooms).toEqual([
+			ROOM_IDS.ENTRANCE,
+		]);
 	});
 
 	it("exposes action button state derived from the machine snapshot", () => {

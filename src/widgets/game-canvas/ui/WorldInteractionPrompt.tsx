@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import {
 	ATTACK_KEY_LABEL,
 	INTERACTION_KEY_LABEL,
-	useGameMachineRuntime,
 	useInteractionCandidates,
 } from "@/features/dungeon-navigation";
 
@@ -48,14 +47,8 @@ const KEY_STYLE: React.CSSProperties = {
 };
 
 export function WorldInteractionPrompt() {
-	const { snapshot } = useGameMachineRuntime();
 	const { roomMeshSettings } = useSceneEnvironmentSettings();
-
-	const interactionCandidates = useInteractionCandidates({
-		currentRoomId: snapshot.context.currentRoomId,
-		hasTreasureKey: snapshot.context.hasTreasureKey,
-		enemiesRemaining: snapshot.context.enemiesRemaining,
-	});
+	const interactionCandidates = useInteractionCandidates();
 
 	const interactPosition = useMemo(() => {
 		if (!interactionCandidates.hasInteract) {

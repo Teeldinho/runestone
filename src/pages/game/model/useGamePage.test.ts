@@ -3,8 +3,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import type { DungeonContext } from "@/entities/dungeon";
-import { FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
+import { ROOM_IDS } from "@/entities/dungeon";
 import { useAudioController } from "@/features/audio-manager";
 import { useGameMachine } from "@/features/dungeon-navigation";
 import { useStateVisualizer } from "@/features/state-visualizer";
@@ -77,27 +76,17 @@ vi.mock("@/shared/lib/playerPositionStore", () => ({
 
 describe("useGamePage", () => {
 	it("composes page data from machine and visualizer hooks", () => {
-		const machineContext: DungeonContext = {
-			currentFloorId: FLOOR_IDS.FLOOR_ONE,
-			currentRoomId: ROOM_IDS.ENTRANCE,
-			discoveredRooms: [ROOM_IDS.ENTRANCE],
-			hasTreasureKey: false,
-			enemiesRemaining: 1,
-			nearInteractable: null,
-			nearInteractableType: null,
-			lastTransition: null,
-		};
-
 		vi.mocked(useGameMachine).mockReturnValue({
+			activeStateLabel: ROOM_IDS.ENTRANCE,
 			actionButtons: [],
 			currentRoomLabel: "Entrance",
+			currentRoomId: ROOM_IDS.ENTRANCE,
 			discoveredRoomLabels: ["Entrance"],
+			discoveredRooms: [ROOM_IDS.ENTRANCE],
+			enemiesRemaining: 1,
 			handleDungeonRunReset: vi.fn(),
 			handleDungeonEventSend: vi.fn(),
-			snapshot: {
-				context: machineContext,
-				value: ROOM_IDS.ENTRANCE,
-			},
+			hasTreasureKey: false,
 		} as unknown as ReturnType<typeof useGameMachine>);
 
 		vi.mocked(useStateVisualizer).mockReturnValue({
@@ -109,7 +98,7 @@ describe("useGamePage", () => {
 		const { result } = renderHook(() => useGamePage());
 
 		expect(useStateVisualizer).toHaveBeenCalledWith({
-			context: machineContext,
+			currentRoomId: ROOM_IDS.ENTRANCE,
 		});
 		expect(result.current.canvasMachineRuntime).toEqual({
 			currentRoomId: ROOM_IDS.ENTRANCE,
@@ -136,24 +125,17 @@ describe("dungeon reset teleport", () => {
 		);
 		const resetDungeonMachine = vi.fn();
 
-		const machineContext: DungeonContext = {
-			currentFloorId: FLOOR_IDS.FLOOR_ONE,
-			currentRoomId: ROOM_IDS.ENTRANCE,
-			discoveredRooms: [ROOM_IDS.ENTRANCE],
-			hasTreasureKey: false,
-			enemiesRemaining: 0,
-			nearInteractable: null,
-			nearInteractableType: null,
-			lastTransition: null,
-		};
-
 		vi.mocked(useGameMachine).mockReturnValue({
+			activeStateLabel: ROOM_IDS.ENTRANCE,
 			actionButtons: [],
 			currentRoomLabel: "Entrance",
+			currentRoomId: ROOM_IDS.ENTRANCE,
 			discoveredRoomLabels: ["Entrance"],
+			discoveredRooms: [ROOM_IDS.ENTRANCE],
+			enemiesRemaining: 0,
 			handleDungeonRunReset: resetDungeonMachine,
 			handleDungeonEventSend: vi.fn(),
-			snapshot: { context: machineContext, value: ROOM_IDS.ENTRANCE },
+			hasTreasureKey: false,
 		} as unknown as ReturnType<typeof useGameMachine>);
 
 		vi.mocked(useStateVisualizer).mockReturnValue({

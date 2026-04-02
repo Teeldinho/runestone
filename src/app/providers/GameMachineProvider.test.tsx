@@ -41,10 +41,8 @@ describe("GameMachineProvider", () => {
 			},
 		);
 
-		expect(result.current.primaryRuntime.snapshot.value).toBe(
-			ROOM_IDS.ENTRANCE,
-		);
-		expect(result.current.secondaryRuntime.snapshot.value).toBe(
+		expect(result.current.primaryRuntime.currentRoomId).toBe(ROOM_IDS.ENTRANCE);
+		expect(result.current.secondaryRuntime.currentRoomId).toBe(
 			ROOM_IDS.ENTRANCE,
 		);
 
@@ -61,8 +59,8 @@ describe("GameMachineProvider", () => {
 			libraryAction?.handleDungeonActionTrigger();
 		});
 
-		expect(result.current.primaryRuntime.snapshot.value).toBe(ROOM_IDS.LIBRARY);
-		expect(result.current.secondaryRuntime.snapshot.value).toBe(
+		expect(result.current.primaryRuntime.currentRoomId).toBe(ROOM_IDS.LIBRARY);
+		expect(result.current.secondaryRuntime.currentRoomId).toBe(
 			ROOM_IDS.LIBRARY,
 		);
 	});

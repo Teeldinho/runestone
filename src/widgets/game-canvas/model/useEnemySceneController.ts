@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { DUNGEON_EVENTS } from "@/entities/dungeon";
 import { PLAYER_EVENTS, usePlayerMachineRuntime } from "@/entities/player";
-import { useGameMachineRuntime } from "@/features/dungeon-navigation";
+import { useSendDungeonMachineEvent } from "@/features/dungeon-navigation";
 import { useHaptics } from "@/features/haptics-feedback";
 import { ENEMY_CONFIG } from "@/shared/config";
 
@@ -12,7 +12,7 @@ type UseEnemySceneControllerResult = {
 };
 
 export const useEnemySceneController = (): UseEnemySceneControllerResult => {
-	const { sendDungeonMachineEvent } = useGameMachineRuntime();
+	const sendDungeonMachineEvent = useSendDungeonMachineEvent();
 	const { sendPlayerMachineEvent } = usePlayerMachineRuntime();
 	const { onEnemyHit } = useHaptics();
 

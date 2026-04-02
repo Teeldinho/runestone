@@ -1,3 +1,4 @@
+import { shallowEqual } from "@xstate/react";
 import { useEffect, useMemo, useRef } from "react";
 
 import {
@@ -14,10 +15,16 @@ import {
 import type { Vector3Tuple } from "@/shared/types";
 
 import { resolveNearInteractableTarget } from "../lib";
-import { useGameMachineRuntime } from "./gameMachineRuntime";
+import {
+	selectDoorwayNavigationContext,
+	useGameMachineSelector,
+	useSendDungeonMachineEvent,
+} from "./gameMachineRuntime";
 
 export const useDoorwayNavigation = (): void => {
-	const { snapshot, sendDungeonMachineEvent } = useGameMachineRuntime();
+	const { currentRoomId, enemiesRemaining, hasTreasureKey } =
+		useGameMachineSelector(selectDoorwayNavigationContext, shallowEqual);
+	const sendDungeonMachineEvent = useSendDungeonMachineEvent();
 
 	const roomPositionById = useMemo(() => {
 		const layout = createDungeonFloorLayout(createFloorOneMachine());
@@ -39,8 +46,7 @@ export const useDoorwayNavigation = (): void => {
 
 	useEffect(() => {
 		const runDoorwayCheck = () => {
-			const currentRoomId = snapshot.context.currentRoomId as RoomId;
-			const roomCenterPosition = roomPositionById[currentRoomId];
+			const roomCenterPosition = roomPositionById[currentRoomId as RoomId];
 			if (!roomCenterPosition) {
 				if (lastSentNearInteractableRef.current) {
 					send({
@@ -56,8 +62,8 @@ export const useDoorwayNavigation = (): void => {
 				currentRoomId,
 				roomCenterPosition,
 				playerPosition: getPlayerPosition(),
-				hasTreasureKey: snapshot.context.hasTreasureKey,
-				enemiesRemaining: snapshot.context.enemiesRemaining,
+				hasTreasureKey,
+				enemiesRemaining,
 			});
 
 			if (!nearbyInteractable) {
@@ -96,11 +102,5 @@ export const useDoorwayNavigation = (): void => {
 		return () => {
 			unsubscribe();
 		};
-	}, [
-		roomPositionById,
-		snapshot.context.currentRoomId,
-		snapshot.context.enemiesRemaining,
-		snapshot.context.hasTreasureKey,
-		send,
-	]);
+	}, [roomPositionById, currentRoomId, enemiesRemaining, hasTreasureKey, send]);
 };

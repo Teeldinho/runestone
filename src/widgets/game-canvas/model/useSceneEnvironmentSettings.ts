@@ -1,3 +1,4 @@
+import { shallowEqual } from "@xstate/react";
 import { useMemo } from "react";
 import type { CorridorMeshSettings } from "@/entities/corridor";
 import {
@@ -8,7 +9,10 @@ import {
 } from "@/entities/dungeon";
 import { type PlayerMeshSettings, usePlayerMesh } from "@/entities/player";
 import { createDungeonFloorLayout } from "@/entities/room";
-import { useGameMachineRuntime } from "@/features/dungeon-navigation";
+import {
+	selectDoorwayNavigationContext,
+	useGameMachineSelector,
+} from "@/features/dungeon-navigation";
 import {
 	createSceneCorridorMeshSettings,
 	createSceneEnemyMeshSettings,
@@ -28,18 +32,20 @@ type SceneEnvironmentSettingsViewModel = {
 export const useSceneEnvironmentSettings =
 	(): SceneEnvironmentSettingsViewModel => {
 		const defaultPlayerMeshSettings = usePlayerMesh();
-		const { snapshot } = useGameMachineRuntime();
+		const { enemiesRemaining, hasTreasureKey } = useGameMachineSelector(
+			selectDoorwayNavigationContext,
+			shallowEqual,
+		);
 
 		return useMemo(() => {
 			const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
 			const lockedDoorSidesByRoomId = {
 				[ROOM_IDS.GUARD_ROOM]:
-					snapshot.context.hasTreasureKey &&
-					snapshot.context.enemiesRemaining ===
-						FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING
+					hasTreasureKey &&
+					enemiesRemaining === FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING
 						? ([] as const)
 						: ([DOOR_SIDES.SOUTH] as const),
-				[ROOM_IDS.TREASURY]: snapshot.context.hasTreasureKey
+				[ROOM_IDS.TREASURY]: hasTreasureKey
 					? ([] as const)
 					: ([DOOR_SIDES.SOUTH] as const),
 			};
@@ -54,13 +60,12 @@ export const useSceneEnvironmentSettings =
 				...roomMeshSetting,
 				isTreasury: roomMeshSetting.roomId === ROOM_IDS.TREASURY,
 				showTreasureKey:
-					roomMeshSetting.roomId === ROOM_IDS.GUARD_ROOM &&
-					!snapshot.context.hasTreasureKey,
+					roomMeshSetting.roomId === ROOM_IDS.GUARD_ROOM && !hasTreasureKey,
 			}));
 			const enemyMeshSettings = createSceneEnemyMeshSettings(
 				floorLayout.rooms,
 				ROOM_IDS.GUARD_ROOM,
-				snapshot.context.enemiesRemaining,
+				enemiesRemaining,
 			);
 			const playerPosition = createSceneSpawnPosition(
 				floorLayout.rooms,
@@ -78,11 +83,7 @@ export const useSceneEnvironmentSettings =
 				playerMeshSettings,
 				roomMeshSettings,
 			};
-		}, [
-			defaultPlayerMeshSettings,
-			snapshot.context.enemiesRemaining,
-			snapshot.context.hasTreasureKey,
-		]);
+		}, [defaultPlayerMeshSettings, enemiesRemaining, hasTreasureKey]);
 	};
 
 export type { SceneEnvironmentSettingsViewModel, SceneRoomMeshSettings };

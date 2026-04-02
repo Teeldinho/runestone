@@ -27,9 +27,7 @@ vi.mock("@/entities/dungeon", () => ({
 }));
 
 vi.mock("@/features/dungeon-navigation", () => ({
-	useGameMachineRuntime: () => ({
-		sendDungeonMachineEvent: mockSendDungeonMachineEvent,
-	}),
+	useSendDungeonMachineEvent: () => mockSendDungeonMachineEvent,
 }));
 
 vi.mock("@/features/haptics-feedback", () => ({
