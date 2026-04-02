@@ -76,7 +76,7 @@ describe("resolveInteractionCandidates", () => {
 			expect(result.interact?.prompt).toBe("Enter Treasury");
 		});
 
-		it("dispatches locked doorway feedback while keeping treasury prompt copy when guard is unmet", () => {
+		it("dispatches locked doorway feedback with locked prompt copy when guard is unmet", () => {
 			const result = resolveInteractionCandidates({
 				currentRoomId: ROOM_IDS.GUARD_ROOM,
 				hasTreasureKey: false,
@@ -89,7 +89,7 @@ describe("resolveInteractionCandidates", () => {
 			expect(result.interact).not.toBeNull();
 			expect(result.interact?.type).toBe("guarded-door");
 			expect(result.interact?.event).toBe(DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT);
-			expect(result.interact?.prompt).toBe("Enter Treasury");
+			expect(result.interact?.prompt).toBe("Locked");
 		});
 
 		it("returns exit candidate when the treasury exit is nearby and unlocked", () => {

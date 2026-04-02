@@ -12,45 +12,18 @@ import {
 	getWorldAttackPromptPosition,
 	getWorldInteractionPromptPosition,
 } from "./getWorldInteractionPromptPosition";
-import type { SceneRoomMeshSettings } from "./sceneEnvironmentMappers";
 
-const ROOM_MESH_SETTINGS: SceneRoomMeshSettings[] = [
-	{
-		roomId: ROOM_IDS.GUARD_ROOM,
-		position: [0, 0, 20] as [number, number, number],
-		labelSettings: {
-			isVisible: true,
-			position: [0, 7, 20] as [number, number, number],
-			text: "Guard Room",
-		},
-		wallOpenings: [DOOR_SIDES.NORTH, DOOR_SIDES.SOUTH],
-		lockedDoorSides: [DOOR_SIDES.SOUTH],
-		openedDoorSides: [],
-		isTreasury: false,
-		showTreasureKey: true,
-	},
-	{
-		roomId: ROOM_IDS.TREASURY,
-		position: [0, 0, 40] as [number, number, number],
-		labelSettings: {
-			isVisible: true,
-			position: [0, 7, 40] as [number, number, number],
-			text: "Treasury",
-		},
-		wallOpenings: [DOOR_SIDES.NORTH, DOOR_SIDES.SOUTH],
-		lockedDoorSides: [],
-		openedDoorSides: [],
-		isTreasury: true,
-		showTreasureKey: false,
-	},
-];
+const ROOM_POSITIONS_BY_ID = {
+	[ROOM_IDS.GUARD_ROOM]: [0, 0, 20] as [number, number, number],
+	[ROOM_IDS.TREASURY]: [0, 0, 40] as [number, number, number],
+} as const;
 
 describe("getWorldInteractionPromptPosition", () => {
 	it("anchors a guarded door prompt to the relevant doorway", () => {
 		expect(
 			getWorldInteractionPromptPosition(
 				buildDoorKey(ROOM_IDS.GUARD_ROOM, DOOR_SIDES.SOUTH),
-				ROOM_MESH_SETTINGS,
+				ROOM_POSITIONS_BY_ID,
 			),
 		).toEqual([0, WORLD_INTERACTION_PROMPT_CONFIG.DOOR_HEIGHT, 26]);
 	});
@@ -59,7 +32,7 @@ describe("getWorldInteractionPromptPosition", () => {
 		expect(
 			getWorldInteractionPromptPosition(
 				DUNGEON_INTERACTABLE_IDS.TREASURE_KEY,
-				ROOM_MESH_SETTINGS,
+				ROOM_POSITIONS_BY_ID,
 			),
 		).toEqual([0, WORLD_INTERACTION_PROMPT_CONFIG.KEY_HEIGHT, 20]);
 	});

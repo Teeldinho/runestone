@@ -8,11 +8,11 @@ import { CAMERA_MODES } from "@/features/camera-system";
 
 import { GameCanvas } from "./GameCanvas";
 
-const mockUseInteractionCandidates = vi.fn();
-const mockUseInteractionInput = vi.fn();
-const mockUseSendDungeonMachineEvent = vi.fn();
 const mockSceneEnvironment = vi.fn((_props: unknown) => (
 	<div data-testid="scene-environment" />
+));
+const mockWorldInteractionRuntime = vi.fn(() => (
+	<div data-testid="world-interaction-runtime" />
 ));
 
 vi.mock("@react-three/drei", () => ({
@@ -66,12 +66,6 @@ vi.mock("@/entities/room", () => ({
 	RoomMesh: () => null,
 }));
 
-vi.mock("@/features/dungeon-navigation", () => ({
-	useInteractionCandidates: () => mockUseInteractionCandidates(),
-	useInteractionInput: (input: unknown) => mockUseInteractionInput(input),
-	useSendDungeonMachineEvent: () => mockUseSendDungeonMachineEvent(),
-}));
-
 vi.mock("../model", () => ({
 	useAchievementTracker: () => ({ activeAchievement: null }),
 	useCanvasMachineSettings: () => ({
@@ -118,22 +112,12 @@ vi.mock("./SceneLighting", () => ({
 	SceneLighting: () => null,
 }));
 
+vi.mock("./WorldInteractionRuntime", () => ({
+	WorldInteractionRuntime: () => mockWorldInteractionRuntime(),
+}));
+
 describe("GameCanvas", () => {
-	it("computes interaction candidates once and shares them with input and scene rendering", () => {
-		const candidates = {
-			interactPrompt: "Enter Library",
-			interactEvent: "ENTER_LIBRARY",
-			interactTargetId: "entrance:south",
-			attackPrompt: null,
-			attackPosition: null,
-			hasInteract: true,
-			hasAttack: false,
-		};
-		const sendDungeonMachineEvent = vi.fn();
-
-		mockUseInteractionCandidates.mockReturnValue(candidates);
-		mockUseSendDungeonMachineEvent.mockReturnValue(sendDungeonMachineEvent);
-
+	it("renders the narrow interaction runtime separately from the scene environment", () => {
 		render(
 			<GameCanvas
 				cameraStateSnapshot={{
@@ -152,15 +136,7 @@ describe("GameCanvas", () => {
 			/>,
 		);
 
-		expect(mockUseInteractionCandidates).toHaveBeenCalledTimes(1);
-		expect(mockUseInteractionInput).toHaveBeenCalledWith({
-			candidates,
-			sendDungeonMachineEvent,
-		});
-		expect(mockSceneEnvironment).toHaveBeenCalledWith(
-			expect.objectContaining({
-				interactionCandidates: candidates,
-			}),
-		);
+		expect(mockSceneEnvironment).toHaveBeenCalledTimes(1);
+		expect(mockWorldInteractionRuntime).toHaveBeenCalledTimes(1);
 	});
 });
