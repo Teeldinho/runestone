@@ -38,10 +38,8 @@ vi.mock("@/entities/player", () => ({
 }));
 
 vi.mock("@/features/dungeon-navigation", () => ({
-	useGameMachineRuntime: () => ({
-		sendDungeonMachineEvent: mockSendDungeonMachineEvent,
-	}),
 	DUNGEON_MACHINE_SYSTEM_EVENTS: { RESET_DUNGEON_RUN: "RESET_DUNGEON_RUN" },
+	useSendDungeonMachineEvent: () => mockSendDungeonMachineEvent,
 }));
 
 const createMockPlayerSnapshot = (

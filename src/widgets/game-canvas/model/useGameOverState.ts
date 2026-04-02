@@ -7,7 +7,7 @@ import {
 } from "@/entities/player";
 import {
 	DUNGEON_MACHINE_SYSTEM_EVENTS,
-	useGameMachineRuntime,
+	useSendDungeonMachineEvent,
 } from "@/features/dungeon-navigation";
 
 type UseGameOverStateResult = {
@@ -17,7 +17,7 @@ type UseGameOverStateResult = {
 
 export const useGameOverState = (): UseGameOverStateResult => {
 	const { snapshot, sendPlayerMachineEvent } = usePlayerMachineRuntime();
-	const { sendDungeonMachineEvent } = useGameMachineRuntime();
+	const sendDungeonMachineEvent = useSendDungeonMachineEvent();
 
 	const healthState =
 		snapshot.value[PLAYER_STATES.REGIONS.HEALTH as keyof typeof snapshot.value];
