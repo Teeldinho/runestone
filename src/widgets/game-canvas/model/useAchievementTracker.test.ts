@@ -18,7 +18,8 @@ const { mockSnapshotGetter } = vi.hoisted(() => ({
 }));
 
 vi.mock("@/features/dungeon-navigation", () => ({
-	useGameMachineRuntime: () => ({ snapshot: mockSnapshotGetter() }),
+	selectAchievementTrackingContext: vi.fn(),
+	useGameMachineSelector: () => mockSnapshotGetter().context,
 }));
 
 vi.mock("@/features/haptics-feedback", () => ({
@@ -66,6 +67,7 @@ const makeSnapshot = (
 	hasTreasureKey = false,
 	enemiesRemaining = 3,
 ) => ({
+	value: ROOM_IDS.ENTRANCE,
 	context: {
 		currentFloorId: FLOOR_IDS.FLOOR_ONE,
 		currentRoomId: ROOM_IDS.ENTRANCE,

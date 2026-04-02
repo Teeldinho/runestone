@@ -15,11 +15,8 @@ const mockRuntimeContext = vi.hoisted(() => ({
 }));
 
 vi.mock("@/features/dungeon-navigation", () => ({
-	useGameMachineRuntime: () => ({
-		snapshot: {
-			context: mockRuntimeContext,
-		},
-	}),
+	selectDoorwayNavigationContext: vi.fn(),
+	useGameMachineSelector: () => mockRuntimeContext,
 }));
 
 const consoleWarnSpy = vi.hoisted(() => {

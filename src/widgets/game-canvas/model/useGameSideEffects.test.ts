@@ -73,10 +73,8 @@ vi.mock("@/features/dungeon-navigation", async (importOriginal) => {
 
 	return {
 		...original,
-		useGameMachineRuntime: () => ({
-			snapshot: mockSnapshotGetter(),
-			sendDungeonMachineEvent: vi.fn(),
-		}),
+		useGameMachineSelector: (selector: (snapshot: unknown) => unknown) =>
+			selector(mockSnapshotGetter()),
 	};
 });
 

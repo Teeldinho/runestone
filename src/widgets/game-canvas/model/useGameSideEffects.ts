@@ -11,7 +11,14 @@ import { createDungeonFloorLayout } from "@/entities/room";
 import { useSubmitDungeonScore } from "@/entities/score";
 import { AUDIO_SPRITE_IDS, useAudioController } from "@/features/audio-manager";
 import { useAuthContext } from "@/features/auth";
-import { useGameMachineRuntime } from "@/features/dungeon-navigation";
+import {
+	selectActiveStateLabel,
+	selectCurrentRoomId,
+	selectDiscoveredRooms,
+	selectLastDoorwayFeedback,
+	selectLastTransition,
+	useGameMachineSelector,
+} from "@/features/dungeon-navigation";
 import { useHaptics } from "@/features/haptics-feedback";
 import { SCORE_VALUES } from "@/shared/config";
 import { setPlayerTeleportTarget } from "@/shared/lib/playerPositionStore";
@@ -23,7 +30,11 @@ import {
 } from "../lib";
 
 export const useGameSideEffects = (): void => {
-	const { snapshot } = useGameMachineRuntime();
+	const activeStateLabel = useGameMachineSelector(selectActiveStateLabel);
+	const currentRoomId = useGameMachineSelector(selectCurrentRoomId);
+	const discoveredRooms = useGameMachineSelector(selectDiscoveredRooms);
+	const lastDoorwayFeedback = useGameMachineSelector(selectLastDoorwayFeedback);
+	const lastTransition = useGameMachineSelector(selectLastTransition);
 	const { snapshot: playerSnapshot } = usePlayerMachineRuntime();
 	const {
 		onGuardFail,
@@ -45,34 +56,24 @@ export const useGameSideEffects = (): void => {
 	const prevRoomRef = useRef<RoomId | null>(null);
 	const hasAppliedInitialTeleportRef = useRef(false);
 	const lastArrivalKeyRef = useRef<string | null>(null);
-	const previousDoorwayFeedbackRef =
-		useRef<typeof snapshot.context.lastDoorwayFeedback>(null);
+	const previousDoorwayFeedbackRef = useRef<typeof lastDoorwayFeedback>(null);
 	const hasSubmittedRef = useRef(false);
 	const hasTriggeredDeathRef = useRef(false);
 
 	useEffect(() => {
-		const currentRoom = snapshot.context.currentRoomId;
-
-		if (currentRoom !== prevRoomRef.current) {
+		if (currentRoomId !== prevRoomRef.current) {
 			onTransition();
 			onRoomEnter();
 			handleSoundEffectPlay(AUDIO_SPRITE_IDS.DOOR_OPEN);
 
-			prevRoomRef.current = currentRoom;
+			prevRoomRef.current = currentRoomId;
 		}
-	}, [
-		snapshot.context.currentRoomId,
-		onTransition,
-		onRoomEnter,
-		handleSoundEffectPlay,
-	]);
+	}, [currentRoomId, onTransition, onRoomEnter, handleSoundEffectPlay]);
 
 	useEffect(() => {
-		const currentRoom = snapshot.context.currentRoomId;
-		const currentTransition = snapshot.context.lastTransition;
 		const roomPosition = getRoomWorldPosition(
 			floorRooms,
-			currentRoom,
+			currentRoomId,
 			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
 		);
 
@@ -81,12 +82,12 @@ export const useGameSideEffects = (): void => {
 		}
 
 		const hasTransitionForCurrentRoom =
-			currentTransition?.toRoom === currentRoom;
+			lastTransition?.toRoom === currentRoomId;
 		const arrivalKey = hasTransitionForCurrentRoom
-			? `${currentRoom}:${currentTransition.fromRoom}:${currentTransition.toRoom}:${currentTransition.doorSide}`
+			? `${currentRoomId}:${lastTransition.fromRoom}:${lastTransition.toRoom}:${lastTransition.doorSide}`
 			: hasAppliedInitialTeleportRef.current
 				? null
-				: `${currentRoom}:initial`;
+				: `${currentRoomId}:initial`;
 
 		if (!arrivalKey || lastArrivalKeyRef.current === arrivalKey) {
 			return;
@@ -95,40 +96,29 @@ export const useGameSideEffects = (): void => {
 		setPlayerTeleportTarget(
 			...getDoorwayArrivalPosition({
 				currentRoomPosition: roomPosition,
-				lastTransition: hasTransitionForCurrentRoom ? currentTransition : null,
+				lastTransition: hasTransitionForCurrentRoom ? lastTransition : null,
 				spawnHeightOffset: PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
 			}),
 		);
 
 		hasAppliedInitialTeleportRef.current = true;
 		lastArrivalKeyRef.current = arrivalKey;
-	}, [
-		snapshot.context.currentRoomId,
-		snapshot.context.lastTransition,
-		floorRooms,
-	]);
+	}, [currentRoomId, lastTransition, floorRooms]);
 
 	useEffect(() => {
 		if (
-			snapshot.context.lastDoorwayFeedback &&
-			snapshot.context.lastDoorwayFeedback !==
-				previousDoorwayFeedbackRef.current
+			lastDoorwayFeedback &&
+			lastDoorwayFeedback !== previousDoorwayFeedbackRef.current
 		) {
 			onGuardFail();
 			handleSoundEffectPlay(AUDIO_SPRITE_IDS.DOOR_LOCKED);
 		}
 
-		previousDoorwayFeedbackRef.current = snapshot.context.lastDoorwayFeedback;
-	}, [
-		snapshot.context.lastDoorwayFeedback,
-		onGuardFail,
-		handleSoundEffectPlay,
-	]);
+		previousDoorwayFeedbackRef.current = lastDoorwayFeedback;
+	}, [lastDoorwayFeedback, onGuardFail, handleSoundEffectPlay]);
 
 	useEffect(() => {
-		if (
-			!shouldSubmitFloorScore(snapshot.value as string, hasSubmittedRef.current)
-		) {
+		if (!shouldSubmitFloorScore(activeStateLabel, hasSubmittedRef.current)) {
 			return;
 		}
 
@@ -142,14 +132,13 @@ export const useGameSideEffects = (): void => {
 		submitScore.mutate({
 			userId: authenticatedProfile.id,
 			dungeonId: FLOOR_IDS.FLOOR_ONE,
-			score:
-				snapshot.context.discoveredRooms.length * SCORE_VALUES.ROOM_DISCOVERY,
+			score: discoveredRooms.length * SCORE_VALUES.ROOM_DISCOVERY,
 			timeMs: Date.now() - startTimeMsRef.current,
-			roomsDiscovered: snapshot.context.discoveredRooms.length,
+			roomsDiscovered: discoveredRooms.length,
 		});
 	}, [
-		snapshot.value,
-		snapshot.context.discoveredRooms,
+		activeStateLabel,
+		discoveredRooms,
 		authenticatedProfile,
 		onFloorComplete,
 		handleSoundEffectPlay,
