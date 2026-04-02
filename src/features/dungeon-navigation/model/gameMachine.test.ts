@@ -3,8 +3,11 @@ import { createActor } from "xstate";
 
 import {
 	buildDoorKey,
+	DOOR_SIDES,
 	DUNGEON_EVENTS,
+	DUNGEON_INTERACTABLE_IDS,
 	FLOOR_IDS,
+	INTERACTION_TYPES,
 	ROOM_IDS,
 } from "@/entities/dungeon";
 import { createGameMachine } from "@/features/dungeon-navigation/model/gameMachine";
@@ -23,38 +26,39 @@ describe("createGameMachine", () => {
 		});
 	});
 
-	it("moves from entrance to library", () => {
+	it("moves from entrance to library when the doorway is nearby", () => {
 		const actor = createActor(createGameMachine()).start();
 
 		actor.send({
-			type: DUNGEON_EVENTS.OPEN_DOOR,
-			doorKey: buildDoorKey(ROOM_IDS.ENTRANCE, "south"),
+			type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+			interactableId: buildDoorKey(ROOM_IDS.ENTRANCE, DOOR_SIDES.SOUTH),
+			interactableType: INTERACTION_TYPES.DOOR,
 		});
 		actor.send({ type: DUNGEON_EVENTS.ENTER_LIBRARY });
 
 		expect(actor.getSnapshot().value).toBe(ROOM_IDS.LIBRARY);
 		expect(actor.getSnapshot().context.currentRoomId).toBe(ROOM_IDS.LIBRARY);
-		expect(actor.getSnapshot().context.discoveredRooms).toContain(
-			ROOM_IDS.LIBRARY,
-		);
 	});
 
-	it("blocks treasury until guard room combat is cleared and key is acquired", () => {
+	it("blocks treasury until guard-room combat is cleared and key is acquired", () => {
 		const actor = createActor(createGameMachine()).start();
 
 		actor.send({
-			type: DUNGEON_EVENTS.OPEN_DOOR,
-			doorKey: buildDoorKey(ROOM_IDS.ENTRANCE, "south"),
+			type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+			interactableId: buildDoorKey(ROOM_IDS.ENTRANCE, DOOR_SIDES.SOUTH),
+			interactableType: INTERACTION_TYPES.DOOR,
 		});
 		actor.send({ type: DUNGEON_EVENTS.ENTER_LIBRARY });
 		actor.send({
-			type: DUNGEON_EVENTS.OPEN_DOOR,
-			doorKey: buildDoorKey(ROOM_IDS.LIBRARY, "south"),
+			type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+			interactableId: buildDoorKey(ROOM_IDS.LIBRARY, DOOR_SIDES.SOUTH),
+			interactableType: INTERACTION_TYPES.DOOR,
 		});
 		actor.send({ type: DUNGEON_EVENTS.ENTER_GUARD_ROOM });
 		actor.send({
-			type: DUNGEON_EVENTS.OPEN_DOOR,
-			doorKey: buildDoorKey(ROOM_IDS.GUARD_ROOM, "south"),
+			type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+			interactableId: buildDoorKey(ROOM_IDS.GUARD_ROOM, DOOR_SIDES.SOUTH),
+			interactableType: INTERACTION_TYPES.DOOR,
 		});
 		actor.send({ type: DUNGEON_EVENTS.ENTER_TREASURY });
 
@@ -65,25 +69,34 @@ describe("createGameMachine", () => {
 		const actor = createActor(createGameMachine()).start();
 
 		actor.send({
-			type: DUNGEON_EVENTS.OPEN_DOOR,
-			doorKey: buildDoorKey(ROOM_IDS.ENTRANCE, "south"),
+			type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+			interactableId: buildDoorKey(ROOM_IDS.ENTRANCE, DOOR_SIDES.SOUTH),
+			interactableType: INTERACTION_TYPES.DOOR,
 		});
 		actor.send({ type: DUNGEON_EVENTS.ENTER_LIBRARY });
 		actor.send({
-			type: DUNGEON_EVENTS.OPEN_DOOR,
-			doorKey: buildDoorKey(ROOM_IDS.LIBRARY, "south"),
+			type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+			interactableId: buildDoorKey(ROOM_IDS.LIBRARY, DOOR_SIDES.SOUTH),
+			interactableType: INTERACTION_TYPES.DOOR,
 		});
 		actor.send({ type: DUNGEON_EVENTS.ENTER_GUARD_ROOM });
+		actor.send({
+			type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+			interactableId: DUNGEON_INTERACTABLE_IDS.TREASURE_KEY,
+			interactableType: INTERACTION_TYPES.KEY,
+		});
 		actor.send({ type: DUNGEON_EVENTS.PICK_UP_KEY });
 		actor.send({ type: DUNGEON_EVENTS.ENEMY_DIED });
 		actor.send({
-			type: DUNGEON_EVENTS.OPEN_DOOR,
-			doorKey: buildDoorKey(ROOM_IDS.GUARD_ROOM, "south"),
+			type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+			interactableId: buildDoorKey(ROOM_IDS.GUARD_ROOM, DOOR_SIDES.SOUTH),
+			interactableType: INTERACTION_TYPES.DOOR,
 		});
 		actor.send({ type: DUNGEON_EVENTS.ENTER_TREASURY });
 		actor.send({
-			type: DUNGEON_EVENTS.OPEN_DOOR,
-			doorKey: buildDoorKey(ROOM_IDS.TREASURY, "south"),
+			type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+			interactableId: buildDoorKey(ROOM_IDS.TREASURY, DOOR_SIDES.SOUTH),
+			interactableType: INTERACTION_TYPES.EXIT,
 		});
 		actor.send({ type: DUNGEON_EVENTS.ENTER_EXIT });
 

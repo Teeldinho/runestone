@@ -1,8 +1,10 @@
 export {
 	checkPlayerWithinRoomBounds,
 	type DoorwayNavigationEvent,
+	type NearbyInteractable,
 	type ResolveDoorwayNavigationInput,
 	resolveDoorwayNavigationEvent,
+	resolveNearInteractableTarget,
 } from "./doorwayNavigation";
 export {
 	createInitialDungeonContext,

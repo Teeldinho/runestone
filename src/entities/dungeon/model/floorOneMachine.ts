@@ -1,88 +1,132 @@
 import { and, assign, setup } from "xstate";
 
-import { DUNGEON_EVENTS, ROOM_IDS } from "../config";
+import {
+	DUNGEON_EVENTS,
+	DUNGEON_MACHINE_IDS,
+	FLOOR_ONE_EVENT_DOOR_TRANSITIONS,
+	FLOOR_ONE_GUARD_KEYS,
+	ROOM_IDS,
+} from "../config";
 import {
 	buildDoorKey,
-	canEnterFloorOneExit,
-	canEnterFloorOneTreasury,
 	clearFloorOneNearInteractable,
 	createFloorOneContext,
 	decrementFloorOneEnemies,
-	isDoorOpened,
+	FLOOR_ONE_GUARD_IMPLEMENTATIONS,
 	markFloorOneTreasureKeyCollected,
-	openFloorOneDoor,
 	setFloorOneDoorwayFeedback,
 	setFloorOneNearInteractable,
-	updateFloorOneContextRoom,
+	transitionFloorOneContextRoom,
 } from "../lib";
-import type {
-	DoorStateKey,
-	DungeonMachineContext,
-	DungeonMachineEvent,
-} from "./types";
+import type { DungeonMachineContext, DungeonMachineEvent } from "./types";
 
 export const createFloorOneMachine = (options?: {
 	context?: Partial<DungeonMachineContext>;
-}) =>
-	setup({
+}) => {
+	const getRequiredTransition = (eventType: DungeonMachineEvent["type"]) => {
+		const transition = FLOOR_ONE_EVENT_DOOR_TRANSITIONS[eventType];
+
+		if (!transition) {
+			throw new Error(`Missing floor-one transition metadata for ${eventType}`);
+		}
+
+		return transition;
+	};
+
+	const entranceToLibrary = getRequiredTransition(DUNGEON_EVENTS.ENTER_LIBRARY);
+	const libraryToGuardRoom = getRequiredTransition(
+		DUNGEON_EVENTS.ENTER_GUARD_ROOM,
+	);
+	const libraryToEntrance = getRequiredTransition(
+		DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
+	);
+	const guardRoomToTreasury = getRequiredTransition(
+		DUNGEON_EVENTS.ENTER_TREASURY,
+	);
+	const guardRoomToLibrary = getRequiredTransition(
+		DUNGEON_EVENTS.RETURN_TO_LIBRARY,
+	);
+	const treasuryToExit = getRequiredTransition(DUNGEON_EVENTS.ENTER_EXIT);
+	const treasuryToGuardRoom = getRequiredTransition(
+		DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM,
+	);
+	const exitToTreasury = getRequiredTransition(
+		DUNGEON_EVENTS.RETURN_TO_TREASURY,
+	);
+
+	return setup({
 		types: {
 			context: {} as DungeonMachineContext,
 			events: {} as DungeonMachineEvent,
 		},
-		guards: {
-			doorIsOpened: ({ context }, params: { doorKey: DoorStateKey }) =>
-				isDoorOpened(context, params.doorKey),
-			treasuryCanBeEntered: ({ context }) => canEnterFloorOneTreasury(context),
-			exitCanBeEntered: ({ context }) => canEnterFloorOneExit(context),
-		},
+		guards: FLOOR_ONE_GUARD_IMPLEMENTATIONS,
 	}).createMachine({
-		id: "floorOneMachine",
+		id: DUNGEON_MACHINE_IDS.FLOOR_ONE,
 		initial: ROOM_IDS.ENTRANCE,
 		context: createFloorOneContext(options?.context),
+		on: {
+			[DUNGEON_EVENTS.NEAR_INTERACTABLE]: {
+				actions: assign(({ context, event }) => {
+					if ("interactableId" in event && "interactableType" in event) {
+						return setFloorOneNearInteractable(
+							context,
+							event.interactableId,
+							event.interactableType,
+						);
+					}
+
+					return context;
+				}),
+			},
+			[DUNGEON_EVENTS.LEFT_INTERACTABLE]: {
+				actions: assign(({ context, event }) => {
+					if (
+						"interactableId" in event &&
+						context.nearInteractable === event.interactableId
+					) {
+						return clearFloorOneNearInteractable(context);
+					}
+
+					return context;
+				}),
+			},
+			[DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT]: {
+				actions: assign(({ context }) =>
+					setFloorOneDoorwayFeedback(
+						context,
+						DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT,
+					),
+				),
+			},
+			[DUNGEON_EVENTS.LOCKED_EXIT_ATTEMPT]: {
+				actions: assign(({ context }) =>
+					setFloorOneDoorwayFeedback(
+						context,
+						DUNGEON_EVENTS.LOCKED_EXIT_ATTEMPT,
+					),
+				),
+			},
+		},
 		states: {
 			[ROOM_IDS.ENTRANCE]: {
 				on: {
 					[DUNGEON_EVENTS.ENTER_LIBRARY]: {
 						target: ROOM_IDS.LIBRARY,
 						guard: {
-							type: "doorIsOpened",
-							params: { doorKey: buildDoorKey(ROOM_IDS.ENTRANCE, "south") },
-						},
-						actions: [
-							assign(({ context }) =>
-								openFloorOneDoor(
-									context,
-									buildDoorKey(ROOM_IDS.ENTRANCE, "south"),
+							type: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+							params: {
+								interactableId: buildDoorKey(
+									entranceToLibrary.fromRoom,
+									entranceToLibrary.departureDoorSide,
 								),
-							),
-							assign(({ context }) =>
-								updateFloorOneContextRoom(context, ROOM_IDS.LIBRARY),
-							),
-						],
-					},
-					[DUNGEON_EVENTS.OPEN_DOOR]: {
-						actions: assign(({ context, event }) => {
-							if ("doorKey" in event) {
-								return openFloorOneDoor(context, event.doorKey);
-							}
-							return context;
-						}),
-					},
-					[DUNGEON_EVENTS.NEAR_INTERACTABLE]: {
-						actions: assign(({ context, event }) => {
-							if ("doorKey" in event && "interactableType" in event) {
-								return setFloorOneNearInteractable(
-									context,
-									event.doorKey,
-									event.interactableType,
-								);
-							}
-							return context;
-						}),
-					},
-					[DUNGEON_EVENTS.LEFT_INTERACTABLE]: {
+							},
+						},
 						actions: assign(({ context }) =>
-							clearFloorOneNearInteractable(context),
+							transitionFloorOneContextRoom(context, {
+								fromRoom: entranceToLibrary.fromRoom,
+								toRoom: entranceToLibrary.toRoom,
+								doorSide: entranceToLibrary.arrivalDoorSide,
+							}),
 						),
 					},
 				},
@@ -92,62 +136,39 @@ export const createFloorOneMachine = (options?: {
 					[DUNGEON_EVENTS.ENTER_GUARD_ROOM]: {
 						target: ROOM_IDS.GUARD_ROOM,
 						guard: {
-							type: "doorIsOpened",
-							params: { doorKey: buildDoorKey(ROOM_IDS.LIBRARY, "south") },
-						},
-						actions: [
-							assign(({ context }) =>
-								openFloorOneDoor(
-									context,
-									buildDoorKey(ROOM_IDS.LIBRARY, "south"),
+							type: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+							params: {
+								interactableId: buildDoorKey(
+									libraryToGuardRoom.fromRoom,
+									libraryToGuardRoom.departureDoorSide,
 								),
-							),
-							assign(({ context }) =>
-								updateFloorOneContextRoom(context, ROOM_IDS.GUARD_ROOM),
-							),
-						],
+							},
+						},
+						actions: assign(({ context }) =>
+							transitionFloorOneContextRoom(context, {
+								fromRoom: libraryToGuardRoom.fromRoom,
+								toRoom: libraryToGuardRoom.toRoom,
+								doorSide: libraryToGuardRoom.arrivalDoorSide,
+							}),
+						),
 					},
 					[DUNGEON_EVENTS.RETURN_TO_ENTRANCE]: {
 						target: ROOM_IDS.ENTRANCE,
 						guard: {
-							type: "doorIsOpened",
-							params: { doorKey: buildDoorKey(ROOM_IDS.LIBRARY, "north") },
-						},
-						actions: [
-							assign(({ context }) =>
-								openFloorOneDoor(
-									context,
-									buildDoorKey(ROOM_IDS.LIBRARY, "north"),
+							type: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+							params: {
+								interactableId: buildDoorKey(
+									libraryToEntrance.fromRoom,
+									libraryToEntrance.departureDoorSide,
 								),
-							),
-							assign(({ context }) =>
-								updateFloorOneContextRoom(context, ROOM_IDS.ENTRANCE),
-							),
-						],
-					},
-					[DUNGEON_EVENTS.OPEN_DOOR]: {
-						actions: assign(({ context, event }) => {
-							if ("doorKey" in event) {
-								return openFloorOneDoor(context, event.doorKey);
-							}
-							return context;
-						}),
-					},
-					[DUNGEON_EVENTS.NEAR_INTERACTABLE]: {
-						actions: assign(({ context, event }) => {
-							if ("doorKey" in event && "interactableType" in event) {
-								return setFloorOneNearInteractable(
-									context,
-									event.doorKey,
-									event.interactableType,
-								);
-							}
-							return context;
-						}),
-					},
-					[DUNGEON_EVENTS.LEFT_INTERACTABLE]: {
+							},
+						},
 						actions: assign(({ context }) =>
-							clearFloorOneNearInteractable(context),
+							transitionFloorOneContextRoom(context, {
+								fromRoom: libraryToEntrance.fromRoom,
+								toRoom: libraryToEntrance.toRoom,
+								doorSide: libraryToEntrance.arrivalDoorSide,
+							}),
 						),
 					},
 				},
@@ -158,6 +179,9 @@ export const createFloorOneMachine = (options?: {
 						actions: assign(({ context }) => decrementFloorOneEnemies(context)),
 					},
 					[DUNGEON_EVENTS.PICK_UP_KEY]: {
+						guard: {
+							type: FLOOR_ONE_GUARD_KEYS.CAN_PICK_UP_TREASURE_KEY,
+						},
 						actions: assign(({ context }) =>
 							markFloorOneTreasureKeyCollected(context),
 						),
@@ -166,72 +190,41 @@ export const createFloorOneMachine = (options?: {
 						target: ROOM_IDS.TREASURY,
 						guard: and([
 							{
-								type: "doorIsOpened",
-								params: { doorKey: buildDoorKey(ROOM_IDS.GUARD_ROOM, "south") },
+								type: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+								params: {
+									interactableId: buildDoorKey(
+										guardRoomToTreasury.fromRoom,
+										guardRoomToTreasury.departureDoorSide,
+									),
+								},
 							},
-							{ type: "treasuryCanBeEntered" },
+							{ type: FLOOR_ONE_GUARD_KEYS.TREASURY_CAN_BE_ENTERED },
 						]),
-						actions: [
-							assign(({ context }) =>
-								openFloorOneDoor(
-									context,
-									buildDoorKey(ROOM_IDS.GUARD_ROOM, "south"),
-								),
-							),
-							assign(({ context }) =>
-								updateFloorOneContextRoom(context, ROOM_IDS.TREASURY),
-							),
-						],
-					},
-					[DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT]: {
 						actions: assign(({ context }) =>
-							setFloorOneDoorwayFeedback(
-								context,
-								DUNGEON_EVENTS.LOCKED_DOOR_ATTEMPT,
-							),
+							transitionFloorOneContextRoom(context, {
+								fromRoom: guardRoomToTreasury.fromRoom,
+								toRoom: guardRoomToTreasury.toRoom,
+								doorSide: guardRoomToTreasury.arrivalDoorSide,
+							}),
 						),
 					},
 					[DUNGEON_EVENTS.RETURN_TO_LIBRARY]: {
 						target: ROOM_IDS.LIBRARY,
 						guard: {
-							type: "doorIsOpened",
-							params: { doorKey: buildDoorKey(ROOM_IDS.GUARD_ROOM, "north") },
-						},
-						actions: [
-							assign(({ context }) =>
-								openFloorOneDoor(
-									context,
-									buildDoorKey(ROOM_IDS.GUARD_ROOM, "north"),
+							type: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+							params: {
+								interactableId: buildDoorKey(
+									guardRoomToLibrary.fromRoom,
+									guardRoomToLibrary.departureDoorSide,
 								),
-							),
-							assign(({ context }) =>
-								updateFloorOneContextRoom(context, ROOM_IDS.LIBRARY),
-							),
-						],
-					},
-					[DUNGEON_EVENTS.OPEN_DOOR]: {
-						actions: assign(({ context, event }) => {
-							if ("doorKey" in event) {
-								return openFloorOneDoor(context, event.doorKey);
-							}
-							return context;
-						}),
-					},
-					[DUNGEON_EVENTS.NEAR_INTERACTABLE]: {
-						actions: assign(({ context, event }) => {
-							if ("doorKey" in event && "interactableType" in event) {
-								return setFloorOneNearInteractable(
-									context,
-									event.doorKey,
-									event.interactableType,
-								);
-							}
-							return context;
-						}),
-					},
-					[DUNGEON_EVENTS.LEFT_INTERACTABLE]: {
+							},
+						},
 						actions: assign(({ context }) =>
-							clearFloorOneNearInteractable(context),
+							transitionFloorOneContextRoom(context, {
+								fromRoom: guardRoomToLibrary.fromRoom,
+								toRoom: guardRoomToLibrary.toRoom,
+								doorSide: guardRoomToLibrary.arrivalDoorSide,
+							}),
 						),
 					},
 				},
@@ -242,72 +235,41 @@ export const createFloorOneMachine = (options?: {
 						target: ROOM_IDS.EXIT,
 						guard: and([
 							{
-								type: "doorIsOpened",
-								params: { doorKey: buildDoorKey(ROOM_IDS.TREASURY, "south") },
+								type: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+								params: {
+									interactableId: buildDoorKey(
+										treasuryToExit.fromRoom,
+										treasuryToExit.departureDoorSide,
+									),
+								},
 							},
-							{ type: "exitCanBeEntered" },
+							{ type: FLOOR_ONE_GUARD_KEYS.EXIT_CAN_BE_ENTERED },
 						]),
-						actions: [
-							assign(({ context }) =>
-								openFloorOneDoor(
-									context,
-									buildDoorKey(ROOM_IDS.TREASURY, "south"),
-								),
-							),
-							assign(({ context }) =>
-								updateFloorOneContextRoom(context, ROOM_IDS.EXIT),
-							),
-						],
-					},
-					[DUNGEON_EVENTS.LOCKED_EXIT_ATTEMPT]: {
 						actions: assign(({ context }) =>
-							setFloorOneDoorwayFeedback(
-								context,
-								DUNGEON_EVENTS.LOCKED_EXIT_ATTEMPT,
-							),
+							transitionFloorOneContextRoom(context, {
+								fromRoom: treasuryToExit.fromRoom,
+								toRoom: treasuryToExit.toRoom,
+								doorSide: treasuryToExit.arrivalDoorSide,
+							}),
 						),
 					},
 					[DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM]: {
 						target: ROOM_IDS.GUARD_ROOM,
 						guard: {
-							type: "doorIsOpened",
-							params: { doorKey: buildDoorKey(ROOM_IDS.TREASURY, "north") },
-						},
-						actions: [
-							assign(({ context }) =>
-								openFloorOneDoor(
-									context,
-									buildDoorKey(ROOM_IDS.TREASURY, "north"),
+							type: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+							params: {
+								interactableId: buildDoorKey(
+									treasuryToGuardRoom.fromRoom,
+									treasuryToGuardRoom.departureDoorSide,
 								),
-							),
-							assign(({ context }) =>
-								updateFloorOneContextRoom(context, ROOM_IDS.GUARD_ROOM),
-							),
-						],
-					},
-					[DUNGEON_EVENTS.OPEN_DOOR]: {
-						actions: assign(({ context, event }) => {
-							if ("doorKey" in event) {
-								return openFloorOneDoor(context, event.doorKey);
-							}
-							return context;
-						}),
-					},
-					[DUNGEON_EVENTS.NEAR_INTERACTABLE]: {
-						actions: assign(({ context, event }) => {
-							if ("doorKey" in event && "interactableType" in event) {
-								return setFloorOneNearInteractable(
-									context,
-									event.doorKey,
-									event.interactableType,
-								);
-							}
-							return context;
-						}),
-					},
-					[DUNGEON_EVENTS.LEFT_INTERACTABLE]: {
+							},
+						},
 						actions: assign(({ context }) =>
-							clearFloorOneNearInteractable(context),
+							transitionFloorOneContextRoom(context, {
+								fromRoom: treasuryToGuardRoom.fromRoom,
+								toRoom: treasuryToGuardRoom.toRoom,
+								doorSide: treasuryToGuardRoom.arrivalDoorSide,
+							}),
 						),
 					},
 				},
@@ -317,44 +279,24 @@ export const createFloorOneMachine = (options?: {
 					[DUNGEON_EVENTS.RETURN_TO_TREASURY]: {
 						target: ROOM_IDS.TREASURY,
 						guard: {
-							type: "doorIsOpened",
-							params: { doorKey: buildDoorKey(ROOM_IDS.EXIT, "north") },
+							type: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+							params: {
+								interactableId: buildDoorKey(
+									exitToTreasury.fromRoom,
+									exitToTreasury.departureDoorSide,
+								),
+							},
 						},
-						actions: [
-							assign(({ context }) =>
-								openFloorOneDoor(context, buildDoorKey(ROOM_IDS.EXIT, "north")),
-							),
-							assign(({ context }) =>
-								updateFloorOneContextRoom(context, ROOM_IDS.TREASURY),
-							),
-						],
-					},
-					[DUNGEON_EVENTS.OPEN_DOOR]: {
-						actions: assign(({ context, event }) => {
-							if ("doorKey" in event) {
-								return openFloorOneDoor(context, event.doorKey);
-							}
-							return context;
-						}),
-					},
-					[DUNGEON_EVENTS.NEAR_INTERACTABLE]: {
-						actions: assign(({ context, event }) => {
-							if ("doorKey" in event && "interactableType" in event) {
-								return setFloorOneNearInteractable(
-									context,
-									event.doorKey,
-									event.interactableType,
-								);
-							}
-							return context;
-						}),
-					},
-					[DUNGEON_EVENTS.LEFT_INTERACTABLE]: {
 						actions: assign(({ context }) =>
-							clearFloorOneNearInteractable(context),
+							transitionFloorOneContextRoom(context, {
+								fromRoom: exitToTreasury.fromRoom,
+								toRoom: exitToTreasury.toRoom,
+								doorSide: exitToTreasury.arrivalDoorSide,
+							}),
 						),
 					},
 				},
 			},
 		},
 	});
+};

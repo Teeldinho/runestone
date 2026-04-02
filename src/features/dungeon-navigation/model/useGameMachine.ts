@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 
 import type { DungeonEvent } from "@/entities/dungeon";
-import { DUNGEON_EVENTS, ROOM_LABELS } from "@/entities/dungeon";
+import { ROOM_LABELS } from "@/entities/dungeon";
 
 import {
 	DUNGEON_MACHINE_SYSTEM_EVENTS,
@@ -9,7 +9,6 @@ import {
 	NAVIGATION_ACTION_LABELS,
 	type NavigationActionEvent,
 } from "../config";
-import { getDoorKeyForNavigationEvent } from "../lib/getDoorKeyForNavigationEvent";
 import { getNavigationActionDisabled } from "../lib/navigationActionAvailability";
 import { useGameMachineRuntime } from "./gameMachineRuntime";
 
@@ -32,16 +31,9 @@ export const useGameMachine = () => {
 
 	const handleDoorTransition = useCallback(
 		(eventType: NavigationActionEvent) => {
-			const doorKey = getDoorKeyForNavigationEvent(eventType);
-			if (doorKey && !snapshot.context.openedDoors.includes(doorKey)) {
-				sendDungeonMachineEvent({
-					type: DUNGEON_EVENTS.OPEN_DOOR,
-					doorKey,
-				});
-			}
 			sendDungeonMachineEvent({ type: eventType });
 		},
-		[snapshot.context.openedDoors, sendDungeonMachineEvent],
+		[sendDungeonMachineEvent],
 	);
 
 	const handleDungeonRunReset = useCallback(() => {

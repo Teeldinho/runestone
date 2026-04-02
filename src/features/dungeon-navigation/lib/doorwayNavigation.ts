@@ -1,19 +1,29 @@
 import {
+	buildDoorKey,
 	canEnterFloorOneExit,
 	canEnterFloorOneTreasury,
 	createFloorOneContext,
+	DOOR_SIDES,
+	DUNGEON_EVENTS,
+	DUNGEON_INTERACTABLE_IDS,
 	type DungeonEvent,
+	type DungeonInteractableId,
+	INTERACTION_TYPES,
+	type InteractionType,
+	ROOM_IDS,
 	type RoomId,
 } from "@/entities/dungeon";
 import { ROOM_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 import {
+	DOOR_GUARDS,
 	DOORWAY_INTERACTIONS_BY_ROOM,
 	DOORWAY_NAVIGATION_CONFIG,
 	type DoorGuard,
 	type DoorSide,
 } from "../config";
+import { INTERACTION_CONFIG } from "../config/interactionConfig";
 
 type ResolveDoorwayNavigationInput = {
 	currentRoomId: RoomId;
@@ -27,6 +37,11 @@ type DoorwayNavigationEvent = {
 	eventType: DungeonEvent;
 	isLocked: boolean;
 	doorSide: DoorSide;
+};
+
+type NearbyInteractable = {
+	interactableId: DungeonInteractableId;
+	interactableType: InteractionType;
 };
 
 const isPlayerWithinRoomBounds = (localX: number, localZ: number): boolean => {
@@ -54,28 +69,28 @@ const resolveNearDoorSide = (
 		Math.abs(localX) <= doorwayHalfWidth &&
 		Math.abs(localZ + roomHalfDepth) <= threshold
 	) {
-		return "north";
+		return DOOR_SIDES.NORTH;
 	}
 
 	if (
 		Math.abs(localX) <= doorwayHalfWidth &&
 		Math.abs(localZ - roomHalfDepth) <= threshold
 	) {
-		return "south";
+		return DOOR_SIDES.SOUTH;
 	}
 
 	if (
 		Math.abs(localZ) <= doorwayHalfWidth &&
 		Math.abs(localX - roomHalfWidth) <= threshold
 	) {
-		return "east";
+		return DOOR_SIDES.EAST;
 	}
 
 	if (
 		Math.abs(localZ) <= doorwayHalfWidth &&
 		Math.abs(localX + roomHalfWidth) <= threshold
 	) {
-		return "west";
+		return DOOR_SIDES.WEST;
 	}
 
 	return null;
@@ -87,7 +102,7 @@ const isDoorGuardOpen = (
 	hasTreasureKey: boolean,
 	enemiesRemaining: number,
 ): boolean => {
-	if (doorGuard === "none") {
+	if (doorGuard === DOOR_GUARDS.NONE) {
 		return true;
 	}
 
@@ -97,11 +112,21 @@ const isDoorGuardOpen = (
 		enemiesRemaining,
 	});
 
-	if (doorGuard === "treasury") {
+	if (doorGuard === DOOR_GUARDS.TREASURY) {
 		return canEnterFloorOneTreasury(guardContext);
 	}
 
 	return canEnterFloorOneExit(guardContext);
+};
+
+const isNearTreasureKey = (
+	playerPosition: Vector3Tuple,
+	roomCenterPosition: Vector3Tuple,
+): boolean => {
+	const deltaX = playerPosition[0] - roomCenterPosition[0];
+	const deltaZ = playerPosition[2] - roomCenterPosition[2];
+
+	return Math.hypot(deltaX, deltaZ) <= INTERACTION_CONFIG.INTERACT_RADIUS;
 };
 
 export const resolveDoorwayNavigationEvent = ({
@@ -152,6 +177,36 @@ export const resolveDoorwayNavigationEvent = ({
 	};
 };
 
+export const resolveNearInteractableTarget = (
+	input: ResolveDoorwayNavigationInput,
+): NearbyInteractable | null => {
+	if (
+		input.currentRoomId === ROOM_IDS.GUARD_ROOM &&
+		!input.hasTreasureKey &&
+		isNearTreasureKey(input.playerPosition, input.roomCenterPosition)
+	) {
+		return {
+			interactableId: DUNGEON_INTERACTABLE_IDS.TREASURE_KEY,
+			interactableType: INTERACTION_TYPES.KEY,
+		};
+	}
+
+	const doorwayEvent = resolveDoorwayNavigationEvent(input);
+
+	if (!doorwayEvent) {
+		return null;
+	}
+
+	return {
+		interactableId: buildDoorKey(input.currentRoomId, doorwayEvent.doorSide),
+		interactableType:
+			doorwayEvent.eventType === DUNGEON_EVENTS.ENTER_EXIT ||
+			doorwayEvent.eventType === DUNGEON_EVENTS.LOCKED_EXIT_ATTEMPT
+				? INTERACTION_TYPES.EXIT
+				: INTERACTION_TYPES.DOOR,
+	};
+};
+
 export const checkPlayerWithinRoomBounds = ({
 	roomCenterPosition,
 	playerPosition,
@@ -165,4 +220,8 @@ export const checkPlayerWithinRoomBounds = ({
 	return isPlayerWithinRoomBounds(localX, localZ);
 };
 
-export type { DoorwayNavigationEvent, ResolveDoorwayNavigationInput };
+export type {
+	DoorwayNavigationEvent,
+	NearbyInteractable,
+	ResolveDoorwayNavigationInput,
+};

@@ -2,8 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import type { DungeonContext } from "@/entities/dungeon";
 import {
+	buildDoorKey,
+	DOOR_SIDES,
 	DUNGEON_DEFAULTS,
 	DUNGEON_EVENTS,
+	DUNGEON_INTERACTABLE_IDS,
 	FLOOR_IDS,
 	ROOM_IDS,
 } from "@/entities/dungeon";
@@ -22,7 +25,6 @@ const createDungeonContext = (
 	discoveredRooms: [ROOM_IDS.ENTRANCE],
 	hasTreasureKey: false,
 	enemiesRemaining: DUNGEON_DEFAULTS.INITIAL_ENEMIES_REMAINING,
-	openedDoors: [],
 	nearInteractable: null,
 	nearInteractableType: null,
 	lastTransition: null,
@@ -75,7 +77,9 @@ describe("dungeon navigation rules", () => {
 	});
 
 	it("derives navigation action disablement from context", () => {
-		const entranceContext = createDungeonContext();
+		const entranceContext = createDungeonContext({
+			nearInteractable: buildDoorKey(ROOM_IDS.ENTRANCE, DOOR_SIDES.SOUTH),
+		});
 
 		expect(
 			getNavigationActionDisabled(
@@ -99,6 +103,7 @@ describe("dungeon navigation rules", () => {
 			],
 			hasTreasureKey: true,
 			enemiesRemaining: 0,
+			nearInteractable: buildDoorKey(ROOM_IDS.GUARD_ROOM, DOOR_SIDES.SOUTH),
 		});
 
 		expect(
@@ -114,6 +119,7 @@ describe("dungeon navigation rules", () => {
 				createDungeonContext({
 					currentRoomId: ROOM_IDS.GUARD_ROOM,
 					hasTreasureKey: false,
+					nearInteractable: DUNGEON_INTERACTABLE_IDS.TREASURE_KEY,
 				}),
 			),
 		).toBe(false);
@@ -154,6 +160,7 @@ describe("dungeon navigation rules", () => {
 				createDungeonContext({
 					currentRoomId: ROOM_IDS.TREASURY,
 					hasTreasureKey: true,
+					nearInteractable: buildDoorKey(ROOM_IDS.TREASURY, DOOR_SIDES.SOUTH),
 				}),
 			),
 		).toBe(false);
@@ -171,7 +178,10 @@ describe("dungeon navigation rules", () => {
 		expect(
 			getNavigationActionDisabled(
 				DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
-				createDungeonContext({ currentRoomId: ROOM_IDS.LIBRARY }),
+				createDungeonContext({
+					currentRoomId: ROOM_IDS.LIBRARY,
+					nearInteractable: buildDoorKey(ROOM_IDS.LIBRARY, DOOR_SIDES.NORTH),
+				}),
 			),
 		).toBe(false);
 
@@ -185,7 +195,10 @@ describe("dungeon navigation rules", () => {
 		expect(
 			getNavigationActionDisabled(
 				DUNGEON_EVENTS.RETURN_TO_LIBRARY,
-				createDungeonContext({ currentRoomId: ROOM_IDS.GUARD_ROOM }),
+				createDungeonContext({
+					currentRoomId: ROOM_IDS.GUARD_ROOM,
+					nearInteractable: buildDoorKey(ROOM_IDS.GUARD_ROOM, DOOR_SIDES.NORTH),
+				}),
 			),
 		).toBe(false);
 
@@ -199,7 +212,10 @@ describe("dungeon navigation rules", () => {
 		expect(
 			getNavigationActionDisabled(
 				DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM,
-				createDungeonContext({ currentRoomId: ROOM_IDS.TREASURY }),
+				createDungeonContext({
+					currentRoomId: ROOM_IDS.TREASURY,
+					nearInteractable: buildDoorKey(ROOM_IDS.TREASURY, DOOR_SIDES.NORTH),
+				}),
 			),
 		).toBe(false);
 
@@ -213,7 +229,10 @@ describe("dungeon navigation rules", () => {
 		expect(
 			getNavigationActionDisabled(
 				DUNGEON_EVENTS.RETURN_TO_TREASURY,
-				createDungeonContext({ currentRoomId: ROOM_IDS.EXIT }),
+				createDungeonContext({
+					currentRoomId: ROOM_IDS.EXIT,
+					nearInteractable: buildDoorKey(ROOM_IDS.EXIT, DOOR_SIDES.NORTH),
+				}),
 			),
 		).toBe(false);
 
