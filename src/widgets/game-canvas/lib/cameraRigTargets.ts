@@ -1,7 +1,10 @@
 import { DOOR_SIDES, type DoorSide } from "@/entities/dungeon";
 import { CAMERA_MODES, type CameraMode } from "@/features/camera-system";
+import { DOORWAY_NAVIGATION_CONFIG } from "@/features/dungeon-navigation";
 import { CAMERA_CONFIG, PLAYER_EYE_HEIGHT } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
+
+import { CAMERA_RIG_THIRD_PERSON_TRANSITION_PADDING } from "../config";
 
 type GetCameraRigTargetsInput = {
 	mode: CameraMode;
@@ -19,22 +22,26 @@ type GetThirdPersonTransitionTargetsInput = {
 };
 
 const getThirdPersonTransitionOffset = (doorSide: DoorSide): Vector3Tuple => {
-	const [, offsetY, offsetZ] = CAMERA_CONFIG.THIRD_PERSON.OFFSET;
-	const transitionDistance = Math.abs(offsetZ);
+	const [, offsetY] = CAMERA_CONFIG.THIRD_PERSON.OFFSET;
+	const transitionDistance = Math.max(
+		DOORWAY_NAVIGATION_CONFIG.ARRIVAL_OFFSET -
+			CAMERA_RIG_THIRD_PERSON_TRANSITION_PADDING,
+		0,
+	);
 
 	if (doorSide === DOOR_SIDES.NORTH) {
-		return [0, offsetY, transitionDistance];
-	}
-
-	if (doorSide === DOOR_SIDES.SOUTH) {
 		return [0, offsetY, -transitionDistance];
 	}
 
-	if (doorSide === DOOR_SIDES.EAST) {
-		return [-transitionDistance, offsetY, 0];
+	if (doorSide === DOOR_SIDES.SOUTH) {
+		return [0, offsetY, transitionDistance];
 	}
 
-	return [transitionDistance, offsetY, 0];
+	if (doorSide === DOOR_SIDES.EAST) {
+		return [transitionDistance, offsetY, 0];
+	}
+
+	return [-transitionDistance, offsetY, 0];
 };
 
 export const getCameraRigTargets = ({
