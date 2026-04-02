@@ -12,7 +12,7 @@ import {
 	getWorldAttackPromptPosition,
 	getWorldInteractionPromptPosition,
 } from "../lib";
-import { useSceneEnvironmentSettings } from "../model";
+import type { RoomPositionsById } from "../lib/getWorldInteractionPromptPosition";
 
 const PROMPT_STYLE: React.CSSProperties = {
 	display: "flex",
@@ -48,13 +48,13 @@ const KEY_STYLE: React.CSSProperties = {
 
 type WorldInteractionPromptProps = {
 	interactionCandidates: InteractionCandidatesViewModel;
+	roomPositionsById: RoomPositionsById;
 };
 
 export function WorldInteractionPrompt({
 	interactionCandidates,
+	roomPositionsById,
 }: WorldInteractionPromptProps) {
-	const { roomMeshSettings } = useSceneEnvironmentSettings();
-
 	const interactPosition = useMemo(() => {
 		if (!interactionCandidates.hasInteract) {
 			return null;
@@ -62,12 +62,12 @@ export function WorldInteractionPrompt({
 
 		return getWorldInteractionPromptPosition(
 			interactionCandidates.interactTargetId,
-			roomMeshSettings,
+			roomPositionsById,
 		);
 	}, [
 		interactionCandidates.hasInteract,
 		interactionCandidates.interactTargetId,
-		roomMeshSettings,
+		roomPositionsById,
 	]);
 
 	const attackPosition = useMemo(() => {

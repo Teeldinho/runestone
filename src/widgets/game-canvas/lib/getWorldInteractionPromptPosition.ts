@@ -4,48 +4,46 @@ import {
 	type DungeonInteractableId,
 	parseDoorKey,
 	ROOM_IDS,
+	type RoomId,
 } from "@/entities/dungeon";
 import type { Vector3Tuple } from "@/shared/types";
 
 import { WORLD_INTERACTION_PROMPT_CONFIG } from "../config";
 import { getDoorwayAnchorPosition } from "./getDoorwayAnchorPosition";
-import type { SceneRoomMeshSettings } from "./sceneEnvironmentMappers";
+
+type RoomPositionsById = Partial<Record<RoomId, Vector3Tuple>>;
 
 export const getWorldInteractionPromptPosition = (
 	interactableId: DungeonInteractableId | null,
-	roomMeshSettings: readonly SceneRoomMeshSettings[],
+	roomPositionsById: RoomPositionsById,
 ): Vector3Tuple | null => {
 	if (!interactableId) {
 		return null;
 	}
 
 	if (interactableId === DUNGEON_INTERACTABLE_IDS.TREASURE_KEY) {
-		const guardRoom = roomMeshSettings.find(
-			(room) => room.roomId === ROOM_IDS.GUARD_ROOM,
-		);
+		const guardRoomPosition = roomPositionsById[ROOM_IDS.GUARD_ROOM];
 
-		if (!guardRoom) {
+		if (!guardRoomPosition) {
 			return null;
 		}
 
 		return [
-			guardRoom.position[0],
-			guardRoom.position[1] + WORLD_INTERACTION_PROMPT_CONFIG.KEY_HEIGHT,
-			guardRoom.position[2],
+			guardRoomPosition[0],
+			guardRoomPosition[1] + WORLD_INTERACTION_PROMPT_CONFIG.KEY_HEIGHT,
+			guardRoomPosition[2],
 		];
 	}
 
 	const { doorSide, roomId } = parseDoorKey(interactableId as DoorStateKey);
-	const room = roomMeshSettings.find(
-		(roomMeshSetting) => roomMeshSetting.roomId === roomId,
-	);
+	const roomPosition = roomPositionsById[roomId as RoomId];
 
-	if (!room) {
+	if (!roomPosition) {
 		return null;
 	}
 
 	return getDoorwayAnchorPosition(
-		room.position,
+		roomPosition,
 		doorSide,
 		WORLD_INTERACTION_PROMPT_CONFIG.DOOR_HEIGHT,
 	);
@@ -64,3 +62,5 @@ export const getWorldAttackPromptPosition = (
 		enemyPosition[2],
 	];
 };
+
+export type { RoomPositionsById };

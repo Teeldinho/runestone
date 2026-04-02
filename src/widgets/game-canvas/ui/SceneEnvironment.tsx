@@ -2,7 +2,6 @@ import { CorridorMesh } from "@/entities/corridor";
 import { EnemyMesh } from "@/entities/enemy";
 import { PlayerMesh } from "@/entities/player";
 import { RoomLabel, RoomMesh } from "@/entities/room";
-import type { InteractionCandidatesViewModel } from "@/features/dungeon-navigation";
 import type { Vector3Tuple } from "@/shared/types";
 import {
 	type CanvasEnvironmentSettings,
@@ -10,17 +9,13 @@ import {
 	useSceneEnvironmentSettings,
 } from "../model";
 
-import { WorldInteractionPrompt } from "./WorldInteractionPrompt";
-
 type SceneEnvironmentProps = {
 	environment: CanvasEnvironmentSettings;
-	interactionCandidates: InteractionCandidatesViewModel;
 	playerSpawnPosition: Vector3Tuple;
 };
 
 export function SceneEnvironment({
 	environment,
-	interactionCandidates,
 	playerSpawnPosition,
 }: SceneEnvironmentProps) {
 	const { corridorMeshSettings, roomMeshSettings, enemyMeshSettings } =
@@ -59,7 +54,6 @@ export function SceneEnvironment({
 			{roomMeshSettings.map((room) => (
 				<RoomLabel key={`${room.roomId}:label`} settings={room.labelSettings} />
 			))}
-			<WorldInteractionPrompt interactionCandidates={interactionCandidates} />
 		</>
 	);
 }

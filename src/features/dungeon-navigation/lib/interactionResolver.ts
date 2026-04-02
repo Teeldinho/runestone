@@ -87,7 +87,6 @@ const resolveInteractCandidate = (
 				: doorConfig.guard === DOOR_GUARDS.TREASURY
 					? hasTreasureKey && enemiesRemaining === 0
 					: hasTreasureKey;
-		const promptEvent = doorConfig.successEvent;
 		const actionEvent = isDoorGuardOpen
 			? doorConfig.successEvent
 			: (doorConfig.lockedEvent ?? doorConfig.successEvent);
@@ -103,7 +102,7 @@ const resolveInteractCandidate = (
 			event: actionEvent,
 			interactableId: doorKey,
 			prompt:
-				INTERACTION_PROMPTS[promptEvent as keyof typeof INTERACTION_PROMPTS],
+				INTERACTION_PROMPTS[actionEvent as keyof typeof INTERACTION_PROMPTS],
 		};
 	}
 
