@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { getPreservedOrbitCameraPosition } from "./cameraRigFollow";
+import {
+	checkOrbitFollowJump,
+	getPreservedOrbitCameraPosition,
+	resolveOrbitFollowUpdate,
+} from "./cameraRigFollow";
 
 describe("getPreservedOrbitCameraPosition", () => {
 	it("preserves the current orbit offset while moving to a new target", () => {
@@ -11,5 +15,47 @@ describe("getPreservedOrbitCameraPosition", () => {
 				nextTarget: [6, 1, 4],
 			}),
 		).toEqual([7, 5, 0]);
+	});
+
+	it("skips orbit follow updates when the next target stays within recenter distance", () => {
+		expect(
+			resolveOrbitFollowUpdate({
+				cameraPosition: { x: 10, y: 18.9, z: 13 },
+				currentTarget: { x: 10, y: 0.9, z: -5 },
+				nextTarget: [12, 0.9, -4],
+				recenterDistance: 6,
+			}),
+		).toBeNull();
+	});
+
+	it("returns the preserved orbit position when the next target exceeds recenter distance", () => {
+		expect(
+			resolveOrbitFollowUpdate({
+				cameraPosition: { x: 10, y: 18.9, z: 13 },
+				currentTarget: { x: 10, y: 0.9, z: -5 },
+				nextTarget: [18, 0.9, -5],
+				recenterDistance: 6,
+			}),
+		).toEqual({
+			desiredCameraPosition: [18, 18.9, 13],
+			nextTarget: [18, 0.9, -5],
+		});
+	});
+
+	it("detects large tracked-target jumps for immediate orbit preservation", () => {
+		expect(
+			checkOrbitFollowJump({
+				jumpDistance: 6,
+				nextTarget: [10, 0.9, 0],
+				previousTarget: [0, 0.9, 0],
+			}),
+		).toBe(true);
+		expect(
+			checkOrbitFollowJump({
+				jumpDistance: 6,
+				nextTarget: [2, 0.9, 0],
+				previousTarget: [0, 0.9, 0],
+			}),
+		).toBe(false);
 	});
 });

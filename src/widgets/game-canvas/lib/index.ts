@@ -1,6 +1,10 @@
 export type { OrbitControlsHandle } from "./cameraRigControls";
 export { setCameraUp, setOrbitTarget } from "./cameraRigControls";
-export { getPreservedOrbitCameraPosition } from "./cameraRigFollow";
+export {
+	checkOrbitFollowJump,
+	getPreservedOrbitCameraPosition,
+	resolveOrbitFollowUpdate,
+} from "./cameraRigFollow";
 export { getCameraRigTargets } from "./cameraRigTargets";
 export { createTorchSettings } from "./createTorchSettings";
 export { shouldSubmitFloorScore } from "./floorCompletion";

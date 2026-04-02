@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import {
 	ATTACK_KEY_LABEL,
 	INTERACTION_KEY_LABEL,
-	useInteractionCandidates,
+	type InteractionCandidatesViewModel,
 } from "@/features/dungeon-navigation";
 
 import { WORLD_INTERACTION_PROMPT_CONFIG } from "../config";
@@ -12,7 +12,7 @@ import {
 	getWorldAttackPromptPosition,
 	getWorldInteractionPromptPosition,
 } from "../lib";
-import { useSceneEnvironmentSettings } from "../model";
+import type { RoomPositionsById } from "../lib/getWorldInteractionPromptPosition";
 
 const PROMPT_STYLE: React.CSSProperties = {
 	display: "flex",
@@ -46,10 +46,15 @@ const KEY_STYLE: React.CSSProperties = {
 	background: "color-mix(in srgb, var(--dungeon-gold) 10%, transparent)",
 };
 
-export function WorldInteractionPrompt() {
-	const { roomMeshSettings } = useSceneEnvironmentSettings();
-	const interactionCandidates = useInteractionCandidates();
+type WorldInteractionPromptProps = {
+	interactionCandidates: InteractionCandidatesViewModel;
+	roomPositionsById: RoomPositionsById;
+};
 
+export function WorldInteractionPrompt({
+	interactionCandidates,
+	roomPositionsById,
+}: WorldInteractionPromptProps) {
 	const interactPosition = useMemo(() => {
 		if (!interactionCandidates.hasInteract) {
 			return null;
@@ -57,12 +62,12 @@ export function WorldInteractionPrompt() {
 
 		return getWorldInteractionPromptPosition(
 			interactionCandidates.interactTargetId,
-			roomMeshSettings,
+			roomPositionsById,
 		);
 	}, [
 		interactionCandidates.hasInteract,
 		interactionCandidates.interactTargetId,
-		roomMeshSettings,
+		roomPositionsById,
 	]);
 
 	const attackPosition = useMemo(() => {

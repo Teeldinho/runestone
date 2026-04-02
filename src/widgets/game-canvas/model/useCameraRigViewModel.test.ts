@@ -187,4 +187,150 @@ describe("useCameraRigViewModel", () => {
 		expect(mockCamera.position.x).toBeGreaterThan(0);
 		expect(mockCamera.position.z).toBeCloseTo(-3.8, 6);
 	});
+
+	it("does not rewrite movement azimuth during free-orbital auto-follow", () => {
+		mockHasPlayerPosition.mockReturnValue(true);
+		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
+		const { result } = renderHook(() =>
+			useCameraRigViewModel({
+				cameraStateSnapshot: {
+					fov: 58,
+					mode: CAMERA_MODES.FREE_ORBITAL,
+					position: [0, 18, 18],
+					target: [0, 0, 0],
+					zoom: 1,
+				},
+				playerSpawnPosition: [0, 0.9, 0],
+			}),
+		);
+		const freeOrbitalControls = {
+			target: new THREE.Vector3(),
+			update: vi.fn(),
+		};
+
+		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(mockSetCameraAzimuth).toHaveBeenCalledTimes(1);
+
+		mockGetPlayerPosition.mockReturnValue([10, 0.9, 0]);
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(mockSetCameraAzimuth).toHaveBeenCalledTimes(1);
+	});
+
+	it("updates movement azimuth while the user is actively orbiting in free-orbital", () => {
+		mockHasPlayerPosition.mockReturnValue(true);
+		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
+		const { result } = renderHook(() =>
+			useCameraRigViewModel({
+				cameraStateSnapshot: {
+					fov: 58,
+					mode: CAMERA_MODES.FREE_ORBITAL,
+					position: [0, 18, 18],
+					target: [0, 0, 0],
+					zoom: 1,
+				},
+				playerSpawnPosition: [0, 0.9, 0],
+			}),
+		);
+		const freeOrbitalControls = {
+			target: new THREE.Vector3(),
+			update: vi.fn(),
+		};
+
+		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(mockSetCameraAzimuth).toHaveBeenCalledTimes(1);
+
+		act(() => {
+			result.current.handleOrbitStart();
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(mockSetCameraAzimuth).toHaveBeenCalledTimes(2);
+	});
+
+	it("snaps preserved orbit immediately on large free-orbital target jumps", () => {
+		mockHasPlayerPosition.mockReturnValue(true);
+		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
+		const { result } = renderHook(() =>
+			useCameraRigViewModel({
+				cameraStateSnapshot: {
+					fov: 58,
+					mode: CAMERA_MODES.FREE_ORBITAL,
+					position: [0, 18, 18],
+					target: [0, 0, 0],
+					zoom: 1,
+				},
+				playerSpawnPosition: [0, 0.9, 0],
+			}),
+		);
+		const freeOrbitalControls = {
+			target: new THREE.Vector3(),
+			update: vi.fn(),
+		};
+
+		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		mockGetPlayerPosition.mockReturnValue([10, 0.9, 0]);
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(mockCamera.position.toArray()).toEqual([10, 18.9, 18]);
+		expect(freeOrbitalControls.target.toArray()).toEqual([10, 0.9, 0]);
+	});
+
+	it("keeps the free-orbital camera stable during ordinary movement", () => {
+		mockHasPlayerPosition.mockReturnValue(true);
+		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
+		const { result } = renderHook(() =>
+			useCameraRigViewModel({
+				cameraStateSnapshot: {
+					fov: 58,
+					mode: CAMERA_MODES.FREE_ORBITAL,
+					position: [0, 18, 18],
+					target: [0, 0, 0],
+					zoom: 1,
+				},
+				playerSpawnPosition: [0, 0.9, 0],
+			}),
+		);
+		const freeOrbitalControls = {
+			target: new THREE.Vector3(),
+			update: vi.fn(),
+		};
+
+		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		mockGetPlayerPosition.mockReturnValue([2, 0.9, 0]);
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(mockCamera.position.toArray()).toEqual([0, 18.9, 18]);
+		expect(freeOrbitalControls.target.toArray()).toEqual([0, 0.9, 0]);
+		expect(freeOrbitalControls.update).toHaveBeenCalledTimes(1);
+	});
 });

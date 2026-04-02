@@ -21,6 +21,7 @@ import { GameOverOverlay } from "./GameOverOverlay";
 import { SceneEnvironment } from "./SceneEnvironment";
 import { SceneFog } from "./SceneFog";
 import { SceneLighting } from "./SceneLighting";
+import { WorldInteractionRuntime } from "./WorldInteractionRuntime";
 
 type GameCanvasProps = {
 	cameraStateSnapshot?: CameraStateSnapshot;
@@ -113,6 +114,7 @@ export function GameCanvas({
 							environment={environment}
 							playerSpawnPosition={playerSpawnPosition}
 						/>
+						<WorldInteractionRuntime />
 					</Physics>
 				</Suspense>
 			</Canvas>

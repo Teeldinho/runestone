@@ -37,13 +37,6 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 			position={settings.position}
 			rotation={[0, settings.rotationYRad, 0]}
 		>
-			<pointLight
-				color={CORRIDOR_LIGHT_CONFIG.COLOR}
-				decay={CORRIDOR_LIGHT_CONFIG.DECAY}
-				intensity={CORRIDOR_LIGHT_CONFIG.INTENSITY}
-				position={[0, CORRIDOR_LIGHT_CONFIG.HEIGHT, 0]}
-			/>
-
 			{/* Floor tiles — GLTF */}
 			{floorTilePositions.map(([x, , z]) => (
 				<primitive
