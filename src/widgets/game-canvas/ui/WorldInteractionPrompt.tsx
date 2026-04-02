@@ -8,6 +8,11 @@ import {
 	useInteractionCandidates,
 } from "@/features/dungeon-navigation";
 
+import { WORLD_INTERACTION_PROMPT_CONFIG } from "../config";
+import {
+	getWorldAttackPromptPosition,
+	getWorldInteractionPromptPosition,
+} from "../lib";
 import { useSceneEnvironmentSettings } from "../model";
 
 const PROMPT_STYLE: React.CSSProperties = {
@@ -44,7 +49,7 @@ const KEY_STYLE: React.CSSProperties = {
 
 export function WorldInteractionPrompt() {
 	const { snapshot } = useGameMachineRuntime();
-	const { roomMeshSettings, enemyMeshSettings } = useSceneEnvironmentSettings();
+	const { roomMeshSettings } = useSceneEnvironmentSettings();
 
 	const interactionCandidates = useInteractionCandidates({
 		currentRoomId: snapshot.context.currentRoomId,
@@ -52,44 +57,28 @@ export function WorldInteractionPrompt() {
 		enemiesRemaining: snapshot.context.enemiesRemaining,
 	});
 
-	const currentRoom = useMemo(
-		() =>
-			roomMeshSettings.find((r) => r.roomId === snapshot.context.currentRoomId),
-		[roomMeshSettings, snapshot.context.currentRoomId],
-	);
-
 	const interactPosition = useMemo(() => {
-		if (!interactionCandidates.hasInteract || !currentRoom) {
+		if (!interactionCandidates.hasInteract) {
 			return null;
 		}
 
-		if (interactionCandidates.interactEvent === "PICK_UP_KEY") {
-			return [
-				currentRoom.position[0],
-				currentRoom.position[1] + 2.5,
-				currentRoom.position[2],
-			] as const;
-		}
-
-		return [
-			currentRoom.position[0],
-			currentRoom.position[1] + 3,
-			currentRoom.position[2],
-		] as const;
-	}, [interactionCandidates, currentRoom]);
+		return getWorldInteractionPromptPosition(
+			interactionCandidates.interactTargetId,
+			roomMeshSettings,
+		);
+	}, [
+		interactionCandidates.hasInteract,
+		interactionCandidates.interactTargetId,
+		roomMeshSettings,
+	]);
 
 	const attackPosition = useMemo(() => {
-		if (!interactionCandidates.hasAttack || enemyMeshSettings.length === 0) {
+		if (!interactionCandidates.hasAttack) {
 			return null;
 		}
 
-		const nearest = enemyMeshSettings[0];
-		return [
-			nearest.position[0],
-			nearest.position[1] + 2.5,
-			nearest.position[2],
-		] as const;
-	}, [interactionCandidates.hasAttack, enemyMeshSettings]);
+		return getWorldAttackPromptPosition(interactionCandidates.attackPosition);
+	}, [interactionCandidates.attackPosition, interactionCandidates.hasAttack]);
 
 	if (!interactionCandidates.hasInteract && !interactionCandidates.hasAttack) {
 		return null;
@@ -105,7 +94,7 @@ export function WorldInteractionPrompt() {
 						interactPosition[2],
 					]}
 					center
-					distanceFactor={10}
+					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
 					style={{ pointerEvents: "none" }}
 				>
 					<div style={PROMPT_STYLE}>
@@ -118,7 +107,7 @@ export function WorldInteractionPrompt() {
 				<Html
 					position={[attackPosition[0], attackPosition[1], attackPosition[2]]}
 					center
-					distanceFactor={10}
+					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
 					style={{ pointerEvents: "none" }}
 				>
 					<div style={PROMPT_STYLE}>

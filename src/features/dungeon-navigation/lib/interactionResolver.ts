@@ -1,25 +1,34 @@
 import {
-	type DoorStateKey,
 	DUNGEON_EVENTS,
+	DUNGEON_INTERACTABLE_IDS,
+	type DungeonInteractableId,
 	ROOM_IDS,
 	type RoomId,
 } from "@/entities/dungeon";
 import { ENEMY_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
-import { DOORWAY_INTERACTIONS_BY_ROOM } from "../config";
+import {
+	DOOR_GUARDS,
+	DOORWAY_INTERACTIONS_BY_ROOM,
+	INTERACTION_CANDIDATE_TYPES,
+	INTERACTION_PROMPTS,
+} from "../config";
 
-type InteractType = "key" | "guarded-door" | "door" | "exit";
+type InteractType =
+	(typeof INTERACTION_CANDIDATE_TYPES)[keyof typeof INTERACTION_CANDIDATE_TYPES];
 
 type InteractCandidate = {
 	type: InteractType;
 	event: (typeof DUNGEON_EVENTS)[keyof typeof DUNGEON_EVENTS];
-	doorKey?: DoorStateKey;
+	interactableId: DungeonInteractableId;
+	prompt: string;
 };
 
 type AttackCandidate = {
-	type: "enemy";
+	type: typeof INTERACTION_CANDIDATE_TYPES.ENEMY;
 	distance: number;
+	position: Vector3Tuple;
 };
 
 type InteractionCandidates = {
@@ -33,8 +42,7 @@ type ResolveInput = {
 	enemiesRemaining: number;
 	playerPosition: Vector3Tuple;
 	enemyPositions: readonly Vector3Tuple[];
-	openedDoors: DoorStateKey[];
-	nearInteractable: DoorStateKey | null;
+	nearInteractable: DungeonInteractableId | null;
 };
 
 const distance = (a: Vector3Tuple, b: Vector3Tuple): number => {
@@ -47,13 +55,19 @@ const distance = (a: Vector3Tuple, b: Vector3Tuple): number => {
 const resolveInteractCandidate = (
 	input: ResolveInput,
 ): InteractCandidate | null => {
-	const { currentRoomId, hasTreasureKey, openedDoors, nearInteractable } =
+	const { currentRoomId, hasTreasureKey, enemiesRemaining, nearInteractable } =
 		input;
 
-	if (currentRoomId === ROOM_IDS.GUARD_ROOM && !hasTreasureKey) {
+	if (
+		currentRoomId === ROOM_IDS.GUARD_ROOM &&
+		!hasTreasureKey &&
+		nearInteractable === DUNGEON_INTERACTABLE_IDS.TREASURE_KEY
+	) {
 		return {
-			type: "key",
+			type: INTERACTION_CANDIDATE_TYPES.KEY,
 			event: DUNGEON_EVENTS.PICK_UP_KEY,
+			interactableId: DUNGEON_INTERACTABLE_IDS.TREASURE_KEY,
+			prompt: INTERACTION_PROMPTS[DUNGEON_EVENTS.PICK_UP_KEY],
 		};
 	}
 
@@ -61,22 +75,36 @@ const resolveInteractCandidate = (
 	if (!roomDoors) return null;
 
 	for (const [doorSide, doorConfig] of Object.entries(roomDoors)) {
-		const doorKey = `${currentRoomId}:${doorSide}` as DoorStateKey;
+		const doorKey = `${currentRoomId}:${doorSide}` as DungeonInteractableId;
 
 		if (nearInteractable !== doorKey) {
 			continue;
 		}
 
-		const isDoorOpen = openedDoors.includes(doorKey);
-		const isGuarded = doorConfig.guard !== "none";
+		const isDoorGuardOpen =
+			doorConfig.guard === DOOR_GUARDS.NONE
+				? true
+				: doorConfig.guard === DOOR_GUARDS.TREASURY
+					? hasTreasureKey && enemiesRemaining === 0
+					: hasTreasureKey;
+		const promptEvent = doorConfig.successEvent;
+		const actionEvent = isDoorGuardOpen
+			? doorConfig.successEvent
+			: (doorConfig.lockedEvent ?? doorConfig.successEvent);
+		const isExitDoor = doorConfig.guard === DOOR_GUARDS.EXIT;
+		const candidateType = isExitDoor
+			? INTERACTION_CANDIDATE_TYPES.EXIT
+			: doorConfig.guard === DOOR_GUARDS.NONE
+				? INTERACTION_CANDIDATE_TYPES.DOOR
+				: INTERACTION_CANDIDATE_TYPES.GUARDED_DOOR;
 
-		if (!isGuarded || isDoorOpen) {
-			return {
-				type: isGuarded ? "guarded-door" : "door",
-				event: doorConfig.successEvent,
-				doorKey,
-			};
-		}
+		return {
+			type: candidateType,
+			event: actionEvent,
+			interactableId: doorKey,
+			prompt:
+				INTERACTION_PROMPTS[promptEvent as keyof typeof INTERACTION_PROMPTS],
+		};
 	}
 
 	return null;
@@ -98,7 +126,11 @@ const resolveAttackCandidate = (
 		const dist = distance(playerPosition, pos);
 		if (dist <= ENEMY_CONFIG.ATTACK_RADIUS) {
 			if (!nearest || dist < nearest.distance) {
-				nearest = { type: "enemy", distance: dist };
+				nearest = {
+					type: INTERACTION_CANDIDATE_TYPES.ENEMY,
+					distance: dist,
+					position: pos,
+				};
 			}
 		}
 	}

@@ -6,7 +6,10 @@ import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import type * as THREE from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
-
+import {
+	removeEnemyPosition,
+	setEnemyPosition,
+} from "@/shared/lib/enemyPositionStore";
 import { getPlayerPosition } from "@/shared/lib/playerPositionStore";
 import type { Vector3Tuple } from "@/shared/types";
 
@@ -99,6 +102,7 @@ export function EnemyMesh({
 		const body = rigidBodyRef.current;
 		if (!body) return;
 		const current = body.translation();
+		setEnemyPosition(id, current.x, current.y, current.z);
 		const nextPos = getNextPosition(delta, [current.x, current.y, current.z]);
 		const currentLinvel = body.linvel();
 		body.setLinvel(
@@ -127,6 +131,14 @@ export function EnemyMesh({
 	);
 
 	const { actions } = useAnimations(allAnims, groupRef);
+
+	useEffect(() => {
+		setEnemyPosition(id, position[0], position[1], position[2]);
+
+		return () => {
+			removeEnemyPosition(id);
+		};
+	}, [id, position]);
 
 	useEffect(() => {
 		const action = actions[animationName];
