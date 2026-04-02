@@ -1,0 +1,35 @@
+import { PLAYER_EYE_HEIGHT } from "@/shared/config";
+import type { Vector3Tuple } from "@/shared/types";
+
+import type { CameraHotkey, CameraMode } from "./cameraConfig";
+import { CAMERA_HOTKEYS, CAMERA_MODES } from "./cameraConfig";
+
+type CameraStateTargets = {
+	ORIGIN: Vector3Tuple;
+	PLAYER_HEAD: Vector3Tuple;
+	PLAYER_HEAD_FORWARD: Vector3Tuple;
+};
+
+export const CAMERA_MACHINE_ID = "camera";
+
+export const CAMERA_HOTKEY_EVENT_TYPE = "keydown";
+
+export const CAMERA_HOTKEY_VALUES = [
+	CAMERA_HOTKEYS.THIRD_PERSON,
+	CAMERA_HOTKEYS.TOP_DOWN,
+	CAMERA_HOTKEYS.FIRST_PERSON,
+	CAMERA_HOTKEYS.FREE_ORBITAL,
+] as const;
+
+export const CAMERA_MODES_BY_HOTKEY: Record<CameraHotkey, CameraMode> = {
+	[CAMERA_HOTKEYS.THIRD_PERSON]: CAMERA_MODES.THIRD_PERSON,
+	[CAMERA_HOTKEYS.TOP_DOWN]: CAMERA_MODES.TOP_DOWN,
+	[CAMERA_HOTKEYS.FIRST_PERSON]: CAMERA_MODES.FIRST_PERSON,
+	[CAMERA_HOTKEYS.FREE_ORBITAL]: CAMERA_MODES.FREE_ORBITAL,
+};
+
+export const CAMERA_STATE_TARGETS: CameraStateTargets = {
+	ORIGIN: [0, 0, 0],
+	PLAYER_HEAD: [0, PLAYER_EYE_HEIGHT, 0],
+	PLAYER_HEAD_FORWARD: [0, PLAYER_EYE_HEIGHT, 1],
+};
