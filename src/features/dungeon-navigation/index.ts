@@ -13,6 +13,7 @@ export {
 	type NavigationActionEvent,
 } from "./config";
 export { resolveDoorwayEntrySide, resolveInteractionCandidates } from "./lib";
+export type { InteractionCandidatesViewModel } from "./model";
 export {
 	createGameMachine,
 	DungeonGameMachineProvider,

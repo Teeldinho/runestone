@@ -5,6 +5,11 @@ import { Physics } from "@react-three/rapier";
 import { Suspense } from "react";
 import { AchievementNotification } from "@/features/achievements";
 import type { CameraStateSnapshot } from "@/features/camera-system";
+import {
+	useInteractionCandidates,
+	useInteractionInput,
+	useSendDungeonMachineEvent,
+} from "@/features/dungeon-navigation";
 import { GAME_CANVAS_COPY } from "../config";
 import {
 	type CanvasMachineRuntime,
@@ -48,9 +53,15 @@ export function GameCanvas({
 		renderer,
 		isPostprocessingEnabled,
 	} = canvasSettings;
+	const sendDungeonMachineEvent = useSendDungeonMachineEvent();
+	const interactionCandidates = useInteractionCandidates();
 
 	usePlayerSceneController();
 	useGameSideEffects();
+	useInteractionInput({
+		candidates: interactionCandidates,
+		sendDungeonMachineEvent,
+	});
 	const { isGameOver, handleGameRestart } = useGameOverState();
 	const { activeAchievement } = useAchievementTracker();
 	const showFirstPersonLockHint = useFirstPersonLockHint({
@@ -111,6 +122,7 @@ export function GameCanvas({
 					<Physics>
 						<SceneEnvironment
 							environment={environment}
+							interactionCandidates={interactionCandidates}
 							playerSpawnPosition={playerSpawnPosition}
 						/>
 					</Physics>

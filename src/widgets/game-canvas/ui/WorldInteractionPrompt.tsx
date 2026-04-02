@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import {
 	ATTACK_KEY_LABEL,
 	INTERACTION_KEY_LABEL,
-	useInteractionCandidates,
+	type InteractionCandidatesViewModel,
 } from "@/features/dungeon-navigation";
 
 import { WORLD_INTERACTION_PROMPT_CONFIG } from "../config";
@@ -46,9 +46,14 @@ const KEY_STYLE: React.CSSProperties = {
 	background: "color-mix(in srgb, var(--dungeon-gold) 10%, transparent)",
 };
 
-export function WorldInteractionPrompt() {
+type WorldInteractionPromptProps = {
+	interactionCandidates: InteractionCandidatesViewModel;
+};
+
+export function WorldInteractionPrompt({
+	interactionCandidates,
+}: WorldInteractionPromptProps) {
 	const { roomMeshSettings } = useSceneEnvironmentSettings();
-	const interactionCandidates = useInteractionCandidates();
 
 	const interactPosition = useMemo(() => {
 		if (!interactionCandidates.hasInteract) {

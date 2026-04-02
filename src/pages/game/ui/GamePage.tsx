@@ -1,10 +1,5 @@
 import { Volume2, VolumeX } from "lucide-react";
 import { useCameraMachine } from "@/features/camera-system";
-import {
-	useInteractionCandidates,
-	useInteractionInput,
-	useSendDungeonMachineEvent,
-} from "@/features/dungeon-navigation";
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
 import { ScrollArea } from "@/shared/ui";
@@ -32,12 +27,6 @@ export function GamePage() {
 	} = useGamePage();
 	const settings = useSettingsForm();
 	const { cameraStateSnapshot, handleCameraModeSwitch } = useCameraMachine();
-	const sendDungeonMachineEvent = useSendDungeonMachineEvent();
-	const interactionCandidates = useInteractionCandidates();
-	useInteractionInput({
-		candidates: interactionCandidates,
-		sendDungeonMachineEvent,
-	});
 
 	return (
 		<main

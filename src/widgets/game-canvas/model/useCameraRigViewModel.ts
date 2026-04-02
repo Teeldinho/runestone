@@ -25,6 +25,7 @@ import type { OrbitControlsHandle } from "../lib";
 import {
 	getCameraRigTargets,
 	getPreservedOrbitCameraPosition,
+	resolveOrbitFollowUpdate,
 	setCameraUp,
 	setOrbitTarget,
 } from "../lib";
@@ -67,6 +68,9 @@ export const useCameraRigViewModel = ({
 	const needsThirdPersonSyncRef = useRef(false);
 	const needsTopDownSyncRef = useRef(false);
 	const isUserInteractingRef = useRef(false);
+	const directionRef = useRef(new THREE.Vector3());
+	const lookAtVectorRef = useRef(new THREE.Vector3());
+	const positionVectorRef = useRef(new THREE.Vector3());
 
 	useEffect(() => {
 		if (!mode) {
@@ -129,7 +133,8 @@ export const useCameraRigViewModel = ({
 			}
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
 			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
-			camera.position.lerp(new THREE.Vector3(...position), transitionAlpha);
+			positionVectorRef.current.set(...position);
+			camera.position.lerp(positionVectorRef.current, transitionAlpha);
 			if (!pointerLockRef.current?.isLocked) {
 				camera.lookAt(...lookAt);
 			}
@@ -151,14 +156,14 @@ export const useCameraRigViewModel = ({
 					nextTarget: lookAt,
 				});
 
+				lookAtVectorRef.current.set(...lookAt);
+				positionVectorRef.current.set(...desiredCameraPosition);
+
 				thirdPersonOrbitRef.current.target.lerp(
-					new THREE.Vector3(...lookAt),
+					lookAtVectorRef.current,
 					CAMERA_RIG_LERP_ALPHA,
 				);
-				camera.position.lerp(
-					new THREE.Vector3(...desiredCameraPosition),
-					CAMERA_RIG_LERP_ALPHA,
-				);
+				camera.position.lerp(positionVectorRef.current, CAMERA_RIG_LERP_ALPHA);
 				thirdPersonOrbitRef.current.update();
 			}
 		} else if (!freeOrbitalOrbitRef.current) {
@@ -172,36 +177,33 @@ export const useCameraRigViewModel = ({
 			setOrbitTarget(freeOrbitalOrbitRef.current, lookAt);
 			needsFreeOrbitalSyncRef.current = false;
 		} else if (!isUserInteractingRef.current) {
-			const nextTarget = new THREE.Vector3(...lookAt);
-			if (
-				freeOrbitalOrbitRef.current.target.distanceTo(nextTarget) >=
-				CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE
-			) {
+			const orbitFollowUpdate = resolveOrbitFollowUpdate({
+				cameraPosition: camera.position,
+				currentTarget: freeOrbitalOrbitRef.current.target,
+				nextTarget: lookAt,
+				recenterDistance: CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE,
+			});
+
+			if (orbitFollowUpdate) {
 				setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
-				const desiredCameraPosition = getPreservedOrbitCameraPosition({
-					cameraPosition: camera.position.toArray() as Vector3Tuple,
-					currentTarget:
-						freeOrbitalOrbitRef.current.target.toArray() as Vector3Tuple,
-					nextTarget: lookAt,
-				});
+				lookAtVectorRef.current.set(...orbitFollowUpdate.nextTarget);
+				positionVectorRef.current.set(
+					...orbitFollowUpdate.desiredCameraPosition,
+				);
 
 				freeOrbitalOrbitRef.current.target.lerp(
-					nextTarget,
+					lookAtVectorRef.current,
 					CAMERA_RIG_LERP_ALPHA,
 				);
-				camera.position.lerp(
-					new THREE.Vector3(...desiredCameraPosition),
-					CAMERA_RIG_LERP_ALPHA,
-				);
+				camera.position.lerp(positionVectorRef.current, CAMERA_RIG_LERP_ALPHA);
 				freeOrbitalOrbitRef.current.update();
 			}
 		}
 
-		const direction = new THREE.Vector3();
-		camera.getWorldDirection(direction);
+		camera.getWorldDirection(directionRef.current);
 		const nextAzimuth = resolveCameraAzimuth({
 			mode: cameraStateSnapshot.mode,
-			direction,
+			direction: directionRef.current,
 		});
 		if (nextAzimuth !== null) {
 			setCameraAzimuth(nextAzimuth);
