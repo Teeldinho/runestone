@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
-
+import { DOOR_SIDES } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
 import { CAMERA_CONFIG, PLAYER_EYE_HEIGHT } from "@/shared/config";
 
-import { getCameraRigTargets } from "./cameraRigTargets";
+import {
+	getCameraRigTargets,
+	getThirdPersonTransitionTargets,
+} from "./cameraRigTargets";
 
 describe("getCameraRigTargets", () => {
 	it("centers free-orbital mode on the player using the configured offset", () => {
@@ -38,5 +41,25 @@ describe("getCameraRigTargets", () => {
 
 		expect(result.position).toEqual([2, 0.9 + PLAYER_EYE_HEIGHT, 4]);
 		expect(result.lookAt).toEqual([2, 0.9 + PLAYER_EYE_HEIGHT, 5]);
+	});
+
+	it("resets third-person transition framing opposite the north entry wall", () => {
+		const result = getThirdPersonTransitionTargets({
+			doorSide: DOOR_SIDES.NORTH,
+			playerPosition: [10, 0.9, 0],
+		});
+
+		expect(result.position).toEqual([10, 3.1, 3.8]);
+		expect(result.lookAt).toEqual([10, 0.9 + PLAYER_EYE_HEIGHT, 0]);
+	});
+
+	it("resets third-person transition framing opposite the west entry wall", () => {
+		const result = getThirdPersonTransitionTargets({
+			doorSide: DOOR_SIDES.WEST,
+			playerPosition: [10, 0.9, 0],
+		});
+
+		expect(result.position).toEqual([13.8, 3.1, 0]);
+		expect(result.lookAt).toEqual([10, 0.9 + PLAYER_EYE_HEIGHT, 0]);
 	});
 });

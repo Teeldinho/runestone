@@ -3,7 +3,7 @@
 import { act, renderHook } from "@testing-library/react";
 import * as THREE from "three";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
+import { DOOR_SIDES, ROOM_IDS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
 import { CAMERA_DEFAULT_ZOOM, PLAYER_EYE_HEIGHT } from "@/shared/config";
 
@@ -12,6 +12,7 @@ const mockSetCameraMode = vi.fn();
 const mockSetCameraAzimuth = vi.fn();
 const mockHasPlayerPosition = vi.fn();
 const mockGetPlayerPosition = vi.fn();
+const mockLastTransition = vi.fn();
 
 const mockCamera = new THREE.PerspectiveCamera();
 mockCamera.zoom = CAMERA_DEFAULT_ZOOM;
@@ -36,6 +37,11 @@ vi.mock("@/shared/lib/playerPositionStore", () => ({
 	getPlayerPosition: () => mockGetPlayerPosition(),
 }));
 
+vi.mock("@/features/dungeon-navigation", () => ({
+	selectLastTransition: "selectLastTransition",
+	useGameMachineSelector: () => mockLastTransition(),
+}));
+
 import { useCameraRigViewModel } from "./useCameraRigViewModel";
 
 describe("useCameraRigViewModel", () => {
@@ -46,6 +52,7 @@ describe("useCameraRigViewModel", () => {
 		mockCamera.up.set(0, 1, 0);
 		mockHasPlayerPosition.mockReturnValue(false);
 		mockGetPlayerPosition.mockReturnValue([0, 0, 0]);
+		mockLastTransition.mockReturnValue(null);
 	});
 
 	it("syncs the camera mode store immediately from the snapshot mode", () => {
@@ -188,9 +195,14 @@ describe("useCameraRigViewModel", () => {
 		expect(mockCamera.position.z).toBeCloseTo(-3.8, 6);
 	});
 
-	it("resets third-person to the canonical follow offset on large room jumps", () => {
+	it("resets third-person opposite the doorway used to enter the room", () => {
 		mockHasPlayerPosition.mockReturnValue(true);
 		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
+		mockLastTransition.mockReturnValue({
+			fromRoom: ROOM_IDS.ENTRANCE,
+			toRoom: ROOM_IDS.LIBRARY,
+			doorSide: DOOR_SIDES.NORTH,
+		});
 		const { result } = renderHook(() =>
 			useCameraRigViewModel({
 				cameraStateSnapshot: {
@@ -221,7 +233,7 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([10, 3.1, -3.8]);
+		expect(mockCamera.position.toArray()).toEqual([10, 3.1, 3.8]);
 		expect(thirdPersonControls.target.toArray()).toEqual([
 			10,
 			0.9 + PLAYER_EYE_HEIGHT,
