@@ -98,4 +98,51 @@ describe("musicManager", () => {
 
 		expect(mockPlayerDispose).toHaveBeenCalledTimes(1);
 	});
+
+	it("skips pause when music was never started", () => {
+		pauseBackgroundMusicLoop();
+
+		expect(mockTransportPause).not.toHaveBeenCalled();
+		expect(mockPlayerStop).not.toHaveBeenCalled();
+	});
+
+	it("skips stop when music was never started", () => {
+		stopBackgroundMusicLoop();
+
+		expect(mockTransportStop).not.toHaveBeenCalled();
+		expect(mockPlayerStop).not.toHaveBeenCalled();
+	});
+
+	it("pauses correctly after music has started", async () => {
+		await startBackgroundMusicLoop();
+		vi.clearAllMocks();
+
+		pauseBackgroundMusicLoop();
+
+		expect(mockTransportPause).toHaveBeenCalledTimes(1);
+		expect(mockPlayerStop).toHaveBeenCalledTimes(1);
+	});
+
+	it("stops correctly after music has started", async () => {
+		await startBackgroundMusicLoop();
+		vi.clearAllMocks();
+
+		stopBackgroundMusicLoop();
+
+		expect(mockTransportStop).toHaveBeenCalledTimes(1);
+		expect(mockPlayerStop).toHaveBeenCalledTimes(1);
+	});
+
+	it("resets started flag on dispose so pause/stop are skipped after", async () => {
+		await startBackgroundMusicLoop();
+		disposeMusicManager();
+		vi.clearAllMocks();
+
+		pauseBackgroundMusicLoop();
+		stopBackgroundMusicLoop();
+
+		expect(mockTransportPause).not.toHaveBeenCalled();
+		expect(mockTransportStop).not.toHaveBeenCalled();
+		expect(mockPlayerStop).not.toHaveBeenCalled();
+	});
 });
