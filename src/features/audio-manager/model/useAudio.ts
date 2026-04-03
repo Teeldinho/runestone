@@ -1,16 +1,10 @@
 import { useMachine } from "@xstate/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import {
-	AUDIO_EVENTS,
-	AUDIO_MACHINE_STATES,
-	type AudioSpriteId,
-} from "../config";
+import { AUDIO_EVENTS, AUDIO_MACHINE_STATES } from "../config";
 import {
 	pauseBackgroundMusicLoop,
-	playSoundEffect,
 	startBackgroundMusicLoop,
-	stopAllSoundEffects,
 	stopBackgroundMusicLoop,
 } from "../lib";
 
@@ -39,7 +33,6 @@ export const useAudio = () => {
 
 		if (audioSnapshot.matches(AUDIO_MACHINE_STATES.MUTED)) {
 			pauseBackgroundMusicLoop();
-			stopAllSoundEffects();
 		}
 	}, [audioSnapshot]);
 
@@ -60,7 +53,6 @@ export const useAudio = () => {
 			type: AUDIO_EVENTS.STOP_REQUESTED,
 		});
 		stopBackgroundMusicLoop();
-		stopAllSoundEffects();
 	}, [sendAudioEvent]);
 
 	const handleAudioMuteToggle = useCallback(() => {
@@ -71,14 +63,6 @@ export const useAudio = () => {
 		});
 	}, [sendAudioEvent]);
 
-	const handleSoundEffectPlay = useCallback((soundEffectId: AudioSpriteId) => {
-		if (isAudioMutedRef.current) {
-			return;
-		}
-
-		playSoundEffect(soundEffectId);
-	}, []);
-
 	return useMemo(
 		() => ({
 			audioState: audioSnapshot.value,
@@ -88,7 +72,6 @@ export const useAudio = () => {
 			handleAudioPauseRequest,
 			handleAudioPlayRequest,
 			handleAudioStopRequest,
-			handleSoundEffectPlay,
 		}),
 		[
 			audioSnapshot,
@@ -96,7 +79,6 @@ export const useAudio = () => {
 			handleAudioPauseRequest,
 			handleAudioPlayRequest,
 			handleAudioStopRequest,
-			handleSoundEffectPlay,
 		],
 	);
 };

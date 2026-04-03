@@ -15,7 +15,6 @@ describe("audioMachineContext", () => {
 				isMuted: false,
 				masterVolume: 0.8,
 				musicVolume: 0.55,
-				sfxVolume: 0.9,
 			},
 		});
 
@@ -30,7 +29,6 @@ describe("audioMachineContext", () => {
 				isMuted: true,
 				masterVolume: 0.8,
 				musicVolume: 0.55,
-				sfxVolume: 0.9,
 			},
 		});
 

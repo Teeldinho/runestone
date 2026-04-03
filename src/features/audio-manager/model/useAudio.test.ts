@@ -9,24 +9,18 @@ import { useAudio } from "./useAudio";
 
 const {
 	mockPauseBackgroundMusicLoop,
-	mockPlaySoundEffect,
 	mockStartBackgroundMusicLoop,
-	mockStopAllSoundEffects,
 	mockStopBackgroundMusicLoop,
 } = vi.hoisted(() => ({
 	mockStartBackgroundMusicLoop: vi.fn(),
 	mockPauseBackgroundMusicLoop: vi.fn(),
 	mockStopBackgroundMusicLoop: vi.fn(),
-	mockPlaySoundEffect: vi.fn(),
-	mockStopAllSoundEffects: vi.fn(),
 }));
 
 vi.mock("../lib", () => ({
 	startBackgroundMusicLoop: mockStartBackgroundMusicLoop,
 	pauseBackgroundMusicLoop: mockPauseBackgroundMusicLoop,
 	stopBackgroundMusicLoop: mockStopBackgroundMusicLoop,
-	playSoundEffect: mockPlaySoundEffect,
-	stopAllSoundEffects: mockStopAllSoundEffects,
 }));
 
 describe("useAudio", () => {
@@ -45,17 +39,15 @@ describe("useAudio", () => {
 		});
 	});
 
-	it("suppresses sound effect playback while muted", () => {
+	it("pauses music when muted", () => {
 		const { result } = renderHook(() => useAudio());
 
 		act(() => {
 			result.current.handleAudioMuteToggle();
-			result.current.handleSoundEffectPlay("DOOR_OPEN");
 		});
 
 		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.MUTED);
-		expect(mockPlaySoundEffect).not.toHaveBeenCalled();
-		expect(mockStopAllSoundEffects).toHaveBeenCalledTimes(1);
+		expect(mockPauseBackgroundMusicLoop).toHaveBeenCalledTimes(1);
 	});
 
 	it("unmutes back to previous audible state", async () => {
