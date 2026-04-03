@@ -3,6 +3,7 @@ import * as Tone from "tone";
 import { AUDIO_DEFAULTS, AUDIO_PATHS } from "../config";
 
 let backgroundMusicPlayer: Tone.Player | null = null;
+let isMusicStarted = false;
 
 const getBackgroundMusicPlayer = (): Tone.Player => {
 	if (!backgroundMusicPlayer) {
@@ -22,16 +23,27 @@ export const startBackgroundMusicLoop = async (): Promise<void> => {
 	await Tone.start();
 	Tone.Transport.start();
 	getBackgroundMusicPlayer().start();
+	isMusicStarted = true;
 };
 
 export const pauseBackgroundMusicLoop = (): void => {
+	if (!isMusicStarted) {
+		return;
+	}
+
 	Tone.Transport.pause();
 	getBackgroundMusicPlayer().stop();
+	isMusicStarted = false;
 };
 
 export const stopBackgroundMusicLoop = (): void => {
+	if (!isMusicStarted) {
+		return;
+	}
+
 	Tone.Transport.stop();
 	getBackgroundMusicPlayer().stop();
+	isMusicStarted = false;
 };
 
 export const setBackgroundMusicVolume = (volume: number): void => {
@@ -45,4 +57,5 @@ export const disposeMusicManager = (): void => {
 
 	backgroundMusicPlayer.dispose();
 	backgroundMusicPlayer = null;
+	isMusicStarted = false;
 };
