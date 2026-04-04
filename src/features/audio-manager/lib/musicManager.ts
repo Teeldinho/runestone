@@ -5,13 +5,15 @@ import { AUDIO_DEFAULTS, AUDIO_PATHS } from "../config";
 let backgroundMusicPlayer: Tone.Player | null = null;
 let isMusicStarted = false;
 
-const getBackgroundMusicPlayer = (): Tone.Player => {
+const initBackgroundMusicPlayer = async (): Promise<Tone.Player> => {
 	if (!backgroundMusicPlayer) {
-		backgroundMusicPlayer = new Tone.Player({
-			autostart: false,
-			loop: AUDIO_DEFAULTS.MUSIC_LOOP,
-			url: AUDIO_PATHS.MUSIC,
-		});
+		// Explicitly load and decode buffer first
+		const buffer = new Tone.Buffer(AUDIO_PATHS.MUSIC);
+		await buffer.loaded;
+
+		// Create player with pre-loaded buffer — no async loading needed
+		backgroundMusicPlayer = new Tone.Player(buffer);
+		backgroundMusicPlayer.loop = AUDIO_DEFAULTS.MUSIC_LOOP;
 		backgroundMusicPlayer.toDestination();
 		backgroundMusicPlayer.volume.value = AUDIO_DEFAULTS.MUSIC_VOLUME;
 	}
@@ -22,22 +24,7 @@ const getBackgroundMusicPlayer = (): Tone.Player => {
 export const startBackgroundMusicLoop = async (): Promise<void> => {
 	try {
 		await Tone.start();
-		const player = getBackgroundMusicPlayer();
-		await player.loaded;
-
-		// Tone.js v14: player.loaded can resolve before buffer is assigned
-		// Wait for buffer to actually be ready before starting
-		let retries = 0;
-		while (!player.buffer && retries < 20) {
-			await new Promise((r) => setTimeout(r, 100));
-			retries++;
-		}
-
-		if (!player.buffer) {
-			console.error("[audio] Music buffer failed to load after retries");
-			return;
-		}
-
+		const player = await initBackgroundMusicPlayer();
 		Tone.Transport.start();
 		player.start();
 		isMusicStarted = true;
@@ -47,27 +34,31 @@ export const startBackgroundMusicLoop = async (): Promise<void> => {
 };
 
 export const pauseBackgroundMusicLoop = (): void => {
-	if (!isMusicStarted) {
+	if (!isMusicStarted || !backgroundMusicPlayer) {
 		return;
 	}
 
 	Tone.Transport.pause();
-	getBackgroundMusicPlayer().stop();
+	backgroundMusicPlayer.stop();
 	isMusicStarted = false;
 };
 
 export const stopBackgroundMusicLoop = (): void => {
-	if (!isMusicStarted) {
+	if (!isMusicStarted || !backgroundMusicPlayer) {
 		return;
 	}
 
 	Tone.Transport.stop();
-	getBackgroundMusicPlayer().stop();
+	backgroundMusicPlayer.stop();
 	isMusicStarted = false;
 };
 
 export const setBackgroundMusicVolume = (volume: number): void => {
-	getBackgroundMusicPlayer().volume.value = volume;
+	if (!backgroundMusicPlayer) {
+		return;
+	}
+
+	backgroundMusicPlayer.volume.value = volume;
 };
 
 export const disposeMusicManager = (): void => {
