@@ -1,10 +1,4 @@
-export {
-	AUDIO_DEFAULTS,
-	AUDIO_PATHS,
-	AUDIO_SPRITE_IDS,
-	AUDIO_SPRITES,
-	type AudioSpriteId,
-} from "./audioAssets";
+export { AUDIO_DEFAULTS, AUDIO_PATHS } from "./audioAssets";
 export type { AudioEventType, AudioMachineStateValue } from "./audioEvents";
 export {
 	AUDIO_EVENTS,
