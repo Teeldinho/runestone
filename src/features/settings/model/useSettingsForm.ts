@@ -10,7 +10,6 @@ import {
 type UseSettingsFormResult = SettingsValues & {
 	handleMasterVolumeChange: (value: number) => void;
 	handleMusicVolumeChange: (value: number) => void;
-	handleSfxVolumeChange: (value: number) => void;
 	handleHapticsToggle: (enabled: boolean) => void;
 	handlePostprocessingToggle: (enabled: boolean) => void;
 	handleSettingsReset: () => void;
@@ -40,13 +39,6 @@ export const useSettingsForm = (): UseSettingsFormResult => {
 		[settings, persist],
 	);
 
-	const handleSfxVolumeChange = useCallback(
-		(value: number) => {
-			persist({ ...settings, sfxVolume: value });
-		},
-		[settings, persist],
-	);
-
 	const handleHapticsToggle = useCallback(
 		(enabled: boolean) => {
 			persist({ ...settings, hapticsEnabled: enabled });
@@ -71,7 +63,6 @@ export const useSettingsForm = (): UseSettingsFormResult => {
 		...settings,
 		handleMasterVolumeChange,
 		handleMusicVolumeChange,
-		handleSfxVolumeChange,
 		handleHapticsToggle,
 		handlePostprocessingToggle,
 		handleSettingsReset,

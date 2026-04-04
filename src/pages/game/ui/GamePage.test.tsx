@@ -45,12 +45,10 @@ vi.mock("@/features/settings", () => ({
 		hapticsEnabled: true,
 		masterVolume: 50,
 		musicVolume: 50,
-		sfxVolume: 50,
 		handlePostprocessingToggle: vi.fn(),
 		handleHapticsToggle: vi.fn(),
 		handleMasterVolumeChange: vi.fn(),
 		handleMusicVolumeChange: vi.fn(),
-		handleSfxVolumeChange: vi.fn(),
 		handleSettingsReset: vi.fn(),
 	})),
 }));
