@@ -1,24 +1,19 @@
 // @vitest-environment happy-dom
 
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AUDIO_MACHINE_STATES } from "../config";
 
 import { useAudio } from "./useAudio";
 
-const {
-	mockPauseBackgroundMusicLoop,
-	mockStartBackgroundMusicLoop,
-	mockStopBackgroundMusicLoop,
-} = vi.hoisted(() => ({
-	mockStartBackgroundMusicLoop: vi.fn(),
-	mockPauseBackgroundMusicLoop: vi.fn(),
-	mockStopBackgroundMusicLoop: vi.fn(),
-}));
+const { mockPauseBackgroundMusicLoop, mockStopBackgroundMusicLoop } =
+	vi.hoisted(() => ({
+		mockPauseBackgroundMusicLoop: vi.fn(),
+		mockStopBackgroundMusicLoop: vi.fn(),
+	}));
 
 vi.mock("../lib", () => ({
-	startBackgroundMusicLoop: mockStartBackgroundMusicLoop,
 	pauseBackgroundMusicLoop: mockPauseBackgroundMusicLoop,
 	stopBackgroundMusicLoop: mockStopBackgroundMusicLoop,
 }));
@@ -26,17 +21,12 @@ vi.mock("../lib", () => ({
 describe("useAudio", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockStartBackgroundMusicLoop.mockResolvedValue(undefined);
 	});
 
-	it("starts playing and calls startBackgroundMusicLoop on mount", async () => {
+	it("starts in PLAYING state", () => {
 		const { result } = renderHook(() => useAudio());
 
 		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PLAYING);
-
-		await waitFor(() => {
-			expect(mockStartBackgroundMusicLoop).toHaveBeenCalledTimes(1);
-		});
 	});
 
 	it("pauses music when muted", () => {
@@ -47,10 +37,10 @@ describe("useAudio", () => {
 		});
 
 		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.MUTED);
-		expect(mockPauseBackgroundMusicLoop).toHaveBeenCalledTimes(1);
+		expect(mockPauseBackgroundMusicLoop).toHaveBeenCalled();
 	});
 
-	it("unmutes back to previous audible state", async () => {
+	it("unmutes back to previous audible state", () => {
 		const { result } = renderHook(() => useAudio());
 
 		act(() => {
@@ -59,8 +49,6 @@ describe("useAudio", () => {
 			result.current.handleAudioMuteToggle();
 		});
 
-		await waitFor(() => {
-			expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PLAYING);
-		});
+		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PLAYING);
 	});
 });

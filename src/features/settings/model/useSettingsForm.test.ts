@@ -12,8 +12,8 @@ const { mockWriteSettings, mockResetSettings, mockReadSettings } = vi.hoisted(
 		mockReadSettings: vi.fn(() => ({
 			masterVolume: 0.8,
 			musicVolume: 0.55,
-			sfxVolume: 0.9,
 			hapticsEnabled: true,
+			postprocessingEnabled: true,
 		})),
 	}),
 );
@@ -30,8 +30,8 @@ describe("useSettingsForm", () => {
 
 		expect(result.current.masterVolume).toBe(0.8);
 		expect(result.current.musicVolume).toBe(0.55);
-		expect(result.current.sfxVolume).toBe(0.9);
 		expect(result.current.hapticsEnabled).toBe(true);
+		expect(result.current.postprocessingEnabled).toBe(true);
 	});
 
 	it("updates master volume and persists", () => {
@@ -59,20 +59,6 @@ describe("useSettingsForm", () => {
 		expect(mockWriteSettings).toHaveBeenCalledWith(
 			expect.anything(),
 			expect.objectContaining({ musicVolume: 0.4 }),
-		);
-	});
-
-	it("updates sfx volume and persists", () => {
-		const { result } = renderHook(() => useSettingsForm());
-
-		act(() => {
-			result.current.handleSfxVolumeChange(0.3);
-		});
-
-		expect(result.current.sfxVolume).toBe(0.3);
-		expect(mockWriteSettings).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({ sfxVolume: 0.3 }),
 		);
 	});
 

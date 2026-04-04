@@ -77,13 +77,22 @@ describe("musicManager", () => {
 		expect(mockPlayerStart).toHaveBeenCalledTimes(1);
 	});
 
-	it("pauses and stops background music transport", () => {
+	it("pauses and stops background music transport", async () => {
+		await startBackgroundMusicLoop();
+		vi.clearAllMocks();
+
 		pauseBackgroundMusicLoop();
-		stopBackgroundMusicLoop();
 
 		expect(mockTransportPause).toHaveBeenCalledTimes(1);
+		expect(mockPlayerStop).toHaveBeenCalledTimes(1);
+
+		await startBackgroundMusicLoop();
+		vi.clearAllMocks();
+
+		stopBackgroundMusicLoop();
+
 		expect(mockTransportStop).toHaveBeenCalledTimes(1);
-		expect(mockPlayerStop).toHaveBeenCalledTimes(2);
+		expect(mockPlayerStop).toHaveBeenCalledTimes(1);
 	});
 
 	it("updates background music player volume", () => {

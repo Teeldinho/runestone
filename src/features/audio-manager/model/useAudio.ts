@@ -2,11 +2,7 @@ import { useMachine } from "@xstate/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { AUDIO_EVENTS, AUDIO_MACHINE_STATES } from "../config";
-import {
-	pauseBackgroundMusicLoop,
-	startBackgroundMusicLoop,
-	stopBackgroundMusicLoop,
-} from "../lib";
+import { pauseBackgroundMusicLoop, stopBackgroundMusicLoop } from "../lib";
 
 import { audioMachine } from "./audioMachine";
 
@@ -21,11 +17,6 @@ export const useAudio = () => {
 	}, [audioSnapshot]);
 
 	useEffect(() => {
-		if (audioSnapshot.matches(AUDIO_MACHINE_STATES.PLAYING)) {
-			void startBackgroundMusicLoop();
-			return;
-		}
-
 		if (audioSnapshot.matches(AUDIO_MACHINE_STATES.PAUSED)) {
 			pauseBackgroundMusicLoop();
 			return;

@@ -10,6 +10,7 @@ export {
 	AUDIO_MACHINE_STATES,
 	AUDIO_PATHS,
 } from "./config";
+export { startBackgroundMusicLoop } from "./lib";
 export {
 	AudioContext,
 	type AudioMachineContext,

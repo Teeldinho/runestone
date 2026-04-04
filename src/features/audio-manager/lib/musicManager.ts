@@ -20,10 +20,16 @@ const getBackgroundMusicPlayer = (): Tone.Player => {
 };
 
 export const startBackgroundMusicLoop = async (): Promise<void> => {
-	await Tone.start();
-	Tone.Transport.start();
-	getBackgroundMusicPlayer().start();
-	isMusicStarted = true;
+	try {
+		await Tone.start();
+		const player = getBackgroundMusicPlayer();
+		await player.loaded;
+		Tone.Transport.start();
+		player.start();
+		isMusicStarted = true;
+	} catch (error) {
+		console.error("[audio] Failed to start background music:", error);
+	}
 };
 
 export const pauseBackgroundMusicLoop = (): void => {
