@@ -32,6 +32,8 @@ const {
 		volume: {
 			value: 0,
 		},
+		buffer: new ArrayBuffer(0),
+		loaded: Promise.resolve(),
 	};
 
 	return {

@@ -24,6 +24,20 @@ export const startBackgroundMusicLoop = async (): Promise<void> => {
 		await Tone.start();
 		const player = getBackgroundMusicPlayer();
 		await player.loaded;
+
+		// Tone.js v14: player.loaded can resolve before buffer is assigned
+		// Wait for buffer to actually be ready before starting
+		let retries = 0;
+		while (!player.buffer && retries < 20) {
+			await new Promise((r) => setTimeout(r, 100));
+			retries++;
+		}
+
+		if (!player.buffer) {
+			console.error("[audio] Music buffer failed to load after retries");
+			return;
+		}
+
 		Tone.Transport.start();
 		player.start();
 		isMusicStarted = true;
