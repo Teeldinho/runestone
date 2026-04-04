@@ -3,7 +3,6 @@ import { SETTINGS_DEFAULTS, SETTINGS_STORAGE_KEYS } from "../config";
 export type SettingsValues = {
 	masterVolume: number;
 	musicVolume: number;
-	sfxVolume: number;
 	hapticsEnabled: boolean;
 	postprocessingEnabled: boolean;
 };
@@ -32,10 +31,6 @@ export const readSettings = (storage: StorageAdapter): SettingsValues => {
 				typeof parsed.musicVolume === "number"
 					? clamp(parsed.musicVolume, 0, 1)
 					: SETTINGS_DEFAULTS.musicVolume,
-			sfxVolume:
-				typeof parsed.sfxVolume === "number"
-					? clamp(parsed.sfxVolume, 0, 1)
-					: SETTINGS_DEFAULTS.sfxVolume,
 			hapticsEnabled:
 				typeof parsed.hapticsEnabled === "boolean"
 					? parsed.hapticsEnabled
