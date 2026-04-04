@@ -1,6 +1,5 @@
 export { audioMachine } from "./audioMachine";
 export type {
-	AudioCue,
 	AudioMachineContext,
 	AudioMachineEvent,
 	AudioMachineState,

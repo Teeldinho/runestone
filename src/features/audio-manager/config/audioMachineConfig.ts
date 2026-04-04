@@ -4,7 +4,6 @@ import { AUDIO_MACHINE_STATES } from "./audioEvents";
 export const AUDIO_SETTINGS_DEFAULTS = {
 	masterVolume: AUDIO_DEFAULTS.MASTER_VOLUME,
 	musicVolume: AUDIO_DEFAULTS.MUSIC_VOLUME,
-	sfxVolume: AUDIO_DEFAULTS.SFX_VOLUME,
 	isMuted: false,
 } as const;
 
