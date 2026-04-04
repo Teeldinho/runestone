@@ -7,7 +7,7 @@ graph while the player moves through the dungeon.
 
 This is an engineering-first game prototype. The machine is not just in the code — it is the level.
 
-**Live:** [runestone.teeldinho.com](https://runestone.teeldinho.com)
+Ready to Play? ⟐ [Enter the Dungeon](https://runestone.teeldinho.com)
 
 ![Runestone Preview](./docs/screenshots/runestone-preview.png)
 
@@ -89,7 +89,7 @@ machine orchestrates traversal, guards, enemy behaviour, and state visibility.
 - Player movement (WASD, sprint), health, death, and restart flow
 - Guard-room enemy behaviour and treasury key progression
 - Convex-backed authentication and leaderboard flow
-- Audio (Howler.js + Tone.js) and haptics (Web Haptics API) integration
+- Audio (Tone.js) and haptics (Web Haptics API) integration
 - Achievements, HUD, settings, and tutorial systems
 
 > **Active development.** Phase 1 targets desktop-first gameplay. Mobile controls
@@ -242,12 +242,11 @@ Frontend state consumption uses TanStack Query with `convexQuery()` from
 `@convex-dev/react-query`. Queries use `staleTime: Infinity` — Convex pushes updates
 reactively, so client-side polling is never needed.
 
-### Audio: Howler.js + Tone.js
+### Audio: Tone.js
 
-Howler.js handles sound effects via a sprite file — door open, door locked, rune activate,
-enemy hit, enemy defeat, player hit, and achievement cues. Tone.js drives looping background
-music via the Web Audio API Transport. Both are wrapped in an XState audio machine and exposed
-through a single hook. No audio library is referenced outside the audio feature slice.
+Tone.js drives looping background music via the Web Audio API Transport. The audio system
+is wrapped in an XState audio machine and exposed through a single hook. The Tone.js library
+is only referenced within the audio feature slice.
 
 ### Haptics
 
@@ -356,8 +355,7 @@ Return visit: UUID found → `getByUuid` query → modal skipped.
 | Backend          | Convex                                  |
 | Data fetching    | TanStack Query                          |
 | Forms            | TanStack Form                           |
-| Sound effects    | Howler.js                               |
-| Music synthesis  | Tone.js                                 |
+| Music            | Tone.js                                 |
 | Haptics          | web-haptics                             |
 | Animation        | Motion (motion/react)                   |
 | Styling          | Tailwind CSS v4                         |
