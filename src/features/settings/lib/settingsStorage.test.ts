@@ -27,7 +27,6 @@ describe("settingsStorage utilities", () => {
 		expect(readSettings(storage)).toEqual({
 			masterVolume: 0.8,
 			musicVolume: 0.55,
-			sfxVolume: 0.9,
 			hapticsEnabled: true,
 			postprocessingEnabled: true,
 		});
@@ -41,7 +40,6 @@ describe("settingsStorage utilities", () => {
 		expect(readSettings(storage)).toEqual({
 			masterVolume: 0.5,
 			musicVolume: 0.55,
-			sfxVolume: 0.9,
 			hapticsEnabled: false,
 			postprocessingEnabled: true,
 		});
@@ -53,7 +51,6 @@ describe("settingsStorage utilities", () => {
 		expect(readSettings(storage)).toEqual({
 			masterVolume: 0.8,
 			musicVolume: 0.55,
-			sfxVolume: 0.9,
 			hapticsEnabled: true,
 			postprocessingEnabled: true,
 		});
@@ -65,7 +62,6 @@ describe("settingsStorage utilities", () => {
 		writeSettings(storage, {
 			masterVolume: 0.3,
 			musicVolume: 0.2,
-			sfxVolume: 0.7,
 			hapticsEnabled: false,
 			postprocessingEnabled: false,
 		});
@@ -73,7 +69,6 @@ describe("settingsStorage utilities", () => {
 		expect(readSettings(storage)).toEqual({
 			masterVolume: 0.3,
 			musicVolume: 0.2,
-			sfxVolume: 0.7,
 			hapticsEnabled: false,
 			postprocessingEnabled: false,
 		});
@@ -89,7 +84,6 @@ describe("settingsStorage utilities", () => {
 		expect(readSettings(storage)).toEqual({
 			masterVolume: 0.8,
 			musicVolume: 0.55,
-			sfxVolume: 0.9,
 			hapticsEnabled: true,
 			postprocessingEnabled: true,
 		});
@@ -104,7 +98,6 @@ describe("settingsStorage utilities", () => {
 		expect(settings).toEqual({
 			masterVolume: 0.6,
 			musicVolume: 0.55,
-			sfxVolume: 0.9,
 			hapticsEnabled: true,
 			postprocessingEnabled: true,
 		});
@@ -124,7 +117,6 @@ describe("settingsStorage utilities", () => {
 		const storage = createMemoryStorage({
 			rs_settings: JSON.stringify({
 				musicVolume: 0.4,
-				sfxVolume: 0.6,
 				hapticsEnabled: false,
 			}),
 		});
