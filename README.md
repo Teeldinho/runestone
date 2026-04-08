@@ -279,16 +279,16 @@ file: `shared/lib/cn.ts`.
 The game page has three regions:
 
 - **Header** — title, current room name, mute toggle
-- **Left column** — 3D scene fills the upper portion; the XState inspector panel sits below it, always visible; the camera mode switcher strip sits between the two
+- **Left column** — 3D scene fills the upper portion; the Statechart Visualizer (XState) panel sits below it, always visible; the camera mode switcher strip sits between the two
 - **Right sidebar** — HUD with health, score, discovered rooms, action buttons, and game state
 
-The inspector panel renders the machine as a live React Flow graph. It shows each room as a
+The Statechart Visualizer (XState) panel renders machines as live React Flow graphs. It shows each room as a
 node (highlighted when active), every transition as an edge, and guard conditions labelled
-inline. A metadata panel alongside the graph lists states, guard legend, and transitions in
+inline. A metadata panel alongside the graph lists states, guard keys, and transitions in
 text form.
 
-The machine that renders in the inspector panel and the machine that drives the dungeon are the
-same object — not two synchronised copies.
+The machine definitions that render in the visualizer are the same definitions used by runtime
+actors — not duplicated static graph snapshots.
 
 ---
 
