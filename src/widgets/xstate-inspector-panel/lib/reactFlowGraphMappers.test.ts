@@ -67,13 +67,13 @@ describe("reactFlowGraphMappers", () => {
 		expect(flowEdges).toContainEqual(
 			expect.objectContaining({
 				id: `${ROOM_IDS.ENTRANCE}:${ROOM_IDS.GUARD_ROOM}`,
-				label: "ENTER_GUARD_ROOM [hasKey]",
+				label: "Enter Guard Room",
 			}),
 		);
 		expect(flowEdges).toContainEqual(
 			expect.objectContaining({
 				id: `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.ENTRANCE}`,
-				label: "RETURN_TO_ENTRANCE",
+				label: "Return to Entrance",
 			}),
 		);
 	});

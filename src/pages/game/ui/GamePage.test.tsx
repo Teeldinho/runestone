@@ -66,6 +66,9 @@ vi.mock("@/widgets/camera-mode-switcher", () => ({
 
 vi.mock("@/widgets/xstate-inspector-panel", () => ({
 	XStateInspectorPanel: () => <div data-testid="xstate-inspector-widget" />,
+	XStateInspectorDetailsPanel: () => (
+		<div data-testid="xstate-inspector-details-widget" />
+	),
 }));
 
 vi.mock("@/widgets/hud", () => ({
@@ -92,5 +95,8 @@ describe("GamePage", () => {
 		expect(screen.getByTestId("camera-switcher-widget")).not.toBeNull();
 		expect(screen.getByTestId("hud-widget-marker")).not.toBeNull();
 		expect(screen.getByTestId("xstate-inspector-widget")).not.toBeNull();
+		expect(
+			screen.getByTestId("xstate-inspector-details-widget"),
+		).not.toBeNull();
 	});
 });

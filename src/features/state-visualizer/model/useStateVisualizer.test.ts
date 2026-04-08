@@ -119,6 +119,14 @@ describe("useStateVisualizer", () => {
 		expect(entranceNode?.isActive).toBe(true);
 		expect(entranceNode?.position.x).toEqual(expect.any(Number));
 		expect(entranceNode?.position.y).toEqual(expect.any(Number));
+
+		const libraryNode = dungeonSection?.positionedNodes.find((node) =>
+			node.id.endsWith(".library"),
+		);
+
+		expect(libraryNode?.position.y).toBeGreaterThan(
+			entranceNode?.position.y ?? 0,
+		);
 	});
 
 	it("updates section active metadata when machine state values change", () => {
