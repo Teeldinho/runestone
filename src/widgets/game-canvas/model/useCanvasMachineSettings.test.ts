@@ -11,16 +11,16 @@ import {
 import { CAMERA_MODES } from "@/features/camera-system";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 
-import { CANVAS_TORCH_INTENSITY_CONFIG } from "../config";
+import {
+	CANVAS_FOG_DENSITY_MULTIPLIERS_BY_ROOM,
+	CANVAS_FREE_ORBITAL_TORCH_ROOM_LIMIT,
+	CANVAS_RUNE_EMISSIVE_MULTIPLIERS,
+	CANVAS_TORCH_INTENSITY_CONFIG,
+} from "../config";
 import {
 	type CanvasMachineRuntime,
 	useCanvasMachineSettings,
 } from "./useCanvasMachineSettings";
-
-const FOG_MULTIPLIER_GUARD_ROOM = 1.2;
-const RUNE_EMISSIVE_MULTIPLIER_SEALED = 0.3;
-const RUNE_EMISSIVE_MULTIPLIER_OPEN = 0.75;
-const RUNE_EMISSIVE_MULTIPLIER_ACTIVE = 1.2;
 
 const RUNE_COLORS_BY_STATE = {
 	[DUNGEON_RUNE_STATES.SEALED]: DUNGEON_THEME.RUNES.SEALED,
@@ -57,14 +57,75 @@ describe("useCanvasMachineSettings", () => {
 		);
 		expect(result.current.environment.rune.emissiveIntensity).toBeCloseTo(
 			GAME_CANVAS_CONFIG.SCENE.RUNE_EMISSIVE_INTENSITY *
-				RUNE_EMISSIVE_MULTIPLIER_SEALED,
+				CANVAS_RUNE_EMISSIVE_MULTIPLIERS[DUNGEON_RUNE_STATES.SEALED],
 		);
 		expect(result.current.fog.density).toBeCloseTo(
-			DUNGEON_THEME.FOG.DENSITY * FOG_MULTIPLIER_GUARD_ROOM,
+			DUNGEON_THEME.FOG.DENSITY *
+				CANVAS_FOG_DENSITY_MULTIPLIERS_BY_ROOM[ROOM_IDS.GUARD_ROOM],
 		);
 		expect(result.current.lighting.torch.intensity).toBeCloseTo(
 			DUNGEON_THEME.LIGHTING.TORCH_INTENSITY +
 				1 * CANVAS_TORCH_INTENSITY_CONFIG.ENEMY_STEP,
+		);
+		expect(result.current.lighting.torch.positions).toHaveLength(
+			GAME_CANVAS_CONFIG.SCENE.TORCH_POSITIONS.length,
+		);
+	});
+
+	it("limits top-down torch lights to the current room", () => {
+		const machineRuntime = createMachineRuntime();
+
+		const { result } = renderHook(() =>
+			useCanvasMachineSettings(machineRuntime, {
+				fov: 60,
+				mode: CAMERA_MODES.TOP_DOWN,
+				position: [0, 20, 0],
+				target: [0, 0, 0],
+				zoom: 1,
+			}),
+		);
+
+		expect(result.current.lighting.torch.positions).toHaveLength(
+			GAME_CANVAS_CONFIG.SCENE.TORCH_POSITIONS.length,
+		);
+	});
+
+	it("renders nearest-room torch lights in free-orbital mode for performance", () => {
+		const machineRuntime = createMachineRuntime();
+
+		const { result } = renderHook(() =>
+			useCanvasMachineSettings(machineRuntime, {
+				fov: 58,
+				mode: CAMERA_MODES.FREE_ORBITAL,
+				position: [0, 16, -18],
+				target: [0, 0, 0],
+				zoom: 1,
+			}),
+		);
+
+		expect(result.current.lighting.torch.positions).toHaveLength(
+			CANVAS_FREE_ORBITAL_TORCH_ROOM_LIMIT *
+				GAME_CANVAS_CONFIG.SCENE.TORCH_POSITIONS.length,
+		);
+	});
+
+	it("limits torch lights to the current room in third-person mode for performance", () => {
+		const machineRuntime = createMachineRuntime({
+			currentRoomId: ROOM_IDS.GUARD_ROOM,
+		});
+
+		const { result } = renderHook(() =>
+			useCanvasMachineSettings(machineRuntime, {
+				fov: 65,
+				mode: CAMERA_MODES.THIRD_PERSON,
+				position: [0, 2.2, -3.8],
+				target: [0, 0, 0],
+				zoom: 1,
+			}),
+		);
+
+		expect(result.current.lighting.torch.positions).toHaveLength(
+			GAME_CANVAS_CONFIG.SCENE.TORCH_POSITIONS.length,
 		);
 	});
 
@@ -87,7 +148,7 @@ describe("useCanvasMachineSettings", () => {
 		);
 		expect(result.current.environment.rune.emissiveIntensity).toBeCloseTo(
 			GAME_CANVAS_CONFIG.SCENE.RUNE_EMISSIVE_INTENSITY *
-				RUNE_EMISSIVE_MULTIPLIER_OPEN,
+				CANVAS_RUNE_EMISSIVE_MULTIPLIERS[DUNGEON_RUNE_STATES.OPEN],
 		);
 	});
 
@@ -110,7 +171,7 @@ describe("useCanvasMachineSettings", () => {
 		);
 		expect(result.current.environment.rune.emissiveIntensity).toBeCloseTo(
 			GAME_CANVAS_CONFIG.SCENE.RUNE_EMISSIVE_INTENSITY *
-				RUNE_EMISSIVE_MULTIPLIER_ACTIVE,
+				CANVAS_RUNE_EMISSIVE_MULTIPLIERS[DUNGEON_RUNE_STATES.ACTIVE],
 		);
 		expect(result.current.lighting.torch.intensity).toBe(
 			DUNGEON_THEME.LIGHTING.TORCH_INTENSITY,
