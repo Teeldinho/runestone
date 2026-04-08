@@ -276,16 +276,17 @@ file: `shared/lib/cn.ts`.
 
 ## Layout
 
-The game page has three regions:
+The game page has four regions:
 
 - **Header** — title, current room name, mute toggle
-- **Left column** — 3D scene fills the upper portion; the Statechart Visualizer (XState) panel sits below it, always visible; the camera mode switcher strip sits between the two
-- **Right sidebar** — HUD with health, score, discovered rooms, action buttons, and game state
+- **Left sidebar** — full-height Statechart Visualizer (XState) graph rail with machine tabs
+- **Center stage** — 3D scene and camera switcher strip
+- **Center-bottom details pane** — fixed 35dvh machine details panel with human-readable states, transitions, and requirements
+- **Right sidebar** — full-height HUD with vitality, machine snapshot, discovered rooms, action buttons, and game state
 
-The Statechart Visualizer (XState) panel renders machines as live React Flow graphs. It shows each room as a
-node (highlighted when active), every transition as an edge, and guard conditions labelled
-inline. A metadata panel alongside the graph lists states, guard keys, and transitions in
-text form.
+The Statechart Visualizer (XState) graph renders in a vertical flow to keep labels and guard-heavy
+transitions readable. Machine tabs switch the active graph and the center-bottom details pane in
+sync, so graph context and textual explanations stay aligned.
 
 The machine definitions that render in the visualizer are the same definitions used by runtime
 actors — not duplicated static graph snapshots.
