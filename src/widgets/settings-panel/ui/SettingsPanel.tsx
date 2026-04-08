@@ -88,25 +88,6 @@ export function SettingsPanel() {
 									}
 								/>
 							</Field>
-
-							<Field>
-								<FieldLabel htmlFor="sfx-volume">
-									{SETTINGS_COPY.SFX_VOLUME_LABEL}
-								</FieldLabel>
-								<FieldDescription>
-									{formatVolumePercent(settings.sfxVolume)}
-								</FieldDescription>
-								<Slider
-									id="sfx-volume"
-									value={[settings.sfxVolume]}
-									min={SETTINGS_VOLUME_RANGE.MIN}
-									max={SETTINGS_VOLUME_RANGE.MAX}
-									step={SETTINGS_VOLUME_RANGE.STEP}
-									onValueChange={([value]) =>
-										settings.handleSfxVolumeChange(value ?? 0)
-									}
-								/>
-							</Field>
 						</FieldGroup>
 					</FieldSet>
 				</section>

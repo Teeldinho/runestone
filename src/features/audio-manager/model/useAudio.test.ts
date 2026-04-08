@@ -9,24 +9,18 @@ import { useAudio } from "./useAudio";
 
 const {
 	mockPauseBackgroundMusicLoop,
-	mockPlaySoundEffect,
 	mockStartBackgroundMusicLoop,
-	mockStopAllSoundEffects,
 	mockStopBackgroundMusicLoop,
 } = vi.hoisted(() => ({
 	mockStartBackgroundMusicLoop: vi.fn(),
 	mockPauseBackgroundMusicLoop: vi.fn(),
 	mockStopBackgroundMusicLoop: vi.fn(),
-	mockPlaySoundEffect: vi.fn(),
-	mockStopAllSoundEffects: vi.fn(),
 }));
 
 vi.mock("../lib", () => ({
 	startBackgroundMusicLoop: mockStartBackgroundMusicLoop,
 	pauseBackgroundMusicLoop: mockPauseBackgroundMusicLoop,
 	stopBackgroundMusicLoop: mockStopBackgroundMusicLoop,
-	playSoundEffect: mockPlaySoundEffect,
-	stopAllSoundEffects: mockStopAllSoundEffects,
 }));
 
 describe("useAudio", () => {
@@ -35,40 +29,58 @@ describe("useAudio", () => {
 		mockStartBackgroundMusicLoop.mockResolvedValue(undefined);
 	});
 
-	it("starts playing and calls startBackgroundMusicLoop on mount", async () => {
+	it("initializes in playing state without auto-starting on mount", () => {
 		const { result } = renderHook(() => useAudio());
 
 		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PLAYING);
+		expect(mockStartBackgroundMusicLoop).not.toHaveBeenCalled();
+	});
+
+	it("starts background music when transitioning back to playing", async () => {
+		const { result } = renderHook(() => useAudio());
+
+		act(() => {
+			result.current.handleAudioPauseRequest();
+		});
+
+		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PAUSED);
+
+		act(() => {
+			result.current.handleAudioPlayRequest();
+		});
 
 		await waitFor(() => {
 			expect(mockStartBackgroundMusicLoop).toHaveBeenCalledTimes(1);
 		});
 	});
 
-	it("suppresses sound effect playback while muted", () => {
+	it("pauses background music when muted", () => {
 		const { result } = renderHook(() => useAudio());
 
 		act(() => {
 			result.current.handleAudioMuteToggle();
-			result.current.handleSoundEffectPlay("DOOR_OPEN");
 		});
 
 		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.MUTED);
-		expect(mockPlaySoundEffect).not.toHaveBeenCalled();
-		expect(mockStopAllSoundEffects).toHaveBeenCalledTimes(1);
+		expect(mockPauseBackgroundMusicLoop).toHaveBeenCalled();
 	});
 
 	it("unmutes back to previous audible state", async () => {
 		const { result } = renderHook(() => useAudio());
 
 		act(() => {
-			result.current.handleAudioPlayRequest();
 			result.current.handleAudioMuteToggle();
+		});
+
+		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.MUTED);
+
+		act(() => {
 			result.current.handleAudioMuteToggle();
 		});
 
 		await waitFor(() => {
 			expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PLAYING);
+			expect(mockStartBackgroundMusicLoop).toHaveBeenCalledTimes(1);
 		});
 	});
 });

@@ -12,5 +12,5 @@ export const CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE =
 
 export const CAMERA_RIG_CAMERA_UP = {
 	DEFAULT: [0, 1, 0],
-	TOP_DOWN: [0, 0, -1],
+	TOP_DOWN: [0, 0, 1],
 } as const;

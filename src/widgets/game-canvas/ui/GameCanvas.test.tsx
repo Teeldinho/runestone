@@ -69,7 +69,7 @@ vi.mock("@/entities/room", () => ({
 vi.mock("../model", () => ({
 	useAchievementTracker: () => ({ activeAchievement: null }),
 	useCanvasMachineSettings: () => ({
-		camera: { far: 120, fov: 58, near: 0.1, position: [0, 18, 18], zoom: 1 },
+		camera: { far: 120, fov: 58, near: 0.1, position: [0, 16, -18], zoom: 1 },
 		environment: {},
 		fog: {},
 		lighting: {},
@@ -123,7 +123,7 @@ describe("GameCanvas", () => {
 				cameraStateSnapshot={{
 					fov: 58,
 					mode: CAMERA_MODES.FREE_ORBITAL,
-					position: [0, 18, 18],
+					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
 				}}

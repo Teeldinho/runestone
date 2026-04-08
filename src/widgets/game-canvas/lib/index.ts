@@ -9,6 +9,7 @@ export {
 	getCameraRigTargets,
 	getThirdPersonTransitionTargets,
 } from "./cameraRigTargets";
+export { createRoomTorchPositions } from "./createRoomTorchPositions";
 export { createTorchSettings } from "./createTorchSettings";
 export { shouldSubmitFloorScore } from "./floorCompletion";
 export { getDoorwayAnchorPosition } from "./getDoorwayAnchorPosition";
@@ -28,3 +29,4 @@ export {
 	createSceneRoomMeshSettings,
 	createSceneSpawnPosition,
 } from "./sceneEnvironmentMappers";
+export { selectNearestRoomPositions } from "./selectNearestRoomPositions";

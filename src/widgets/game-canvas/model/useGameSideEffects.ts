@@ -9,7 +9,6 @@ import {
 } from "@/entities/player";
 import { createDungeonFloorLayout } from "@/entities/room";
 import { useSubmitDungeonScore } from "@/entities/score";
-import { AUDIO_SPRITE_IDS, useAudioController } from "@/features/audio-manager";
 import { useAuthContext } from "@/features/auth";
 import {
 	selectActiveStateLabel,
@@ -43,7 +42,6 @@ export const useGameSideEffects = (): void => {
 		onFloorComplete,
 		onPlayerDeath,
 	} = useHaptics();
-	const { handleSoundEffectPlay } = useAudioController();
 	const submitScore = useSubmitDungeonScore();
 	const { authenticatedProfile } = useAuthContext();
 
@@ -64,11 +62,10 @@ export const useGameSideEffects = (): void => {
 		if (currentRoomId !== prevRoomRef.current) {
 			onTransition();
 			onRoomEnter();
-			handleSoundEffectPlay(AUDIO_SPRITE_IDS.DOOR_OPEN);
 
 			prevRoomRef.current = currentRoomId;
 		}
-	}, [currentRoomId, onTransition, onRoomEnter, handleSoundEffectPlay]);
+	}, [currentRoomId, onTransition, onRoomEnter]);
 
 	useEffect(() => {
 		const roomPosition = getRoomWorldPosition(
@@ -111,11 +108,10 @@ export const useGameSideEffects = (): void => {
 			lastDoorwayFeedback !== previousDoorwayFeedbackRef.current
 		) {
 			onGuardFail();
-			handleSoundEffectPlay(AUDIO_SPRITE_IDS.DOOR_LOCKED);
 		}
 
 		previousDoorwayFeedbackRef.current = lastDoorwayFeedback;
-	}, [lastDoorwayFeedback, onGuardFail, handleSoundEffectPlay]);
+	}, [lastDoorwayFeedback, onGuardFail]);
 
 	useEffect(() => {
 		if (!shouldSubmitFloorScore(activeStateLabel, hasSubmittedRef.current)) {
@@ -128,7 +124,6 @@ export const useGameSideEffects = (): void => {
 
 		hasSubmittedRef.current = true;
 		onFloorComplete();
-		handleSoundEffectPlay(AUDIO_SPRITE_IDS.ACHIEVEMENT);
 		submitScore.mutate({
 			userId: authenticatedProfile.id,
 			dungeonId: FLOOR_IDS.FLOOR_ONE,
@@ -141,7 +136,6 @@ export const useGameSideEffects = (): void => {
 		discoveredRooms,
 		authenticatedProfile,
 		onFloorComplete,
-		handleSoundEffectPlay,
 		submitScore,
 	]);
 
@@ -162,6 +156,5 @@ export const useGameSideEffects = (): void => {
 
 		hasTriggeredDeathRef.current = true;
 		onPlayerDeath();
-		handleSoundEffectPlay(AUDIO_SPRITE_IDS.PLAYER_HIT);
-	}, [playerSnapshot, onPlayerDeath, handleSoundEffectPlay]);
+	}, [playerSnapshot, onPlayerDeath]);
 };

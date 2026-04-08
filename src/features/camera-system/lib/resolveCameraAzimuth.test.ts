@@ -4,13 +4,13 @@ import { CAMERA_MODES } from "../config";
 import { resolveCameraAzimuth } from "./resolveCameraAzimuth";
 
 describe("resolveCameraAzimuth", () => {
-	it("returns a fixed north-up azimuth for top-down mode", () => {
+	it("returns a fixed camera-relative azimuth for top-down mode", () => {
 		expect(
 			resolveCameraAzimuth({
 				mode: CAMERA_MODES.TOP_DOWN,
 				direction: { x: 0, y: -1, z: 0 },
 			}),
-		).toBe(Math.PI);
+		).toBe(0);
 	});
 
 	it("derives azimuth from the camera direction for orbital modes", () => {
