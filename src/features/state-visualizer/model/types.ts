@@ -1,9 +1,13 @@
-import type { RoomId } from "@/entities/dungeon";
-
 export type MachineGraphNodeKind = "state" | "initial" | "final";
 
+export type StateVisualizerSectionId =
+	| "dungeon"
+	| "camera"
+	| "audio"
+	| "player";
+
 export type MachineGraphNode = {
-	id: RoomId;
+	id: string;
 	label: string;
 	kind: MachineGraphNodeKind;
 	isActive: boolean;
@@ -11,8 +15,9 @@ export type MachineGraphNode = {
 
 export type MachineGraphEdge = {
 	id: string;
-	source: RoomId;
-	target: RoomId;
+	source: string;
+	target: string;
+	eventType: string;
 	guard: string | null;
 };
 
@@ -23,4 +28,14 @@ export type MachineGraphNodePosition = {
 
 export type PositionedMachineGraphNode = MachineGraphNode & {
 	position: MachineGraphNodePosition;
+};
+
+export type MachineGraphSection = {
+	id: StateVisualizerSectionId;
+	label: string;
+	activeStateLabel: string;
+	guardKeys: string[];
+	nodes: MachineGraphNode[];
+	edges: MachineGraphEdge[];
+	positionedNodes: PositionedMachineGraphNode[];
 };

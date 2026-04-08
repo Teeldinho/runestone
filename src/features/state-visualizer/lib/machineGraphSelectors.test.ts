@@ -1,27 +1,27 @@
 import { describe, expect, it } from "vitest";
 
 import {
-	getMachineGraphNodeKind,
-	getMachineGraphRoomLabel,
+	formatMachineStateLabel,
+	getMachineGraphNodeLabel,
 } from "./machineGraphSelectors";
 
-describe("getMachineGraphNodeKind", () => {
-	it("returns initial for the entrance room", () => {
-		expect(getMachineGraphNodeKind("entrance")).toBe("initial");
+describe("getMachineGraphNodeLabel", () => {
+	it("uses room labels for the dungeon section", () => {
+		expect(getMachineGraphNodeLabel("dungeon", "guardRoom")).toBe("Guard Room");
+		expect(getMachineGraphNodeLabel("dungeon", "entrance")).toBe("Entrance");
 	});
 
-	it("returns final for the exit room", () => {
-		expect(getMachineGraphNodeKind("exit")).toBe("final");
-	});
-
-	it("returns state for a non-extreme room", () => {
-		expect(getMachineGraphNodeKind("library")).toBe("state");
+	it("formats non-dungeon labels from machine keys", () => {
+		expect(getMachineGraphNodeLabel("camera", "freeOrbital")).toBe(
+			"Free Orbital",
+		);
+		expect(getMachineGraphNodeLabel("audio", "playing")).toBe("Playing");
 	});
 });
 
-describe("getMachineGraphRoomLabel", () => {
-	it("looks up the human-readable label for a room", () => {
-		expect(getMachineGraphRoomLabel("guardRoom")).toBe("Guard Room");
-		expect(getMachineGraphRoomLabel("entrance")).toBe("Entrance");
+describe("formatMachineStateLabel", () => {
+	it("formats state labels for panel badges", () => {
+		expect(formatMachineStateLabel("thirdPerson")).toBe("Third Person");
+		expect(formatMachineStateLabel("health.damaged")).toBe("Health damaged");
 	});
 });

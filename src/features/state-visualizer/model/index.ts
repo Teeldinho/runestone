@@ -3,7 +3,9 @@ export type {
 	MachineGraphNode,
 	MachineGraphNodeKind,
 	MachineGraphNodePosition,
+	MachineGraphSection,
 	PositionedMachineGraphNode,
+	StateVisualizerSectionId,
 } from "./types";
 export type {
 	StateVisualizerResult,

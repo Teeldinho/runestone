@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { ROOM_IDS } from "@/entities/dungeon";
 import { useAudioController } from "@/features/audio-manager";
+import { CAMERA_MODES, useCameraMachine } from "@/features/camera-system";
 import { useGameMachine } from "@/features/dungeon-navigation";
 import { useStateVisualizer } from "@/features/state-visualizer";
 import { GAME_PAGE_COPY } from "@/pages/game/config";
@@ -12,7 +13,9 @@ import { GAME_PAGE_COPY } from "@/pages/game/config";
 import { useGamePage } from "./useGamePage";
 
 vi.mock("@/features/audio-manager", () => ({
+	audioMachine: {},
 	useAudioController: vi.fn().mockReturnValue({
+		audioState: "playing",
 		handleAudioPlayRequest: vi.fn(),
 		handleAudioMuteToggle: vi.fn(),
 		isAudioMuted: false,
@@ -21,6 +24,27 @@ vi.mock("@/features/audio-manager", () => ({
 
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachine: vi.fn(),
+}));
+
+vi.mock("@/features/camera-system", () => ({
+	CAMERA_MODES: {
+		THIRD_PERSON: "thirdPerson",
+		TOP_DOWN: "topDown",
+		FIRST_PERSON: "firstPerson",
+		FREE_ORBITAL: "freeOrbital",
+	},
+	createCameraMachine: vi.fn(() => ({})),
+	useCameraMachine: vi.fn().mockReturnValue({
+		cameraStateSnapshot: {
+			fov: 58,
+			mode: "freeOrbital",
+			position: [0, 8, 10],
+			target: [0, 0, 0],
+			zoom: 1,
+		},
+		handleCameraModeSwitch: vi.fn(),
+		mode: "freeOrbital",
+	}),
 }));
 
 vi.mock("@/features/state-visualizer", () => ({
@@ -32,6 +56,7 @@ vi.mock("@/entities/player", () => ({
 	PLAYER_ENTITY_CONFIG: {
 		TRANSFORM: { SPAWN_HEIGHT_OFFSET: 0.45 },
 	},
+	createPlayerMachine: vi.fn(() => ({})),
 	usePlayerMachineRuntime: vi.fn().mockReturnValue({
 		snapshot: {
 			value: { health: "alive", movement: "idle" },
@@ -90,16 +115,30 @@ describe("useGamePage", () => {
 		} as unknown as ReturnType<typeof useGameMachine>);
 
 		vi.mocked(useStateVisualizer).mockReturnValue({
-			edges: [],
-			nodes: [],
-			positionedNodes: [],
+			sections: [],
 		} as unknown as ReturnType<typeof useStateVisualizer>);
 
 		const { result } = renderHook(() => useGamePage());
 
-		expect(useStateVisualizer).toHaveBeenCalledWith({
-			currentRoomId: ROOM_IDS.ENTRANCE,
-		});
+		expect(useStateVisualizer).toHaveBeenCalledWith(
+			expect.objectContaining({
+				machinesBySectionId: {
+					audio: {},
+					camera: {},
+					dungeon: {},
+					player: {},
+				},
+				stateValuesBySectionId: {
+					dungeon: ROOM_IDS.ENTRANCE,
+					camera: CAMERA_MODES.FREE_ORBITAL,
+					audio: "playing",
+					player: {
+						health: "alive",
+						movement: "idle",
+					},
+				},
+			}),
+		);
 		expect(result.current.canvasMachineRuntime).toEqual({
 			currentRoomId: ROOM_IDS.ENTRANCE,
 			enemiesRemaining: 1,
@@ -111,6 +150,10 @@ describe("useGamePage", () => {
 		expect(result.current.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
 		expect(result.current.currentRoomLabel).toBe("Entrance");
 		expect(result.current.isAudioMuted).toBe(false);
+		expect(result.current.cameraStateSnapshot.mode).toBe(
+			CAMERA_MODES.FREE_ORBITAL,
+		);
+		expect(vi.mocked(useCameraMachine)).toHaveBeenCalled();
 		expect(result.current.handleAudioMuteToggle).toBeDefined();
 		expect(
 			vi.mocked(useAudioController)().handleAudioPlayRequest,
@@ -139,9 +182,7 @@ describe("dungeon reset teleport", () => {
 		} as unknown as ReturnType<typeof useGameMachine>);
 
 		vi.mocked(useStateVisualizer).mockReturnValue({
-			edges: [],
-			nodes: [],
-			positionedNodes: [],
+			sections: [],
 		} as unknown as ReturnType<typeof useStateVisualizer>);
 
 		const { result } = renderHook(() => useGamePage());

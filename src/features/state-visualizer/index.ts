@@ -1,11 +1,11 @@
 export {
 	MACHINE_GRAPH_LAYOUT,
-	MACHINE_GRAPH_ROOM_IDS,
-	MACHINE_GRAPH_TRANSITIONS,
+	STATE_VISUALIZER_DEFAULT_OPEN_SECTION,
+	STATE_VISUALIZER_SECTIONS,
 } from "./config";
 export {
 	createMachineGraphSnapshot,
-	getMachineGraphRoomLabel,
+	formatMachineStateLabel,
 	type MachineGraphSnapshot,
 } from "./lib";
 export type { StateVisualizerResult, UseStateVisualizerInput } from "./model";
@@ -15,5 +15,7 @@ export type {
 	MachineGraphNode,
 	MachineGraphNodeKind,
 	MachineGraphNodePosition,
+	MachineGraphSection,
 	PositionedMachineGraphNode,
+	StateVisualizerSectionId,
 } from "./model/types";
