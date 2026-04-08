@@ -4,5 +4,8 @@ export {
 } from "./createMachineGraphSnapshot";
 export {
 	formatMachineStateLabel,
+	formatMachineTokenLabel,
+	getMachineGraphGuardLabel,
 	getMachineGraphNodeLabel,
+	getMachineGraphTransitionEventLabel,
 } from "./machineGraphSelectors";

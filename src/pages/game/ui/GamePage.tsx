@@ -1,11 +1,17 @@
 import { Volume2, VolumeX } from "lucide-react";
+import type { CSSProperties } from "react";
 import { useSettingsForm } from "@/features/settings";
+import { StateVisualizerWorkspaceProvider } from "@/features/state-visualizer";
+import { GAME_PAGE_LAYOUT } from "@/pages/game/config";
 import { useGamePage } from "@/pages/game/model";
 import { ScrollArea } from "@/shared/ui";
 import { CameraModeSwitcher } from "@/widgets/camera-mode-switcher";
 import { GameCanvas } from "@/widgets/game-canvas";
 import { GameHud } from "@/widgets/hud";
-import { XStateInspectorPanel } from "@/widgets/xstate-inspector-panel";
+import {
+	XStateInspectorDetailsPanel,
+	XStateInspectorPanel,
+} from "@/widgets/xstate-inspector-panel";
 
 export function GamePage() {
 	const {
@@ -72,80 +78,94 @@ export function GamePage() {
 				</div>
 			</header>
 
-			<div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
-				{/* Left column: Scene + XState Inspector stacked */}
-				<div className="order-1 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-					{/* 3D Scene */}
-					<section
-						aria-labelledby="dungeon-canvas-heading"
-						className="relative flex min-h-0 basis-[60%] flex-col"
+			<StateVisualizerWorkspaceProvider>
+				<div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
+					<aside
+						aria-label="Statechart graph"
+						className="order-2 flex w-full shrink-0 flex-col border-t lg:order-1 lg:w-[var(--game-left-pane-width)] lg:border-r lg:border-t-0"
+						style={
+							{
+								borderColor: "var(--panel-border)",
+								background: "var(--panel)",
+								"--game-left-pane-width": `${GAME_PAGE_LAYOUT.DESKTOP_LEFT_PANE_WIDTH_REM}rem`,
+							} as CSSProperties
+						}
 					>
-						<h2 id="dungeon-canvas-heading" className="sr-only">
-							Dungeon Canvas
-						</h2>
-						<div className="min-h-0 flex-1" style={{ cursor: "grab" }}>
-							<GameCanvas
-								cameraStateSnapshot={cameraStateSnapshot}
-								machineRuntime={canvasMachineRuntime}
-								postprocessingEnabled={settings.postprocessingEnabled}
-							/>
-						</div>
+						<XStateInspectorPanel sections={graphSections} />
+					</aside>
 
-						<div
-							className="shrink-0 border-t p-2"
+					<div className="order-1 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden lg:order-2">
+						<section
+							aria-labelledby="dungeon-canvas-heading"
+							className="relative flex min-h-0 flex-1 flex-col"
+						>
+							<h2 id="dungeon-canvas-heading" className="sr-only">
+								Dungeon Canvas
+							</h2>
+							<div className="min-h-0 flex-1" style={{ cursor: "grab" }}>
+								<GameCanvas
+									cameraStateSnapshot={cameraStateSnapshot}
+									machineRuntime={canvasMachineRuntime}
+									postprocessingEnabled={settings.postprocessingEnabled}
+								/>
+							</div>
+
+							<div
+								className="shrink-0 border-t p-2"
+								style={{
+									borderColor: "var(--panel-border)",
+								}}
+							>
+								<CameraModeSwitcher
+									activeCameraMode={cameraStateSnapshot.mode}
+									handleCameraModeSwitch={handleCameraModeSwitch}
+								/>
+							</div>
+						</section>
+
+						<section
+							aria-label="Selected machine details"
+							className="shrink-0 border-t"
 							style={{
 								borderColor: "var(--panel-border)",
+								background: "var(--panel)",
+								height: `${GAME_PAGE_LAYOUT.DETAILS_PANEL_HEIGHT_DVH}dvh`,
+								maxHeight: `${GAME_PAGE_LAYOUT.DETAILS_PANEL_HEIGHT_DVH}dvh`,
 							}}
 						>
-							<CameraModeSwitcher
-								activeCameraMode={cameraStateSnapshot.mode}
-								handleCameraModeSwitch={handleCameraModeSwitch}
-							/>
-						</div>
-					</section>
+							<XStateInspectorDetailsPanel sections={graphSections} />
+						</section>
+					</div>
 
-					{/* XState Inspector - always visible below scene */}
-					<section
-						aria-labelledby="xstate-inspector-heading"
-						className="flex min-h-0 basis-[40%] flex-col border-t"
-						style={{
-							borderColor: "var(--panel-border)",
-							background: "var(--panel)",
-						}}
+					<aside
+						aria-label="Game controls and state"
+						className="order-3 flex w-full shrink-0 flex-col border-t lg:w-[var(--game-right-pane-width)] lg:border-l lg:border-t-0"
+						style={
+							{
+								borderColor: "var(--panel-border)",
+								background: "var(--panel)",
+								"--game-right-pane-width": `${GAME_PAGE_LAYOUT.DESKTOP_RIGHT_PANE_WIDTH_REM}rem`,
+							} as CSSProperties
+						}
 					>
-						<XStateInspectorPanel
-							activeStateLabel={activeStateLabel}
-							sections={graphSections}
-						/>
-					</section>
+						<ScrollArea className="flex-1">
+							<div className="p-3">
+								<GameHud
+									actionButtons={actionButtons}
+									activeStateLabel={activeStateLabel}
+									currentRoomLabel={currentRoomLabel}
+									discoveredRoomLabels={discoveredRoomLabels}
+									enemiesRemaining={enemiesRemaining}
+									handleDungeonRunReset={handleDungeonRunReset}
+									hasTreasureKeyLabel={hasTreasureKeyLabel}
+									playerHp={playerHp}
+									playerMaxHp={playerMaxHp}
+								/>
+							</div>
+						</ScrollArea>
+					</aside>
 				</div>
-
-				{/* Right column: Sidebar always visible */}
-				<aside
-					aria-label="Game controls and state"
-					className="order-2 flex max-h-[38dvh] w-full shrink-0 flex-col border-t lg:max-h-none lg:w-60 lg:border-l lg:border-t-0"
-					style={{
-						borderColor: "var(--panel-border)",
-						background: "var(--panel)",
-					}}
-				>
-					<ScrollArea className="flex-1">
-						<div className="p-3">
-							<GameHud
-								actionButtons={actionButtons}
-								activeStateLabel={activeStateLabel}
-								currentRoomLabel={currentRoomLabel}
-								discoveredRoomLabels={discoveredRoomLabels}
-								enemiesRemaining={enemiesRemaining}
-								handleDungeonRunReset={handleDungeonRunReset}
-								hasTreasureKeyLabel={hasTreasureKeyLabel}
-								playerHp={playerHp}
-								playerMaxHp={playerMaxHp}
-							/>
-						</div>
-					</ScrollArea>
-				</aside>
-			</div>
+			</StateVisualizerWorkspaceProvider>
 		</main>
 	);
 }

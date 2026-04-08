@@ -5,6 +5,7 @@ import type {
 	MachineGraphNodeKind,
 	PositionedMachineGraphNode,
 } from "@/features/state-visualizer";
+import { getMachineGraphTransitionEventLabel } from "@/features/state-visualizer";
 
 import {
 	INSPECTOR_FLOW_EDGE_VISUALS,
@@ -36,12 +37,8 @@ const getFlowNodeClassName = (
 	return `${INSPECTOR_FLOW_NODE_VISUALS.BASE_CLASS_NAME} ${INSPECTOR_FLOW_NODE_VISUALS.CLASS_NAME_BY_KIND[kind]}${activeClassName}`;
 };
 
-const getFlowEdgeLabel = (eventType: string, guard: string | null): string => {
-	if (!guard) {
-		return eventType;
-	}
-
-	return `${eventType} [${guard}]`;
+const getFlowEdgeLabel = (eventType: string): string => {
+	return getMachineGraphTransitionEventLabel(eventType);
 };
 
 export const mapGraphNodesToFlowNodes = (
@@ -68,7 +65,7 @@ export const mapGraphEdgesToFlowEdges = (
 		id: graphEdge.id,
 		source: graphEdge.source,
 		target: graphEdge.target,
-		label: getFlowEdgeLabel(graphEdge.eventType, graphEdge.guard),
+		label: getFlowEdgeLabel(graphEdge.eventType),
 		data: {
 			eventType: graphEdge.eventType,
 			guard: graphEdge.guard,

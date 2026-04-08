@@ -12,3 +12,11 @@ export type {
 	UseStateVisualizerInput,
 } from "./useStateVisualizer";
 export { useStateVisualizer } from "./useStateVisualizer";
+export type {
+	StateVisualizerWorkspaceContextValue,
+	StateVisualizerWorkspaceProviderProps,
+} from "./useStateVisualizerWorkspace";
+export {
+	StateVisualizerWorkspaceProvider,
+	useStateVisualizerWorkspace,
+} from "./useStateVisualizerWorkspace";

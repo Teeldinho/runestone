@@ -1,11 +1,11 @@
 import type { StateVisualizerSectionId } from "../model/types";
 
 export const MACHINE_GRAPH_LAYOUT = {
-	DIRECTION: "LR",
+	DIRECTION: "TB",
 	NODE_WIDTH: 160,
 	NODE_HEIGHT: 60,
-	NODE_SEPARATION: 80,
-	RANK_SEPARATION: 120,
+	NODE_SEPARATION: 56,
+	RANK_SEPARATION: 92,
 } as const;
 
 export const STATE_VISUALIZER_SECTIONS: Array<{

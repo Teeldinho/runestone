@@ -1,14 +1,40 @@
-import { ROOM_LABELS } from "@/entities/dungeon";
+import {
+	STATE_VISUALIZER_GUARD_LABELS,
+	STATE_VISUALIZER_STATE_LABELS,
+	STATE_VISUALIZER_TITLE_CASE_STOP_WORDS,
+} from "../config";
 
 import type { StateVisualizerSectionId } from "../model/types";
 
-const formatSegmentLabel = (segment: string): string => {
+const splitMachineToken = (segment: string): string[] => {
 	return segment
 		.replace(/([a-z])([A-Z])/g, "$1 $2")
 		.replace(/[._-]/g, " ")
 		.replace(/\s+/g, " ")
 		.trim()
-		.replace(/^./, (char) => char.toUpperCase());
+		.split(" ")
+		.filter(Boolean);
+};
+
+const formatTitleCaseWord = (word: string, index: number): string => {
+	const lowerCaseWord = word.toLowerCase();
+
+	if (
+		index > 0 &&
+		STATE_VISUALIZER_TITLE_CASE_STOP_WORDS.includes(
+			lowerCaseWord as (typeof STATE_VISUALIZER_TITLE_CASE_STOP_WORDS)[number],
+		)
+	) {
+		return lowerCaseWord;
+	}
+
+	return `${lowerCaseWord.charAt(0).toUpperCase()}${lowerCaseWord.slice(1)}`;
+};
+
+export const formatMachineTokenLabel = (segment: string): string => {
+	return splitMachineToken(segment)
+		.map((word, index) => formatTitleCaseWord(word, index))
+		.join(" ");
 };
 
 export const getMachineGraphNodeLabel = (
@@ -17,14 +43,29 @@ export const getMachineGraphNodeLabel = (
 ): string => {
 	if (sectionId === "dungeon") {
 		return (
-			ROOM_LABELS[stateNodeKey as keyof typeof ROOM_LABELS] ??
-			formatSegmentLabel(stateNodeKey)
+			STATE_VISUALIZER_STATE_LABELS[
+				stateNodeKey as keyof typeof STATE_VISUALIZER_STATE_LABELS
+			] ?? formatMachineTokenLabel(stateNodeKey)
 		);
 	}
 
-	return formatSegmentLabel(stateNodeKey);
+	return formatMachineTokenLabel(stateNodeKey);
+};
+
+export const getMachineGraphTransitionEventLabel = (
+	eventType: string,
+): string => {
+	return formatMachineTokenLabel(eventType);
+};
+
+export const getMachineGraphGuardLabel = (guardKey: string): string => {
+	return (
+		STATE_VISUALIZER_GUARD_LABELS[
+			guardKey as keyof typeof STATE_VISUALIZER_GUARD_LABELS
+		] ?? formatMachineTokenLabel(guardKey)
+	);
 };
 
 export const formatMachineStateLabel = (stateLabel: string): string => {
-	return formatSegmentLabel(stateLabel);
+	return formatMachineTokenLabel(stateLabel);
 };

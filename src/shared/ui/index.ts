@@ -43,3 +43,4 @@ export { Label } from "./label";
 export { ScrollArea, ScrollBar } from "./scroll-area";
 export { Separator } from "./separator";
 export { Slider } from "./slider";
+export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
