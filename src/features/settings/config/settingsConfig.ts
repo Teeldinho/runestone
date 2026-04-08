@@ -3,7 +3,6 @@ import { STORAGE_KEYS } from "@/shared/config";
 export const SETTINGS_DEFAULTS = {
 	masterVolume: 0.8,
 	musicVolume: 0.55,
-	sfxVolume: 0.9,
 	hapticsEnabled: true,
 	postprocessingEnabled: true,
 } as const;
@@ -25,7 +24,6 @@ export const SETTINGS_COPY = {
 	HAPTICS_SECTION: "Haptics",
 	MASTER_VOLUME_LABEL: "Master Volume",
 	MUSIC_VOLUME_LABEL: "Music Volume",
-	SFX_VOLUME_LABEL: "SFX Volume",
 	HAPTICS_TOGGLE_LABEL: "Haptic Feedback",
 	HAPTICS_ON_LABEL: "On",
 	HAPTICS_OFF_LABEL: "Off",
