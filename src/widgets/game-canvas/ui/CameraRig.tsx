@@ -106,8 +106,8 @@ export function CameraRig({
 				maxPolarAngle={topDownPolarAngle}
 				minDistance={CAMERA_CONFIG.TOP_DOWN.MIN_DISTANCE}
 				minPolarAngle={topDownPolarAngle}
-				minAzimuthAngle={0}
-				maxAzimuthAngle={0}
+				minAzimuthAngle={Math.PI}
+				maxAzimuthAngle={Math.PI}
 				zoomSpeed={CAMERA_CONFIG.TOP_DOWN.ZOOM_SPEED}
 			/>
 		);

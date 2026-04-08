@@ -23,7 +23,11 @@ describe("getCameraRigTargets", () => {
 			0.9 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[1],
 			-5 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[2],
 		]);
-		expect(result.lookAt).toEqual([10, 0.9, -5]);
+		expect(result.lookAt).toEqual([
+			10,
+			0.9 + CAMERA_CONFIG.FREE_ORBITAL.TARGET_OFFSET_Y,
+			-5,
+		]);
 	});
 
 	it("returns a strict overhead target for top-down mode", () => {
