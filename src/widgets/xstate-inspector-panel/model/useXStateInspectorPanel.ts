@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
 import type {
-	MachineGraphEdge,
-	PositionedMachineGraphNode,
+	MachineGraphSection,
+	StateVisualizerSectionId,
 } from "@/features/state-visualizer";
 
 import { INSPECTOR_REACT_FLOW_DEFAULTS } from "../config";
@@ -15,42 +15,54 @@ import {
 
 type UseXStateInspectorPanelInput = {
 	activeStateLabel: string;
-	graphEdges: MachineGraphEdge[];
-	graphNodes: PositionedMachineGraphNode[];
+	sections: MachineGraphSection[];
+};
+
+type InspectorMachineSectionViewModel = {
+	id: StateVisualizerSectionId;
+	label: string;
+	activeStateLabel: string;
+	guardKeys: string[];
+	graphEdges: MachineGraphSection["edges"];
+	graphNodes: MachineGraphSection["positionedNodes"];
+	flowEdges: InspectorFlowEdge[];
+	flowNodes: InspectorFlowNode[];
 };
 
 type XStateInspectorPanelViewModel = {
 	activeStateLabel: string;
-	flowEdges: InspectorFlowEdge[];
-	flowNodes: InspectorFlowNode[];
-	graphEdges: MachineGraphEdge[];
-	graphNodes: PositionedMachineGraphNode[];
+	sections: InspectorMachineSectionViewModel[];
 	reactFlowDefaults: typeof INSPECTOR_REACT_FLOW_DEFAULTS;
 };
 
 export const useXStateInspectorPanel = ({
 	activeStateLabel,
-	graphEdges,
-	graphNodes,
+	sections,
 }: UseXStateInspectorPanelInput): XStateInspectorPanelViewModel => {
-	const flowNodes = useMemo(
-		() => mapGraphNodesToFlowNodes(graphNodes),
-		[graphNodes],
-	);
-
-	const flowEdges = useMemo(
-		() => mapGraphEdgesToFlowEdges(graphEdges),
-		[graphEdges],
+	const sectionViewModels = useMemo<InspectorMachineSectionViewModel[]>(
+		() =>
+			sections.map((section) => ({
+				id: section.id,
+				label: section.label,
+				activeStateLabel: section.activeStateLabel,
+				guardKeys: section.guardKeys,
+				graphEdges: section.edges,
+				graphNodes: section.positionedNodes,
+				flowEdges: mapGraphEdgesToFlowEdges(section.edges),
+				flowNodes: mapGraphNodesToFlowNodes(section.positionedNodes),
+			})),
+		[sections],
 	);
 
 	return {
 		activeStateLabel,
-		flowEdges,
-		flowNodes,
-		graphEdges,
-		graphNodes,
+		sections: sectionViewModels,
 		reactFlowDefaults: INSPECTOR_REACT_FLOW_DEFAULTS,
 	};
 };
 
-export type { UseXStateInspectorPanelInput, XStateInspectorPanelViewModel };
+export type {
+	InspectorMachineSectionViewModel,
+	UseXStateInspectorPanelInput,
+	XStateInspectorPanelViewModel,
+};

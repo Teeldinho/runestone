@@ -31,11 +31,14 @@ vi.mock("@/pages/game/model", () => ({
 		currentRoomLabel: "Entrance",
 		discoveredRoomLabels: ["Entrance"],
 		enemiesRemaining: 1,
-		graphEdges: [],
-		graphNodes: [],
+		graphSections: [],
 		handleCameraModeSwitch: vi.fn(),
+		handleAudioMuteToggle: vi.fn(),
+		isAudioMuted: false,
 		hasTreasureKeyLabel: "Missing",
 		handleDungeonRunReset: vi.fn(),
+		playerHp: 100,
+		playerMaxHp: 100,
 	})),
 }));
 

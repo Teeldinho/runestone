@@ -29,12 +29,14 @@ const GRAPH_NODES: PositionedMachineGraphNode[] = [
 
 const GRAPH_EDGES: MachineGraphEdge[] = [
 	{
+		eventType: "ENTER_GUARD_ROOM",
 		guard: "hasKey",
 		id: `${ROOM_IDS.ENTRANCE}:${ROOM_IDS.GUARD_ROOM}`,
 		source: ROOM_IDS.ENTRANCE,
 		target: ROOM_IDS.GUARD_ROOM,
 	},
 	{
+		eventType: "RETURN_TO_ENTRANCE",
 		guard: null,
 		id: `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.ENTRANCE}`,
 		source: ROOM_IDS.GUARD_ROOM,
@@ -65,13 +67,13 @@ describe("reactFlowGraphMappers", () => {
 		expect(flowEdges).toContainEqual(
 			expect.objectContaining({
 				id: `${ROOM_IDS.ENTRANCE}:${ROOM_IDS.GUARD_ROOM}`,
-				label: "hasKey",
+				label: "ENTER_GUARD_ROOM [hasKey]",
 			}),
 		);
 		expect(flowEdges).toContainEqual(
 			expect.objectContaining({
 				id: `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.ENTRANCE}`,
-				label: "No guard",
+				label: "RETURN_TO_ENTRANCE",
 			}),
 		);
 	});

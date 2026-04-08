@@ -7,7 +7,6 @@ import type {
 } from "@/features/state-visualizer";
 
 import {
-	INSPECTOR_EDGE_LABELS,
 	INSPECTOR_FLOW_EDGE_VISUALS,
 	INSPECTOR_FLOW_NODE_VISUALS,
 } from "../config";
@@ -19,6 +18,7 @@ type InspectorFlowNodeData = {
 };
 
 type InspectorFlowEdgeData = {
+	eventType: string;
 	guard: string | null;
 };
 
@@ -36,8 +36,13 @@ const getFlowNodeClassName = (
 	return `${INSPECTOR_FLOW_NODE_VISUALS.BASE_CLASS_NAME} ${INSPECTOR_FLOW_NODE_VISUALS.CLASS_NAME_BY_KIND[kind]}${activeClassName}`;
 };
 
-const getFlowEdgeLabel = (guard: string | null): string =>
-	guard ?? INSPECTOR_EDGE_LABELS.NO_GUARD;
+const getFlowEdgeLabel = (eventType: string, guard: string | null): string => {
+	if (!guard) {
+		return eventType;
+	}
+
+	return `${eventType} [${guard}]`;
+};
 
 export const mapGraphNodesToFlowNodes = (
 	graphNodes: PositionedMachineGraphNode[],
@@ -63,8 +68,9 @@ export const mapGraphEdgesToFlowEdges = (
 		id: graphEdge.id,
 		source: graphEdge.source,
 		target: graphEdge.target,
-		label: getFlowEdgeLabel(graphEdge.guard),
+		label: getFlowEdgeLabel(graphEdge.eventType, graphEdge.guard),
 		data: {
+			eventType: graphEdge.eventType,
 			guard: graphEdge.guard,
 		},
 		type: INSPECTOR_FLOW_EDGE_VISUALS.TYPE,

@@ -1,5 +1,4 @@
 import { Volume2, VolumeX } from "lucide-react";
-import { useCameraMachine } from "@/features/camera-system";
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
 import { ScrollArea } from "@/shared/ui";
@@ -12,13 +11,14 @@ export function GamePage() {
 	const {
 		actionButtons,
 		activeStateLabel,
+		cameraStateSnapshot,
 		canvasMachineRuntime,
 		currentRoomLabel,
 		discoveredRoomLabels,
 		enemiesRemaining,
-		graphEdges,
-		graphNodes,
+		graphSections,
 		handleAudioMuteToggle,
+		handleCameraModeSwitch,
 		hasTreasureKeyLabel,
 		handleDungeonRunReset,
 		isAudioMuted,
@@ -26,15 +26,14 @@ export function GamePage() {
 		playerMaxHp,
 	} = useGamePage();
 	const settings = useSettingsForm();
-	const { cameraStateSnapshot, handleCameraModeSwitch } = useCameraMachine();
 
 	return (
 		<main
 			id="main-content"
-			className="flex h-dvh flex-col overflow-hidden"
+			className="flex h-svh w-dvw flex-col overflow-hidden md:h-dvh"
 			style={{ background: "transparent" }}
 		>
-			<header className="flex shrink-0 items-center justify-between border-b border-panel-border px-4 py-2">
+			<header className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-panel-border px-4 py-2">
 				<div className="flex items-center gap-3">
 					<span
 						className="text-lg font-bold tracking-[0.2em]"
@@ -48,7 +47,7 @@ export function GamePage() {
 					<span className="rune-text">·</span>
 					<span className="rune-text">Floor I</span>
 				</div>
-				<div className="flex items-center gap-4">
+				<div className="flex items-center gap-2 sm:gap-4">
 					<span className="flex shrink-0 items-center gap-2 whitespace-nowrap">
 						<span className="rune-text">Room:</span>
 						<span
@@ -73,13 +72,13 @@ export function GamePage() {
 				</div>
 			</header>
 
-			<div className="flex min-h-0 flex-1 overflow-hidden">
+			<div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
 				{/* Left column: Scene + XState Inspector stacked */}
-				<div className="flex min-w-0 flex-1 flex-col">
+				<div className="order-1 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
 					{/* 3D Scene */}
 					<section
 						aria-labelledby="dungeon-canvas-heading"
-						className="relative flex min-h-0 flex-[4] flex-col"
+						className="relative flex min-h-0 basis-[60%] flex-col"
 					>
 						<h2 id="dungeon-canvas-heading" className="sr-only">
 							Dungeon Canvas
@@ -108,7 +107,7 @@ export function GamePage() {
 					{/* XState Inspector - always visible below scene */}
 					<section
 						aria-labelledby="xstate-inspector-heading"
-						className="flex min-h-[200px] flex-[1] flex-col border-t"
+						className="flex min-h-0 basis-[40%] flex-col border-t"
 						style={{
 							borderColor: "var(--panel-border)",
 							background: "var(--panel)",
@@ -116,8 +115,7 @@ export function GamePage() {
 					>
 						<XStateInspectorPanel
 							activeStateLabel={activeStateLabel}
-							graphNodes={graphNodes}
-							graphEdges={graphEdges}
+							sections={graphSections}
 						/>
 					</section>
 				</div>
@@ -125,7 +123,7 @@ export function GamePage() {
 				{/* Right column: Sidebar always visible */}
 				<aside
 					aria-label="Game controls and state"
-					className="flex w-60 shrink-0 flex-col border-l"
+					className="order-2 flex max-h-[38dvh] w-full shrink-0 flex-col border-t lg:max-h-none lg:w-60 lg:border-l lg:border-t-0"
 					style={{
 						borderColor: "var(--panel-border)",
 						background: "var(--panel)",
