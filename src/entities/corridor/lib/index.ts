@@ -1,3 +1,4 @@
+export { getCorridorSideWallColliders } from "./corridorColliderLayout";
 export {
 	createCorridorMeshSettings,
 	getCorridorFloorTilePositions,

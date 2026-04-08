@@ -11,7 +11,10 @@ import {
 	CORRIDOR_LIGHT_CONFIG,
 	CORRIDOR_WALL_Y,
 } from "../config";
-import { getCorridorFloorTilePositions } from "../lib";
+import {
+	getCorridorFloorTilePositions,
+	getCorridorSideWallColliders,
+} from "../lib";
 import { type CorridorMeshSettings, useCorridorMeshScenes } from "../model";
 
 type CorridorMeshProps = {
@@ -29,6 +32,18 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 				CORRIDOR_CONFIG.DEPTH,
 				CORRIDOR_GLTF_CONFIG.FLOOR_TILE.TILE_SIZE,
 			),
+		[],
+	);
+
+	const [leftWallCollider, rightWallCollider] = useMemo(
+		() =>
+			getCorridorSideWallColliders({
+				depth: CORRIDOR_CONFIG.DEPTH,
+				halfWidth: CORRIDOR_HALF_WIDTH,
+				wallColliderThickness:
+					CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_COLLIDER_THICKNESS,
+				wallHeight: CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT,
+			}),
 		[],
 	);
 
@@ -69,22 +84,10 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 					castShadow
 					receiveShadow
 				/>
-				<mesh
-					visible={false}
-					position={[
-						-CORRIDOR_HALF_WIDTH,
-						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT / 2,
-						0,
-					]}
-				>
-					<boxGeometry
-						args={[
-							0.2,
-							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT,
-							CORRIDOR_CONFIG.DEPTH,
-						]}
-					/>
-				</mesh>
+				<CuboidCollider
+					args={leftWallCollider.args}
+					position={leftWallCollider.position}
+				/>
 			</RigidBody>
 
 			{/* Right wall — GLTF */}
@@ -96,22 +99,10 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 					castShadow
 					receiveShadow
 				/>
-				<mesh
-					visible={false}
-					position={[
-						CORRIDOR_HALF_WIDTH,
-						CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT / 2,
-						0,
-					]}
-				>
-					<boxGeometry
-						args={[
-							0.2,
-							CORRIDOR_ENTITY_CONFIG.DIMENSIONS.WALL_HEIGHT,
-							CORRIDOR_CONFIG.DEPTH,
-						]}
-					/>
-				</mesh>
+				<CuboidCollider
+					args={rightWallCollider.args}
+					position={rightWallCollider.position}
+				/>
 			</RigidBody>
 
 			{/* Torch — left wall midpoint */}

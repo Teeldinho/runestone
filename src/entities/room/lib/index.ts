@@ -6,6 +6,11 @@ export type {
 	MachineDefinition,
 } from "./dungeonGenerator";
 export { createDungeonFloorLayout } from "./dungeonGenerator";
+export {
+	getRoomColumnColliderSettings,
+	getTreasuryChestCollider,
+	getTreasuryChestPosition,
+} from "./roomColliderLayout";
 export type {
 	RoomBounds,
 	RoomBoundsInput,
