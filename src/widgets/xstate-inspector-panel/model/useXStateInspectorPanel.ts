@@ -14,6 +14,8 @@ import {
 
 import {
 	INSPECTOR_COPY,
+	INSPECTOR_ID_SEGMENT_SEPARATOR,
+	INSPECTOR_ID_SEGMENTS,
 	INSPECTOR_REACT_FLOW_DEFAULTS,
 	INSPECTOR_REACT_FLOW_SECTION_PADDING,
 } from "../config";
@@ -123,7 +125,7 @@ export const useXStateInspectorPanel = ({
 					activeStateSummary: `${STATE_VISUALIZER_DETAILS_COPY.ACTIVE_STATE_SUMMARY_PREFIX} ${section.activeStateLabel}`,
 					sectionDescription: STATE_VISUALIZER_SECTION_DESCRIPTIONS[section.id],
 					guardDetails: section.guardKeys.map((guardKey) => ({
-						id: `${section.id}:${guardKey}`,
+						id: [section.id, guardKey].join(INSPECTOR_ID_SEGMENT_SEPARATOR),
 						label: getMachineGraphGuardLabel(guardKey),
 					})),
 					guardIndicators: section.guardKeys.map((guardKey) => {
@@ -132,7 +134,9 @@ export const useXStateInspectorPanel = ({
 						).length;
 
 						return {
-							id: `${section.id}:indicator:${guardKey}`,
+							id: [section.id, INSPECTOR_ID_SEGMENTS.INDICATOR, guardKey].join(
+								INSPECTOR_ID_SEGMENT_SEPARATOR,
+							),
 							label: getMachineGraphGuardLabel(guardKey),
 							color: guardColorByKey[guardKey],
 							transitionCount,
@@ -170,7 +174,7 @@ export const useXStateInspectorPanel = ({
 							eventLabel,
 							flowLabel: `${sourceLabel}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_FLOW_SEPARATOR}${targetLabel}`,
 							requirementLabel,
-							summary: `${eventLabel} moves from ${sourceLabel} to ${targetLabel}. ${STATE_VISUALIZER_DETAILS_COPY.TRANSITION_REQUIREMENT_PREFIX} ${requirementLabel}.`,
+							summary: `${eventLabel} ${INSPECTOR_COPY.TRANSITION_SUMMARY_MOVES_FROM} ${sourceLabel} ${INSPECTOR_COPY.TRANSITION_SUMMARY_TO} ${targetLabel}. ${STATE_VISUALIZER_DETAILS_COPY.TRANSITION_REQUIREMENT_PREFIX} ${requirementLabel}.`,
 						};
 					}),
 					flowEdges: mapGraphEdgesToFlowEdges(section.edges),

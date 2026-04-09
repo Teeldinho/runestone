@@ -6,6 +6,21 @@ export const INSPECTOR_COPY = {
 	ACTIVE_LABEL: "Active",
 	TRANSITION_LABEL_SINGULAR: "transition",
 	TRANSITION_LABEL_PLURAL: "transitions",
+	PANEL_TITLE: "Statechart Visualizer (XState)",
+	GUARDS_HEADING: "Guards",
+	EMPTY_GRAPH_MESSAGE: "No machine graph available.",
+	DETAILS_PANEL_TITLE: "State Details",
+	STATES_IN_MACHINE_LABEL: "States in this machine",
+	GUARD_TOOLTIP_TITLE: "Guard",
+	DIRECTION_PREFIX: "Direction:",
+	TRANSITION_SUMMARY_MOVES_FROM: "moves from",
+	TRANSITION_SUMMARY_TO: "to",
+} as const;
+
+export const INSPECTOR_ID_SEGMENT_SEPARATOR = ":";
+
+export const INSPECTOR_ID_SEGMENTS = {
+	INDICATOR: "indicator",
 } as const;
 
 export const INSPECTOR_FLOW_EDGE_VISUALS = {

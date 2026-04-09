@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 import {
 	createFloorOneMachine,
+	DUNGEON_EVENTS,
 	DUNGEON_MACHINE_IDS,
 	FLOOR_ONE_GUARD_KEYS,
 	ROOM_IDS,
+	ROOM_LABELS,
 } from "@/entities/dungeon";
 
 import {
 	STATE_VISUALIZER_GRAPH_SYNTAX,
+	STATE_VISUALIZER_NODE_KINDS,
 	STATE_VISUALIZER_SECTION_IDS,
 } from "../config";
 
@@ -35,14 +38,14 @@ describe("createMachineGraphSnapshot", () => {
 
 		expect(entranceNode).toMatchObject({
 			id: `${DUNGEON_MACHINE_IDS.FLOOR_ONE}.${ROOM_IDS.ENTRANCE}`,
-			label: "Entrance",
-			kind: "initial",
+			label: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+			kind: STATE_VISUALIZER_NODE_KINDS.INITIAL,
 			isActive: true,
 		});
 		expect(exitNode).toMatchObject({
 			id: `${DUNGEON_MACHINE_IDS.FLOOR_ONE}.${ROOM_IDS.EXIT}`,
-			label: "Exit",
-			kind: "state",
+			label: ROOM_LABELS[ROOM_IDS.EXIT],
+			kind: STATE_VISUALIZER_NODE_KINDS.STATE,
 			isActive: false,
 		});
 	});
@@ -60,12 +63,12 @@ describe("createMachineGraphSnapshot", () => {
 			expect.objectContaining({
 				source: `${DUNGEON_MACHINE_IDS.FLOOR_ONE}.${ROOM_IDS.GUARD_ROOM}`,
 				target: `${DUNGEON_MACHINE_IDS.FLOOR_ONE}.${ROOM_IDS.TREASURY}`,
-				eventType: "ENTER_TREASURY",
+				eventType: DUNGEON_EVENTS.ENTER_TREASURY,
 			}),
 		);
 
 		const enterTreasuryEdge = snapshot.edges.find(
-			(edge) => edge.eventType === "ENTER_TREASURY",
+			(edge) => edge.eventType === DUNGEON_EVENTS.ENTER_TREASURY,
 		);
 
 		expect(enterTreasuryEdge).toBeDefined();
@@ -77,7 +80,7 @@ describe("createMachineGraphSnapshot", () => {
 			expect.objectContaining({
 				source: `${DUNGEON_MACHINE_IDS.FLOOR_ONE}.${ROOM_IDS.LIBRARY}`,
 				target: `${DUNGEON_MACHINE_IDS.FLOOR_ONE}.${ROOM_IDS.GUARD_ROOM}`,
-				eventType: "ENTER_GUARD_ROOM",
+				eventType: DUNGEON_EVENTS.ENTER_GUARD_ROOM,
 				guard: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
 			}),
 		);
@@ -109,7 +112,9 @@ describe("createMachineGraphSnapshot", () => {
 		});
 
 		expect(
-			snapshot.edges.some((edge) => edge.eventType === "ENTER_LIBRARY"),
+			snapshot.edges.some(
+				(edge) => edge.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+			),
 		).toBe(true);
 	});
 });

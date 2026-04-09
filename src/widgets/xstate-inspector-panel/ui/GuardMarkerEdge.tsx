@@ -7,6 +7,7 @@ import {
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/shared/ui";
 import {
+	INSPECTOR_COPY,
 	INSPECTOR_FLOW_EDGE_LAYOUT,
 	INSPECTOR_GUARD_MARKER_INTERACTION,
 } from "../config";
@@ -130,14 +131,14 @@ export function GuardMarkerEdge({
 										</HoverCardTrigger>
 										<HoverCardContent className="w-72">
 											<p className="text-[11px] font-semibold text-panel-title">
-												Guard
+												{INSPECTOR_COPY.GUARD_TOOLTIP_TITLE}
 											</p>
 											<p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
 												{guardMarker.guardLabel}
 											</p>
 											{guardMarker.showDirectionIndicator ? (
 												<p className="mt-1 text-[10px] text-muted-foreground/80">
-													Direction:{" "}
+													{INSPECTOR_COPY.DIRECTION_PREFIX}{" "}
 													{isDownwardDirection
 														? INSPECTOR_GUARD_MARKER_INTERACTION
 																.DIRECTION_TEXT_BY_LABEL.DOWN

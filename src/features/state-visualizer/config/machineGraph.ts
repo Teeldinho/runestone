@@ -19,9 +19,19 @@ export const STATE_VISUALIZER_GRAPH_SYNTAX = {
 	EDGE_PAIR_SEPARATOR: "|",
 	EDGE_ID_SEGMENT_SEPARATOR: ":",
 	NODE_PATH_SEPARATOR: ".",
+	TARGET_ID_PREFIX: "#",
+	RELATIVE_TARGET_PREFIX: ".",
 	MACHINE_GUARD_PREFIX: "xstate.",
 	UNGUARDED_EDGE_TOKEN: "unguarded",
 	STATE_PATH_DELIMITER: " | ",
+	GUARD_LABEL_CAPTURE_PATTERN: /\[(.+?)\]/,
+	GUARD_TOKEN_SPLIT_PATTERN: /&&|\band\b|&|,/gi,
+} as const;
+
+export const STATE_VISUALIZER_NODE_KINDS = {
+	STATE: "state",
+	INITIAL: "initial",
+	FINAL: "final",
 } as const;
 
 export const STATE_VISUALIZER_SECTIONS: Array<{

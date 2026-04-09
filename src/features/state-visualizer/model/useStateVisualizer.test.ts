@@ -4,8 +4,13 @@ import { renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMachine } from "xstate";
 
-import { DUNGEON_MACHINE_IDS, ROOM_IDS } from "@/entities/dungeon";
+import {
+	DUNGEON_EVENTS,
+	DUNGEON_MACHINE_IDS,
+	ROOM_IDS,
+} from "@/entities/dungeon";
 import { PLAYER_STATES } from "@/entities/player";
+import { CAMERA_MODES } from "@/shared/config";
 
 import { STATE_VISUALIZER_SECTION_IDS } from "../config";
 
@@ -20,15 +25,21 @@ const USE_STATE_VISUALIZER_TEST_EXPECTATIONS = {
 } as const;
 
 const TEST_CAMERA_MACHINE = {
-	ID: "camera",
+	ID: STATE_VISUALIZER_SECTION_IDS.CAMERA,
+	EVENTS: {
+		SWITCH_TO_TOP_DOWN: "SWITCH_TO_TOP_DOWN",
+	},
 	MODES: {
-		FREE_ORBITAL: "freeOrbital",
-		TOP_DOWN: "topDown",
+		FREE_ORBITAL: CAMERA_MODES.FREE_ORBITAL,
+		TOP_DOWN: CAMERA_MODES.TOP_DOWN,
 	},
 } as const;
 
 const TEST_AUDIO_MACHINE = {
-	ID: "audio",
+	ID: STATE_VISUALIZER_SECTION_IDS.AUDIO,
+	EVENTS: {
+		PAUSE_REQUESTED: "PAUSE_REQUESTED",
+	},
 	STATES: {
 		PLAYING: "playing",
 		PAUSED: "paused",
@@ -43,23 +54,23 @@ const TEST_MACHINES_BY_SECTION_ID: UseStateVisualizerInput["machinesBySectionId"
 			states: {
 				[ROOM_IDS.ENTRANCE]: {
 					on: {
-						ENTER_LIBRARY: ROOM_IDS.LIBRARY,
-						ENTER_GUARD_ROOM: ROOM_IDS.GUARD_ROOM,
+						[DUNGEON_EVENTS.ENTER_LIBRARY]: ROOM_IDS.LIBRARY,
+						[DUNGEON_EVENTS.ENTER_GUARD_ROOM]: ROOM_IDS.GUARD_ROOM,
 					},
 				},
 				[ROOM_IDS.LIBRARY]: {
 					on: {
-						ENTER_GUARD_ROOM: ROOM_IDS.GUARD_ROOM,
+						[DUNGEON_EVENTS.ENTER_GUARD_ROOM]: ROOM_IDS.GUARD_ROOM,
 					},
 				},
 				[ROOM_IDS.GUARD_ROOM]: {
 					on: {
-						ENTER_TREASURY: ROOM_IDS.TREASURY,
+						[DUNGEON_EVENTS.ENTER_TREASURY]: ROOM_IDS.TREASURY,
 					},
 				},
 				[ROOM_IDS.TREASURY]: {
 					on: {
-						ENTER_EXIT: ROOM_IDS.EXIT,
+						[DUNGEON_EVENTS.ENTER_EXIT]: ROOM_IDS.EXIT,
 					},
 				},
 				[ROOM_IDS.EXIT]: {},
@@ -71,7 +82,8 @@ const TEST_MACHINES_BY_SECTION_ID: UseStateVisualizerInput["machinesBySectionId"
 			states: {
 				[TEST_CAMERA_MACHINE.MODES.FREE_ORBITAL]: {
 					on: {
-						SET_TOP_DOWN: TEST_CAMERA_MACHINE.MODES.TOP_DOWN,
+						[TEST_CAMERA_MACHINE.EVENTS.SWITCH_TO_TOP_DOWN]:
+							TEST_CAMERA_MACHINE.MODES.TOP_DOWN,
 					},
 				},
 				[TEST_CAMERA_MACHINE.MODES.TOP_DOWN]: {},
@@ -83,7 +95,8 @@ const TEST_MACHINES_BY_SECTION_ID: UseStateVisualizerInput["machinesBySectionId"
 			states: {
 				[TEST_AUDIO_MACHINE.STATES.PLAYING]: {
 					on: {
-						PAUSE: TEST_AUDIO_MACHINE.STATES.PAUSED,
+						[TEST_AUDIO_MACHINE.EVENTS.PAUSE_REQUESTED]:
+							TEST_AUDIO_MACHINE.STATES.PAUSED,
 					},
 				},
 				[TEST_AUDIO_MACHINE.STATES.PAUSED]: {},

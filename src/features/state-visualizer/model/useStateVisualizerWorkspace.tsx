@@ -7,7 +7,10 @@ import {
 	useState,
 } from "react";
 
-import { STATE_VISUALIZER_DEFAULT_OPEN_SECTION } from "../config";
+import {
+	STATE_VISUALIZER_DEFAULT_OPEN_SECTION,
+	STATE_VISUALIZER_ERROR_MESSAGES,
+} from "../config";
 import type { StateVisualizerSectionId } from "./types";
 
 type StateVisualizerWorkspaceContextValue = {
@@ -56,7 +59,7 @@ export const useStateVisualizerWorkspace = () => {
 
 	if (!context) {
 		throw new Error(
-			"useStateVisualizerWorkspace must be used within StateVisualizerWorkspaceProvider",
+			STATE_VISUALIZER_ERROR_MESSAGES.WORKSPACE_PROVIDER_REQUIRED,
 		);
 	}
 

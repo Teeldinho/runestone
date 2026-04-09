@@ -1,6 +1,9 @@
 import type { AnyStateMachine } from "xstate";
 import { toDirectedGraph } from "xstate/graph";
-import { STATE_VISUALIZER_GRAPH_SYNTAX } from "../config";
+import {
+	STATE_VISUALIZER_GRAPH_SYNTAX,
+	STATE_VISUALIZER_NODE_KINDS,
+} from "../config";
 import type {
 	MachineGraphEdge,
 	MachineGraphNode,
@@ -101,32 +104,32 @@ const getMachineGraphNodeKind = (
 ): MachineGraphNodeKind => {
 	const stateConfig = resolveStateConfig(machine, nodeId);
 
-	if (stateConfig?.type === "final") {
-		return "final";
+	if (stateConfig?.type === STATE_VISUALIZER_NODE_KINDS.FINAL) {
+		return STATE_VISUALIZER_NODE_KINDS.FINAL;
 	}
 
 	const segments = getNodePathSegments(machine, nodeId);
 	const currentKey = segments.at(-1);
 
 	if (!currentKey) {
-		return "state";
+		return STATE_VISUALIZER_NODE_KINDS.STATE;
 	}
 
 	if (segments.length === 1 && machine.config.initial === currentKey) {
-		return "initial";
+		return STATE_VISUALIZER_NODE_KINDS.INITIAL;
 	}
 
 	const parentNodeId =
 		segments.length > 1
-			? `${machine.id}.${segments.slice(0, -1).join(".")}`
+			? `${machine.id}${STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR}${segments.slice(0, -1).join(STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR)}`
 			: machine.id;
 	const parentConfig = resolveStateConfig(machine, parentNodeId);
 
 	if (parentConfig?.initial === currentKey) {
-		return "initial";
+		return STATE_VISUALIZER_NODE_KINDS.INITIAL;
 	}
 
-	return "state";
+	return STATE_VISUALIZER_NODE_KINDS.STATE;
 };
 
 const collectNodes = (
@@ -209,15 +212,21 @@ const resolveTargetNodeId = (
 	sourceNodeId: string,
 	rawTarget: string,
 ): string => {
-	if (rawTarget.startsWith("#")) {
-		return rawTarget.slice(1);
+	if (rawTarget.startsWith(STATE_VISUALIZER_GRAPH_SYNTAX.TARGET_ID_PREFIX)) {
+		return rawTarget.slice(
+			STATE_VISUALIZER_GRAPH_SYNTAX.TARGET_ID_PREFIX.length,
+		);
 	}
 
-	if (rawTarget.startsWith(".")) {
+	if (
+		rawTarget.startsWith(STATE_VISUALIZER_GRAPH_SYNTAX.RELATIVE_TARGET_PREFIX)
+	) {
 		return `${machine.id}${rawTarget}`;
 	}
 
-	if (rawTarget.startsWith(`${machine.id}.`)) {
+	const machinePathPrefix = `${machine.id}${STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR}`;
+
+	if (rawTarget.startsWith(machinePathPrefix)) {
 		return rawTarget;
 	}
 
@@ -225,10 +234,10 @@ const resolveTargetNodeId = (
 	const parentSegments = sourceSegments.slice(0, -1);
 
 	if (parentSegments.length === 0) {
-		return `${machine.id}.${rawTarget}`;
+		return `${machine.id}${STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR}${rawTarget}`;
 	}
 
-	return `${machine.id}.${parentSegments.join(".")}.${rawTarget}`;
+	return `${machine.id}${STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR}${parentSegments.join(STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR)}${STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR}${rawTarget}`;
 };
 
 const getGuardFromMachineConfig = (
@@ -297,14 +306,16 @@ const getEdgeGuardLabel = (
 		return machineConfigGuard;
 	}
 
-	const labelMatch = edge.label.text.match(/\[(.+?)\]/);
+	const labelMatch = edge.label.text.match(
+		STATE_VISUALIZER_GRAPH_SYNTAX.GUARD_LABEL_CAPTURE_PATTERN,
+	);
 
 	if (!labelMatch) {
 		return null;
 	}
 
 	const labelGuardKeys = labelMatch[1]
-		.split(/&&|\band\b|&|,/gi)
+		.split(STATE_VISUALIZER_GRAPH_SYNTAX.GUARD_TOKEN_SPLIT_PATTERN)
 		.map((guardKey) => guardKey.trim())
 		.filter(Boolean);
 

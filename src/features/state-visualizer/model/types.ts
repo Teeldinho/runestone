@@ -1,6 +1,10 @@
-import type { STATE_VISUALIZER_SECTION_IDS } from "../config/machineGraph";
+import type {
+	STATE_VISUALIZER_NODE_KINDS,
+	STATE_VISUALIZER_SECTION_IDS,
+} from "../config/machineGraph";
 
-export type MachineGraphNodeKind = "state" | "initial" | "final";
+export type MachineGraphNodeKind =
+	(typeof STATE_VISUALIZER_NODE_KINDS)[keyof typeof STATE_VISUALIZER_NODE_KINDS];
 
 export type StateVisualizerSectionId =
 	(typeof STATE_VISUALIZER_SECTION_IDS)[keyof typeof STATE_VISUALIZER_SECTION_IDS];

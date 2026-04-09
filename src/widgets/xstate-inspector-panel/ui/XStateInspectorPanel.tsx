@@ -3,6 +3,7 @@ import { Background, Controls, ReactFlow } from "@xyflow/react";
 import type { MachineGraphSection } from "@/features/state-visualizer";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui";
 import {
+	INSPECTOR_COPY,
 	INSPECTOR_FLOW_BACKGROUND,
 	INSPECTOR_FLOW_EDGE_VISUALS,
 	INSPECTOR_GUARD_LEGEND_LAYOUT,
@@ -38,7 +39,7 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 						fontFamily: "Space Grotesk, sans-serif",
 					}}
 				>
-					Statechart Visualizer (XState)
+					{INSPECTOR_COPY.PANEL_TITLE}
 				</h2>
 			</div>
 
@@ -50,7 +51,12 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 					value={inspectorPanel.selectedSectionId}
 					onValueChange={inspectorPanel.handleSelectedSectionIdChange}
 				>
-					<TabsList className="grid h-auto w-full grid-cols-4 gap-1 p-1">
+					<TabsList
+						className="grid h-auto w-full gap-1 p-1"
+						style={{
+							gridTemplateColumns: `repeat(${inspectorPanel.sectionTabs.length}, minmax(0, 1fr))`,
+						}}
+					>
 						{inspectorPanel.sectionTabs.map((sectionTab) => (
 							<TabsTrigger
 								key={sectionTab.id}
@@ -65,7 +71,7 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 				{inspectorPanel.selectedSection?.guardIndicators.length ? (
 					<div className="mt-2 grid gap-1.5">
 						<p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-							Guards
+							{INSPECTOR_COPY.GUARDS_HEADING}
 						</p>
 						{inspectorPanel.selectedSection.guardIndicators.map(
 							(guardIndicator) => (
@@ -131,7 +137,7 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 							color: "var(--muted-foreground)",
 						}}
 					>
-						No machine graph available.
+						{INSPECTOR_COPY.EMPTY_GRAPH_MESSAGE}
 					</div>
 				)}
 			</div>

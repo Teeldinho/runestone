@@ -1,7 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { FLOOR_ONE_GUARD_KEYS, ROOM_IDS } from "@/entities/dungeon";
+import {
+	DUNGEON_EVENTS,
+	FLOOR_ONE_GUARD_KEYS,
+	ROOM_IDS,
+	ROOM_LABELS,
+} from "@/entities/dungeon";
+import { PLAYER_STATES } from "@/entities/player";
+import { CAMERA_MODES } from "@/shared/config";
 
-import { STATE_VISUALIZER_SECTION_IDS } from "../config";
+import {
+	STATE_VISUALIZER_GRAPH_SYNTAX,
+	STATE_VISUALIZER_SECTION_IDS,
+} from "../config";
 
 import {
 	formatMachineStateLabel,
@@ -11,12 +21,8 @@ import {
 	getMachineGraphTransitionEventLabel,
 } from "./machineGraphSelectors";
 
-const TEST_AUDIO_STATES = {
+const TEST_AUDIO_MACHINE_STATES = {
 	PLAYING: "playing",
-} as const;
-
-const TEST_CAMERA_MODES = {
-	FREE_ORBITAL: "freeOrbital",
 } as const;
 
 describe("getMachineGraphNodeLabel", () => {
@@ -26,26 +32,26 @@ describe("getMachineGraphNodeLabel", () => {
 				STATE_VISUALIZER_SECTION_IDS.DUNGEON,
 				ROOM_IDS.GUARD_ROOM,
 			),
-		).toBe("Guard Room");
+		).toBe(ROOM_LABELS[ROOM_IDS.GUARD_ROOM]);
 		expect(
 			getMachineGraphNodeLabel(
 				STATE_VISUALIZER_SECTION_IDS.DUNGEON,
 				ROOM_IDS.ENTRANCE,
 			),
-		).toBe("Entrance");
+		).toBe(ROOM_LABELS[ROOM_IDS.ENTRANCE]);
 	});
 
 	it("formats non-dungeon labels from machine keys", () => {
 		expect(
 			getMachineGraphNodeLabel(
 				STATE_VISUALIZER_SECTION_IDS.CAMERA,
-				TEST_CAMERA_MODES.FREE_ORBITAL,
+				CAMERA_MODES.FREE_ORBITAL,
 			),
 		).toBe("Free Orbital");
 		expect(
 			getMachineGraphNodeLabel(
 				STATE_VISUALIZER_SECTION_IDS.AUDIO,
-				TEST_AUDIO_STATES.PLAYING,
+				TEST_AUDIO_MACHINE_STATES.PLAYING,
 			),
 		).toBe("Playing");
 	});
@@ -53,16 +59,22 @@ describe("getMachineGraphNodeLabel", () => {
 
 describe("formatMachineStateLabel", () => {
 	it("formats state labels for panel badges", () => {
-		expect(formatMachineStateLabel("thirdPerson")).toBe("Third Person");
-		expect(formatMachineStateLabel("health.damaged")).toBe("Health Damaged");
+		expect(formatMachineStateLabel(CAMERA_MODES.THIRD_PERSON)).toBe(
+			"Third Person",
+		);
+		expect(
+			formatMachineStateLabel(
+				`${PLAYER_STATES.REGIONS.HEALTH}${STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR}${PLAYER_STATES.HEALTH.DAMAGED}`,
+			),
+		).toBe("Health Damaged");
 	});
 });
 
 describe("human-readable graph copy selectors", () => {
 	it("formats transition events with readable title case", () => {
-		expect(getMachineGraphTransitionEventLabel("ENTER_GUARD_ROOM")).toBe(
-			"Enter Guard Room",
-		);
+		expect(
+			getMachineGraphTransitionEventLabel(DUNGEON_EVENTS.ENTER_GUARD_ROOM),
+		).toBe("Enter Guard Room");
 	});
 
 	it("maps known guard keys to user-facing requirements", () => {

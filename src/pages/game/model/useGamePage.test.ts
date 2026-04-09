@@ -3,93 +3,114 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { ROOM_IDS } from "@/entities/dungeon";
-import { useAudioController } from "@/features/audio-manager";
+import { ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
+import { PLAYER_STATES } from "@/entities/player";
+import {
+	AUDIO_MACHINE_STATES,
+	useAudioController,
+} from "@/features/audio-manager";
 import { CAMERA_MODES, useCameraMachine } from "@/features/camera-system";
 import { useGameMachine } from "@/features/dungeon-navigation";
-import { useStateVisualizer } from "@/features/state-visualizer";
+import {
+	STATE_VISUALIZER_SECTION_IDS,
+	useStateVisualizer,
+} from "@/features/state-visualizer";
 import { GAME_PAGE_COPY } from "@/pages/game/config";
 
 import { useGamePage } from "./useGamePage";
 
-const { TEST_AUDIO_STATES, TEST_STATE_VISUALIZER_SECTION_IDS } = vi.hoisted(
-	() => ({
-		TEST_STATE_VISUALIZER_SECTION_IDS: {
-			DUNGEON: "dungeon",
-			CAMERA: "camera",
-			AUDIO: "audio",
-			PLAYER: "player",
-		} as const,
-		TEST_AUDIO_STATES: {
-			PLAYING: "playing",
-		} as const,
-	}),
-);
-
-vi.mock("@/features/audio-manager", () => ({
-	audioMachine: {},
-	useAudioController: vi.fn().mockReturnValue({
-		audioState: TEST_AUDIO_STATES.PLAYING,
-		handleAudioPlayRequest: vi.fn(),
-		handleAudioMuteToggle: vi.fn(),
-		isAudioMuted: false,
-	}),
+const {
+	MOCK_AUDIO_MACHINE_STATES,
+	MOCK_CAMERA_MODES,
+	MOCK_STATE_VISUALIZER_SECTION_IDS,
+} = vi.hoisted(() => ({
+	MOCK_AUDIO_MACHINE_STATES: {
+		PLAYING: "playing",
+	} as const,
+	MOCK_CAMERA_MODES: {
+		THIRD_PERSON: "thirdPerson",
+		TOP_DOWN: "topDown",
+		FIRST_PERSON: "firstPerson",
+		FREE_ORBITAL: "freeOrbital",
+	} as const,
+	MOCK_STATE_VISUALIZER_SECTION_IDS: {
+		DUNGEON: "dungeon",
+		CAMERA: "camera",
+		AUDIO: "audio",
+		PLAYER: "player",
+	} as const,
 }));
+
+vi.mock("@/features/audio-manager", () => {
+	return {
+		AUDIO_MACHINE_STATES: MOCK_AUDIO_MACHINE_STATES,
+		audioMachine: {},
+		useAudioController: vi.fn().mockReturnValue({
+			audioState: MOCK_AUDIO_MACHINE_STATES.PLAYING,
+			handleAudioPlayRequest: vi.fn(),
+			handleAudioMuteToggle: vi.fn(),
+			isAudioMuted: false,
+		}),
+	};
+});
 
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachine: vi.fn(),
 }));
 
-vi.mock("@/features/camera-system", () => ({
-	CAMERA_MODES: {
-		THIRD_PERSON: "thirdPerson",
-		TOP_DOWN: "topDown",
-		FIRST_PERSON: "firstPerson",
-		FREE_ORBITAL: "freeOrbital",
-	},
-	createCameraMachine: vi.fn(() => ({})),
-	useCameraMachine: vi.fn().mockReturnValue({
-		cameraStateSnapshot: {
-			fov: 58,
-			mode: "freeOrbital",
-			position: [0, 8, 10],
-			target: [0, 0, 0],
-			zoom: 1,
-		},
-		handleCameraModeSwitch: vi.fn(),
-		mode: "freeOrbital",
-	}),
-}));
+vi.mock("@/features/camera-system", () => {
+	return {
+		CAMERA_MODES: MOCK_CAMERA_MODES,
+		createCameraMachine: vi.fn(() => ({})),
+		useCameraMachine: vi.fn().mockReturnValue({
+			cameraStateSnapshot: {
+				fov: 58,
+				mode: MOCK_CAMERA_MODES.FREE_ORBITAL,
+				position: [0, 8, 10],
+				target: [0, 0, 0],
+				zoom: 1,
+			},
+			handleCameraModeSwitch: vi.fn(),
+			mode: MOCK_CAMERA_MODES.FREE_ORBITAL,
+		}),
+	};
+});
 
-vi.mock("@/features/state-visualizer", () => ({
-	STATE_VISUALIZER_SECTION_IDS: TEST_STATE_VISUALIZER_SECTION_IDS,
-	useStateVisualizer: vi.fn(),
-}));
+vi.mock("@/features/state-visualizer", () => {
+	return {
+		STATE_VISUALIZER_SECTION_IDS: MOCK_STATE_VISUALIZER_SECTION_IDS,
+		useStateVisualizer: vi.fn(),
+	};
+});
 
-vi.mock("@/entities/player", () => ({
-	PLAYER_EVENTS: { RESTART: "RESTART" },
-	PLAYER_ENTITY_CONFIG: {
-		TRANSFORM: { SPAWN_HEIGHT_OFFSET: 0.45 },
-	},
-	createPlayerMachine: vi.fn(() => ({})),
-	usePlayerMachineRuntime: vi.fn().mockReturnValue({
-		snapshot: {
-			value: { health: "alive", movement: "idle" },
-			context: {
-				position: [0, 0, 0],
-				velocity: [0, 0, 0],
-				stats: {
-					hp: 100,
-					maxHp: 100,
-					score: 0,
-					keyCount: 0,
-					chainMultiplier: 1,
+vi.mock("@/entities/player", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("@/entities/player")>();
+
+	return {
+		...actual,
+		createPlayerMachine: vi.fn(() => ({})),
+		usePlayerMachineRuntime: vi.fn().mockReturnValue({
+			snapshot: {
+				value: {
+					health: actual.PLAYER_STATES.HEALTH.ALIVE,
+					movement: actual.PLAYER_STATES.MOVEMENT.IDLE,
+				},
+				context: {
+					position: [0, 0, 0],
+					velocity: [0, 0, 0],
+					stats: {
+						hp: 100,
+						maxHp: 100,
+						score: 0,
+						keyCount: 0,
+						chainMultiplier: 1,
+					},
 				},
 			},
-		},
-		sendPlayerMachineEvent: vi.fn(),
-	}),
-}));
+			sendPlayerMachineEvent: vi.fn(),
+		}),
+	};
+});
 
 vi.mock("@/entities/dungeon", async (importOriginal) => {
 	const actual = await importOriginal<typeof import("@/entities/dungeon")>();
@@ -99,16 +120,22 @@ vi.mock("@/entities/dungeon", async (importOriginal) => {
 	};
 });
 
-vi.mock("@/entities/room", () => ({
-	createDungeonFloorLayout: vi.fn(() => ({
-		rooms: [
-			{ roomId: "entrance", position: [0, 0, 0], isInitial: true },
-			{ roomId: "guardRoom", position: [20, 0, 0], isInitial: false },
-		],
-		corridors: [],
-		transitions: [],
-	})),
-}));
+vi.mock("@/entities/room", () => {
+	return {
+		createDungeonFloorLayout: vi.fn(() => ({
+			rooms: [
+				{ roomId: ROOM_IDS.ENTRANCE, position: [0, 0, 0], isInitial: true },
+				{
+					roomId: ROOM_IDS.GUARD_ROOM,
+					position: [20, 0, 0],
+					isInitial: false,
+				},
+			],
+			corridors: [],
+			transitions: [],
+		})),
+	};
+});
 
 vi.mock("@/shared/lib/playerPositionStore", () => ({
 	setPlayerTeleportTarget: vi.fn(),
@@ -119,9 +146,9 @@ describe("useGamePage", () => {
 		vi.mocked(useGameMachine).mockReturnValue({
 			activeStateLabel: ROOM_IDS.ENTRANCE,
 			actionButtons: [],
-			currentRoomLabel: "Entrance",
+			currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
 			currentRoomId: ROOM_IDS.ENTRANCE,
-			discoveredRoomLabels: ["Entrance"],
+			discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
 			discoveredRooms: [ROOM_IDS.ENTRANCE],
 			enemiesRemaining: 1,
 			handleDungeonRunReset: vi.fn(),
@@ -138,18 +165,18 @@ describe("useGamePage", () => {
 		expect(useStateVisualizer).toHaveBeenCalledWith(
 			expect.objectContaining({
 				machinesBySectionId: {
-					[TEST_STATE_VISUALIZER_SECTION_IDS.AUDIO]: {},
-					[TEST_STATE_VISUALIZER_SECTION_IDS.CAMERA]: {},
-					[TEST_STATE_VISUALIZER_SECTION_IDS.DUNGEON]: {},
-					[TEST_STATE_VISUALIZER_SECTION_IDS.PLAYER]: {},
+					[STATE_VISUALIZER_SECTION_IDS.AUDIO]: {},
+					[STATE_VISUALIZER_SECTION_IDS.CAMERA]: {},
+					[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: {},
+					[STATE_VISUALIZER_SECTION_IDS.PLAYER]: {},
 				},
 				stateValuesBySectionId: {
-					[TEST_STATE_VISUALIZER_SECTION_IDS.DUNGEON]: ROOM_IDS.ENTRANCE,
-					[TEST_STATE_VISUALIZER_SECTION_IDS.CAMERA]: CAMERA_MODES.FREE_ORBITAL,
-					[TEST_STATE_VISUALIZER_SECTION_IDS.AUDIO]: TEST_AUDIO_STATES.PLAYING,
-					[TEST_STATE_VISUALIZER_SECTION_IDS.PLAYER]: {
-						health: "alive",
-						movement: "idle",
+					[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: ROOM_IDS.ENTRANCE,
+					[STATE_VISUALIZER_SECTION_IDS.CAMERA]: CAMERA_MODES.FREE_ORBITAL,
+					[STATE_VISUALIZER_SECTION_IDS.AUDIO]: AUDIO_MACHINE_STATES.PLAYING,
+					[STATE_VISUALIZER_SECTION_IDS.PLAYER]: {
+						health: PLAYER_STATES.HEALTH.ALIVE,
+						movement: PLAYER_STATES.MOVEMENT.IDLE,
 					},
 				},
 			}),
@@ -163,7 +190,9 @@ describe("useGamePage", () => {
 			GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 		);
 		expect(result.current.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
-		expect(result.current.currentRoomLabel).toBe("Entrance");
+		expect(result.current.currentRoomLabel).toBe(
+			ROOM_LABELS[ROOM_IDS.ENTRANCE],
+		);
 		expect(result.current.isAudioMuted).toBe(false);
 		expect(result.current.cameraStateSnapshot.mode).toBe(
 			CAMERA_MODES.FREE_ORBITAL,
@@ -186,9 +215,9 @@ describe("dungeon reset teleport", () => {
 		vi.mocked(useGameMachine).mockReturnValue({
 			activeStateLabel: ROOM_IDS.ENTRANCE,
 			actionButtons: [],
-			currentRoomLabel: "Entrance",
+			currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
 			currentRoomId: ROOM_IDS.ENTRANCE,
-			discoveredRoomLabels: ["Entrance"],
+			discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
 			discoveredRooms: [ROOM_IDS.ENTRANCE],
 			enemiesRemaining: 0,
 			handleDungeonRunReset: resetDungeonMachine,

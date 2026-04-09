@@ -2,40 +2,47 @@
 
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { DUNGEON_EVENTS, ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
+import { CAMERA_MODES } from "@/features/camera-system";
+import { GAME_PAGE_COPY } from "@/pages/game/config";
 
 import { GamePage } from "./GamePage";
+
+const TEST_NAVIGATION_ACTION_LABELS = {
+	[DUNGEON_EVENTS.ENTER_LIBRARY]: "Enter Library",
+} as const;
 
 vi.mock("@/pages/game/model", () => ({
 	useGamePage: vi.fn(() => ({
 		actionButtons: [
 			{
-				eventType: "ENTER_LIBRARY",
-				label: "Enter Library",
+				eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
+				label: TEST_NAVIGATION_ACTION_LABELS[DUNGEON_EVENTS.ENTER_LIBRARY],
 				isDisabled: false,
 				handleDungeonActionTrigger: vi.fn(),
 			},
 		],
-		activeStateLabel: "entrance",
+		activeStateLabel: ROOM_IDS.ENTRANCE,
 		cameraStateSnapshot: {
 			fov: 58,
-			mode: "freeOrbital",
+			mode: CAMERA_MODES.FREE_ORBITAL,
 			position: [0, 8, 10],
 			target: [0, 0, 0],
 			zoom: 1,
 		},
 		canvasMachineRuntime: {
-			currentRoomId: "entrance",
+			currentRoomId: ROOM_IDS.ENTRANCE,
 			enemiesRemaining: 1,
 			hasTreasureKey: false,
 		},
-		currentRoomLabel: "Entrance",
-		discoveredRoomLabels: ["Entrance"],
+		currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+		discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
 		enemiesRemaining: 1,
 		graphSections: [],
 		handleCameraModeSwitch: vi.fn(),
 		handleAudioMuteToggle: vi.fn(),
 		isAudioMuted: false,
-		hasTreasureKeyLabel: "Missing",
+		hasTreasureKeyLabel: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 		handleDungeonRunReset: vi.fn(),
 		playerHp: 100,
 		playerMaxHp: 100,

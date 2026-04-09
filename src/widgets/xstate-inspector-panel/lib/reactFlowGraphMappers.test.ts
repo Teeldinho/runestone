@@ -1,11 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { ROOM_IDS } from "@/entities/dungeon";
+import {
+	DUNGEON_EVENTS,
+	FLOOR_ONE_GUARD_KEYS,
+	ROOM_IDS,
+	ROOM_LABELS,
+} from "@/entities/dungeon";
 import type {
 	MachineGraphEdge,
 	PositionedMachineGraphNode,
 } from "@/features/state-visualizer";
+import {
+	getMachineGraphGuardLabel,
+	STATE_VISUALIZER_GRAPH_SYNTAX,
+	STATE_VISUALIZER_NODE_KINDS,
+} from "@/features/state-visualizer";
 
-import { INSPECTOR_FLOW_EDGE_LAYOUT } from "../config";
+import {
+	INSPECTOR_FLOW_EDGE_LAYOUT,
+	INSPECTOR_FLOW_EDGE_VISUALS,
+} from "../config";
 
 import {
 	mapGraphEdgesToFlowEdges,
@@ -17,35 +30,41 @@ const TEST_GRAPH_POSITIONS = {
 	GUARD_ROOM: { x: 420, y: 120 },
 } as const;
 
+const TEST_GRAPH_EDGE_IDS = {
+	ENTRANCE_TO_GUARD_ROOM: `${ROOM_IDS.ENTRANCE}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_ID_SEGMENT_SEPARATOR}${ROOM_IDS.GUARD_ROOM}`,
+	GUARD_ROOM_TO_ENTRANCE: `${ROOM_IDS.GUARD_ROOM}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_ID_SEGMENT_SEPARATOR}${ROOM_IDS.ENTRANCE}`,
+	GUARD_ROOM_TO_TREASURY: `${ROOM_IDS.GUARD_ROOM}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_ID_SEGMENT_SEPARATOR}${ROOM_IDS.TREASURY}`,
+} as const;
+
 const GRAPH_NODES: PositionedMachineGraphNode[] = [
 	{
 		id: ROOM_IDS.ENTRANCE,
 		isActive: true,
-		kind: "initial",
-		label: "Entrance",
+		kind: STATE_VISUALIZER_NODE_KINDS.INITIAL,
+		label: ROOM_LABELS[ROOM_IDS.ENTRANCE],
 		position: TEST_GRAPH_POSITIONS.ENTRANCE,
 	},
 	{
 		id: ROOM_IDS.GUARD_ROOM,
 		isActive: false,
-		kind: "state",
-		label: "Guard Room",
+		kind: STATE_VISUALIZER_NODE_KINDS.STATE,
+		label: ROOM_LABELS[ROOM_IDS.GUARD_ROOM],
 		position: TEST_GRAPH_POSITIONS.GUARD_ROOM,
 	},
 ];
 
 const GRAPH_EDGES: MachineGraphEdge[] = [
 	{
-		eventType: "ENTER_GUARD_ROOM",
-		guard: "hasKey",
-		id: `${ROOM_IDS.ENTRANCE}:${ROOM_IDS.GUARD_ROOM}`,
+		eventType: DUNGEON_EVENTS.ENTER_GUARD_ROOM,
+		guard: FLOOR_ONE_GUARD_KEYS.TREASURY_CAN_BE_ENTERED,
+		id: TEST_GRAPH_EDGE_IDS.ENTRANCE_TO_GUARD_ROOM,
 		source: ROOM_IDS.ENTRANCE,
 		target: ROOM_IDS.GUARD_ROOM,
 	},
 	{
-		eventType: "RETURN_TO_ENTRANCE",
+		eventType: DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
 		guard: null,
-		id: `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.ENTRANCE}`,
+		id: TEST_GRAPH_EDGE_IDS.GUARD_ROOM_TO_ENTRANCE,
 		source: ROOM_IDS.GUARD_ROOM,
 		target: ROOM_IDS.ENTRANCE,
 	},
@@ -60,8 +79,8 @@ describe("reactFlowGraphMappers", () => {
 			id: ROOM_IDS.ENTRANCE,
 			position: TEST_GRAPH_POSITIONS.ENTRANCE,
 			data: {
-				label: "Entrance",
-				kind: "initial",
+				label: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+				kind: STATE_VISUALIZER_NODE_KINDS.INITIAL,
 				isActive: true,
 			},
 		});
@@ -70,10 +89,10 @@ describe("reactFlowGraphMappers", () => {
 	it("maps graph edges with lane offsets and subtle styles", () => {
 		const flowEdges = mapGraphEdgesToFlowEdges(GRAPH_EDGES);
 		const enterGuardRoomEdge = flowEdges.find(
-			(edge) => edge.id === `${ROOM_IDS.ENTRANCE}:${ROOM_IDS.GUARD_ROOM}`,
+			(edge) => edge.id === TEST_GRAPH_EDGE_IDS.ENTRANCE_TO_GUARD_ROOM,
 		);
 		const returnToEntranceEdge = flowEdges.find(
-			(edge) => edge.id === `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.ENTRANCE}`,
+			(edge) => edge.id === TEST_GRAPH_EDGE_IDS.GUARD_ROOM_TO_ENTRANCE,
 		);
 
 		expect(flowEdges).toHaveLength(2);
@@ -83,20 +102,22 @@ describe("reactFlowGraphMappers", () => {
 				pathOptions: {
 					offset: INSPECTOR_FLOW_EDGE_LAYOUT.LANE_OFFSET_STEP,
 				},
-				type: "guard-marker",
+				type: INSPECTOR_FLOW_EDGE_VISUALS.TYPE,
 				data: expect.objectContaining({
 					markerLaneOffset: -INSPECTOR_FLOW_EDGE_LAYOUT.LANE_OFFSET_STEP,
 					guardMarkers: [
 						expect.objectContaining({
-							guardKey: "hasKey",
-							guardLabel: "Has Key",
-							color: "var(--dungeon-gold)",
+							guardKey: FLOOR_ONE_GUARD_KEYS.TREASURY_CAN_BE_ENTERED,
+							guardLabel: getMachineGraphGuardLabel(
+								FLOOR_ONE_GUARD_KEYS.TREASURY_CAN_BE_ENTERED,
+							),
+							color: INSPECTOR_FLOW_EDGE_LAYOUT.GUARDED_EDGE_STROKE_COLOR,
 							showDirectionIndicator: false,
 						}),
 					],
 				}),
 				style: {
-					stroke: "var(--dungeon-gold)",
+					stroke: INSPECTOR_FLOW_EDGE_LAYOUT.GUARDED_EDGE_STROKE_COLOR,
 					strokeDasharray:
 						INSPECTOR_FLOW_EDGE_LAYOUT.GUARDED_EDGE_STROKE_DASHARRAY,
 					strokeOpacity: INSPECTOR_FLOW_EDGE_LAYOUT.GUARDED_EDGE_STROKE_OPACITY,
@@ -114,7 +135,7 @@ describe("reactFlowGraphMappers", () => {
 					guardMarkers: [],
 				}),
 				style: {
-					stroke: "var(--panel-border)",
+					stroke: INSPECTOR_FLOW_EDGE_LAYOUT.UNGUARDED_EDGE_STROKE_COLOR,
 					strokeOpacity:
 						INSPECTOR_FLOW_EDGE_LAYOUT.UNGUARDED_EDGE_STROKE_OPACITY,
 				},
@@ -127,16 +148,16 @@ describe("reactFlowGraphMappers", () => {
 	it("flags direction indicators for shared guards on reverse edges", () => {
 		const flowEdges = mapGraphEdgesToFlowEdges([
 			{
-				eventType: "ENTER_LIBRARY",
-				guard: "isNearInteractable",
-				id: `${ROOM_IDS.ENTRANCE}:${ROOM_IDS.GUARD_ROOM}`,
+				eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
+				guard: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+				id: TEST_GRAPH_EDGE_IDS.ENTRANCE_TO_GUARD_ROOM,
 				source: ROOM_IDS.ENTRANCE,
 				target: ROOM_IDS.GUARD_ROOM,
 			},
 			{
-				eventType: "RETURN_TO_ENTRANCE",
-				guard: "isNearInteractable",
-				id: `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.ENTRANCE}`,
+				eventType: DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
+				guard: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+				id: TEST_GRAPH_EDGE_IDS.GUARD_ROOM_TO_ENTRANCE,
 				source: ROOM_IDS.GUARD_ROOM,
 				target: ROOM_IDS.ENTRANCE,
 			},
@@ -153,25 +174,25 @@ describe("reactFlowGraphMappers", () => {
 	it("keeps same guard color stable and different guards distinct", () => {
 		const flowEdges = mapGraphEdgesToFlowEdges([
 			{
-				eventType: "ENTER_GUARD_ROOM",
-				guard: "isNearInteractable",
-				id: "entrance:guard-room",
+				eventType: DUNGEON_EVENTS.ENTER_GUARD_ROOM,
+				guard: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+				id: TEST_GRAPH_EDGE_IDS.ENTRANCE_TO_GUARD_ROOM,
 				source: ROOM_IDS.ENTRANCE,
 				target: ROOM_IDS.GUARD_ROOM,
 			},
 			{
-				eventType: "RETURN_TO_ENTRANCE",
-				guard: "isNearInteractable",
-				id: "guard-room:entrance",
+				eventType: DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
+				guard: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+				id: TEST_GRAPH_EDGE_IDS.GUARD_ROOM_TO_ENTRANCE,
 				source: ROOM_IDS.GUARD_ROOM,
 				target: ROOM_IDS.ENTRANCE,
 			},
 			{
-				eventType: "ENTER_TREASURY",
-				guard: "treasuryCanBeEntered",
-				id: "guard-room:treasury",
+				eventType: DUNGEON_EVENTS.ENTER_TREASURY,
+				guard: FLOOR_ONE_GUARD_KEYS.TREASURY_CAN_BE_ENTERED,
+				id: TEST_GRAPH_EDGE_IDS.GUARD_ROOM_TO_TREASURY,
 				source: ROOM_IDS.GUARD_ROOM,
-				target: "treasury",
+				target: ROOM_IDS.TREASURY,
 			},
 		]);
 

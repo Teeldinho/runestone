@@ -2,6 +2,7 @@ import type { MachineGraphSection } from "@/features/state-visualizer";
 import { STATE_VISUALIZER_DETAILS_COPY } from "@/features/state-visualizer";
 import { Badge, ScrollArea, Separator } from "@/shared/ui";
 
+import { INSPECTOR_COPY } from "../config";
 import { useXStateInspectorPanel } from "../model";
 
 type XStateInspectorDetailsPanelProps = {
@@ -19,7 +20,7 @@ export function XStateInspectorDetailsPanel({
 				className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-2"
 				style={{ borderColor: "var(--panel-border)" }}
 			>
-				<h2 className="rune-text">State Details</h2>
+				<h2 className="rune-text">{INSPECTOR_COPY.DETAILS_PANEL_TITLE}</h2>
 				{inspectorPanel.selectedSection ? (
 					<Badge variant="outline" className="text-[10px]">
 						{inspectorPanel.selectedSection.label}
@@ -49,7 +50,7 @@ export function XStateInspectorDetailsPanel({
 
 						<section className="space-y-2">
 							<p className="text-[10px] uppercase tracking-widest text-muted-foreground">
-								States in this machine
+								{INSPECTOR_COPY.STATES_IN_MACHINE_LABEL}
 							</p>
 							<ul className="grid gap-1.5 sm:grid-cols-2">
 								{inspectorPanel.selectedSection.stateDetails.map(
@@ -69,7 +70,7 @@ export function XStateInspectorDetailsPanel({
 											<span>{stateDetail.label}</span>
 											{stateDetail.isActive ? (
 												<Badge variant="outline" className="text-[9px]">
-													Active
+													{INSPECTOR_COPY.ACTIVE_LABEL}
 												</Badge>
 											) : null}
 										</li>

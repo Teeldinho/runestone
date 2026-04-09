@@ -93,7 +93,9 @@ const mapGuardMarkers = (
 		) ?? new Set();
 
 	return guardKeys.map((guardKey, index) => ({
-		id: `${edgeId}:${guardKey}`,
+		id: [edgeId, guardKey].join(
+			STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_ID_SEGMENT_SEPARATOR,
+		),
 		guardKey,
 		guardLabel: getMachineGraphGuardLabel(guardKey),
 		color:

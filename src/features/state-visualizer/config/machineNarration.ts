@@ -16,6 +16,11 @@ export const STATE_VISUALIZER_DETAILS_COPY = {
 	TRANSITION_FLOW_PREFIX: "Flow",
 } as const;
 
+export const STATE_VISUALIZER_ERROR_MESSAGES = {
+	WORKSPACE_PROVIDER_REQUIRED:
+		"useStateVisualizerWorkspace must be used within StateVisualizerWorkspaceProvider",
+} as const;
+
 export const STATE_VISUALIZER_TITLE_CASE_STOP_WORDS = [
 	"and",
 	"or",
