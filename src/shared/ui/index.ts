@@ -38,6 +38,7 @@ export {
 	FieldSet,
 	FieldTitle,
 } from "./field";
+export { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card";
 export { Input } from "./input";
 export { Label } from "./label";
 export { ScrollArea, ScrollBar } from "./scroll-area";

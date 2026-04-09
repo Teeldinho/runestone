@@ -10,8 +10,12 @@ import {
 	useStateVisualizerWorkspace,
 } from "@/features/state-visualizer";
 
-import { INSPECTOR_REACT_FLOW_DEFAULTS } from "../config";
 import {
+	INSPECTOR_REACT_FLOW_DEFAULTS,
+	INSPECTOR_REACT_FLOW_SECTION_PADDING,
+} from "../config";
+import {
+	createGuardColorByKey,
 	type InspectorFlowEdge,
 	type InspectorFlowNode,
 	mapGraphEdgesToFlowEdges,
@@ -33,6 +37,13 @@ type InspectorGuardDetail = {
 	label: string;
 };
 
+type InspectorGuardIndicator = {
+	id: string;
+	label: string;
+	color: string;
+	transitionCount: number;
+};
+
 type InspectorTransitionDetail = {
 	id: string;
 	eventLabel: string;
@@ -48,6 +59,7 @@ type InspectorMachineSectionViewModel = {
 	activeStateSummary: string;
 	sectionDescription: string;
 	guardDetails: InspectorGuardDetail[];
+	guardIndicators: InspectorGuardIndicator[];
 	graphEdges: MachineGraphSection["edges"];
 	graphNodes: MachineGraphSection["positionedNodes"];
 	stateDetails: InspectorStateDetail[];
@@ -66,6 +78,7 @@ type XStateInspectorPanelViewModel = {
 	selectedSection: InspectorMachineSectionViewModel | null;
 	sections: InspectorMachineSectionViewModel[];
 	reactFlowDefaults: typeof INSPECTOR_REACT_FLOW_DEFAULTS;
+	selectedFlowFitViewPadding: number;
 };
 
 const resolveSectionEdgeNodeLabel = (
@@ -77,6 +90,17 @@ const resolveSectionEdgeNodeLabel = (
 	);
 };
 
+const splitGuardKeys = (guard: string | null): string[] => {
+	if (!guard) {
+		return [];
+	}
+
+	return guard
+		.split(" & ")
+		.map((guardKey) => guardKey.trim())
+		.filter(Boolean);
+};
+
 export const useXStateInspectorPanel = ({
 	sections,
 }: UseXStateInspectorPanelInput): XStateInspectorPanelViewModel => {
@@ -85,44 +109,62 @@ export const useXStateInspectorPanel = ({
 
 	const sectionViewModels = useMemo<InspectorMachineSectionViewModel[]>(
 		() =>
-			sections.map((section) => ({
-				id: section.id,
-				label: section.label,
-				activeStateLabel: section.activeStateLabel,
-				activeStateSummary: `${STATE_VISUALIZER_DETAILS_COPY.ACTIVE_STATE_SUMMARY_PREFIX} ${section.activeStateLabel}`,
-				sectionDescription: STATE_VISUALIZER_SECTION_DESCRIPTIONS[section.id],
-				guardDetails: section.guardKeys.map((guardKey) => ({
-					id: `${section.id}:${guardKey}`,
-					label: getMachineGraphGuardLabel(guardKey),
-				})),
-				graphEdges: section.edges,
-				graphNodes: section.positionedNodes,
-				stateDetails: section.positionedNodes.map((node) => ({
-					id: node.id,
-					label: node.label,
-					isActive: node.isActive,
-				})),
-				transitionDetails: section.edges.map((edge) => {
-					const sourceLabel = resolveSectionEdgeNodeLabel(section, edge.source);
-					const targetLabel = resolveSectionEdgeNodeLabel(section, edge.target);
-					const eventLabel = getMachineGraphTransitionEventLabel(
-						edge.eventType,
-					);
-					const requirementLabel = edge.guard
-						? getMachineGraphGuardLabel(edge.guard)
-						: STATE_VISUALIZER_DETAILS_COPY.TRANSITION_REQUIREMENT_NONE;
+			sections.map((section) => {
+				const guardColorByKey = createGuardColorByKey(section.guardKeys);
 
-					return {
-						id: edge.id,
-						eventLabel,
-						flowLabel: `${sourceLabel} -> ${targetLabel}`,
-						requirementLabel,
-						summary: `${eventLabel} moves from ${sourceLabel} to ${targetLabel}. ${STATE_VISUALIZER_DETAILS_COPY.TRANSITION_REQUIREMENT_PREFIX} ${requirementLabel}.`,
-					};
-				}),
-				flowEdges: mapGraphEdgesToFlowEdges(section.edges),
-				flowNodes: mapGraphNodesToFlowNodes(section.positionedNodes),
-			})),
+				return {
+					id: section.id,
+					label: section.label,
+					activeStateLabel: section.activeStateLabel,
+					activeStateSummary: `${STATE_VISUALIZER_DETAILS_COPY.ACTIVE_STATE_SUMMARY_PREFIX} ${section.activeStateLabel}`,
+					sectionDescription: STATE_VISUALIZER_SECTION_DESCRIPTIONS[section.id],
+					guardDetails: section.guardKeys.map((guardKey) => ({
+						id: `${section.id}:${guardKey}`,
+						label: getMachineGraphGuardLabel(guardKey),
+					})),
+					guardIndicators: section.guardKeys.map((guardKey) => ({
+						id: `${section.id}:indicator:${guardKey}`,
+						label: getMachineGraphGuardLabel(guardKey),
+						color: guardColorByKey[guardKey],
+						transitionCount: section.edges.filter((edge) =>
+							splitGuardKeys(edge.guard).includes(guardKey),
+						).length,
+					})),
+					graphEdges: section.edges,
+					graphNodes: section.positionedNodes,
+					stateDetails: section.positionedNodes.map((node) => ({
+						id: node.id,
+						label: node.label,
+						isActive: node.isActive,
+					})),
+					transitionDetails: section.edges.map((edge) => {
+						const sourceLabel = resolveSectionEdgeNodeLabel(
+							section,
+							edge.source,
+						);
+						const targetLabel = resolveSectionEdgeNodeLabel(
+							section,
+							edge.target,
+						);
+						const eventLabel = getMachineGraphTransitionEventLabel(
+							edge.eventType,
+						);
+						const requirementLabel = edge.guard
+							? getMachineGraphGuardLabel(edge.guard)
+							: STATE_VISUALIZER_DETAILS_COPY.TRANSITION_REQUIREMENT_NONE;
+
+						return {
+							id: edge.id,
+							eventLabel,
+							flowLabel: `${sourceLabel} -> ${targetLabel}`,
+							requirementLabel,
+							summary: `${eventLabel} moves from ${sourceLabel} to ${targetLabel}. ${STATE_VISUALIZER_DETAILS_COPY.TRANSITION_REQUIREMENT_PREFIX} ${requirementLabel}.`,
+						};
+					}),
+					flowEdges: mapGraphEdgesToFlowEdges(section.edges),
+					flowNodes: mapGraphNodesToFlowNodes(section.positionedNodes),
+				};
+			}),
 		[sections],
 	);
 
@@ -166,11 +208,16 @@ export const useXStateInspectorPanel = ({
 			null,
 		sections: sectionViewModels,
 		reactFlowDefaults: INSPECTOR_REACT_FLOW_DEFAULTS,
+		selectedFlowFitViewPadding:
+			selectedSectionId === "camera"
+				? INSPECTOR_REACT_FLOW_SECTION_PADDING.CAMERA
+				: INSPECTOR_REACT_FLOW_DEFAULTS.FIT_VIEW_PADDING,
 	};
 };
 
 export type {
 	InspectorGuardDetail,
+	InspectorGuardIndicator,
 	InspectorMachineSectionViewModel,
 	InspectorStateDetail,
 	InspectorTransitionDetail,

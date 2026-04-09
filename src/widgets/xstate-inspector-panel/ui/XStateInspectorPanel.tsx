@@ -1,14 +1,20 @@
 import { Background, Controls, ReactFlow } from "@xyflow/react";
 
 import type { MachineGraphSection } from "@/features/state-visualizer";
-import { Badge, Tabs, TabsList, TabsTrigger } from "@/shared/ui";
+import { Tabs, TabsList, TabsTrigger } from "@/shared/ui";
+import { INSPECTOR_FLOW_EDGE_VISUALS } from "../config";
 
 import "@xyflow/react/dist/style.css";
 
 import { useXStateInspectorPanel } from "../model";
+import { GuardMarkerEdge } from "./GuardMarkerEdge";
 
 type XStateInspectorPanelProps = {
 	sections: MachineGraphSection[];
+};
+
+const inspectorEdgeTypes = {
+	[INSPECTOR_FLOW_EDGE_VISUALS.TYPE]: GuardMarkerEdge,
 };
 
 export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
@@ -30,11 +36,6 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 				>
 					Statechart Visualizer (XState)
 				</h2>
-				{inspectorPanel.selectedSection ? (
-					<Badge variant="outline" className="text-[10px]">
-						{inspectorPanel.selectedSection.activeStateLabel}
-					</Badge>
-				) : null}
 			</div>
 
 			<div
@@ -57,17 +58,50 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 						))}
 					</TabsList>
 				</Tabs>
+				{inspectorPanel.selectedSection?.guardIndicators.length ? (
+					<div className="mt-2 grid gap-1.5">
+						<p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+							Guards
+						</p>
+						{inspectorPanel.selectedSection.guardIndicators.map(
+							(guardIndicator) => (
+								<div
+									key={guardIndicator.id}
+									className="flex items-start gap-2 rounded border border-panel-border bg-background px-2.5 py-1.5"
+								>
+									<span
+										className="mt-0.5 inline-block rounded-full"
+										style={{
+											width: "11px",
+											height: "11px",
+											backgroundColor: guardIndicator.color,
+										}}
+									/>
+									<span className="min-w-0 flex-1 text-[11px] leading-snug text-panel-title">
+										{guardIndicator.label}
+									</span>
+									<span className="ml-auto inline-flex shrink-0 items-center rounded border border-panel-border/80 bg-panel px-1.5 py-0.5 text-[10px] font-medium whitespace-nowrap text-muted-foreground">
+										{guardIndicator.transitionCount} transition
+										{guardIndicator.transitionCount === 1 ? "" : "s"}
+									</span>
+								</div>
+							),
+						)}
+					</div>
+				) : null}
 			</div>
 
 			<div className="min-h-0 flex-1 p-3">
 				{inspectorPanel.selectedSection ? (
 					<ReactFlow
+						key={inspectorPanel.selectedSectionId}
 						colorMode="dark"
+						edgeTypes={inspectorEdgeTypes}
 						edges={inspectorPanel.selectedSection.flowEdges}
 						elementsSelectable={false}
 						fitView
 						fitViewOptions={{
-							padding: inspectorPanel.reactFlowDefaults.FIT_VIEW_PADDING,
+							padding: inspectorPanel.selectedFlowFitViewPadding,
 						}}
 						maxZoom={inspectorPanel.reactFlowDefaults.MAX_ZOOM}
 						minZoom={inspectorPanel.reactFlowDefaults.MIN_ZOOM}
