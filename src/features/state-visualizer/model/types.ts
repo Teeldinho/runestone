@@ -1,9 +1,16 @@
-import type { RoomId } from "@/entities/dungeon";
+import type {
+	STATE_VISUALIZER_NODE_KINDS,
+	STATE_VISUALIZER_SECTION_IDS,
+} from "../config/machineGraph";
 
-export type MachineGraphNodeKind = "state" | "initial" | "final";
+export type MachineGraphNodeKind =
+	(typeof STATE_VISUALIZER_NODE_KINDS)[keyof typeof STATE_VISUALIZER_NODE_KINDS];
+
+export type StateVisualizerSectionId =
+	(typeof STATE_VISUALIZER_SECTION_IDS)[keyof typeof STATE_VISUALIZER_SECTION_IDS];
 
 export type MachineGraphNode = {
-	id: RoomId;
+	id: string;
 	label: string;
 	kind: MachineGraphNodeKind;
 	isActive: boolean;
@@ -11,8 +18,9 @@ export type MachineGraphNode = {
 
 export type MachineGraphEdge = {
 	id: string;
-	source: RoomId;
-	target: RoomId;
+	source: string;
+	target: string;
+	eventType: string;
 	guard: string | null;
 };
 
@@ -23,4 +31,14 @@ export type MachineGraphNodePosition = {
 
 export type PositionedMachineGraphNode = MachineGraphNode & {
 	position: MachineGraphNodePosition;
+};
+
+export type MachineGraphSection = {
+	id: StateVisualizerSectionId;
+	label: string;
+	activeStateLabel: string;
+	guardKeys: string[];
+	nodes: MachineGraphNode[];
+	edges: MachineGraphEdge[];
+	positionedNodes: PositionedMachineGraphNode[];
 };

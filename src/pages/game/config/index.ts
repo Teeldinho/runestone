@@ -4,3 +4,9 @@ export const GAME_PAGE_COPY = {
 		MISSING: "Missing",
 	},
 } as const;
+
+export const GAME_PAGE_LAYOUT = {
+	DETAILS_PANEL_HEIGHT_DVH: 35,
+	DESKTOP_LEFT_PANE_WIDTH_REM: 24,
+	DESKTOP_RIGHT_PANE_WIDTH_REM: 22,
+} as const;

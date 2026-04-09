@@ -3,6 +3,9 @@ export {
 	type MachineGraphSnapshot,
 } from "./createMachineGraphSnapshot";
 export {
-	getMachineGraphNodeKind,
-	getMachineGraphRoomLabel,
+	formatMachineStateLabel,
+	formatMachineTokenLabel,
+	getMachineGraphGuardLabel,
+	getMachineGraphNodeLabel,
+	getMachineGraphTransitionEventLabel,
 } from "./machineGraphSelectors";

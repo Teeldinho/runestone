@@ -2,52 +2,219 @@
 
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import type { RoomId } from "@/entities/dungeon";
-import { ROOM_IDS } from "@/entities/dungeon";
+import { createMachine } from "xstate";
 
-import { useStateVisualizer } from "./useStateVisualizer";
+import {
+	DUNGEON_EVENTS,
+	DUNGEON_MACHINE_IDS,
+	ROOM_IDS,
+} from "@/entities/dungeon";
+import { PLAYER_STATES } from "@/entities/player";
+import { CAMERA_MODES } from "@/shared/config";
+
+import { STATE_VISUALIZER_SECTION_IDS } from "../config";
+
+import {
+	type UseStateVisualizerInput,
+	useStateVisualizer,
+} from "./useStateVisualizer";
+
+const USE_STATE_VISUALIZER_TEST_EXPECTATIONS = {
+	SECTION_COUNT: 4,
+	DUNGEON_NODE_COUNT: 5,
+} as const;
+
+const TEST_CAMERA_MACHINE = {
+	ID: STATE_VISUALIZER_SECTION_IDS.CAMERA,
+	EVENTS: {
+		SWITCH_TO_TOP_DOWN: "SWITCH_TO_TOP_DOWN",
+	},
+	MODES: {
+		FREE_ORBITAL: CAMERA_MODES.FREE_ORBITAL,
+		TOP_DOWN: CAMERA_MODES.TOP_DOWN,
+	},
+} as const;
+
+const TEST_AUDIO_MACHINE = {
+	ID: STATE_VISUALIZER_SECTION_IDS.AUDIO,
+	EVENTS: {
+		PAUSE_REQUESTED: "PAUSE_REQUESTED",
+	},
+	STATES: {
+		PLAYING: "playing",
+		PAUSED: "paused",
+	},
+} as const;
+
+const TEST_MACHINES_BY_SECTION_ID: UseStateVisualizerInput["machinesBySectionId"] =
+	{
+		[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: createMachine({
+			id: DUNGEON_MACHINE_IDS.FLOOR_ONE,
+			initial: ROOM_IDS.ENTRANCE,
+			states: {
+				[ROOM_IDS.ENTRANCE]: {
+					on: {
+						[DUNGEON_EVENTS.ENTER_LIBRARY]: ROOM_IDS.LIBRARY,
+						[DUNGEON_EVENTS.ENTER_GUARD_ROOM]: ROOM_IDS.GUARD_ROOM,
+					},
+				},
+				[ROOM_IDS.LIBRARY]: {
+					on: {
+						[DUNGEON_EVENTS.ENTER_GUARD_ROOM]: ROOM_IDS.GUARD_ROOM,
+					},
+				},
+				[ROOM_IDS.GUARD_ROOM]: {
+					on: {
+						[DUNGEON_EVENTS.ENTER_TREASURY]: ROOM_IDS.TREASURY,
+					},
+				},
+				[ROOM_IDS.TREASURY]: {
+					on: {
+						[DUNGEON_EVENTS.ENTER_EXIT]: ROOM_IDS.EXIT,
+					},
+				},
+				[ROOM_IDS.EXIT]: {},
+			},
+		}),
+		[STATE_VISUALIZER_SECTION_IDS.CAMERA]: createMachine({
+			id: TEST_CAMERA_MACHINE.ID,
+			initial: TEST_CAMERA_MACHINE.MODES.FREE_ORBITAL,
+			states: {
+				[TEST_CAMERA_MACHINE.MODES.FREE_ORBITAL]: {
+					on: {
+						[TEST_CAMERA_MACHINE.EVENTS.SWITCH_TO_TOP_DOWN]:
+							TEST_CAMERA_MACHINE.MODES.TOP_DOWN,
+					},
+				},
+				[TEST_CAMERA_MACHINE.MODES.TOP_DOWN]: {},
+			},
+		}),
+		[STATE_VISUALIZER_SECTION_IDS.AUDIO]: createMachine({
+			id: TEST_AUDIO_MACHINE.ID,
+			initial: TEST_AUDIO_MACHINE.STATES.PLAYING,
+			states: {
+				[TEST_AUDIO_MACHINE.STATES.PLAYING]: {
+					on: {
+						[TEST_AUDIO_MACHINE.EVENTS.PAUSE_REQUESTED]:
+							TEST_AUDIO_MACHINE.STATES.PAUSED,
+					},
+				},
+				[TEST_AUDIO_MACHINE.STATES.PAUSED]: {},
+			},
+		}),
+		[STATE_VISUALIZER_SECTION_IDS.PLAYER]: createMachine({
+			id: STATE_VISUALIZER_SECTION_IDS.PLAYER,
+			type: "parallel",
+			states: {
+				[PLAYER_STATES.REGIONS.HEALTH]: {
+					initial: PLAYER_STATES.HEALTH.ALIVE,
+					states: {
+						[PLAYER_STATES.HEALTH.ALIVE]: {},
+						[PLAYER_STATES.HEALTH.DAMAGED]: {},
+					},
+				},
+				[PLAYER_STATES.REGIONS.MOVEMENT]: {
+					initial: PLAYER_STATES.MOVEMENT.IDLE,
+					states: {
+						[PLAYER_STATES.MOVEMENT.IDLE]: {},
+						[PLAYER_STATES.MOVEMENT.WALKING]: {},
+					},
+				},
+			},
+		}),
+	};
 
 describe("useStateVisualizer", () => {
-	it("returns positioned nodes and graph edges for inspector rendering", () => {
+	it("returns machine sections with positioned graph data", () => {
 		const { result } = renderHook(() =>
 			useStateVisualizer({
-				currentRoomId: ROOM_IDS.ENTRANCE,
+				machinesBySectionId: TEST_MACHINES_BY_SECTION_ID,
+				stateValuesBySectionId: {
+					[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: ROOM_IDS.ENTRANCE,
+					[STATE_VISUALIZER_SECTION_IDS.CAMERA]:
+						TEST_CAMERA_MACHINE.MODES.FREE_ORBITAL,
+					[STATE_VISUALIZER_SECTION_IDS.AUDIO]:
+						TEST_AUDIO_MACHINE.STATES.PLAYING,
+					[STATE_VISUALIZER_SECTION_IDS.PLAYER]: {
+						[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.ALIVE,
+						[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
+					},
+				},
 			}),
 		);
 
-		expect(result.current.positionedNodes).toHaveLength(5);
-		expect(result.current.edges).toHaveLength(8);
+		expect(result.current.sections).toHaveLength(
+			USE_STATE_VISUALIZER_TEST_EXPECTATIONS.SECTION_COUNT,
+		);
 
-		const entranceNode = result.current.positionedNodes.find(
-			(node) => node.id === ROOM_IDS.ENTRANCE,
+		const dungeonSection = result.current.sections.find(
+			(section) => section.id === STATE_VISUALIZER_SECTION_IDS.DUNGEON,
+		);
+
+		expect(dungeonSection).toBeDefined();
+		expect(dungeonSection?.positionedNodes).toHaveLength(
+			USE_STATE_VISUALIZER_TEST_EXPECTATIONS.DUNGEON_NODE_COUNT,
+		);
+		expect(dungeonSection?.edges.length).toBeGreaterThan(0);
+
+		const entranceNode = dungeonSection?.positionedNodes.find((node) =>
+			node.id.endsWith(`.${ROOM_IDS.ENTRANCE}`),
 		);
 
 		expect(entranceNode?.isActive).toBe(true);
 		expect(entranceNode?.position.x).toEqual(expect.any(Number));
 		expect(entranceNode?.position.y).toEqual(expect.any(Number));
+
+		const libraryNode = dungeonSection?.positionedNodes.find((node) =>
+			node.id.endsWith(`.${ROOM_IDS.LIBRARY}`),
+		);
+
+		expect(libraryNode?.position.y).toBeGreaterThan(
+			entranceNode?.position.y ?? 0,
+		);
 	});
 
-	it("updates active room metadata when the selected room changes", () => {
+	it("updates section active metadata when machine state values change", () => {
 		const { result, rerender } = renderHook(
-			({ currentRoomId }: { currentRoomId: RoomId }) =>
+			({
+				dungeonStateValue,
+			}: {
+				dungeonStateValue: (typeof ROOM_IDS)[keyof typeof ROOM_IDS];
+			}) =>
 				useStateVisualizer({
-					currentRoomId,
+					machinesBySectionId: TEST_MACHINES_BY_SECTION_ID,
+					stateValuesBySectionId: {
+						[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: dungeonStateValue,
+						[STATE_VISUALIZER_SECTION_IDS.CAMERA]:
+							TEST_CAMERA_MACHINE.MODES.TOP_DOWN,
+						[STATE_VISUALIZER_SECTION_IDS.AUDIO]:
+							TEST_AUDIO_MACHINE.STATES.PAUSED,
+						[STATE_VISUALIZER_SECTION_IDS.PLAYER]: {
+							[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.DAMAGED,
+							[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.WALKING,
+						},
+					},
 				}),
 			{
 				initialProps: {
-					currentRoomId: ROOM_IDS.ENTRANCE,
-				} as { currentRoomId: RoomId },
+					dungeonStateValue: ROOM_IDS.ENTRANCE,
+				} as {
+					dungeonStateValue: (typeof ROOM_IDS)[keyof typeof ROOM_IDS];
+				},
 			},
 		);
 
 		rerender({
-			currentRoomId: ROOM_IDS.GUARD_ROOM,
+			dungeonStateValue: ROOM_IDS.GUARD_ROOM,
 		});
 
-		const activeNode = result.current.positionedNodes.find(
+		const dungeonSection = result.current.sections.find(
+			(section) => section.id === STATE_VISUALIZER_SECTION_IDS.DUNGEON,
+		);
+		const activeNode = dungeonSection?.positionedNodes.find(
 			(node) => node.isActive,
 		);
 
-		expect(activeNode?.id).toBe(ROOM_IDS.GUARD_ROOM);
+		expect(activeNode?.id.endsWith(`.${ROOM_IDS.GUARD_ROOM}`)).toBe(true);
 	});
 });

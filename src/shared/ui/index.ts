@@ -38,8 +38,10 @@ export {
 	FieldSet,
 	FieldTitle,
 } from "./field";
+export { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card";
 export { Input } from "./input";
 export { Label } from "./label";
 export { ScrollArea, ScrollBar } from "./scroll-area";
 export { Separator } from "./separator";
 export { Slider } from "./slider";
+export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
