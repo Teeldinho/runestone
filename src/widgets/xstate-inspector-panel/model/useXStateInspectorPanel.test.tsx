@@ -90,7 +90,7 @@ describe("useXStateInspectorPanel", () => {
 		expect(result.current.selectedSection?.guardIndicators).toEqual([
 			expect.objectContaining({
 				label: "The guard has been defeated and the treasure key is in hand",
-				color: "#f59e0b",
+				color: "var(--dungeon-gold)",
 				transitionCount: 1,
 			}),
 		]);

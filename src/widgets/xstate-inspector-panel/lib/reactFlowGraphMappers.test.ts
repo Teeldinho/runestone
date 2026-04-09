@@ -81,7 +81,7 @@ describe("reactFlowGraphMappers", () => {
 						expect.objectContaining({
 							guardKey: "hasKey",
 							guardLabel: "Has Key",
-							color: "#f59e0b",
+							color: "var(--dungeon-gold)",
 							showDirectionIndicator: false,
 						}),
 					],
