@@ -7,7 +7,7 @@ graph while the player moves through the dungeon.
 
 This is an engineering-first game prototype. The machine is not just in the code — it is the level.
 
-**Live:** [runestone.teeldinho.com](https://runestone.teeldinho.com)
+**[🏰 Enter the Dungeon](https://runestone.teeldinho.com)**
 
 ![Runestone Preview](./docs/screenshots/runestone-preview.png)
 
