@@ -1,10 +1,9 @@
+import type { STATE_VISUALIZER_SECTION_IDS } from "../config/machineGraph";
+
 export type MachineGraphNodeKind = "state" | "initial" | "final";
 
 export type StateVisualizerSectionId =
-	| "dungeon"
-	| "camera"
-	| "audio"
-	| "player";
+	(typeof STATE_VISUALIZER_SECTION_IDS)[keyof typeof STATE_VISUALIZER_SECTION_IDS];
 
 export type MachineGraphNode = {
 	id: string;

@@ -5,10 +5,17 @@ import type {
 	PositionedMachineGraphNode,
 } from "@/features/state-visualizer";
 
+import { INSPECTOR_FLOW_EDGE_LAYOUT } from "../config";
+
 import {
 	mapGraphEdgesToFlowEdges,
 	mapGraphNodesToFlowNodes,
 } from "./reactFlowGraphMappers";
+
+const TEST_GRAPH_POSITIONS = {
+	ENTRANCE: { x: 80, y: 120 },
+	GUARD_ROOM: { x: 420, y: 120 },
+} as const;
 
 const GRAPH_NODES: PositionedMachineGraphNode[] = [
 	{
@@ -16,14 +23,14 @@ const GRAPH_NODES: PositionedMachineGraphNode[] = [
 		isActive: true,
 		kind: "initial",
 		label: "Entrance",
-		position: { x: 80, y: 120 },
+		position: TEST_GRAPH_POSITIONS.ENTRANCE,
 	},
 	{
 		id: ROOM_IDS.GUARD_ROOM,
 		isActive: false,
 		kind: "state",
 		label: "Guard Room",
-		position: { x: 420, y: 120 },
+		position: TEST_GRAPH_POSITIONS.GUARD_ROOM,
 	},
 ];
 
@@ -51,7 +58,7 @@ describe("reactFlowGraphMappers", () => {
 		expect(flowNodes).toHaveLength(2);
 		expect(flowNodes[0]).toMatchObject({
 			id: ROOM_IDS.ENTRANCE,
-			position: { x: 80, y: 120 },
+			position: TEST_GRAPH_POSITIONS.ENTRANCE,
 			data: {
 				label: "Entrance",
 				kind: "initial",
@@ -73,10 +80,12 @@ describe("reactFlowGraphMappers", () => {
 		expect(enterGuardRoomEdge).toEqual(
 			expect.objectContaining({
 				label: "",
-				pathOptions: { offset: 18 },
+				pathOptions: {
+					offset: INSPECTOR_FLOW_EDGE_LAYOUT.LANE_OFFSET_STEP,
+				},
 				type: "guard-marker",
 				data: expect.objectContaining({
-					markerLaneOffset: -18,
+					markerLaneOffset: -INSPECTOR_FLOW_EDGE_LAYOUT.LANE_OFFSET_STEP,
 					guardMarkers: [
 						expect.objectContaining({
 							guardKey: "hasKey",
@@ -88,22 +97,26 @@ describe("reactFlowGraphMappers", () => {
 				}),
 				style: {
 					stroke: "var(--dungeon-gold)",
-					strokeDasharray: "5 4",
-					strokeOpacity: 0.55,
+					strokeDasharray:
+						INSPECTOR_FLOW_EDGE_LAYOUT.GUARDED_EDGE_STROKE_DASHARRAY,
+					strokeOpacity: INSPECTOR_FLOW_EDGE_LAYOUT.GUARDED_EDGE_STROKE_OPACITY,
 				},
 			}),
 		);
 		expect(returnToEntranceEdge).toEqual(
 			expect.objectContaining({
 				label: "",
-				pathOptions: { offset: 18 },
+				pathOptions: {
+					offset: INSPECTOR_FLOW_EDGE_LAYOUT.LANE_OFFSET_STEP,
+				},
 				data: expect.objectContaining({
-					markerLaneOffset: 18,
+					markerLaneOffset: INSPECTOR_FLOW_EDGE_LAYOUT.LANE_OFFSET_STEP,
 					guardMarkers: [],
 				}),
 				style: {
 					stroke: "var(--panel-border)",
-					strokeOpacity: 0.32,
+					strokeOpacity:
+						INSPECTOR_FLOW_EDGE_LAYOUT.UNGUARDED_EDGE_STROKE_OPACITY,
 				},
 			}),
 		);

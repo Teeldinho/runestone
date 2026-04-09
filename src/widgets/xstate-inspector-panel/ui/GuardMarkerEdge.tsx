@@ -6,7 +6,10 @@ import {
 } from "@xyflow/react";
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/shared/ui";
-import { INSPECTOR_FLOW_EDGE_LAYOUT } from "../config";
+import {
+	INSPECTOR_FLOW_EDGE_LAYOUT,
+	INSPECTOR_GUARD_MARKER_INTERACTION,
+} from "../config";
 import type {
 	InspectorFlowEdgeData,
 	InspectorFlowEdgeGuardMarker,
@@ -63,12 +66,17 @@ export function GuardMarkerEdge({
 										: -INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_DIRECTION_OFFSET_PX
 									: 0;
 								const markerArrowOffset =
-									INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_SIZE_PX / 2 + 4;
+									INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_SIZE_PX / 2 +
+									INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_ARROW_OFFSET_EXTRA_PX;
 
 								return (
 									<HoverCard
-										openDelay={80}
-										closeDelay={60}
+										openDelay={
+											INSPECTOR_GUARD_MARKER_INTERACTION.HOVER_OPEN_DELAY_MS
+										}
+										closeDelay={
+											INSPECTOR_GUARD_MARKER_INTERACTION.HOVER_CLOSE_DELAY_MS
+										}
 										key={guardMarker.id}
 									>
 										<HoverCardTrigger asChild>
@@ -85,7 +93,8 @@ export function GuardMarkerEdge({
 														(markerIndex - (markerCount - 1) / 2) *
 															INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_GAP_PX,
 													top: labelY + markerDirectionOffset,
-													transform: "translate(-50%, -50%)",
+													transform:
+														INSPECTOR_GUARD_MARKER_INTERACTION.TRANSLATE_CENTER,
 												}}
 												aria-label={guardMarker.guardLabel}
 											>
@@ -102,14 +111,19 @@ export function GuardMarkerEdge({
 													<span
 														className="pointer-events-none absolute text-[9px] font-semibold leading-none text-panel-title"
 														style={{
-															left: "50%",
+															left: INSPECTOR_GUARD_MARKER_INTERACTION.POSITION_CENTER_PERCENT,
 															top: isDownwardDirection
-																? `calc(50% + ${markerArrowOffset}px)`
-																: `calc(50% - ${markerArrowOffset}px)`,
-															transform: "translate(-50%, -50%)",
+																? `calc(${INSPECTOR_GUARD_MARKER_INTERACTION.POSITION_CENTER_PERCENT} + ${markerArrowOffset}px)`
+																: `calc(${INSPECTOR_GUARD_MARKER_INTERACTION.POSITION_CENTER_PERCENT} - ${markerArrowOffset}px)`,
+															transform:
+																INSPECTOR_GUARD_MARKER_INTERACTION.TRANSLATE_CENTER,
 														}}
 													>
-														{isDownwardDirection ? "↓" : "↑"}
+														{isDownwardDirection
+															? INSPECTOR_GUARD_MARKER_INTERACTION
+																	.DIRECTION_ARROW_BY_LABEL.DOWN
+															: INSPECTOR_GUARD_MARKER_INTERACTION
+																	.DIRECTION_ARROW_BY_LABEL.UP}
 													</span>
 												) : null}
 											</button>
@@ -123,7 +137,12 @@ export function GuardMarkerEdge({
 											</p>
 											{guardMarker.showDirectionIndicator ? (
 												<p className="mt-1 text-[10px] text-muted-foreground/80">
-													Direction: {isDownwardDirection ? "down" : "up"}
+													Direction:{" "}
+													{isDownwardDirection
+														? INSPECTOR_GUARD_MARKER_INTERACTION
+																.DIRECTION_TEXT_BY_LABEL.DOWN
+														: INSPECTOR_GUARD_MARKER_INTERACTION
+																.DIRECTION_TEXT_BY_LABEL.UP}
 												</p>
 											) : null}
 										</HoverCardContent>

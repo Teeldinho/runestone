@@ -1,5 +1,6 @@
 import {
 	STATE_VISUALIZER_GUARD_LABELS,
+	STATE_VISUALIZER_SECTION_IDS,
 	STATE_VISUALIZER_STATE_LABELS,
 	STATE_VISUALIZER_TITLE_CASE_STOP_WORDS,
 } from "../config";
@@ -41,7 +42,7 @@ export const getMachineGraphNodeLabel = (
 	sectionId: StateVisualizerSectionId,
 	stateNodeKey: string,
 ): string => {
-	if (sectionId === "dungeon") {
+	if (sectionId === STATE_VISUALIZER_SECTION_IDS.DUNGEON) {
 		return (
 			STATE_VISUALIZER_STATE_LABELS[
 				stateNodeKey as keyof typeof STATE_VISUALIZER_STATE_LABELS

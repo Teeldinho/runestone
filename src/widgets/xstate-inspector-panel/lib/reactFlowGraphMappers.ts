@@ -5,7 +5,10 @@ import type {
 	MachineGraphNodeKind,
 	PositionedMachineGraphNode,
 } from "@/features/state-visualizer";
-import { getMachineGraphGuardLabel } from "@/features/state-visualizer";
+import {
+	getMachineGraphGuardLabel,
+	STATE_VISUALIZER_GRAPH_SYNTAX,
+} from "@/features/state-visualizer";
 
 import {
 	INSPECTOR_FLOW_EDGE_LAYOUT,
@@ -39,7 +42,9 @@ type InspectorFlowNode = Node<InspectorFlowNodeData>;
 type InspectorFlowEdge = Edge<InspectorFlowEdgeData>;
 
 const getEdgePairKey = (source: string, target: string): string => {
-	return source < target ? `${source}|${target}` : `${target}|${source}`;
+	return source < target
+		? `${source}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_PAIR_SEPARATOR}${target}`
+		: `${target}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_PAIR_SEPARATOR}${source}`;
 };
 
 const splitGuardKeys = (guard: string | null): string[] => {
@@ -48,7 +53,7 @@ const splitGuardKeys = (guard: string | null): string[] => {
 	}
 
 	return guard
-		.split(" & ")
+		.split(STATE_VISUALIZER_GRAPH_SYNTAX.GUARD_DELIMITER)
 		.map((guardKey) => guardKey.trim())
 		.filter(Boolean);
 };
@@ -59,7 +64,7 @@ const createGuardKeySetByDirectionKey = (
 	const guardKeySetByDirectionKey = new Map<string, Set<string>>();
 
 	for (const graphEdge of graphEdges) {
-		const directionKey = `${graphEdge.source}|${graphEdge.target}`;
+		const directionKey = `${graphEdge.source}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_PAIR_SEPARATOR}${graphEdge.target}`;
 		const guardKeySet =
 			guardKeySetByDirectionKey.get(directionKey) ?? new Set();
 
@@ -83,7 +88,9 @@ const mapGuardMarkers = (
 ): InspectorFlowEdgeGuardMarker[] => {
 	const guardKeys = splitGuardKeys(guard);
 	const reverseDirectionGuardKeySet =
-		guardKeySetByDirectionKey.get(`${target}|${source}`) ?? new Set();
+		guardKeySetByDirectionKey.get(
+			`${target}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_PAIR_SEPARATOR}${source}`,
+		) ?? new Set();
 
 	return guardKeys.map((guardKey, index) => ({
 		id: `${edgeId}:${guardKey}`,
@@ -185,11 +192,13 @@ export const mapGraphEdgesToFlowEdges = (
 						stroke: INSPECTOR_FLOW_EDGE_LAYOUT.GUARDED_EDGE_STROKE_COLOR,
 						strokeDasharray:
 							INSPECTOR_FLOW_EDGE_LAYOUT.GUARDED_EDGE_STROKE_DASHARRAY,
-						strokeOpacity: 0.55,
+						strokeOpacity:
+							INSPECTOR_FLOW_EDGE_LAYOUT.GUARDED_EDGE_STROKE_OPACITY,
 					}
 				: {
 						stroke: INSPECTOR_FLOW_EDGE_LAYOUT.UNGUARDED_EDGE_STROKE_COLOR,
-						strokeOpacity: 0.32,
+						strokeOpacity:
+							INSPECTOR_FLOW_EDGE_LAYOUT.UNGUARDED_EDGE_STROKE_OPACITY,
 					},
 			data: {
 				eventType: graphEdge.eventType,

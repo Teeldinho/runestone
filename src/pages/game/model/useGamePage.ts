@@ -16,7 +16,10 @@ import {
 	useCameraMachine,
 } from "@/features/camera-system";
 import { useGameMachine } from "@/features/dungeon-navigation";
-import { useStateVisualizer } from "@/features/state-visualizer";
+import {
+	STATE_VISUALIZER_SECTION_IDS,
+	useStateVisualizer,
+} from "@/features/state-visualizer";
 import { setPlayerTeleportTarget } from "@/shared/lib/playerPositionStore";
 import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 
@@ -74,31 +77,34 @@ export const useGamePage = (): GamePageViewModel => {
 		const entrance = floorLayout.rooms.find(
 			(room) => room.roomId === ROOM_IDS.ENTRANCE,
 		);
-		return entrance
-			? [
-					entrance.position[0],
-					PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
-					entrance.position[2],
-				]
-			: [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0];
+
+		if (entrance) {
+			const [entranceX, , entranceZ] = entrance.position;
+
+			return [
+				entranceX,
+				PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+				entranceZ,
+			] as const;
+		}
+
+		return [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0] as const;
 	}, []);
 
 	const handleDungeonRunReset = useCallback(() => {
+		const [teleportX, teleportY, teleportZ] = entrancePosition;
+
 		sendPlayerMachineEvent({ type: PLAYER_EVENTS.RESTART });
-		setPlayerTeleportTarget(
-			entrancePosition[0],
-			entrancePosition[1],
-			entrancePosition[2],
-		);
+		setPlayerTeleportTarget(teleportX, teleportY, teleportZ);
 		resetDungeonMachine();
 	}, [sendPlayerMachineEvent, resetDungeonMachine, entrancePosition]);
 
 	const visualizerMachinesBySectionId = useMemo(
 		() => ({
-			dungeon: createFloorOneMachine(),
-			camera: createCameraMachine(),
-			audio: audioMachine,
-			player: createPlayerMachine(),
+			[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: createFloorOneMachine(),
+			[STATE_VISUALIZER_SECTION_IDS.CAMERA]: createCameraMachine(),
+			[STATE_VISUALIZER_SECTION_IDS.AUDIO]: audioMachine,
+			[STATE_VISUALIZER_SECTION_IDS.PLAYER]: createPlayerMachine(),
 		}),
 		[],
 	);
@@ -106,10 +112,10 @@ export const useGamePage = (): GamePageViewModel => {
 	const { sections } = useStateVisualizer({
 		machinesBySectionId: visualizerMachinesBySectionId,
 		stateValuesBySectionId: {
-			dungeon: currentRoomId,
-			camera: cameraMode,
-			audio: audioState,
-			player: playerSnapshot.value,
+			[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: currentRoomId,
+			[STATE_VISUALIZER_SECTION_IDS.CAMERA]: cameraMode,
+			[STATE_VISUALIZER_SECTION_IDS.AUDIO]: audioState,
+			[STATE_VISUALIZER_SECTION_IDS.PLAYER]: playerSnapshot.value,
 		},
 	});
 

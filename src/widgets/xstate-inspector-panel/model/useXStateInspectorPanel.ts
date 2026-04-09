@@ -5,12 +5,15 @@ import {
 	getMachineGraphTransitionEventLabel,
 	type MachineGraphSection,
 	STATE_VISUALIZER_DETAILS_COPY,
+	STATE_VISUALIZER_GRAPH_SYNTAX,
 	STATE_VISUALIZER_SECTION_DESCRIPTIONS,
+	STATE_VISUALIZER_SECTION_IDS,
 	type StateVisualizerSectionId,
 	useStateVisualizerWorkspace,
 } from "@/features/state-visualizer";
 
 import {
+	INSPECTOR_COPY,
 	INSPECTOR_REACT_FLOW_DEFAULTS,
 	INSPECTOR_REACT_FLOW_SECTION_PADDING,
 } from "../config";
@@ -42,6 +45,7 @@ type InspectorGuardIndicator = {
 	label: string;
 	color: string;
 	transitionCount: number;
+	transitionCountLabel: string;
 };
 
 type InspectorTransitionDetail = {
@@ -96,7 +100,7 @@ const splitGuardKeys = (guard: string | null): string[] => {
 	}
 
 	return guard
-		.split(" & ")
+		.split(STATE_VISUALIZER_GRAPH_SYNTAX.GUARD_DELIMITER)
 		.map((guardKey) => guardKey.trim())
 		.filter(Boolean);
 };
@@ -122,14 +126,22 @@ export const useXStateInspectorPanel = ({
 						id: `${section.id}:${guardKey}`,
 						label: getMachineGraphGuardLabel(guardKey),
 					})),
-					guardIndicators: section.guardKeys.map((guardKey) => ({
-						id: `${section.id}:indicator:${guardKey}`,
-						label: getMachineGraphGuardLabel(guardKey),
-						color: guardColorByKey[guardKey],
-						transitionCount: section.edges.filter((edge) =>
+					guardIndicators: section.guardKeys.map((guardKey) => {
+						const transitionCount = section.edges.filter((edge) =>
 							splitGuardKeys(edge.guard).includes(guardKey),
-						).length,
-					})),
+						).length;
+
+						return {
+							id: `${section.id}:indicator:${guardKey}`,
+							label: getMachineGraphGuardLabel(guardKey),
+							color: guardColorByKey[guardKey],
+							transitionCount,
+							transitionCountLabel:
+								transitionCount === 1
+									? INSPECTOR_COPY.TRANSITION_LABEL_SINGULAR
+									: INSPECTOR_COPY.TRANSITION_LABEL_PLURAL,
+						};
+					}),
 					graphEdges: section.edges,
 					graphNodes: section.positionedNodes,
 					stateDetails: section.positionedNodes.map((node) => ({
@@ -156,7 +168,7 @@ export const useXStateInspectorPanel = ({
 						return {
 							id: edge.id,
 							eventLabel,
-							flowLabel: `${sourceLabel} -> ${targetLabel}`,
+							flowLabel: `${sourceLabel}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_FLOW_SEPARATOR}${targetLabel}`,
 							requirementLabel,
 							summary: `${eventLabel} moves from ${sourceLabel} to ${targetLabel}. ${STATE_VISUALIZER_DETAILS_COPY.TRANSITION_REQUIREMENT_PREFIX} ${requirementLabel}.`,
 						};
@@ -209,7 +221,7 @@ export const useXStateInspectorPanel = ({
 		sections: sectionViewModels,
 		reactFlowDefaults: INSPECTOR_REACT_FLOW_DEFAULTS,
 		selectedFlowFitViewPadding:
-			selectedSectionId === "camera"
+			selectedSectionId === STATE_VISUALIZER_SECTION_IDS.CAMERA
 				? INSPECTOR_REACT_FLOW_SECTION_PADDING.CAMERA
 				: INSPECTOR_REACT_FLOW_DEFAULTS.FIT_VIEW_PADDING,
 	};

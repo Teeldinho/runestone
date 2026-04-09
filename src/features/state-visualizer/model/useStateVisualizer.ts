@@ -2,7 +2,12 @@ import { useMemo } from "react";
 import type { AnyStateMachine } from "xstate";
 import { getGraphLayout } from "@/shared/lib";
 
-import { MACHINE_GRAPH_LAYOUT, STATE_VISUALIZER_SECTIONS } from "../config";
+import {
+	MACHINE_GRAPH_LAYOUT,
+	STATE_VISUALIZER_DETAILS_COPY,
+	STATE_VISUALIZER_GRAPH_SYNTAX,
+	STATE_VISUALIZER_SECTIONS,
+} from "../config";
 import { createMachineGraphSnapshot } from "../lib/createMachineGraphSnapshot";
 import { formatMachineStateLabel } from "../lib/machineGraphSelectors";
 import type {
@@ -22,7 +27,11 @@ type StateVisualizerResult = {
 
 const collectStatePaths = (stateValue: unknown, prefix = ""): string[] => {
 	if (typeof stateValue === "string") {
-		return [prefix ? `${prefix}.${stateValue}` : stateValue];
+		return [
+			prefix
+				? `${prefix}${STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR}${stateValue}`
+				: stateValue,
+		];
 	}
 
 	if (!stateValue || typeof stateValue !== "object") {
@@ -32,7 +41,12 @@ const collectStatePaths = (stateValue: unknown, prefix = ""): string[] => {
 	const entries = Object.entries(stateValue as Record<string, unknown>);
 
 	return entries.flatMap(([key, nestedStateValue]) =>
-		collectStatePaths(nestedStateValue, prefix ? `${prefix}.${key}` : key),
+		collectStatePaths(
+			nestedStateValue,
+			prefix
+				? `${prefix}${STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR}${key}`
+				: key,
+		),
 	);
 };
 
@@ -42,7 +56,8 @@ const createActiveStateNodeIds = (
 ): Set<string> => {
 	return new Set(
 		collectStatePaths(stateValue).map(
-			(statePath) => `${machine.id}.${statePath}`,
+			(statePath) =>
+				`${machine.id}${STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR}${statePath}`,
 		),
 	);
 };
@@ -51,10 +66,12 @@ const formatActiveStateLabel = (stateValue: unknown): string => {
 	const statePaths = collectStatePaths(stateValue);
 
 	if (statePaths.length === 0) {
-		return "Unknown";
+		return STATE_VISUALIZER_DETAILS_COPY.UNKNOWN_STATE_LABEL;
 	}
 
-	return statePaths.map(formatMachineStateLabel).join(" | ");
+	return statePaths
+		.map(formatMachineStateLabel)
+		.join(STATE_VISUALIZER_GRAPH_SYNTAX.STATE_PATH_DELIMITER);
 };
 
 export const useStateVisualizer = ({

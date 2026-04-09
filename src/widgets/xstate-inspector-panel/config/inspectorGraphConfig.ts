@@ -4,6 +4,8 @@ export const INSPECTOR_EDGE_LABELS = {
 
 export const INSPECTOR_COPY = {
 	ACTIVE_LABEL: "Active",
+	TRANSITION_LABEL_SINGULAR: "transition",
+	TRANSITION_LABEL_PLURAL: "transitions",
 } as const;
 
 export const INSPECTOR_FLOW_EDGE_VISUALS = {
@@ -14,7 +16,9 @@ export const INSPECTOR_FLOW_EDGE_LAYOUT = {
 	LANE_OFFSET_STEP: 18,
 	GUARDED_EDGE_STROKE_COLOR: "var(--dungeon-gold)",
 	GUARDED_EDGE_STROKE_DASHARRAY: "5 4",
+	GUARDED_EDGE_STROKE_OPACITY: 0.55,
 	UNGUARDED_EDGE_STROKE_COLOR: "var(--panel-border)",
+	UNGUARDED_EDGE_STROKE_OPACITY: 0.32,
 	GUARD_MARKER_COLORS: [
 		"var(--dungeon-gold)",
 		"var(--dungeon-rune)",
@@ -29,6 +33,31 @@ export const INSPECTOR_FLOW_EDGE_LAYOUT = {
 	GUARD_MARKER_LANE_SEPARATION_FACTOR: 1,
 	GUARD_MARKER_DIRECTION_OFFSET_PX: 12,
 	GUARD_MARKER_RING_COLOR: "var(--background)",
+} as const;
+
+export const INSPECTOR_FLOW_BACKGROUND = {
+	GAP_PX: 20,
+	SIZE_PX: 1,
+} as const;
+
+export const INSPECTOR_GUARD_LEGEND_LAYOUT = {
+	DOT_SIZE_PX: 11,
+} as const;
+
+export const INSPECTOR_GUARD_MARKER_INTERACTION = {
+	HOVER_OPEN_DELAY_MS: 80,
+	HOVER_CLOSE_DELAY_MS: 60,
+	DIRECTION_ARROW_OFFSET_EXTRA_PX: 4,
+	POSITION_CENTER_PERCENT: "50%",
+	TRANSLATE_CENTER: "translate(-50%, -50%)",
+	DIRECTION_ARROW_BY_LABEL: {
+		UP: "↑",
+		DOWN: "↓",
+	},
+	DIRECTION_TEXT_BY_LABEL: {
+		UP: "up",
+		DOWN: "down",
+	},
 } as const;
 
 export const INSPECTOR_FLOW_NODE_VISUALS = {

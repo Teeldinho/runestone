@@ -4,6 +4,8 @@ import { act, renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 
+import { STATE_VISUALIZER_SECTION_IDS } from "../config";
+
 import {
 	StateVisualizerWorkspaceProvider,
 	useStateVisualizerWorkspace,
@@ -21,12 +23,18 @@ describe("useStateVisualizerWorkspace", () => {
 			wrapper,
 		});
 
-		expect(result.current.selectedSectionId).toBe("dungeon");
+		expect(result.current.selectedSectionId).toBe(
+			STATE_VISUALIZER_SECTION_IDS.DUNGEON,
+		);
 
 		act(() => {
-			result.current.handleSelectedSectionIdChange("camera");
+			result.current.handleSelectedSectionIdChange(
+				STATE_VISUALIZER_SECTION_IDS.CAMERA,
+			);
 		});
 
-		expect(result.current.selectedSectionId).toBe("camera");
+		expect(result.current.selectedSectionId).toBe(
+			STATE_VISUALIZER_SECTION_IDS.CAMERA,
+		);
 	});
 });

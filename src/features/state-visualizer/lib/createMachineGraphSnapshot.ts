@@ -1,6 +1,6 @@
 import type { AnyStateMachine } from "xstate";
 import { toDirectedGraph } from "xstate/graph";
-
+import { STATE_VISUALIZER_GRAPH_SYNTAX } from "../config";
 import type {
 	MachineGraphEdge,
 	MachineGraphNode,
@@ -64,7 +64,12 @@ const getNodePathSegments = (
 		return [];
 	}
 
-	return nodeId.replace(`${machine.id}.`, "").split(".");
+	return nodeId
+		.replace(
+			`${machine.id}${STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR}`,
+			"",
+		)
+		.split(STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR);
 };
 
 const resolveStateConfig = (
@@ -166,7 +171,8 @@ const collectGuardKeys = (guard: unknown): string[] => {
 	const guardType =
 		typeof guardRecord.type === "string" ? guardRecord.type : null;
 	const guardKeys =
-		guardType && !guardType.startsWith("xstate.")
+		guardType &&
+		!guardType.startsWith(STATE_VISUALIZER_GRAPH_SYNTAX.MACHINE_GUARD_PREFIX)
 			? [guardType, ...nestedGuardKeys]
 			: nestedGuardKeys;
 
@@ -268,7 +274,7 @@ const getGuardFromMachineConfig = (
 				return null;
 			}
 
-			return guardKeys.join(" & ");
+			return guardKeys.join(STATE_VISUALIZER_GRAPH_SYNTAX.GUARD_DELIMITER);
 		}
 	}
 
@@ -282,7 +288,7 @@ const getEdgeGuardLabel = (
 	const guardKeys = collectGuardKeys(edge.transition.guard);
 
 	if (guardKeys.length > 0) {
-		return guardKeys.join(" & ");
+		return guardKeys.join(STATE_VISUALIZER_GRAPH_SYNTAX.GUARD_DELIMITER);
 	}
 
 	const machineConfigGuard = getGuardFromMachineConfig(machine, edge);
@@ -306,7 +312,9 @@ const getEdgeGuardLabel = (
 		return null;
 	}
 
-	return [...new Set(labelGuardKeys)].join(" & ");
+	return [...new Set(labelGuardKeys)].join(
+		STATE_VISUALIZER_GRAPH_SYNTAX.GUARD_DELIMITER,
+	);
 };
 
 const toMachineGraphEdge = (
@@ -317,7 +325,13 @@ const toMachineGraphEdge = (
 	const guard = getEdgeGuardLabel(machine, edge);
 
 	return {
-		id: `${edge.source.id}:${edge.target.id}:${edge.transition.eventType}:${guard ?? "unguarded"}:${index}`,
+		id: [
+			edge.source.id,
+			edge.target.id,
+			edge.transition.eventType,
+			guard ?? STATE_VISUALIZER_GRAPH_SYNTAX.UNGUARDED_EDGE_TOKEN,
+			String(index),
+		].join(STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_ID_SEGMENT_SEPARATOR),
 		source: edge.source.id,
 		target: edge.target.id,
 		eventType: edge.transition.eventType,
@@ -366,7 +380,11 @@ export const createMachineGraphSnapshot = ({
 	);
 	const guardKeys = [
 		...new Set(
-			edges.flatMap((edge) => (edge.guard ? edge.guard.split(" & ") : [])),
+			edges.flatMap((edge) =>
+				edge.guard
+					? edge.guard.split(STATE_VISUALIZER_GRAPH_SYNTAX.GUARD_DELIMITER)
+					: [],
+			),
 		),
 	];
 

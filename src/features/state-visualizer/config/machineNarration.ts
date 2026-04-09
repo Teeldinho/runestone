@@ -6,6 +6,7 @@ export const STATE_VISUALIZER_DETAILS_COPY = {
 	ACTIVE_STATE_LABEL: "Current state",
 	ACTIVE_STATE_FALLBACK: "No active state detected",
 	ACTIVE_STATE_SUMMARY_PREFIX: "Current machine mode:",
+	UNKNOWN_STATE_LABEL: "Unknown",
 	GUARDS_LABEL: "Requirements",
 	GUARDS_EMPTY: "No special requirements right now.",
 	TRANSITIONS_LABEL: "Possible transitions",

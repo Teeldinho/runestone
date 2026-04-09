@@ -12,10 +12,24 @@ import { GAME_PAGE_COPY } from "@/pages/game/config";
 
 import { useGamePage } from "./useGamePage";
 
+const { TEST_AUDIO_STATES, TEST_STATE_VISUALIZER_SECTION_IDS } = vi.hoisted(
+	() => ({
+		TEST_STATE_VISUALIZER_SECTION_IDS: {
+			DUNGEON: "dungeon",
+			CAMERA: "camera",
+			AUDIO: "audio",
+			PLAYER: "player",
+		} as const,
+		TEST_AUDIO_STATES: {
+			PLAYING: "playing",
+		} as const,
+	}),
+);
+
 vi.mock("@/features/audio-manager", () => ({
 	audioMachine: {},
 	useAudioController: vi.fn().mockReturnValue({
-		audioState: "playing",
+		audioState: TEST_AUDIO_STATES.PLAYING,
 		handleAudioPlayRequest: vi.fn(),
 		handleAudioMuteToggle: vi.fn(),
 		isAudioMuted: false,
@@ -48,6 +62,7 @@ vi.mock("@/features/camera-system", () => ({
 }));
 
 vi.mock("@/features/state-visualizer", () => ({
+	STATE_VISUALIZER_SECTION_IDS: TEST_STATE_VISUALIZER_SECTION_IDS,
 	useStateVisualizer: vi.fn(),
 }));
 
@@ -123,16 +138,16 @@ describe("useGamePage", () => {
 		expect(useStateVisualizer).toHaveBeenCalledWith(
 			expect.objectContaining({
 				machinesBySectionId: {
-					audio: {},
-					camera: {},
-					dungeon: {},
-					player: {},
+					[TEST_STATE_VISUALIZER_SECTION_IDS.AUDIO]: {},
+					[TEST_STATE_VISUALIZER_SECTION_IDS.CAMERA]: {},
+					[TEST_STATE_VISUALIZER_SECTION_IDS.DUNGEON]: {},
+					[TEST_STATE_VISUALIZER_SECTION_IDS.PLAYER]: {},
 				},
 				stateValuesBySectionId: {
-					dungeon: ROOM_IDS.ENTRANCE,
-					camera: CAMERA_MODES.FREE_ORBITAL,
-					audio: "playing",
-					player: {
+					[TEST_STATE_VISUALIZER_SECTION_IDS.DUNGEON]: ROOM_IDS.ENTRANCE,
+					[TEST_STATE_VISUALIZER_SECTION_IDS.CAMERA]: CAMERA_MODES.FREE_ORBITAL,
+					[TEST_STATE_VISUALIZER_SECTION_IDS.AUDIO]: TEST_AUDIO_STATES.PLAYING,
+					[TEST_STATE_VISUALIZER_SECTION_IDS.PLAYER]: {
 						health: "alive",
 						movement: "idle",
 					},

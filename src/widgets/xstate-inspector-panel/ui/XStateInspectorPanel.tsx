@@ -2,7 +2,11 @@ import { Background, Controls, ReactFlow } from "@xyflow/react";
 
 import type { MachineGraphSection } from "@/features/state-visualizer";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui";
-import { INSPECTOR_FLOW_EDGE_VISUALS } from "../config";
+import {
+	INSPECTOR_FLOW_BACKGROUND,
+	INSPECTOR_FLOW_EDGE_VISUALS,
+	INSPECTOR_GUARD_LEGEND_LAYOUT,
+} from "../config";
 
 import "@xyflow/react/dist/style.css";
 
@@ -72,8 +76,8 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 									<span
 										className="mt-0.5 inline-block rounded-full"
 										style={{
-											width: "11px",
-											height: "11px",
+											width: `${INSPECTOR_GUARD_LEGEND_LAYOUT.DOT_SIZE_PX}px`,
+											height: `${INSPECTOR_GUARD_LEGEND_LAYOUT.DOT_SIZE_PX}px`,
 											backgroundColor: guardIndicator.color,
 										}}
 									/>
@@ -81,8 +85,8 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 										{guardIndicator.label}
 									</span>
 									<span className="ml-auto inline-flex shrink-0 items-center rounded border border-panel-border/80 bg-panel px-1.5 py-0.5 text-[10px] font-medium whitespace-nowrap text-muted-foreground">
-										{guardIndicator.transitionCount} transition
-										{guardIndicator.transitionCount === 1 ? "" : "s"}
+										{guardIndicator.transitionCount}{" "}
+										{guardIndicator.transitionCountLabel}
 									</span>
 								</div>
 							),
@@ -112,7 +116,11 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 						proOptions={{ hideAttribution: true }}
 						style={{ background: "var(--background)" }}
 					>
-						<Background gap={20} size={1} color="var(--panel-border)" />
+						<Background
+							gap={INSPECTOR_FLOW_BACKGROUND.GAP_PX}
+							size={INSPECTOR_FLOW_BACKGROUND.SIZE_PX}
+							color="var(--panel-border)"
+						/>
 						<Controls position="bottom-right" showInteractive={false} />
 					</ReactFlow>
 				) : (

@@ -1,5 +1,3 @@
-import type { StateVisualizerSectionId } from "../model/types";
-
 export const MACHINE_GRAPH_LAYOUT = {
 	DIRECTION: "TB",
 	NODE_WIDTH: 160,
@@ -8,15 +6,33 @@ export const MACHINE_GRAPH_LAYOUT = {
 	RANK_SEPARATION: 92,
 } as const;
 
+export const STATE_VISUALIZER_SECTION_IDS = {
+	DUNGEON: "dungeon",
+	CAMERA: "camera",
+	AUDIO: "audio",
+	PLAYER: "player",
+} as const;
+
+export const STATE_VISUALIZER_GRAPH_SYNTAX = {
+	GUARD_DELIMITER: " & ",
+	EDGE_FLOW_SEPARATOR: " -> ",
+	EDGE_PAIR_SEPARATOR: "|",
+	EDGE_ID_SEGMENT_SEPARATOR: ":",
+	NODE_PATH_SEPARATOR: ".",
+	MACHINE_GUARD_PREFIX: "xstate.",
+	UNGUARDED_EDGE_TOKEN: "unguarded",
+	STATE_PATH_DELIMITER: " | ",
+} as const;
+
 export const STATE_VISUALIZER_SECTIONS: Array<{
-	id: StateVisualizerSectionId;
+	id: (typeof STATE_VISUALIZER_SECTION_IDS)[keyof typeof STATE_VISUALIZER_SECTION_IDS];
 	label: string;
 }> = [
-	{ id: "dungeon", label: "Dungeon" },
-	{ id: "camera", label: "Camera" },
-	{ id: "audio", label: "Audio" },
-	{ id: "player", label: "Player" },
+	{ id: STATE_VISUALIZER_SECTION_IDS.DUNGEON, label: "Dungeon" },
+	{ id: STATE_VISUALIZER_SECTION_IDS.CAMERA, label: "Camera" },
+	{ id: STATE_VISUALIZER_SECTION_IDS.AUDIO, label: "Audio" },
+	{ id: STATE_VISUALIZER_SECTION_IDS.PLAYER, label: "Player" },
 ] as const;
 
-export const STATE_VISUALIZER_DEFAULT_OPEN_SECTION: StateVisualizerSectionId =
-	"dungeon";
+export const STATE_VISUALIZER_DEFAULT_OPEN_SECTION =
+	STATE_VISUALIZER_SECTION_IDS.DUNGEON;
