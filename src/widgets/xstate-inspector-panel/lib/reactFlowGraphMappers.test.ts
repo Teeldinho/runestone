@@ -60,21 +60,110 @@ describe("reactFlowGraphMappers", () => {
 		});
 	});
 
-	it("maps graph edges and renders guard fallback labels", () => {
+	it("maps graph edges with lane offsets and subtle styles", () => {
 		const flowEdges = mapGraphEdgesToFlowEdges(GRAPH_EDGES);
+		const enterGuardRoomEdge = flowEdges.find(
+			(edge) => edge.id === `${ROOM_IDS.ENTRANCE}:${ROOM_IDS.GUARD_ROOM}`,
+		);
+		const returnToEntranceEdge = flowEdges.find(
+			(edge) => edge.id === `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.ENTRANCE}`,
+		);
 
 		expect(flowEdges).toHaveLength(2);
-		expect(flowEdges).toContainEqual(
+		expect(enterGuardRoomEdge).toEqual(
 			expect.objectContaining({
+				label: "",
+				pathOptions: { offset: 18 },
+				type: "guard-marker",
+				data: expect.objectContaining({
+					markerLaneOffset: -18,
+					guardMarkers: [
+						expect.objectContaining({
+							guardKey: "hasKey",
+							guardLabel: "Has Key",
+							color: "#f59e0b",
+							showDirectionIndicator: false,
+						}),
+					],
+				}),
+				style: {
+					stroke: "var(--dungeon-gold)",
+					strokeDasharray: "5 4",
+					strokeOpacity: 0.55,
+				},
+			}),
+		);
+		expect(returnToEntranceEdge).toEqual(
+			expect.objectContaining({
+				label: "",
+				pathOptions: { offset: 18 },
+				data: expect.objectContaining({
+					markerLaneOffset: 18,
+					guardMarkers: [],
+				}),
+				style: {
+					stroke: "var(--panel-border)",
+					strokeOpacity: 0.32,
+				},
+			}),
+		);
+		expect(enterGuardRoomEdge?.animated).toBe(false);
+		expect(returnToEntranceEdge?.animated).toBe(false);
+	});
+
+	it("flags direction indicators for shared guards on reverse edges", () => {
+		const flowEdges = mapGraphEdgesToFlowEdges([
+			{
+				eventType: "ENTER_LIBRARY",
+				guard: "isNearInteractable",
 				id: `${ROOM_IDS.ENTRANCE}:${ROOM_IDS.GUARD_ROOM}`,
-				label: "Enter Guard Room",
-			}),
-		);
-		expect(flowEdges).toContainEqual(
-			expect.objectContaining({
+				source: ROOM_IDS.ENTRANCE,
+				target: ROOM_IDS.GUARD_ROOM,
+			},
+			{
+				eventType: "RETURN_TO_ENTRANCE",
+				guard: "isNearInteractable",
 				id: `${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.ENTRANCE}`,
-				label: "Return to Entrance",
-			}),
+				source: ROOM_IDS.GUARD_ROOM,
+				target: ROOM_IDS.ENTRANCE,
+			},
+		]);
+
+		expect(flowEdges[0]?.data?.guardMarkers[0]?.showDirectionIndicator).toBe(
+			true,
 		);
+		expect(flowEdges[1]?.data?.guardMarkers[0]?.showDirectionIndicator).toBe(
+			true,
+		);
+	});
+
+	it("keeps same guard color stable and different guards distinct", () => {
+		const flowEdges = mapGraphEdgesToFlowEdges([
+			{
+				eventType: "ENTER_GUARD_ROOM",
+				guard: "isNearInteractable",
+				id: "entrance:guard-room",
+				source: ROOM_IDS.ENTRANCE,
+				target: ROOM_IDS.GUARD_ROOM,
+			},
+			{
+				eventType: "RETURN_TO_ENTRANCE",
+				guard: "isNearInteractable",
+				id: "guard-room:entrance",
+				source: ROOM_IDS.GUARD_ROOM,
+				target: ROOM_IDS.ENTRANCE,
+			},
+			{
+				eventType: "ENTER_TREASURY",
+				guard: "treasuryCanBeEntered",
+				id: "guard-room:treasury",
+				source: ROOM_IDS.GUARD_ROOM,
+				target: "treasury",
+			},
+		]);
+
+		const sameGuardColor = flowEdges[0]?.data?.guardMarkers[0]?.color;
+		expect(flowEdges[1]?.data?.guardMarkers[0]?.color).toBe(sameGuardColor);
+		expect(flowEdges[2]?.data?.guardMarkers[0]?.color).not.toBe(sameGuardColor);
 	});
 });

@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 
@@ -10,6 +10,8 @@ import {
 	type PositionedMachineGraphNode,
 	StateVisualizerWorkspaceProvider,
 } from "@/features/state-visualizer";
+
+import { INSPECTOR_REACT_FLOW_SECTION_PADDING } from "../config";
 
 import { useXStateInspectorPanel } from "./useXStateInspectorPanel";
 
@@ -50,6 +52,15 @@ const SECTIONS: MachineGraphSection[] = [
 		edges: GRAPH_EDGES,
 		positionedNodes: GRAPH_NODES,
 	},
+	{
+		id: "camera",
+		label: "Camera",
+		activeStateLabel: "Free Orbital",
+		guardKeys: [],
+		nodes: [],
+		edges: [],
+		positionedNodes: [],
+	},
 ];
 
 describe("useXStateInspectorPanel", () => {
@@ -70,16 +81,34 @@ describe("useXStateInspectorPanel", () => {
 
 		expect(result.current.sectionTabs).toEqual([
 			{ id: "dungeon", label: "Dungeon" },
+			{ id: "camera", label: "Camera" },
 		]);
 		expect(result.current.selectedSectionId).toBe("dungeon");
 		expect(result.current.selectedSection).not.toBeNull();
 		expect(result.current.selectedSection?.flowNodes).toHaveLength(2);
 		expect(result.current.selectedSection?.flowEdges).toHaveLength(1);
+		expect(result.current.selectedSection?.guardIndicators).toEqual([
+			expect.objectContaining({
+				label: "The guard has been defeated and the treasure key is in hand",
+				color: "#f59e0b",
+				transitionCount: 1,
+			}),
+		]);
+		expect(result.current.selectedFlowFitViewPadding).toBe(0.16);
 		expect(result.current.selectedSection?.transitionDetails[0]).toMatchObject({
 			eventLabel: "Enter Guard Room",
 			requirementLabel:
 				"The guard has been defeated and the treasure key is in hand",
 			flowLabel: "Entrance -> Guard Room",
 		});
+
+		act(() => {
+			result.current.handleSelectedSectionIdChange("camera");
+		});
+
+		expect(result.current.selectedSectionId).toBe("camera");
+		expect(result.current.selectedFlowFitViewPadding).toBe(
+			INSPECTOR_REACT_FLOW_SECTION_PADDING.CAMERA,
+		);
 	});
 });
