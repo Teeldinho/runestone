@@ -1,155 +1,53 @@
 import {
 	BaseEdge,
+	type Edge,
 	EdgeLabelRenderer,
 	type EdgeProps,
-	getSmoothStepPath,
 } from "@xyflow/react";
-
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/shared/ui";
-import {
-	INSPECTOR_COPY,
-	INSPECTOR_FLOW_EDGE_LAYOUT,
-	INSPECTOR_GUARD_MARKER_INTERACTION,
-} from "../config";
 import type {
 	InspectorFlowEdgeData,
 	InspectorFlowEdgeGuardMarker,
 } from "../lib";
+import { useGuardMarkerEdge } from "../model";
+import { GuardMarker } from "./GuardMarker";
 
-export function GuardMarkerEdge({
-	id,
-	sourceX,
-	sourceY,
-	targetX,
-	targetY,
-	sourcePosition,
-	targetPosition,
-	markerEnd,
-	style,
-	pathOptions,
-	data,
-}: EdgeProps) {
-	const edgeData = data as InspectorFlowEdgeData | undefined;
-	const smoothStepPathOptions = (pathOptions ?? {}) as {
-		borderRadius?: number;
-		offset?: number;
-	};
-
-	const [edgePath, labelX, labelY] = getSmoothStepPath({
-		sourceX,
-		sourceY,
-		targetX,
-		targetY,
-		sourcePosition,
-		targetPosition,
-		borderRadius: smoothStepPathOptions.borderRadius,
-		offset: smoothStepPathOptions.offset,
-	});
-
-	const markerCount = edgeData?.guardMarkers.length ?? 0;
-	const markerLaneOffset = edgeData?.markerLaneOffset ?? 0;
-	const isDownwardDirection = sourceY <= targetY;
+export function GuardMarkerEdge(props: EdgeProps<Edge<InspectorFlowEdgeData>>) {
+	const edge = useGuardMarkerEdge(props);
 
 	return (
 		<>
-			<BaseEdge id={id} path={edgePath} markerEnd={markerEnd} style={style} />
-			{markerCount > 0 ? (
+			<BaseEdge
+				id={props.id}
+				path={edge.edgePath}
+				markerEnd={props.markerEnd}
+				style={props.style}
+			/>
+			{edge.hasMarkers ? (
 				<EdgeLabelRenderer>
 					<div className="pointer-events-none absolute inset-0">
-						{edgeData?.guardMarkers.map(
+						{edge.markers.map(
 							(
 								guardMarker: InspectorFlowEdgeGuardMarker,
 								markerIndex: number,
-							) => {
-								const markerDirectionOffset = guardMarker.showDirectionIndicator
-									? isDownwardDirection
-										? INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_DIRECTION_OFFSET_PX
-										: -INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_DIRECTION_OFFSET_PX
-									: 0;
-								const markerArrowOffset =
-									INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_SIZE_PX / 2 +
-									INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_ARROW_OFFSET_EXTRA_PX;
-
-								return (
-									<HoverCard
-										openDelay={
-											INSPECTOR_GUARD_MARKER_INTERACTION.HOVER_OPEN_DELAY_MS
-										}
-										closeDelay={
-											INSPECTOR_GUARD_MARKER_INTERACTION.HOVER_CLOSE_DELAY_MS
-										}
-										key={guardMarker.id}
-									>
-										<HoverCardTrigger asChild>
-											<button
-												type="button"
-												className="pointer-events-auto nodrag nopan absolute flex items-center justify-center rounded-full"
-												style={{
-													width: `${INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_HIT_AREA_PX}px`,
-													height: `${INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_HIT_AREA_PX}px`,
-													left:
-														labelX +
-														markerLaneOffset *
-															INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_LANE_SEPARATION_FACTOR +
-														(markerIndex - (markerCount - 1) / 2) *
-															INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_GAP_PX,
-													top: labelY + markerDirectionOffset,
-													transform:
-														INSPECTOR_GUARD_MARKER_INTERACTION.TRANSLATE_CENTER,
-												}}
-												aria-label={guardMarker.guardLabel}
-											>
-												<span
-													className="rounded-full border border-panel-border shadow-sm"
-													style={{
-														width: `${INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_SIZE_PX}px`,
-														height: `${INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_SIZE_PX}px`,
-														backgroundColor: guardMarker.color,
-														boxShadow: `0 0 0 1px ${INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_RING_COLOR}`,
-													}}
-												/>
-												{guardMarker.showDirectionIndicator ? (
-													<span
-														className="pointer-events-none absolute text-[9px] font-semibold leading-none text-panel-title"
-														style={{
-															left: INSPECTOR_GUARD_MARKER_INTERACTION.POSITION_CENTER_PERCENT,
-															top: isDownwardDirection
-																? `calc(${INSPECTOR_GUARD_MARKER_INTERACTION.POSITION_CENTER_PERCENT} + ${markerArrowOffset}px)`
-																: `calc(${INSPECTOR_GUARD_MARKER_INTERACTION.POSITION_CENTER_PERCENT} - ${markerArrowOffset}px)`,
-															transform:
-																INSPECTOR_GUARD_MARKER_INTERACTION.TRANSLATE_CENTER,
-														}}
-													>
-														{isDownwardDirection
-															? INSPECTOR_GUARD_MARKER_INTERACTION
-																	.DIRECTION_ARROW_BY_LABEL.DOWN
-															: INSPECTOR_GUARD_MARKER_INTERACTION
-																	.DIRECTION_ARROW_BY_LABEL.UP}
-													</span>
-												) : null}
-											</button>
-										</HoverCardTrigger>
-										<HoverCardContent className="w-72">
-											<p className="text-[11px] font-semibold text-panel-title">
-												{INSPECTOR_COPY.GUARD_TOOLTIP_TITLE}
-											</p>
-											<p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-												{guardMarker.guardLabel}
-											</p>
-											{guardMarker.showDirectionIndicator ? (
-												<p className="mt-1 text-[10px] text-muted-foreground/80">
-													{INSPECTOR_COPY.DIRECTION_PREFIX}{" "}
-													{isDownwardDirection
-														? INSPECTOR_GUARD_MARKER_INTERACTION
-																.DIRECTION_TEXT_BY_LABEL.DOWN
-														: INSPECTOR_GUARD_MARKER_INTERACTION
-																.DIRECTION_TEXT_BY_LABEL.UP}
-												</p>
-											) : null}
-										</HoverCardContent>
-									</HoverCard>
-								);
-							},
+							) => (
+								<GuardMarker
+									key={guardMarker.id}
+									guardMarker={guardMarker}
+									collisionSeed={guardMarker.id}
+									isSelfLoopTransition={props.source === props.target}
+									markerIndex={markerIndex}
+									markerCount={edge.markerCount}
+									markerLaneOffset={edge.markerLaneOffset}
+									labelX={edge.labelX}
+									labelY={edge.labelY}
+									sourceX={props.sourceX}
+									sourceY={props.sourceY}
+									targetX={props.targetX}
+									targetY={props.targetY}
+									sourcePosition={props.sourcePosition}
+									targetPosition={props.targetPosition}
+								/>
+							),
 						)}
 					</div>
 				</EdgeLabelRenderer>

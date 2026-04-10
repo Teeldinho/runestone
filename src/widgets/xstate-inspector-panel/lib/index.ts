@@ -1,3 +1,8 @@
+export {
+	type GuardMarkerCenterPoint,
+	type GuardMarkerNodeClearanceInput,
+	resolveGuardMarkerNodeClearance,
+} from "./guardMarkerNodeClearance";
 export { createGuardColorByKey } from "./guardMarkerPalette";
 export {
 	type InspectorFlowEdge,

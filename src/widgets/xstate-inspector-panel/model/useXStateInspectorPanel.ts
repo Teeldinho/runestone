@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { type CSSProperties, useCallback, useEffect, useMemo } from "react";
 
 import {
 	getMachineGraphGuardLabel,
@@ -14,6 +14,7 @@ import {
 
 import {
 	INSPECTOR_COPY,
+	INSPECTOR_GUARD_LEGEND_LAYOUT,
 	INSPECTOR_ID_SEGMENT_SEPARATOR,
 	INSPECTOR_ID_SEGMENTS,
 	INSPECTOR_REACT_FLOW_DEFAULTS,
@@ -48,6 +49,7 @@ type InspectorGuardIndicator = {
 	color: string;
 	transitionCount: number;
 	transitionCountLabel: string;
+	legendDotStyles: CSSProperties;
 };
 
 type InspectorTransitionDetail = {
@@ -66,12 +68,13 @@ type InspectorMachineSectionViewModel = {
 	sectionDescription: string;
 	guardDetails: InspectorGuardDetail[];
 	guardIndicators: InspectorGuardIndicator[];
-	graphEdges: MachineGraphSection["edges"];
-	graphNodes: MachineGraphSection["positionedNodes"];
-	stateDetails: InspectorStateDetail[];
 	transitionDetails: InspectorTransitionDetail[];
 	flowEdges: InspectorFlowEdge[];
 	flowNodes: InspectorFlowNode[];
+	graphEdges: MachineGraphSection["edges"];
+	graphNodes: MachineGraphSection["positionedNodes"];
+	stateDetails: InspectorStateDetail[];
+	hasGuardIndicators: boolean;
 };
 
 type XStateInspectorPanelViewModel = {
@@ -85,6 +88,9 @@ type XStateInspectorPanelViewModel = {
 	sections: InspectorMachineSectionViewModel[];
 	reactFlowDefaults: typeof INSPECTOR_REACT_FLOW_DEFAULTS;
 	selectedFlowFitViewPadding: number;
+	tabsListStyles: CSSProperties;
+	hasSelectedSection: boolean;
+	hasGuardIndicators: boolean;
 };
 
 const resolveSectionEdgeNodeLabel = (
@@ -144,6 +150,11 @@ export const useXStateInspectorPanel = ({
 								transitionCount === 1
 									? INSPECTOR_COPY.TRANSITION_LABEL_SINGULAR
 									: INSPECTOR_COPY.TRANSITION_LABEL_PLURAL,
+							legendDotStyles: {
+								width: `${INSPECTOR_GUARD_LEGEND_LAYOUT.DOT_SIZE_PX}px`,
+								height: `${INSPECTOR_GUARD_LEGEND_LAYOUT.DOT_SIZE_PX}px`,
+								backgroundColor: guardColorByKey[guardKey],
+							},
 						};
 					}),
 					graphEdges: section.edges,
@@ -177,8 +188,12 @@ export const useXStateInspectorPanel = ({
 							summary: `${eventLabel} ${INSPECTOR_COPY.TRANSITION_SUMMARY_MOVES_FROM} ${sourceLabel} ${INSPECTOR_COPY.TRANSITION_SUMMARY_TO} ${targetLabel}. ${STATE_VISUALIZER_DETAILS_COPY.TRANSITION_REQUIREMENT_PREFIX} ${requirementLabel}.`,
 						};
 					}),
-					flowEdges: mapGraphEdgesToFlowEdges(section.edges),
+					flowEdges: mapGraphEdgesToFlowEdges(
+						section.edges,
+						section.positionedNodes,
+					),
 					flowNodes: mapGraphNodesToFlowNodes(section.positionedNodes),
+					hasGuardIndicators: section.guardKeys.length > 0,
 				};
 			}),
 		[sections],
@@ -228,6 +243,16 @@ export const useXStateInspectorPanel = ({
 			selectedSectionId === STATE_VISUALIZER_SECTION_IDS.CAMERA
 				? INSPECTOR_REACT_FLOW_SECTION_PADDING.CAMERA
 				: INSPECTOR_REACT_FLOW_DEFAULTS.FIT_VIEW_PADDING,
+		tabsListStyles: {
+			gridTemplateColumns: `repeat(${sectionViewModels.length}, minmax(0, 1fr))`,
+		},
+		hasSelectedSection: !!(
+			sectionViewModels.find((section) => section.id === selectedSectionId) ??
+			null
+		),
+		hasGuardIndicators: !!sectionViewModels.find(
+			(section) => section.id === selectedSectionId,
+		)?.hasGuardIndicators,
 	};
 };
 

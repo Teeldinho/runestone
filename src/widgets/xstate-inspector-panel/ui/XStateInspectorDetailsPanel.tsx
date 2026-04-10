@@ -21,7 +21,7 @@ export function XStateInspectorDetailsPanel({
 				style={{ borderColor: "var(--panel-border)" }}
 			>
 				<h2 className="rune-text">{INSPECTOR_COPY.DETAILS_PANEL_TITLE}</h2>
-				{inspectorPanel.selectedSection ? (
+				{inspectorPanel.hasSelectedSection && inspectorPanel.selectedSection ? (
 					<Badge variant="outline" className="text-[10px]">
 						{inspectorPanel.selectedSection.label}
 					</Badge>
@@ -29,7 +29,7 @@ export function XStateInspectorDetailsPanel({
 			</div>
 
 			<ScrollArea className="min-h-0 flex-1">
-				{inspectorPanel.selectedSection ? (
+				{inspectorPanel.hasSelectedSection && inspectorPanel.selectedSection ? (
 					<div className="space-y-4 p-4">
 						<section className="space-y-1">
 							<p className="text-[10px] uppercase tracking-widest text-muted-foreground">
