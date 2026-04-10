@@ -18,6 +18,7 @@ import {
 import {
 	INSPECTOR_FLOW_EDGE_LAYOUT,
 	INSPECTOR_FLOW_EDGE_VISUALS,
+	INSPECTOR_GUARD_MARKER_INTERACTION,
 } from "../config";
 
 import {
@@ -112,7 +113,9 @@ describe("reactFlowGraphMappers", () => {
 								FLOOR_ONE_GUARD_KEYS.TREASURY_CAN_BE_ENTERED,
 							),
 							color: INSPECTOR_FLOW_EDGE_LAYOUT.GUARDED_EDGE_STROKE_COLOR,
-							showDirectionIndicator: false,
+							directionIndicatorMode:
+								INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE
+									.SINGLE,
 						}),
 					],
 				}),
@@ -145,7 +148,7 @@ describe("reactFlowGraphMappers", () => {
 		expect(returnToEntranceEdge?.animated).toBe(false);
 	});
 
-	it("flags direction indicators for shared guards on reverse edges", () => {
+	it("collapses shared reverse guard markers into one dual-direction marker", () => {
 		const flowEdges = mapGraphEdgesToFlowEdges([
 			{
 				eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
@@ -163,11 +166,26 @@ describe("reactFlowGraphMappers", () => {
 			},
 		]);
 
-		expect(flowEdges[0]?.data?.guardMarkers[0]?.showDirectionIndicator).toBe(
-			true,
+		expect(flowEdges[0]?.data?.guardMarkers[0]?.directionIndicatorMode).toBe(
+			INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE.DUAL,
 		);
-		expect(flowEdges[1]?.data?.guardMarkers[0]?.showDirectionIndicator).toBe(
-			true,
+		expect(flowEdges[1]?.data?.guardMarkers).toHaveLength(0);
+	});
+
+	it("does not render direction arrows for self-loop guards", () => {
+		const selfLoopEdgeId = `${ROOM_IDS.GUARD_ROOM}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_ID_SEGMENT_SEPARATOR}${ROOM_IDS.GUARD_ROOM}`;
+		const flowEdges = mapGraphEdgesToFlowEdges([
+			{
+				eventType: DUNGEON_EVENTS.PICK_UP_KEY,
+				guard: FLOOR_ONE_GUARD_KEYS.CAN_PICK_UP_TREASURE_KEY,
+				id: selfLoopEdgeId,
+				source: ROOM_IDS.GUARD_ROOM,
+				target: ROOM_IDS.GUARD_ROOM,
+			},
+		]);
+
+		expect(flowEdges[0]?.data?.guardMarkers[0]?.directionIndicatorMode).toBe(
+			INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE.NONE,
 		);
 	});
 
@@ -189,15 +207,78 @@ describe("reactFlowGraphMappers", () => {
 			},
 			{
 				eventType: DUNGEON_EVENTS.ENTER_TREASURY,
-				guard: FLOOR_ONE_GUARD_KEYS.TREASURY_CAN_BE_ENTERED,
+				guard: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
 				id: TEST_GRAPH_EDGE_IDS.GUARD_ROOM_TO_TREASURY,
 				source: ROOM_IDS.GUARD_ROOM,
 				target: ROOM_IDS.TREASURY,
 			},
+			{
+				eventType: DUNGEON_EVENTS.ENTER_EXIT,
+				guard: FLOOR_ONE_GUARD_KEYS.TREASURY_CAN_BE_ENTERED,
+				id: `${ROOM_IDS.TREASURY}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_ID_SEGMENT_SEPARATOR}${ROOM_IDS.EXIT}`,
+				source: ROOM_IDS.TREASURY,
+				target: ROOM_IDS.EXIT,
+			},
 		]);
 
-		const sameGuardColor = flowEdges[0]?.data?.guardMarkers[0]?.color;
-		expect(flowEdges[1]?.data?.guardMarkers[0]?.color).toBe(sameGuardColor);
-		expect(flowEdges[2]?.data?.guardMarkers[0]?.color).not.toBe(sameGuardColor);
+		const isNearInteractableColor = flowEdges[0]?.data?.guardMarkers[0]?.color;
+		expect(flowEdges[2]?.data?.guardMarkers[0]?.color).toBe(
+			isNearInteractableColor,
+		);
+		expect(flowEdges[3]?.data?.guardMarkers[0]?.color).not.toBe(
+			isNearInteractableColor,
+		);
+	});
+
+	it("assigns collision group slots for markers in the same lane bucket", () => {
+		const collisionNodes: PositionedMachineGraphNode[] = [
+			{
+				id: ROOM_IDS.ENTRANCE,
+				isActive: true,
+				kind: STATE_VISUALIZER_NODE_KINDS.STATE,
+				label: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+				position: { x: 100, y: 100 },
+			},
+			{
+				id: ROOM_IDS.GUARD_ROOM,
+				isActive: false,
+				kind: STATE_VISUALIZER_NODE_KINDS.STATE,
+				label: ROOM_LABELS[ROOM_IDS.GUARD_ROOM],
+				position: { x: 100, y: 300 },
+			},
+		];
+		const flowEdges = mapGraphEdgesToFlowEdges(
+			[
+				{
+					eventType: DUNGEON_EVENTS.ENTER_GUARD_ROOM,
+					guard: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+					id: `${TEST_GRAPH_EDGE_IDS.ENTRANCE_TO_GUARD_ROOM}:collisionA`,
+					source: ROOM_IDS.ENTRANCE,
+					target: ROOM_IDS.GUARD_ROOM,
+				},
+				{
+					eventType: DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
+					guard: FLOOR_ONE_GUARD_KEYS.TREASURY_CAN_BE_ENTERED,
+					id: `${TEST_GRAPH_EDGE_IDS.ENTRANCE_TO_GUARD_ROOM}:collisionB`,
+					source: ROOM_IDS.ENTRANCE,
+					target: ROOM_IDS.GUARD_ROOM,
+				},
+			],
+			collisionNodes,
+		);
+		const collisionMarkers = flowEdges.flatMap((flowEdge) =>
+			(flowEdge.data?.guardMarkers ?? []).map((marker) => ({
+				id: marker.id,
+				collisionOrder: marker.collisionOrder,
+				collisionGroupSize: marker.collisionGroupSize,
+			})),
+		);
+
+		expect(collisionMarkers).toHaveLength(2);
+		expect(collisionMarkers[0]?.collisionGroupSize).toBe(2);
+		expect(collisionMarkers[1]?.collisionGroupSize).toBe(2);
+		expect(
+			new Set(collisionMarkers.map((marker) => marker.collisionOrder)),
+		).toEqual(new Set([0, 1]));
 	});
 });
