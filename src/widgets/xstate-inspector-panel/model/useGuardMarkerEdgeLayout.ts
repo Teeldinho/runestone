@@ -1,6 +1,6 @@
 import type { Position } from "@xyflow/react";
 import type { CSSProperties } from "react";
-import { useResponsiveGameLayout } from "@/features/responsive-layout";
+import { useResponsiveLayout } from "@/shared/lib";
 import {
 	INSPECTOR_FLOW_EDGE_LAYOUT,
 	INSPECTOR_GUARD_MARKER_INTERACTION,
@@ -77,7 +77,7 @@ export function useGuardMarkerEdgeLayout({
 	directionIndicatorMode,
 	markerColor,
 }: GuardMarkerEdgeLayoutInput): GuardMarkerEdgeLayoutViewModel {
-	const { isDesktopLayout, isLandscape } = useResponsiveGameLayout();
+	const { isDesktopLayout, isLandscape } = useResponsiveLayout();
 	const isMobileTabletLandscape = !isDesktopLayout && isLandscape;
 
 	const {
@@ -114,7 +114,7 @@ export function useGuardMarkerEdgeLayout({
 
 	const deltaX = Math.abs(targetX - sourceX);
 	const deltaY = Math.abs(targetY - sourceY);
-	const isHorizontal = deltaX > deltaY;
+	const isHorizontal = deltaX > deltaY || !isDesktopLayout;
 
 	const isPositiveDirection = isHorizontal
 		? sourceX <= targetX
@@ -173,6 +173,16 @@ export function useGuardMarkerEdgeLayout({
 			? (collisionOrder - (collisionGroupSize - 1) / 2) *
 				INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_GLOBAL_COLLISION_STEP_PX
 			: 0;
+	const mobileTabletGlobalCollisionOffset =
+		!isDesktopLayout && collisionGroupSize > 1
+			? (collisionOrder - (collisionGroupSize - 1) / 2) *
+				INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_GLOBAL_COLLISION_STEP_PX
+			: 0;
+	const globalCollisionOffset = isDesktopLayout
+		? !isHorizontal
+			? desktopGlobalCollisionOffset
+			: 0
+		: mobileTabletGlobalCollisionOffset;
 	const clearedMarkerCenter = resolveGuardMarkerNodeClearance({
 		markerCenterX: labelX + markerXOffset + desktopVerticalCollisionJitter,
 		markerCenterY: labelY + markerYOffset,
@@ -194,10 +204,10 @@ export function useGuardMarkerEdgeLayout({
 	const resolvedMarkerCenter = isHorizontal
 		? {
 				x: clearedMarkerCenter.x,
-				y: clearedMarkerCenter.y + desktopGlobalCollisionOffset,
+				y: clearedMarkerCenter.y + globalCollisionOffset,
 			}
 		: {
-				x: clearedMarkerCenter.x + desktopGlobalCollisionOffset,
+				x: clearedMarkerCenter.x + globalCollisionOffset,
 				y: clearedMarkerCenter.y,
 			};
 

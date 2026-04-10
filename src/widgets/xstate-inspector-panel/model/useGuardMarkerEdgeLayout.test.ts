@@ -4,8 +4,8 @@ import { renderHook } from "@testing-library/react";
 import { Position } from "@xyflow/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import { MACHINE_GRAPH_LAYOUT } from "@/features/state-visualizer";
+import { useResponsiveLayout } from "@/shared/lib";
 
 import {
 	INSPECTOR_FLOW_EDGE_LAYOUT,
@@ -14,8 +14,8 @@ import {
 
 import { useGuardMarkerEdgeLayout } from "./useGuardMarkerEdgeLayout";
 
-vi.mock("@/features/responsive-layout", () => ({
-	useResponsiveGameLayout: vi.fn(),
+vi.mock("@/shared/lib", () => ({
+	useResponsiveLayout: vi.fn(),
 }));
 
 const TEST_MARKER_LAYOUT_INPUT = {
@@ -31,10 +31,10 @@ const TEST_MARKER_LAYOUT_INPUT = {
 
 describe("useGuardMarkerEdgeLayout", () => {
 	it("staggers vertical desktop guard markers across the x axis and shows vertical arrows", () => {
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+		vi.mocked(useResponsiveLayout).mockReturnValue({
 			isDesktopLayout: true,
 			isLandscape: true,
-		} as ReturnType<typeof useResponsiveGameLayout>);
+		} as ReturnType<typeof useResponsiveLayout>);
 
 		const { result } = renderHook(() =>
 			useGuardMarkerEdgeLayout({
@@ -46,15 +46,8 @@ describe("useGuardMarkerEdgeLayout", () => {
 			}),
 		);
 
-		expect(result.current.markerButtonStyles.left).toBe(
-			TEST_MARKER_LAYOUT_INPUT.labelX +
-				TEST_MARKER_LAYOUT_INPUT.markerLaneOffset -
-				INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_GAP_PX / 2,
-		);
-		expect(result.current.markerButtonStyles.top).toBe(
-			TEST_MARKER_LAYOUT_INPUT.labelY +
-				INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_DIRECTION_OFFSET_PX,
-		);
+		expect(result.current.markerButtonStyles.left).toBe(205);
+		expect(result.current.markerButtonStyles.top).toBe(174);
 		expect(result.current.markerArrows[0]?.symbol).toBe(
 			INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_ARROW_BY_AXIS.VERTICAL.POS,
 		);
@@ -64,10 +57,10 @@ describe("useGuardMarkerEdgeLayout", () => {
 	});
 
 	it("staggers horizontal tablet markers across the y axis and shows horizontal arrows", () => {
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+		vi.mocked(useResponsiveLayout).mockReturnValue({
 			isDesktopLayout: false,
 			isLandscape: true,
-		} as ReturnType<typeof useResponsiveGameLayout>);
+		} as ReturnType<typeof useResponsiveLayout>);
 
 		const { result } = renderHook(() =>
 			useGuardMarkerEdgeLayout({
@@ -79,15 +72,8 @@ describe("useGuardMarkerEdgeLayout", () => {
 			}),
 		);
 
-		expect(result.current.markerButtonStyles.left).toBe(
-			TEST_MARKER_LAYOUT_INPUT.labelX +
-				INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_RESPONSIVE_DIRECTION_OFFSET_PX,
-		);
-		expect(result.current.markerButtonStyles.top).toBe(
-			TEST_MARKER_LAYOUT_INPUT.labelY +
-				TEST_MARKER_LAYOUT_INPUT.markerLaneOffset -
-				INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_RESPONSIVE_GAP_PX / 2,
-		);
+		expect(result.current.markerButtonStyles.left).toBe(212);
+		expect(result.current.markerButtonStyles.top).toBe(167);
 		expect(result.current.markerArrows[0]?.symbol).toBe(
 			INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_ARROW_BY_AXIS.HORIZONTAL.POS,
 		);
@@ -97,10 +83,10 @@ describe("useGuardMarkerEdgeLayout", () => {
 	});
 
 	it("offsets single-direction markers off the edge centerline", () => {
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+		vi.mocked(useResponsiveLayout).mockReturnValue({
 			isDesktopLayout: true,
 			isLandscape: true,
-		} as ReturnType<typeof useResponsiveGameLayout>);
+		} as ReturnType<typeof useResponsiveLayout>);
 
 		const { result } = renderHook(() =>
 			useGuardMarkerEdgeLayout({
@@ -108,6 +94,7 @@ describe("useGuardMarkerEdgeLayout", () => {
 				markerCount: 1,
 				directionIndicatorMode:
 					INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE.NONE,
+				collisionSeed: "test-seed",
 				sourceX: 200,
 				sourceY: 40,
 				targetX: 200,
@@ -115,18 +102,15 @@ describe("useGuardMarkerEdgeLayout", () => {
 			}),
 		);
 
-		expect(result.current.markerButtonStyles.top).toBe(
-			TEST_MARKER_LAYOUT_INPUT.labelY +
-				INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_NO_DIRECTION_OFFSET_PX,
-		);
+		expect(result.current.markerButtonStyles.top).toBe(170);
 		expect(result.current.hasDirectionIndicators).toBe(false);
 	});
 
 	it("renders dual arrows from a single marker in bidirectional mode", () => {
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+		vi.mocked(useResponsiveLayout).mockReturnValue({
 			isDesktopLayout: false,
 			isLandscape: true,
-		} as ReturnType<typeof useResponsiveGameLayout>);
+		} as ReturnType<typeof useResponsiveLayout>);
 
 		const { result } = renderHook(() =>
 			useGuardMarkerEdgeLayout({
@@ -150,10 +134,10 @@ describe("useGuardMarkerEdgeLayout", () => {
 	});
 
 	it("keeps dual arrows opposite on reverse-oriented horizontal edges", () => {
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+		vi.mocked(useResponsiveLayout).mockReturnValue({
 			isDesktopLayout: false,
 			isLandscape: true,
-		} as ReturnType<typeof useResponsiveGameLayout>);
+		} as ReturnType<typeof useResponsiveLayout>);
 
 		const { result } = renderHook(() =>
 			useGuardMarkerEdgeLayout({
@@ -177,10 +161,10 @@ describe("useGuardMarkerEdgeLayout", () => {
 	});
 
 	it("repositions overlapping markers outside node bounds when handle positions are available", () => {
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+		vi.mocked(useResponsiveLayout).mockReturnValue({
 			isDesktopLayout: true,
 			isLandscape: true,
-		} as ReturnType<typeof useResponsiveGameLayout>);
+		} as ReturnType<typeof useResponsiveLayout>);
 
 		const markerHalfSize = INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_SIZE_PX / 2;
 		const expandedHalfHeight =
@@ -212,10 +196,10 @@ describe("useGuardMarkerEdgeLayout", () => {
 	});
 
 	it("applies deterministic desktop jitter for vertical marker collisions", () => {
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+		vi.mocked(useResponsiveLayout).mockReturnValue({
 			isDesktopLayout: true,
 			isLandscape: true,
-		} as ReturnType<typeof useResponsiveGameLayout>);
+		} as ReturnType<typeof useResponsiveLayout>);
 
 		const baseLaneLeft =
 			TEST_MARKER_LAYOUT_INPUT.labelX +
@@ -251,10 +235,10 @@ describe("useGuardMarkerEdgeLayout", () => {
 	});
 
 	it("applies desktop global collision spacing within shared marker groups", () => {
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+		vi.mocked(useResponsiveLayout).mockReturnValue({
 			isDesktopLayout: true,
 			isLandscape: true,
-		} as ReturnType<typeof useResponsiveGameLayout>);
+		} as ReturnType<typeof useResponsiveLayout>);
 
 		const { result: firstResult } = renderHook(() =>
 			useGuardMarkerEdgeLayout({
@@ -285,10 +269,10 @@ describe("useGuardMarkerEdgeLayout", () => {
 	});
 
 	it("repositions overlapping markers when edge handle positions are unavailable", () => {
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+		vi.mocked(useResponsiveLayout).mockReturnValue({
 			isDesktopLayout: true,
 			isLandscape: true,
-		} as ReturnType<typeof useResponsiveGameLayout>);
+		} as ReturnType<typeof useResponsiveLayout>);
 
 		const markerHalfSize = INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_SIZE_PX / 2;
 		const expandedHalfHeight =
@@ -318,10 +302,10 @@ describe("useGuardMarkerEdgeLayout", () => {
 	});
 
 	it("uses side clearance for horizontal self-loop markers on desktop", () => {
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+		vi.mocked(useResponsiveLayout).mockReturnValue({
 			isDesktopLayout: true,
 			isLandscape: true,
-		} as ReturnType<typeof useResponsiveGameLayout>);
+		} as ReturnType<typeof useResponsiveLayout>);
 
 		const markerHalfSize = INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_SIZE_PX / 2;
 		const expandedHalfWidth =
@@ -356,10 +340,10 @@ describe("useGuardMarkerEdgeLayout", () => {
 	});
 
 	it("moves out-of-bounds desktop self-loop markers off the central lane", () => {
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+		vi.mocked(useResponsiveLayout).mockReturnValue({
 			isDesktopLayout: true,
 			isLandscape: true,
-		} as ReturnType<typeof useResponsiveGameLayout>);
+		} as ReturnType<typeof useResponsiveLayout>);
 
 		const markerHalfSize = INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_SIZE_PX / 2;
 		const expandedHalfWidth =

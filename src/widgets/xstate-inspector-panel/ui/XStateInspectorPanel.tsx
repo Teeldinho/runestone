@@ -100,7 +100,7 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 			</div>
 
 			<div
-				className="flex-1 p-3 max-xl:flex-none max-xl:p-0 max-xl:landscape:h-(--mobile-landscape-graph-height) max-xl:landscape:min-h-(--mobile-landscape-graph-height)"
+				className="flex-1 p-3 max-xl:flex-none max-xl:p-0 max-xl:landscape:h-(--mobile-landscape-graph-height)"
 				style={
 					{
 						"--mobile-landscape-graph-height": `${INSPECTOR_FLOW_EDGE_LAYOUT.MOBILE_LANDSCAPE_GRAPH_HEIGHT_PX}px`,
