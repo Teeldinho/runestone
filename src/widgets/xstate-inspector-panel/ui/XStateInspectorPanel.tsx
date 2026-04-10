@@ -1,12 +1,10 @@
 import { Background, Controls, ReactFlow } from "@xyflow/react";
-import type { CSSProperties } from "react";
 
 import type { MachineGraphSection } from "@/features/state-visualizer";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui";
 import {
 	INSPECTOR_COPY,
 	INSPECTOR_FLOW_BACKGROUND,
-	INSPECTOR_FLOW_EDGE_LAYOUT,
 	INSPECTOR_FLOW_EDGE_VISUALS,
 } from "../config";
 
@@ -27,9 +25,9 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 	const inspectorPanel = useXStateInspectorPanel({ sections });
 
 	return (
-		<div className="flex min-h-0 flex-col gap-y-6 lg:h-full lg:gap-y-4">
+		<div className="flex h-full min-h-0 flex-col">
 			<div
-				className="hidden flex-wrap items-center justify-between gap-2 border-b px-3 py-1.5 lg:flex lg:px-4 lg:py-3"
+				className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3"
 				style={{ borderColor: "var(--panel-border)" }}
 			>
 				<h2
@@ -45,7 +43,7 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 			</div>
 
 			<div
-				className="mb-5 border-b px-4 py-2 max-xl:border-0 max-xl:px-0"
+				className="border-b px-4 py-2"
 				style={{ borderColor: "var(--panel-border)" }}
 			>
 				<Tabs
@@ -67,13 +65,10 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 						))}
 					</TabsList>
 				</Tabs>
-				{inspectorPanel.hasGuardIndicators && inspectorPanel.selectedSection ? (
-					<div className="mt-5 grid grid-cols-1 gap-2 max-xl:landscape:grid-cols-2">
-						<p className="col-span-full mb-1 border-panel-border/30 pb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground max-xl:border-b">
+				{inspectorPanel.selectedSection?.guardIndicators.length ? (
+					<div className="mt-2 grid gap-1.5">
+						<p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
 							{INSPECTOR_COPY.GUARDS_HEADING}
-						</p>
-						<p className="col-span-full -mt-1 mb-1 text-[10px] text-muted-foreground/80">
-							{INSPECTOR_COPY.GUARDS_DIRECTION_HINT}
 						</p>
 						{inspectorPanel.selectedSection.guardIndicators.map(
 							(guardIndicator) => (
@@ -99,15 +94,8 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 				) : null}
 			</div>
 
-			<div
-				className="flex-1 p-3 max-xl:flex-none max-xl:p-0 max-xl:landscape:h-(--mobile-landscape-graph-height)"
-				style={
-					{
-						"--mobile-landscape-graph-height": `${INSPECTOR_FLOW_EDGE_LAYOUT.MOBILE_LANDSCAPE_GRAPH_HEIGHT_PX}px`,
-					} as CSSProperties
-				}
-			>
-				{inspectorPanel.hasSelectedSection && inspectorPanel.selectedSection ? (
+			<div className="min-h-0 flex-1 p-3">
+				{inspectorPanel.selectedSection ? (
 					<ReactFlow
 						key={inspectorPanel.selectedSectionId}
 						colorMode="dark"
