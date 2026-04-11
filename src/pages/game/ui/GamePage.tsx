@@ -6,6 +6,12 @@ import { TouchJoystickOverlay } from "@/features/touch-input";
 import { GAME_PAGE_LAYOUT, GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import { useGamePage } from "@/pages/game/model";
 import {
+	Button,
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
 	Drawer,
 	DrawerContent,
 	DrawerDescription,
@@ -18,7 +24,10 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "@/shared/ui";
-import { CameraModeSwitcher } from "@/widgets/camera-mode-switcher";
+import {
+	CameraModeSwitcher,
+	MobileCameraModeSwitcher,
+} from "@/widgets/camera-mode-switcher";
 import { GameCanvas } from "@/widgets/game-canvas";
 import { GameHud } from "@/widgets/hud";
 import {
@@ -40,16 +49,23 @@ export function GamePage() {
 		handleCameraModeSwitch,
 		handleMobileSheetOpenChange,
 		handleMobileSheetTabChange,
+		handleTouchAttack,
+		handleTouchInteract,
 		handleTouchJoystickMove,
 		handleTouchJoystickStop,
+		hasTouchAttack,
+		hasTouchInteract,
 		hasTreasureKeyLabel,
 		handleDungeonRunReset,
 		isAudioMuted,
+		isDesktopLayout,
 		isMobileSheetOpen,
 		isMobileTabletLandscape,
 		mobileSheetTabId,
 		playerHp,
 		playerMaxHp,
+		touchAttackPrompt,
+		touchInteractPrompt,
 	} = useGamePage();
 	const settings = useSettingsForm();
 	const gameHudContent = (
@@ -67,6 +83,28 @@ export function GamePage() {
 			/>
 		</div>
 	);
+
+	if (!isDesktopLayout && !isMobileTabletLandscape) {
+		return (
+			<main id="main-content" className="h-dvh w-dvw overflow-hidden">
+				<section className="flex h-full w-full items-center justify-center p-4">
+					<Card className="w-full max-w-sm bg-panel/95 py-0 ring-panel-border/60">
+						<CardHeader className="pt-5 text-center">
+							<CardTitle className="rune-text text-base text-panel-title">
+								Rotate Device
+							</CardTitle>
+							<CardDescription className="text-sm">
+								Landscape mode is required on mobile and tablet.
+							</CardDescription>
+						</CardHeader>
+						<CardContent className="pb-5 text-center text-xs text-muted-foreground">
+							Rotate your device to landscape to continue playing.
+						</CardContent>
+					</Card>
+				</section>
+			</main>
+		);
+	}
 
 	if (isMobileTabletLandscape) {
 		return (
@@ -95,8 +133,14 @@ export function GamePage() {
 								/>
 							</div>
 
-							<div className="pointer-events-none absolute inset-x-0 top-0 z-30 p-3">
-								<div className="ml-auto w-fit rounded border border-panel-border bg-panel/80 px-3 py-2 shadow-lg backdrop-blur-md">
+							<div className="pointer-events-none absolute inset-x-0 top-0 z-30 p-3 flex justify-between">
+								<div className="pointer-events-auto">
+									<MobileCameraModeSwitcher
+										activeCameraMode={cameraStateSnapshot.mode}
+										handleCameraModeSwitch={handleCameraModeSwitch}
+									/>
+								</div>
+								<div className="w-fit rounded border border-panel-border bg-panel/80 px-3 py-2 shadow-lg backdrop-blur-md">
 									<div className="flex items-center gap-2">
 										<span className="rune-text text-[10px] text-dungeon-gold">
 											HP
@@ -117,11 +161,30 @@ export function GamePage() {
 								</div>
 							</div>
 
-							<div className="pointer-events-none absolute bottom-4 right-4 z-30 flex flex-col items-end gap-2">
-								<button
-									type="button"
+							<div className="pointer-events-none absolute bottom-4 right-4 z-30 flex w-[11rem] flex-col gap-2">
+								{hasTouchInteract ? (
+									<Button
+										size="default"
+										onClick={handleTouchInteract}
+										className="pointer-events-auto w-full"
+									>
+										{touchInteractPrompt}
+									</Button>
+								) : null}
+								{hasTouchAttack ? (
+									<Button
+										size="default"
+										onClick={handleTouchAttack}
+										className="pointer-events-auto w-full"
+									>
+										{touchAttackPrompt}
+									</Button>
+								) : null}
+								<Button
+									variant="secondary"
+									size="default"
 									onClick={handleAudioMuteToggle}
-									className="pointer-events-auto dungeon-btn w-auto px-3 py-2"
+									className="pointer-events-auto w-full"
 									aria-label={isAudioMuted ? "Unmute audio" : "Mute audio"}
 								>
 									{isAudioMuted ? (
@@ -129,20 +192,21 @@ export function GamePage() {
 									) : (
 										<Volume2 className="h-4 w-4 text-[var(--dungeon-gold)]" />
 									)}
-								</button>
+								</Button>
 								<DrawerTrigger asChild>
-									<button
-										type="button"
-										className="pointer-events-auto dungeon-btn w-auto px-3 py-2 text-xs uppercase tracking-wide"
+									<Button
+										variant="outline"
+										size="default"
+										className="pointer-events-auto w-full text-xs uppercase tracking-wide"
 									>
 										{GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}
-									</button>
+									</Button>
 								</DrawerTrigger>
 							</div>
 						</section>
 
 						<DrawerContent
-							className="max-w-full overflow-hidden"
+							className="max-w-full overflow-hidden border-panel-border/60 bg-panel/95"
 							style={{ height: `${GAME_PAGE_MOBILE_SHEET.HEIGHT_DVH}dvh` }}
 							aria-label="Game bottom sheet panels"
 						>
@@ -158,16 +222,16 @@ export function GamePage() {
 									onValueChange={handleMobileSheetTabChange}
 									className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden"
 								>
-									<TabsList className="grid h-auto w-full min-w-0 grid-cols-2 gap-1 p-1">
+									<TabsList className="grid h-auto w-full min-w-0 grid-cols-2 gap-2 border-0 bg-transparent p-0">
 										<TabsTrigger
 											value={GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART}
-											className="h-8 min-w-0 truncate"
+											className="h-8 min-w-0 truncate border border-panel-border/45 bg-panel/45 data-[state=active]:bg-panel"
 										>
 											{GAME_PAGE_MOBILE_SHEET.TAB_LABELS.STATECHART}
 										</TabsTrigger>
 										<TabsTrigger
 											value={GAME_PAGE_MOBILE_SHEET.TAB_IDS.HUD}
-											className="h-8 min-w-0 truncate"
+											className="h-8 min-w-0 truncate border border-panel-border/45 bg-panel/45 data-[state=active]:bg-panel"
 										>
 											{GAME_PAGE_MOBILE_SHEET.TAB_LABELS.HUD}
 										</TabsTrigger>
@@ -175,35 +239,45 @@ export function GamePage() {
 
 									<TabsContent
 										value={GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART}
-										className="mt-3 min-h-0 min-w-0 flex-1 overflow-hidden"
+										className="mt-2 min-h-0 min-w-0 flex-1 overflow-hidden"
 									>
-										<ScrollArea className="h-full w-full rounded border border-panel-border bg-panel/70">
-											<div className="min-w-0 space-y-3 overflow-x-hidden p-3">
-												<section className="h-[27.5rem] min-h-[22.5rem] min-w-0 overflow-hidden rounded border border-panel-border bg-panel">
-													<XStateInspectorPanel sections={graphSections} />
-												</section>
-												<section className="h-[320px] min-h-[240px] min-w-0 overflow-hidden rounded border border-panel-border bg-panel">
-													<XStateInspectorDetailsPanel
-														sections={graphSections}
-													/>
-												</section>
+										<ScrollArea className="h-full w-full">
+											<div className="min-w-0 space-y-2 overflow-x-hidden px-1 py-2">
+												<Card className="min-w-0 bg-panel/80 py-0 ring-panel-border/45">
+													<CardContent className="h-[27.5rem] min-h-[22.5rem] p-2">
+														<XStateInspectorPanel sections={graphSections} />
+													</CardContent>
+												</Card>
+												<Card className="min-w-0 bg-panel/80 py-0 ring-panel-border/45">
+													<CardContent className="h-[20rem] min-h-[15rem] p-2">
+														<XStateInspectorDetailsPanel
+															sections={graphSections}
+														/>
+													</CardContent>
+												</Card>
 											</div>
 										</ScrollArea>
 									</TabsContent>
 
 									<TabsContent
 										value={GAME_PAGE_MOBILE_SHEET.TAB_IDS.HUD}
-										className="mt-3 min-h-0 min-w-0 flex-1 overflow-hidden"
+										className="mt-2 min-h-0 min-w-0 flex-1 overflow-hidden"
 									>
-										<ScrollArea className="h-full w-full rounded border border-panel-border bg-panel/70">
-											<div className="min-w-0 space-y-3 overflow-x-hidden p-3">
-												<section className="min-w-0 overflow-hidden rounded border border-panel-border bg-panel">
-													<CameraModeSwitcher
-														activeCameraMode={cameraStateSnapshot.mode}
-														handleCameraModeSwitch={handleCameraModeSwitch}
-													/>
-												</section>
-												{gameHudContent}
+										<ScrollArea className="h-full w-full">
+											<div className="min-w-0 space-y-2 overflow-x-hidden px-1 py-2">
+												<Card className="min-w-0 bg-panel/80 py-0 ring-panel-border/45">
+													<CardContent className="px-2 py-2">
+														<CameraModeSwitcher
+															activeCameraMode={cameraStateSnapshot.mode}
+															handleCameraModeSwitch={handleCameraModeSwitch}
+														/>
+													</CardContent>
+												</Card>
+												<Card className="min-w-0 bg-panel/80 py-0 ring-panel-border/45">
+													<CardContent className="px-0 py-0">
+														{gameHudContent}
+													</CardContent>
+												</Card>
 											</div>
 										</ScrollArea>
 									</TabsContent>

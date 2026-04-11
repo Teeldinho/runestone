@@ -10,7 +10,11 @@ import {
 	useAudioController,
 } from "@/features/audio-manager";
 import { CAMERA_MODES, useCameraMachine } from "@/features/camera-system";
-import { useGameMachine } from "@/features/dungeon-navigation";
+import {
+	useGameMachine,
+	useInteractionCandidates,
+	useInteractionInput,
+} from "@/features/dungeon-navigation";
 import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import {
 	STATE_VISUALIZER_SECTION_IDS,
@@ -57,6 +61,19 @@ vi.mock("@/features/audio-manager", () => {
 
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachine: vi.fn(),
+	useInteractionCandidates: vi.fn().mockReturnValue({
+		interactPrompt: null,
+		interactEvent: null,
+		interactTargetId: null,
+		attackPrompt: null,
+		attackPosition: null,
+		hasInteract: false,
+		hasAttack: false,
+	}),
+	useInteractionInput: vi.fn().mockReturnValue({
+		handleAttack: vi.fn(),
+		handleInteract: vi.fn(),
+	}),
 }));
 
 vi.mock("@/features/camera-system", () => {
@@ -169,7 +186,23 @@ const createGameMachineResult = (overrides = {}) =>
 
 describe("useGamePage", () => {
 	it("composes page data from machine and visualizer hooks", () => {
+		const handleTouchAttack = vi.fn();
+		const handleTouchInteract = vi.fn();
+
 		vi.mocked(useGameMachine).mockReturnValue(createGameMachineResult());
+		vi.mocked(useInteractionCandidates).mockReturnValue({
+			interactPrompt: null,
+			interactEvent: null,
+			interactTargetId: null,
+			attackPrompt: null,
+			attackPosition: null,
+			hasInteract: false,
+			hasAttack: false,
+		});
+		vi.mocked(useInteractionInput).mockReturnValue({
+			handleAttack: handleTouchAttack,
+			handleInteract: handleTouchInteract,
+		});
 
 		vi.mocked(useStateVisualizer).mockReturnValue({
 			sections: [],
@@ -209,14 +242,35 @@ describe("useGamePage", () => {
 			ROOM_LABELS[ROOM_IDS.ENTRANCE],
 		);
 		expect(result.current.isAudioMuted).toBe(false);
+		expect(result.current.isDesktopLayout).toBe(true);
 		expect(result.current.cameraStateSnapshot.mode).toBe(
 			CAMERA_MODES.FREE_ORBITAL,
 		);
 		expect(result.current.mobileSheetTabId).toBe(
 			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 		);
+		expect(result.current.hasTouchAttack).toBe(false);
+		expect(result.current.hasTouchInteract).toBe(false);
+		expect(result.current.touchAttackPrompt).toBeNull();
+		expect(result.current.touchInteractPrompt).toBeNull();
+		act(() => {
+			result.current.handleTouchInteract();
+			result.current.handleTouchAttack();
+		});
+		expect(handleTouchInteract).toHaveBeenCalledTimes(1);
+		expect(handleTouchAttack).toHaveBeenCalledTimes(1);
 		expect(result.current.isMobileSheetOpen).toBe(false);
 		expect(result.current.isMobileTabletLandscape).toBe(false);
+		expect(useInteractionInput).toHaveBeenCalledWith(
+			expect.objectContaining({
+				candidates: expect.objectContaining({
+					hasAttack: false,
+					hasInteract: false,
+				}),
+				enableKeyboardBindings: false,
+				sendDungeonMachineEvent: expect.any(Function),
+			}),
+		);
 		expect(vi.mocked(useResponsiveGameLayout)).toHaveBeenCalled();
 		expect(vi.mocked(useCameraMachine)).toHaveBeenCalled();
 		expect(result.current.handleAudioMuteToggle).toBeDefined();

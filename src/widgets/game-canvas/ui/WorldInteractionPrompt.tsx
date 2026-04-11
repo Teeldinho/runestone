@@ -3,9 +3,12 @@ import { useMemo } from "react";
 
 import {
 	ATTACK_KEY_LABEL,
+	ATTACK_TOUCH_LABEL,
 	INTERACTION_KEY_LABEL,
+	INTERACTION_TOUCH_LABEL,
 	type InteractionCandidatesViewModel,
 } from "@/features/dungeon-navigation";
+import { useResponsiveGameLayout } from "@/features/responsive-layout";
 
 import { WORLD_INTERACTION_PROMPT_CONFIG } from "../config";
 import {
@@ -55,6 +58,7 @@ export function WorldInteractionPrompt({
 	interactionCandidates,
 	roomPositionsById,
 }: WorldInteractionPromptProps) {
+	const { isDesktopLayout } = useResponsiveGameLayout();
 	const interactPosition = useMemo(() => {
 		if (!interactionCandidates.hasInteract) {
 			return null;
@@ -82,6 +86,11 @@ export function WorldInteractionPrompt({
 		return null;
 	}
 
+	const interactionLabel = isDesktopLayout
+		? INTERACTION_KEY_LABEL
+		: INTERACTION_TOUCH_LABEL;
+	const attackLabel = isDesktopLayout ? ATTACK_KEY_LABEL : ATTACK_TOUCH_LABEL;
+
 	return (
 		<>
 			{interactPosition && interactionCandidates.interactPrompt && (
@@ -96,7 +105,7 @@ export function WorldInteractionPrompt({
 					style={{ pointerEvents: "none" }}
 				>
 					<div style={PROMPT_STYLE}>
-						<span style={KEY_STYLE}>{INTERACTION_KEY_LABEL}</span>
+						<span style={KEY_STYLE}>{interactionLabel}</span>
 						<span>{interactionCandidates.interactPrompt}</span>
 					</div>
 				</Html>
@@ -109,7 +118,7 @@ export function WorldInteractionPrompt({
 					style={{ pointerEvents: "none" }}
 				>
 					<div style={PROMPT_STYLE}>
-						<span style={KEY_STYLE}>{ATTACK_KEY_LABEL}</span>
+						<span style={KEY_STYLE}>{attackLabel}</span>
 						<span>{interactionCandidates.attackPrompt}</span>
 					</div>
 				</Html>

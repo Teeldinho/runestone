@@ -36,6 +36,7 @@ export type {
 export {
 	createPlayerMachine,
 	PlayerMachineProvider,
+	usePlayerDamageFlash,
 	usePlayerMachineRuntime,
 	usePlayerMesh,
 	usePlayerPhysics,

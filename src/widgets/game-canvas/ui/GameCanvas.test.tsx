@@ -56,6 +56,7 @@ vi.mock("@/entities/enemy", () => ({
 
 vi.mock("@/entities/player", () => ({
 	PlayerMesh: () => null,
+	usePlayerDamageFlash: () => false,
 }));
 
 vi.mock("@/entities/room", () => ({

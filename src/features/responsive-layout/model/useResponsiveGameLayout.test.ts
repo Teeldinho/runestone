@@ -1,35 +1,36 @@
 // @vitest-environment happy-dom
 
 import { renderHook } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { RESPONSIVE_LAYOUT_MEDIA_QUERIES } from "../config";
 
 import { useResponsiveGameLayout } from "./useResponsiveGameLayout";
 
-const mockUseMediaQuery = vi.fn();
-
-vi.mock("react-responsive", () => ({
-	useMediaQuery: (options: { query?: string }) => mockUseMediaQuery(options),
-}));
-
-type QueryMatches = Partial<Record<string, boolean>>;
-
-const setQueryMatches = (queryMatches: QueryMatches) => {
-	mockUseMediaQuery.mockImplementation((options: { query?: string } = {}) =>
-		options.query ? Boolean(queryMatches[options.query]) : false,
-	);
-};
+const createMockMediaQueryList = (matches: boolean) => ({
+	matches,
+	addEventListener: vi.fn(),
+	removeEventListener: vi.fn(),
+});
 
 describe("useResponsiveGameLayout", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
 	it("returns desktop layout for fine-pointer desktop viewport", () => {
-		setQueryMatches({
+		const mediaQueries = {
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.DESKTOP_MIN_WIDTH]: true,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_STANDARD_WIDTH]: false,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_COARSE_WIDTH]: false,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.MOBILE_MAX_WIDTH]: false,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.LANDSCAPE]: true,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.PORTRAIT]: false,
+		};
+
+		vi.spyOn(window, "matchMedia").mockImplementation((query) => {
+			const matches = Boolean(mediaQueries[query as keyof typeof mediaQueries]);
+			return createMockMediaQueryList(matches) as unknown as MediaQueryList;
 		});
 
 		const { result } = renderHook(() => useResponsiveGameLayout());
@@ -42,13 +43,18 @@ describe("useResponsiveGameLayout", () => {
 	});
 
 	it("classifies coarse-pointer 1024px landscape viewports as tablet", () => {
-		setQueryMatches({
+		const mediaQueries = {
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.DESKTOP_MIN_WIDTH]: true,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_STANDARD_WIDTH]: false,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_COARSE_WIDTH]: true,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.MOBILE_MAX_WIDTH]: false,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.LANDSCAPE]: true,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.PORTRAIT]: false,
+		};
+
+		vi.spyOn(window, "matchMedia").mockImplementation((query) => {
+			const matches = Boolean(mediaQueries[query as keyof typeof mediaQueries]);
+			return createMockMediaQueryList(matches) as unknown as MediaQueryList;
 		});
 
 		const { result } = renderHook(() => useResponsiveGameLayout());
@@ -60,13 +66,18 @@ describe("useResponsiveGameLayout", () => {
 	});
 
 	it("returns mobile portrait layout for small portrait viewport", () => {
-		setQueryMatches({
+		const mediaQueries = {
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.DESKTOP_MIN_WIDTH]: false,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_STANDARD_WIDTH]: false,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_COARSE_WIDTH]: false,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.MOBILE_MAX_WIDTH]: true,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.LANDSCAPE]: false,
 			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.PORTRAIT]: true,
+		};
+
+		vi.spyOn(window, "matchMedia").mockImplementation((query) => {
+			const matches = Boolean(mediaQueries[query as keyof typeof mediaQueries]);
+			return createMockMediaQueryList(matches) as unknown as MediaQueryList;
 		});
 
 		const { result } = renderHook(() => useResponsiveGameLayout());

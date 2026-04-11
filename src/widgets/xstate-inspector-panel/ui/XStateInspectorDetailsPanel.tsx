@@ -15,11 +15,8 @@ export function XStateInspectorDetailsPanel({
 	const inspectorPanel = useXStateInspectorPanel({ sections });
 
 	return (
-		<div className="flex h-full min-h-0 min-w-0 flex-col overflow-x-hidden">
-			<div
-				className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-2"
-				style={{ borderColor: "var(--panel-border)" }}
-			>
+		<div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
+			<div className="flex flex-wrap items-center justify-between gap-2 border-b border-panel-border/50 px-4 py-2">
 				<h2 className="rune-text">{INSPECTOR_COPY.DETAILS_PANEL_TITLE}</h2>
 				{inspectorPanel.hasSelectedSection && inspectorPanel.selectedSection ? (
 					<Badge variant="outline" className="text-[10px]">
@@ -27,6 +24,8 @@ export function XStateInspectorDetailsPanel({
 					</Badge>
 				) : null}
 			</div>
+
+			<Separator className="bg-panel-border/50" />
 
 			<ScrollArea className="min-h-0 flex-1">
 				{inspectorPanel.hasSelectedSection && inspectorPanel.selectedSection ? (
@@ -57,11 +56,8 @@ export function XStateInspectorDetailsPanel({
 									(stateDetail) => (
 										<li
 											key={stateDetail.id}
-											className="flex items-center justify-between rounded border px-2 py-1.5 text-xs"
+											className="flex items-center justify-between rounded-md px-2 py-1.5 text-xs"
 											style={{
-												borderColor: stateDetail.isActive
-													? "var(--primary)"
-													: "var(--panel-border)",
 												background: stateDetail.isActive
 													? "color-mix(in srgb, var(--primary) 9%, transparent)"
 													: "var(--background)",
@@ -93,7 +89,7 @@ export function XStateInspectorDetailsPanel({
 										(guardDetail) => (
 											<li
 												key={guardDetail.id}
-												className="rounded border border-panel-border bg-background px-2 py-1.5 text-xs text-muted-foreground break-words"
+												className="rounded-md bg-background px-2 py-1.5 text-xs text-muted-foreground break-words"
 											>
 												{guardDetail.label}
 											</li>
@@ -119,7 +115,7 @@ export function XStateInspectorDetailsPanel({
 										(transitionDetail) => (
 											<li
 												key={transitionDetail.id}
-												className="rounded border border-panel-border bg-background px-2.5 py-2"
+												className="rounded-md bg-background px-2.5 py-2"
 											>
 												<p className="break-words text-xs font-semibold text-foreground">
 													{transitionDetail.eventLabel}

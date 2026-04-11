@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import type { DungeonEvent } from "@/entities/dungeon";
 import { createFloorOneMachine, ROOM_IDS } from "@/entities/dungeon";
 import {
 	createPlayerMachine,
@@ -15,7 +16,11 @@ import {
 	createCameraMachine,
 	useCameraMachine,
 } from "@/features/camera-system";
-import { useGameMachine } from "@/features/dungeon-navigation";
+import {
+	useGameMachine,
+	useInteractionCandidates,
+	useInteractionInput,
+} from "@/features/dungeon-navigation";
 import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import {
 	STATE_VISUALIZER_SECTION_IDS,
@@ -44,12 +49,19 @@ type GamePageViewModel = {
 	handleMobileSheetTabChange: (tabId: string) => void;
 	handleTouchJoystickMove: (velocity: Vector3Tuple) => void;
 	handleTouchJoystickStop: () => void;
+	handleTouchAttack: () => void;
+	handleTouchInteract: () => void;
+	hasTouchAttack: boolean;
+	hasTouchInteract: boolean;
 	isAudioMuted: boolean;
+	isDesktopLayout: boolean;
 	isMobileSheetOpen: boolean;
 	isMobileTabletLandscape: boolean;
 	mobileSheetTabId: GamePageMobileSheetTabId;
 	playerHp: number;
 	playerMaxHp: number;
+	touchAttackPrompt: string | null;
+	touchInteractPrompt: string | null;
 };
 
 type GamePageMobileSheetTabId =
@@ -63,9 +75,11 @@ export const useGamePage = (): GamePageViewModel => {
 		currentRoomId,
 		discoveredRoomLabels,
 		enemiesRemaining,
+		handleDungeonEventSend,
 		handleDungeonRunReset: resetDungeonMachine,
 		hasTreasureKey,
 	} = useGameMachine();
+	const interactionCandidates = useInteractionCandidates();
 	const { snapshot: playerSnapshot, sendPlayerMachineEvent } =
 		usePlayerMachineRuntime();
 	const {
@@ -86,6 +100,17 @@ export const useGamePage = (): GamePageViewModel => {
 		useState<GamePageMobileSheetTabId>(
 			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 		);
+	const sendDungeonMachineEvent = useCallback(
+		(event: { type: DungeonEvent }) => {
+			handleDungeonEventSend(event.type);
+		},
+		[handleDungeonEventSend],
+	);
+	const touchInteractionHandlers = useInteractionInput({
+		candidates: interactionCandidates,
+		enableKeyboardBindings: false,
+		sendDungeonMachineEvent,
+	});
 
 	useEffect(() => {
 		if (!isMobileTabletLandscape) {
@@ -217,12 +242,19 @@ export const useGamePage = (): GamePageViewModel => {
 		handleMobileSheetTabChange,
 		handleTouchJoystickMove,
 		handleTouchJoystickStop,
+		handleTouchAttack: touchInteractionHandlers.handleAttack,
+		handleTouchInteract: touchInteractionHandlers.handleInteract,
+		hasTouchAttack: interactionCandidates.hasAttack,
+		hasTouchInteract: interactionCandidates.hasInteract,
 		isAudioMuted,
+		isDesktopLayout,
 		isMobileSheetOpen,
 		isMobileTabletLandscape,
 		mobileSheetTabId,
 		playerHp: playerSnapshot.context.stats.hp,
 		playerMaxHp: playerSnapshot.context.stats.maxHp,
+		touchAttackPrompt: interactionCandidates.attackPrompt,
+		touchInteractPrompt: interactionCandidates.interactPrompt,
 	};
 };
 
