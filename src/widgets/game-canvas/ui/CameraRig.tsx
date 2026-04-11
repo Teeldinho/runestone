@@ -7,6 +7,7 @@ import { CAMERA_MODES } from "@/features/camera-system";
 import { CAMERA_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
+import { CAMERA_RIG_TOUCH_GESTURES } from "../config";
 import { useCameraRigViewModel } from "../model/useCameraRigViewModel";
 
 type CameraRigProps = {
@@ -58,6 +59,7 @@ export function CameraRig({
 					MIDDLE: THREE.MOUSE.DOLLY,
 					RIGHT: THREE.MOUSE.ROTATE,
 				}}
+				touches={CAMERA_RIG_TOUCH_GESTURES.ORBIT}
 			/>
 		);
 	}
@@ -75,6 +77,7 @@ export function CameraRig({
 				minDistance={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MIN_DISTANCE}
 				maxPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MAX_POLAR_ANGLE}
 				minPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MIN_POLAR_ANGLE}
+				touches={CAMERA_RIG_TOUCH_GESTURES.ORBIT}
 			/>
 		);
 	}
@@ -109,6 +112,7 @@ export function CameraRig({
 				minAzimuthAngle={Math.PI}
 				maxAzimuthAngle={Math.PI}
 				zoomSpeed={CAMERA_CONFIG.TOP_DOWN.ZOOM_SPEED}
+				touches={CAMERA_RIG_TOUCH_GESTURES.TOP_DOWN}
 			/>
 		);
 	}

@@ -84,7 +84,7 @@ export function GameCanvas({
 				dpr={renderer.dprRange}
 				onContextMenu={(event) => event.preventDefault()}
 				shadows={renderer.shadowsEnabled}
-				style={{ width: "100%", height: "100%" }}
+				style={{ width: "100%", height: "100%", touchAction: "none" }}
 			>
 				<PerformanceMonitor />
 				<AdaptiveDpr pixelated />
