@@ -9,7 +9,7 @@ This is an engineering-first game prototype. The machine is not just in the code
 
 **[🏰 Enter the Dungeon](https://runestone.teeldinho.com)**
 
-![Runestone Preview](./docs/screenshots/runestone-preview.png)
+![Runestone Hero Desktop](./public/screenshots/desktop-hero-view.png)
 
 ---
 
@@ -20,36 +20,37 @@ of a finite number of **states** at any moment. It moves between states through 
 which are triggered by events. Optional **guard conditions** can block a transition until a
 required condition is met.
 
-FSMs shine when behaviour is predictable and bounded:
-
-- A traffic light cycles through Red → Green → Yellow → Red
-- A loading screen is either `idle`, `fetching`, `success`, or `error`
-- A game character is either `idle`, `walking`, `attacking`, or `dead`
-
-The model solves a common engineering problem: without explicit state representation, systems
-accumulate tangled conditionals, hidden edge cases, and transitions that are hard to trace or
-test. When state is made explicit, behaviour becomes visible, auditable, and testable.
+FSMs shine when behaviour is predictable and bounded. The model solves a common engineering problem: without explicit state representation, systems accumulate tangled conditionals, hidden edge cases, and transitions that are hard to trace or test. When state is made explicit, behaviour becomes visible, auditable, and testable.
 
 ---
 
-## Why XState?
+## Why XState? (Enterprise & Senior Use Cases)
 
 **XState** is a JavaScript/TypeScript library that implements statecharts — an extended form of
 FSMs that adds hierarchy, parallelism, guards, context, and invoked actors to the base model.
 
-Where a plain FSM describes *which* states exist and *how* transitions fire, XState adds:
+While often introduced for simple component states, XState is heavily utilized in enterprise architectures to solve complex software engineering problems:
 
-- **Guards** — conditional gates on transitions (`hasKey`, `enemiesRemaining`)
-- **Context** — structured data carried by the machine (inventory, score, health)
-- **Actors** — independently running machines invoked by a parent machine (enemy behaviour)
-- **Entry/exit actions** — side effects that run when entering or leaving a state
-- **Inspectable runtime** — the machine's current state can be read and visualised externally
+### 1. The Actor Model (XState v5)
+XState v5 introduces a first-class actor model. Instead of one massive "God machine", systems are composed of isolated machines (actors) that communicate via explicit message passing. In a complex frontend, a checkout flow might spawn a dedicated payment validation actor, pausing its own execution until the child returns a success/failure output. In Runestone, enemies and separate rooms act as independent, orchestrated actors.
 
-XState v5 (used in this project) introduces a first-class actor model with explicit lifecycle
-management, input/output contracts, and a `setup()` API that declares the machine's full
-interface before implementation.
+### 2. UI as a Strict "State Contract"
+Fragile boolean flags (`isLoading`, `isError`, `isSuccess`) often lead to overlapping, invalid UI configurations (e.g., showing a loading spinner while rendering an error message). By modeling UI as an XState machine, impossible states are mathematically eliminated. The UI component is downgraded to a pure visual projection that simply reflects the current node of the machine (`state.value`).
 
-### How Runestone uses XState
+### 3. Complex Orchestration & Sagas
+For long-running processes (e.g., multi-step wizard registrations, distributed sagas across microservices, websockets), state machines ensure fault tolerance. They can elegantly handle timeouts, auto-retries, escalations, and debounces declaratively. 
+
+### 4. Hierarchical and Orthogonal States
+State machines easily model parallel activities (orthogonal states). For instance, a video player application can be in a `playing` state while simultaneously being in a `muted` state. Hierarchical (nested) states allow developers to group logic cleanly and avoid transition explosion (e.g., a "CANCEL" event handled uniformly by a parent state machine node).
+
+### 5. Model-Based Testing (MBT)
+Because the statechart defines all possible nodes and the explicit paths to reach them, QA and testing suites can automatically generate traversal graphs. Hundreds of robust End-to-End browser tests can be completely synthesized without manual scripting, simply by asking the engine to reach every state defined in the contract.
+
+![XState Live Sidebar Visualization](./public/screenshots/xstate-sidebar-active.png)
+
+---
+
+## How Runestone uses XState
 
 Every concept in the game maps directly to an XState concept:
 
@@ -63,10 +64,9 @@ Every concept in the game maps directly to an XState concept:
 | Invoked actor   | Enemy behaviour machine (patrol → detect → attack) |
 | Final state     | Exit chamber — floor complete                     |
 
-The machine is not an internal implementation detail hidden from the player. An inspector panel
-renders the dungeon graph in real time. The rune-locked doors in the 3D world glow based on
-whether their guard conditions are met. The game world and the state machine are the same
-structure, observed from two directions.
+The machine is not an internal implementation detail hidden from the player. An inspector panel renders the dungeon graph in real time, and the rune-locked doors in the 3D world glow based on whether their guard conditions are met. 
+
+![Dungeon Lighting and Exploration](./public/screenshots/dungeon-lighting-fog.png)
 
 ---
 
@@ -78,22 +78,28 @@ Phase 1 is a single-floor dungeon with five rooms:
 Entrance → Library → Guard Room → Treasury → Exit
 ```
 
-The player explores the floor using Rapier physics and four camera modes while the dungeon
-machine orchestrates traversal, guards, enemy behaviour, and state visibility.
-
 **Implemented systems:**
 - 3D dungeon scene with KayKit environment assets and atmospheric fog
 - Four camera modes: third-person, top-down, first-person, free-orbital
 - Machine-authoritative room traversal with doorway-relative arrival
 - Live XState inspector panel (React Flow + dagre layout)
-- Player movement (WASD, sprint), health, death, and restart flow
+- Player movement, collision physics (Rapier), health, death, and restart flow
 - Guard-room enemy behaviour and treasury key progression
 - Convex-backed authentication and leaderboard flow
 - Audio (Tone.js) and haptics (Web Haptics API) integration
-- Achievements, HUD, settings, and tutorial systems
+- Fully scalable HUD system with settings and interactive tutorials
 
-> **Active development.** Phase 1 targets desktop-first gameplay. Mobile controls
-> (virtual joystick, touch input) are deferred to Phase 2.
+### Mobile Responsiveness
+Runestone ships with complete touch-screen compatibility, making the 3D physics-based dungeon crawler fully accessible on responsive devices:
+- **Touch Input:** Integrated virtual joysticks for movement and touch-and-drag for orbital camera control.
+- **Adaptive Layouts:** Distinct interfaces mapping strictly to Portrait and Landscape boundaries to preserve gameplay viewing angles.
+- **Bottom-Sheet Flow:** The XState Inspector Sidebar and Settings gracefully map into Shadcn-powered bottom sheets and drawers, maximizing canvas estate.
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+  <img src="./public/screenshots/mobile-joystick-view.png" width="30%" alt="Mobile Joystick Interaction" />
+  <img src="./public/screenshots/mobile-inspector-drawer.png" width="30%" alt="Mobile Inspector Drawer" />
+  <img src="./public/screenshots/mobile-portrait-layout.png" width="30%" alt="Mobile Portrait HUD" />
+</div>
 
 ---
 
@@ -106,7 +112,6 @@ invisible to users and developers alike. Runestone inverts that: the machine is 
 level is the machine.
 
 The questions driving the project:
-
 - What happens when application state is also spatial structure?
 - How do guards, actors, and transitions feel when they are physical and visible?
 - Can a runtime inspector and a playable 3D world share one coherent source of truth?
@@ -154,142 +159,35 @@ Every slice follows a strict chain:
 Component (ui/) → Hook (model/) → Utility (lib/) → Constant (config/)
 ```
 
-Rendering, orchestration, pure logic, and constants are never mixed. This rule is enforced by
-automated purity checks that run on every commit.
+Rendering, orchestration, pure logic, and constants are never mixed. This rule is enforced by automated purity checks that run on every commit.
 
 ---
 
 ## Engineering Approach
 
 ### Test-Driven Development (TDD)
+**Test-Driven Development** is a practice where you write a failing test *before* writing the implementation it tests. The cycle is: write a failing test (Red), write just enough code to make it pass (Green), then refactor. Repeating this loop produces logic that is covered by design, not retro-fitted. 
 
-**Test-Driven Development** is a practice where you write a failing test *before* writing the
-implementation it tests. The cycle is: write a failing test (Red), write just enough code to
-make it pass (Green), then refactor. Repeating this loop produces logic that is covered by
-design, not retro-fitted.
-
-TDD matters most for code that is hardest to debug visually — orchestration logic, pure
-calculators, interaction resolvers, and state machine transitions. Runestone applies TDD to all
-`model/` and `lib/` work, requiring 100% coverage on those segments before a PR can merge.
+Runestone applies TDD strictly to all `model/` and `lib/` segments, requiring **100% test coverage** before a PR can merge.
 
 ### Spec-Driven Development (SDD)
-
-**Spec-Driven Development** means implementation starts from a written brief, not from a vague
-intent. Each work item begins as an explicit specification: what the outcome is, what acceptance
-criteria it must satisfy, and what evidence confirms it is done.
-
-In practice this means:
-
-- No work starts without a written scope
-- Each scope is broken into narrow, verifiable slices
-- Each slice has pass/fail criteria before the first line of code is written
-- Every change is reviewed against the spec, not just against itself
-
-For Runestone, this is operationalised through a controlled delivery loop: brief → spec →
-implement → verify → close. This keeps individual changes small, traceable, and low-risk, even
-for a complex multi-system project.
-
-This loop is inspired in part by iterative delivery patterns from formal software methods —
-adapted here as a practical working discipline for an engineering-first project.
-
-### Branch protection and PR-only delivery
-
-- `develop` is the integration branch — PRs only, never direct commits
-- `main` is the production branch — release PRs from `develop` only
-- Every feature lives on its own short-lived branch
-- Quality gates run before every commit and push
+In Runestone, development starts from a written brief. Each work item operates inside a delivery loop: brief → spec → implement → verify → close. This guarantees all features map directly to acceptance criteria, drastically minimizing scope-creep and untracked bugs.
 
 ---
 
 ## Technical Decisions
 
-### XState as runtime authority
-
-XState owns discrete interaction and traversal authority. It does **not** own per-frame
-physics, rigid-body transforms, animation blending, or camera lerp.
-
-That split is deliberate:
-- Machine logic handles room state, transition guards, interaction semantics, and orchestration
-- Per-frame systems stay in render/runtime code where they belong
-
-XState's context carries the inventory, health, discovered rooms, and score. The machine's
-snapshot can be serialised and restored — which is groundwork for Phase 2 save slots.
-
 ### React 19 + R3F + Rapier
+The project integrates modern paradigms across a 3D stack:
+- **React 19** for the concurrent component topology.
+- **React Three Fiber (v9)** to orchestrate 3D objects as a declarative tree.
+- **@react-three/rapier (v2)** to bind real-time structural physics safely against the render loop.
 
-The project uses:
-- **React 19** for the component and concurrency model
-- **React Three Fiber (R3F) v9** for the declarative 3D scene
-- **@react-three/rapier v2** for physics (required for React 19 + R3F v9 compatibility)
-- **@react-three/drei** for camera controls, GLTF loaders, HTML projection, and helpers
-- **@react-three/postprocessing** for optional bloom and vignette effects
+### TanStack Start & Router
+TanStack Start implements the application's file-based routing and SSR layout scaffolding, ensuring navigation remains entirely type-safe. The WebGL canvas runs purely client-side without hydration unmounts, while non-WebGl routes (Settings, Leaderboards) benefit from robust static layouts.
 
-
-### TanStack Start for the application layer
-
-TanStack Start handles routing, server functions, and full-stack type safety. The game route
-runs with `ssr: false` (client-only rendering required for WebGL). Other routes — leaderboard,
-settings, tutorial — benefit from server-side rendering (SSR) for performance.
-
-### Convex for backend state
-
-Convex handles:
-- User creation and identity via UUID-based zero-friction onboarding
-- Score submission and leaderboard queries (reactive, real-time push)
-- Save slot schema (groundwork for Phase 2 game progress persistence)
-
-Frontend state consumption uses TanStack Query with `convexQuery()` from
-`@convex-dev/react-query`. Queries use `staleTime: Infinity` — Convex pushes updates
-reactively, so client-side polling is never needed.
-
-### Audio: Tone.js
-
-Tone.js drives looping background music via the Web Audio API Transport. The audio system is
-wrapped in an XState audio machine and exposed through a single hook. Tone.js references stay
-contained to the audio feature slice.
-
-### Haptics
-
-Haptic feedback fires on meaningful game events — room entry, guard failure, key pickup, enemy
-defeat, floor completion. The implementation handles both Android Chrome and iOS Safari from
-a single code path. Like audio, the haptics library is imported in exactly one file; all other
-code uses semantic game-event functions exported from the haptics feature's public API.
-
-### Styling: Tailwind v4 + Shadcn
-
-Tailwind v4 is configured via the `@tailwindcss/vite` plugin — no PostCSS config needed.
-Shadcn components live in `shared/ui/` and serve as the design-system primitive layer.
-Custom variants use Class Variance Authority (CVA). The `cn()` utility lives in exactly one
-file: `shared/lib/cn.ts`.
-
-### Quality tooling
-
-| Tool         | Enforces                                           | When it runs         |
-| ------------ | -------------------------------------------------- | -------------------- |
-| **Biome**    | Formatting + linting (replaces ESLint + Prettier)  | Pre-commit, CI       |
-| **Steiger**  | FSD layer boundary enforcement                     | Pre-push, CI         |
-| **Lefthook** | Git hook orchestration                             | Pre-commit, pre-push |
-| **Vitest**   | Tests + coverage (80% overall, 100% model/ + lib/) | Pre-push, CI         |
-| **tsc**      | TypeScript strict mode — zero errors allowed       | Pre-push, CI         |
-
----
-
-## Layout
-
-The game page has four regions:
-
-- **Header** — title, current room name, mute toggle
-- **Left sidebar** — full-height Statechart Visualizer (XState) graph rail with machine tabs
-- **Center stage** — 3D scene and camera switcher strip
-- **Center-bottom details pane** — fixed 35dvh machine details panel with human-readable states, transitions, and requirements
-- **Right sidebar** — full-height HUD with vitality, machine snapshot, discovered rooms, action buttons, and game state
-
-The Statechart Visualizer (XState) graph renders in a vertical flow to keep labels and guard-heavy
-transitions readable. Machine tabs switch the active graph and the center-bottom details pane in
-sync, so graph context and textual explanations stay aligned.
-
-The machine definitions that render in the visualizer are the same definitions used by runtime
-actors — not duplicated static graph snapshots.
+### Real-Time with Convex
+Convex provides reactive data flow out of the box without the overhead of GraphQL subscriptions or web-socket polling. It serves as the primary data-authority for zero-friction user onboarding, session persistence, and instant-on leaderboards.
 
 ---
 
@@ -304,101 +202,18 @@ Runestone has four camera modes, each controlled by a hotkey (keys 1–4):
 | First Person   | `3`    | Head-level view, pointer-lock, subtle head-bob         |
 | Free Orbital   | `4`    | Full 6-DoF orbit, pan + rotate + zoom                  |
 
-All FOVs, offsets, lerp speeds, and zoom ranges come from `CAMERA_CONFIG` constants — no
-magic numbers in camera components. Mode transitions fire a haptic pulse. Free orbital renders
-floating state-name labels above each room.
+All transition logic relies on smooth lerping orchestrated by dedicated configuration constants in the codebase. 
 
-Room traversal is machine-authoritative: the dungeon machine transitions first, then the scene
-positions the player relative to the correct doorway. There is no predictive movement or
-client-side shortcutting.
-
----
-
-## Backend and Persistence
-
-### Convex schema
-
-Three tables:
-
-- **users** — `uuid`, `username`, `discriminator`, timestamps
-- **dungeon_runs** — `userId`, `score`, `timeMs`, `roomsDiscovered`, `completedAt`
-- **game_progress** — `userId`, `slot`, `snapshot` (XState JSON), `savedAt`
-
-`game_progress` is schema-ready for Phase 2 save/load but is not yet wired to UI.
-
-### Auth flow
-
-First visit:
-1. No UUID in `localStorage` → `crypto.randomUUID()` → stored
-2. Username modal shown (3–20 alphanumeric characters)
-3. Convex `createOrGet` mutation assigns a discriminator (e.g. `Hero#0023`)
-4. Session stored → navigate to `/game`
-
-Return visit: UUID found → `getByUuid` query → modal skipped.
-
----
-
-## Tech Stack
-
-| Category         | Technology                              |
-| ---------------- | --------------------------------------- |
-| Framework        | TanStack Start                          |
-| Routing          | TanStack Router                         |
-| UI               | React 19                                |
-| 3D rendering     | React Three Fiber                       |
-| 3D helpers       | @react-three/drei                       |
-| Physics          | @react-three/rapier                     |
-| Postprocessing   | @react-three/postprocessing             |
-| State machines   | XState v5                               |
-| 3D library       | Three.js                                |
-| Graph layout     | @dagrejs/dagre                          |
-| Flow graph       | @xyflow/react                           |
-| Backend          | Convex                                  |
-| Data fetching    | TanStack Query                          |
-| Forms            | TanStack Form                           |
-| Music            | Tone.js                                 |
-| Haptics          | web-haptics                             |
-| Animation        | Motion (motion/react)                   |
-| Styling          | Tailwind CSS v4                         |
-| UI primitives    | Shadcn + Radix UI                       |
-| Variants         | Class Variance Authority                |
-| Linting          | Biome                                   |
-| Architecture     | Steiger (FSD enforcement)               |
-| Git hooks        | Lefthook                                |
-| Testing          | Vitest + Testing Library                |
-| Language         | TypeScript (strict)                     |
-| Runtime          | Node.js ≥ 22.12.0                       |
-
----
-
-## Current Status
-
-Phase 1 (single-floor MVP) is complete:
-
-- All 5 rooms traversable with physics and collision
-- Machine-authoritative traversal with guard conditions enforced
-- Four working camera modes with smooth transitions
-- Enemy patrol, detection, chase, and defeat in the guard room
-- Key pickup, treasury door unlock, and floor completion
-- Convex-backed auth, leaderboard, and score submission
-- Achievements, HUD, audio, haptics, and settings
-
-**Deferred for Phase 2:**
-
-- Mobile controls (virtual joystick, touch input) — not yet implemented
-- Responsive/mobile UX — game input currently requires keyboard and mouse
-- Save/load system — Convex schema exists; UI not wired
-- Multiple floors — only Floor One is scoped
-- Advanced combat — enemy damage to player is placeholder
-- Character facing direction and attack animations
-- Visual polish: door open/close animations, prompt sizing at distance
+<div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+  <img src="./public/screenshots/gameplay-third-person.png" width="48%" alt="Third Person Gameplay" />
+  <img src="./public/screenshots/gameplay-top-down.png" width="48%" alt="Top Down Isometric View" />
+</div>
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
-
 - Node.js ≥ 22.12.0 (`.nvmrc` included — run `nvm use` to align)
 - npm ≥ 11.5.1
 - A [Convex](https://convex.dev) account (free tier sufficient)
@@ -415,16 +230,13 @@ npm install
 npx convex dev --once
 ```
 
-This prompts you to log in and creates a `.env.local` file with your Convex deployment URL.
-
 ### 3. Start the development server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). On first visit, a username prompt appears.
-After entering a username, you land on the game page.
+Open [http://localhost:3000](http://localhost:3000). On first visit, a username prompt appears. After entering a username, you land on the game page.
 
 ---
 
@@ -441,26 +253,6 @@ npm run lint:purity   # Segment purity checks (config/lib/ui separation)
 npm run test          # Vitest test suite
 npm run ci:local      # Full local CI parity check before pushing
 ```
-
----
-
-## Roadmap
-
-**Phase 1 — Complete**
-- Single-floor dungeon with five rooms
-- Machine-authoritative traversal and guard conditions
-- Enemy behaviour, key progression, achievements
-- Live XState inspector panel
-- Auth, audio, haptics, settings
-
-**Phase 2 — Planned**
-- Mobile controls: virtual joystick and touch input
-- Multiple floors with progressive dungeon generation
-- Save/load system using Convex game progress slots
-- Advanced combat: player attack animations, enemy damage, health items
-- Parallel states: twin chambers (XState parallel regions)
-- Nested machines: sub-vaults via descending staircases
-- Visual leaderboard
 
 ---
 
