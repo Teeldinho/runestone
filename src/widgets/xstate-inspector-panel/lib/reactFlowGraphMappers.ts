@@ -27,11 +27,19 @@ type InspectorFlowNodeData = {
 	label: string;
 };
 
+type InspectorFlowNodePosition = {
+	x: number;
+	y: number;
+};
+
 type InspectorFlowEdgeData = {
 	eventType: string;
 	guard: string | null;
 	guardMarkers: InspectorFlowEdgeGuardMarker[];
 	markerLaneOffset: number;
+	sourceNodePosition?: InspectorFlowNodePosition;
+	targetNodePosition?: InspectorFlowNodePosition;
+	nearbyNodePositions?: InspectorFlowNodePosition[];
 };
 
 type InspectorFlowEdgeGuardMarker = {
@@ -270,6 +278,9 @@ const applyGuardMarkerCollisionGroups = (
 				eventType: flowEdgeData.eventType,
 				guard: flowEdgeData.guard,
 				markerLaneOffset: flowEdgeData.markerLaneOffset,
+				sourceNodePosition: flowEdgeData.sourceNodePosition,
+				targetNodePosition: flowEdgeData.targetNodePosition,
+				nearbyNodePositions: flowEdgeData.nearbyNodePositions,
 				guardMarkers: flowEdgeData.guardMarkers.map((marker) => {
 					const collisionMeta = collisionMetaByMarkerId.get(marker.id);
 
@@ -316,6 +327,7 @@ export const mapGraphEdgesToFlowEdges = (
 	graphEdges: MachineGraphEdge[],
 	graphNodes: PositionedMachineGraphNode[] = [],
 ): InspectorFlowEdge[] => {
+	const nodePositionById = createNodePositionById(graphNodes);
 	const edgeLaneOffsetById = createEdgeLaneOffsetById(graphEdges);
 	const guardKeySetByDirectionKey = createGuardKeySetByDirectionKey(graphEdges);
 	const guardColorByKey = createGuardColorByKey(
@@ -323,6 +335,15 @@ export const mapGraphEdgesToFlowEdges = (
 	);
 	const flowEdges = graphEdges.map((graphEdge) => {
 		const laneOffset = edgeLaneOffsetById.get(graphEdge.id) ?? 0;
+		const sourceNodePosition = nodePositionById.get(graphEdge.source);
+		const targetNodePosition = nodePositionById.get(graphEdge.target);
+		const nearbyNodePositions = graphNodes
+			.filter(
+				(graphNode) =>
+					graphNode.id !== graphEdge.source &&
+					graphNode.id !== graphEdge.target,
+			)
+			.map((graphNode) => graphNode.position);
 
 		return {
 			id: graphEdge.id,
@@ -357,13 +378,15 @@ export const mapGraphEdgesToFlowEdges = (
 					guardColorByKey,
 				),
 				markerLaneOffset: laneOffset,
+				sourceNodePosition,
+				targetNodePosition,
+				nearbyNodePositions,
 			},
 			type: INSPECTOR_FLOW_EDGE_VISUALS.TYPE,
 			animated: false,
 			selectable: false,
 		};
 	});
-	const nodePositionById = createNodePositionById(graphNodes);
 
 	return applyGuardMarkerCollisionGroups(flowEdges, nodePositionById);
 };
@@ -374,4 +397,5 @@ export type {
 	InspectorFlowEdgeGuardMarker,
 	InspectorFlowNode,
 	InspectorFlowNodeData,
+	InspectorFlowNodePosition,
 };

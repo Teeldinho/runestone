@@ -5,6 +5,7 @@ import {
 	INSPECTOR_FLOW_EDGE_LAYOUT,
 	INSPECTOR_GUARD_MARKER_INTERACTION,
 } from "../config";
+import type { InspectorFlowNodePosition } from "../lib";
 import { resolveGuardMarkerNodeClearance } from "../lib";
 
 type GuardMarkerDirectionIndicatorMode =
@@ -21,6 +22,9 @@ type GuardMarkerEdgeLayoutInput = {
 	collisionGroupSize?: number;
 	sourcePosition?: Position;
 	targetPosition?: Position;
+	sourceNodePosition?: InspectorFlowNodePosition;
+	targetNodePosition?: InspectorFlowNodePosition;
+	nearbyNodePositions?: InspectorFlowNodePosition[];
 	markerLaneOffset: number;
 	markerIndex: number;
 	markerCount: number;
@@ -69,6 +73,9 @@ export function useGuardMarkerEdgeLayout({
 	collisionGroupSize = 1,
 	sourcePosition,
 	targetPosition,
+	sourceNodePosition,
+	targetNodePosition,
+	nearbyNodePositions,
 	markerLaneOffset,
 	markerIndex,
 	markerCount,
@@ -114,7 +121,7 @@ export function useGuardMarkerEdgeLayout({
 
 	const deltaX = Math.abs(targetX - sourceX);
 	const deltaY = Math.abs(targetY - sourceY);
-	const isHorizontal = deltaX > deltaY || !isDesktopLayout;
+	const isHorizontal = deltaX > deltaY;
 
 	const isPositiveDirection = isHorizontal
 		? sourceX <= targetX
@@ -190,6 +197,9 @@ export function useGuardMarkerEdgeLayout({
 		sourceY,
 		targetX,
 		targetY,
+		sourceNodeCenter: sourceNodePosition,
+		targetNodeCenter: targetNodePosition,
+		additionalNodeCenters: nearbyNodePositions,
 		isSelfLoopTransition,
 		sourcePosition,
 		targetPosition,

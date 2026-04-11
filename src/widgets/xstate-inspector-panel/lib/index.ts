@@ -10,6 +10,7 @@ export {
 	type InspectorFlowEdgeGuardMarker,
 	type InspectorFlowNode,
 	type InspectorFlowNodeData,
+	type InspectorFlowNodePosition,
 	mapGraphEdgesToFlowEdges,
 	mapGraphNodesToFlowNodes,
 } from "./reactFlowGraphMappers";

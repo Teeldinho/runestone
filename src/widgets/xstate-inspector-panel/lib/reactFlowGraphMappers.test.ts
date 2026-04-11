@@ -230,6 +230,51 @@ describe("reactFlowGraphMappers", () => {
 		);
 	});
 
+	it("includes authoritative source and nearby node positions for marker placement", () => {
+		const positionedNodes: PositionedMachineGraphNode[] = [
+			{
+				id: ROOM_IDS.ENTRANCE,
+				isActive: true,
+				kind: STATE_VISUALIZER_NODE_KINDS.STATE,
+				label: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+				position: { x: 80, y: 120 },
+			},
+			{
+				id: ROOM_IDS.GUARD_ROOM,
+				isActive: false,
+				kind: STATE_VISUALIZER_NODE_KINDS.STATE,
+				label: ROOM_LABELS[ROOM_IDS.GUARD_ROOM],
+				position: { x: 420, y: 120 },
+			},
+			{
+				id: ROOM_IDS.TREASURY,
+				isActive: false,
+				kind: STATE_VISUALIZER_NODE_KINDS.STATE,
+				label: ROOM_LABELS[ROOM_IDS.TREASURY],
+				position: { x: 260, y: 280 },
+			},
+		];
+
+		const flowEdges = mapGraphEdgesToFlowEdges(
+			[
+				{
+					eventType: DUNGEON_EVENTS.ENTER_GUARD_ROOM,
+					guard: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+					id: TEST_GRAPH_EDGE_IDS.ENTRANCE_TO_GUARD_ROOM,
+					source: ROOM_IDS.ENTRANCE,
+					target: ROOM_IDS.GUARD_ROOM,
+				},
+			],
+			positionedNodes,
+		);
+
+		expect(flowEdges[0]?.data?.sourceNodePosition).toEqual({ x: 80, y: 120 });
+		expect(flowEdges[0]?.data?.targetNodePosition).toEqual({ x: 420, y: 120 });
+		expect(flowEdges[0]?.data?.nearbyNodePositions).toEqual([
+			{ x: 260, y: 280 },
+		]);
+	});
+
 	it("assigns collision group slots for markers in the same lane bucket", () => {
 		const collisionNodes: PositionedMachineGraphNode[] = [
 			{

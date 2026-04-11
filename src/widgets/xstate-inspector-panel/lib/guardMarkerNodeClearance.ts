@@ -17,6 +17,9 @@ type GuardMarkerNodeClearanceInput = {
 	sourceY: number;
 	targetX: number;
 	targetY: number;
+	sourceNodeCenter?: GuardMarkerNodeCenter;
+	targetNodeCenter?: GuardMarkerNodeCenter;
+	additionalNodeCenters?: GuardMarkerNodeCenter[];
 	isSelfLoopTransition?: boolean;
 	sourcePosition?: Position;
 	targetPosition?: Position;
@@ -136,8 +139,8 @@ const isMarkerInsideNodeBounds = (
 	expandedHalfHeight: number,
 ): boolean => {
 	return (
-		Math.abs(markerCenter.x - nodeCenter.x) <= expandedHalfWidth &&
-		Math.abs(markerCenter.y - nodeCenter.y) <= expandedHalfHeight
+		Math.abs(markerCenter.x - nodeCenter.x) < expandedHalfWidth &&
+		Math.abs(markerCenter.y - nodeCenter.y) < expandedHalfHeight
 	);
 };
 
@@ -160,6 +163,101 @@ const applyAxisBoundary = (
 	return markerValue;
 };
 
+const resolveSignedDirection = (
+	deltaValue: number,
+	fallbackDirection: 1 | -1,
+): 1 | -1 => {
+	if (deltaValue > 0) {
+		return 1;
+	}
+
+	if (deltaValue < 0) {
+		return -1;
+	}
+
+	return fallbackDirection;
+};
+
+const resolveNodeOverlapClearance = ({
+	markerCenter,
+	nodeCenter,
+	expandedHalfWidth,
+	expandedHalfHeight,
+	fallbackDirectionSign,
+}: {
+	markerCenter: GuardMarkerCenterPoint;
+	nodeCenter: GuardMarkerNodeCenter;
+	expandedHalfWidth: number;
+	expandedHalfHeight: number;
+	fallbackDirectionSign: 1 | -1;
+}): GuardMarkerCenterPoint => {
+	if (
+		!isMarkerInsideNodeBounds(
+			markerCenter,
+			nodeCenter,
+			expandedHalfWidth,
+			expandedHalfHeight,
+		)
+	) {
+		return markerCenter;
+	}
+
+	const deltaX = markerCenter.x - nodeCenter.x;
+	const deltaY = markerCenter.y - nodeCenter.y;
+	const overlapX = expandedHalfWidth - Math.abs(deltaX);
+	const overlapY = expandedHalfHeight - Math.abs(deltaY);
+
+	if (overlapX <= overlapY) {
+		return {
+			x: applyAxisBoundary(
+				markerCenter.x,
+				nodeCenter.x,
+				expandedHalfWidth,
+				resolveSignedDirection(deltaX, fallbackDirectionSign),
+			),
+			y: markerCenter.y,
+		};
+	}
+
+	return {
+		x: markerCenter.x,
+		y: applyAxisBoundary(
+			markerCenter.y,
+			nodeCenter.y,
+			expandedHalfHeight,
+			resolveSignedDirection(deltaY, fallbackDirectionSign),
+		),
+	};
+};
+
+const resolveAdditionalNodeClearance = ({
+	markerCenter,
+	additionalNodeCenters,
+	expandedHalfWidth,
+	expandedHalfHeight,
+	fallbackDirectionSign,
+}: {
+	markerCenter: GuardMarkerCenterPoint;
+	additionalNodeCenters: GuardMarkerNodeCenter[];
+	expandedHalfWidth: number;
+	expandedHalfHeight: number;
+	fallbackDirectionSign: 1 | -1;
+}): GuardMarkerCenterPoint => {
+	let nextMarkerCenter = markerCenter;
+
+	for (const additionalNodeCenter of additionalNodeCenters) {
+		nextMarkerCenter = resolveNodeOverlapClearance({
+			markerCenter: nextMarkerCenter,
+			nodeCenter: additionalNodeCenter,
+			expandedHalfWidth,
+			expandedHalfHeight,
+			fallbackDirectionSign,
+		});
+	}
+
+	return nextMarkerCenter;
+};
+
 const areNodeCentersEqual = (
 	firstNodeCenter: GuardMarkerNodeCenter,
 	secondNodeCenter: GuardMarkerNodeCenter,
@@ -177,6 +275,9 @@ export const resolveGuardMarkerNodeClearance = ({
 	sourceY,
 	targetX,
 	targetY,
+	sourceNodeCenter: sourceNodeCenterInput,
+	targetNodeCenter: targetNodeCenterInput,
+	additionalNodeCenters = [],
 	isSelfLoopTransition,
 	sourcePosition,
 	targetPosition,
@@ -196,6 +297,7 @@ export const resolveGuardMarkerNodeClearance = ({
 	const expandedHalfHeight =
 		nodeHalfHeight + markerHalfSize + nodeClearanceOffset;
 	const sourceNodeCenter =
+		sourceNodeCenterInput ??
 		resolveNodeCenterFromHandle(
 			sourceX,
 			sourceY,
@@ -216,6 +318,7 @@ export const resolveGuardMarkerNodeClearance = ({
 			nodeHalfHeight,
 		});
 	const targetNodeCenter =
+		targetNodeCenterInput ??
 		resolveNodeCenterFromHandle(
 			targetX,
 			targetY,
@@ -267,7 +370,13 @@ export const resolveGuardMarkerNodeClearance = ({
 				!isMarkerInsideSelfLoopNodeBounds &&
 				!shouldApplyOutOfBoundsSelfLoopClearance
 			) {
-				return markerCenter;
+				return resolveAdditionalNodeClearance({
+					markerCenter,
+					additionalNodeCenters,
+					expandedHalfWidth,
+					expandedHalfHeight,
+					fallbackDirectionSign,
+				});
 			}
 
 			const perpendicularDirection = fallbackDirectionSign;
@@ -277,33 +386,48 @@ export const resolveGuardMarkerNodeClearance = ({
 					? INSPECTOR_GUARD_MARKER_INTERACTION.SELF_LOOP_CLEARANCE_AXIS.Y
 					: INSPECTOR_GUARD_MARKER_INTERACTION.SELF_LOOP_CLEARANCE_AXIS.X);
 
-			return selfLoopClearanceAxis ===
+			const selfLoopMarkerCenter =
+				selfLoopClearanceAxis ===
 				INSPECTOR_GUARD_MARKER_INTERACTION.SELF_LOOP_CLEARANCE_AXIS.X
-				? {
-						x: applyAxisBoundary(
-							markerCenter.x,
-							selfLoopReferenceNodeCenter.x,
-							expandedHalfWidth,
-							perpendicularDirection,
-						),
-						y: markerCenter.y,
-					}
-				: {
-						x: markerCenter.x,
-						y: applyAxisBoundary(
-							markerCenter.y,
-							selfLoopReferenceNodeCenter.y,
-							expandedHalfHeight,
-							perpendicularDirection,
-						),
-					};
+					? {
+							x: applyAxisBoundary(
+								markerCenter.x,
+								selfLoopReferenceNodeCenter.x,
+								expandedHalfWidth,
+								perpendicularDirection,
+							),
+							y: markerCenter.y,
+						}
+					: {
+							x: markerCenter.x,
+							y: applyAxisBoundary(
+								markerCenter.y,
+								selfLoopReferenceNodeCenter.y,
+								expandedHalfHeight,
+								perpendicularDirection,
+							),
+						};
+
+			return resolveAdditionalNodeClearance({
+				markerCenter: selfLoopMarkerCenter,
+				additionalNodeCenters,
+				expandedHalfWidth,
+				expandedHalfHeight,
+				fallbackDirectionSign,
+			});
 		}
 
 		if (!isMarkerInsideSelfLoopNodeBounds) {
-			return markerCenter;
+			return resolveAdditionalNodeClearance({
+				markerCenter,
+				additionalNodeCenters,
+				expandedHalfWidth,
+				expandedHalfHeight,
+				fallbackDirectionSign,
+			});
 		}
 
-		return isHorizontal
+		const selfLoopDirectionalMarkerCenter = isHorizontal
 			? {
 					x: applyAxisBoundary(
 						markerCenter.x,
@@ -322,6 +446,14 @@ export const resolveGuardMarkerNodeClearance = ({
 						directionSign,
 					),
 				};
+
+		return resolveAdditionalNodeClearance({
+			markerCenter: selfLoopDirectionalMarkerCenter,
+			additionalNodeCenters,
+			expandedHalfWidth,
+			expandedHalfHeight,
+			fallbackDirectionSign,
+		});
 	}
 
 	let nextMarkerCenter = { ...markerCenter };
@@ -388,7 +520,13 @@ export const resolveGuardMarkerNodeClearance = ({
 				};
 	}
 
-	return nextMarkerCenter;
+	return resolveAdditionalNodeClearance({
+		markerCenter: nextMarkerCenter,
+		additionalNodeCenters,
+		expandedHalfWidth,
+		expandedHalfHeight,
+		fallbackDirectionSign,
+	});
 };
 
 export type { GuardMarkerCenterPoint, GuardMarkerNodeClearanceInput };

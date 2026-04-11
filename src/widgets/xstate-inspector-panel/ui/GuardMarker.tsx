@@ -1,7 +1,10 @@
 import type { Position } from "@xyflow/react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/shared/ui";
 import { INSPECTOR_COPY, INSPECTOR_GUARD_MARKER_INTERACTION } from "../config";
-import type { InspectorFlowEdgeGuardMarker } from "../lib";
+import type {
+	InspectorFlowEdgeGuardMarker,
+	InspectorFlowNodePosition,
+} from "../lib";
 import { useGuardMarkerEdgeLayout } from "../model";
 
 type GuardMarkerProps = {
@@ -19,6 +22,9 @@ type GuardMarkerProps = {
 	isSelfLoopTransition: boolean;
 	sourcePosition?: Position;
 	targetPosition?: Position;
+	sourceNodePosition?: InspectorFlowNodePosition;
+	targetNodePosition?: InspectorFlowNodePosition;
+	nearbyNodePositions?: InspectorFlowNodePosition[];
 };
 
 export function GuardMarker({
@@ -36,6 +42,9 @@ export function GuardMarker({
 	isSelfLoopTransition,
 	sourcePosition,
 	targetPosition,
+	sourceNodePosition,
+	targetNodePosition,
+	nearbyNodePositions,
 }: GuardMarkerProps) {
 	const markerLayout = useGuardMarkerEdgeLayout({
 		sourceX,
@@ -48,6 +57,9 @@ export function GuardMarker({
 		collisionGroupSize: guardMarker.collisionGroupSize,
 		sourcePosition,
 		targetPosition,
+		sourceNodePosition,
+		targetNodePosition,
+		nearbyNodePositions,
 		markerLaneOffset,
 		markerIndex,
 		markerCount,

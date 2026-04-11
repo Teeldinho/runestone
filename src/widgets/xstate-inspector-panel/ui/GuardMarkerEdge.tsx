@@ -46,6 +46,9 @@ export function GuardMarkerEdge(props: EdgeProps<Edge<InspectorFlowEdgeData>>) {
 									targetY={props.targetY}
 									sourcePosition={props.sourcePosition}
 									targetPosition={props.targetPosition}
+									sourceNodePosition={props.data?.sourceNodePosition}
+									targetNodePosition={props.data?.targetNodePosition}
+									nearbyNodePositions={props.data?.nearbyNodePositions}
 								/>
 							),
 						)}

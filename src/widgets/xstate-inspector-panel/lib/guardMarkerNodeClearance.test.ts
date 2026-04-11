@@ -189,4 +189,31 @@ describe("resolveGuardMarkerNodeClearance", () => {
 		expect(result.x).toBe(200 + expandedHalfWidth);
 		expect(result.y).toBe(250);
 	});
+
+	it("repositions markers that overlap additional nearby machine nodes", () => {
+		const overlappingNodeCenter = { x: 200, y: 220 };
+		const result = resolveGuardMarkerNodeClearance({
+			markerCenterX: 200,
+			markerCenterY: 220,
+			sourceX: 200,
+			sourceY: 100,
+			targetX: 200,
+			targetY: 340,
+			isHorizontal: false,
+			directionSign: 1,
+			fallbackDirectionSign: 1,
+			directionIndicatorMode:
+				INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE.SINGLE,
+			markerSize: INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_SIZE_PX,
+			nodeClearanceOffset:
+				INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_NODE_CLEARANCE_OFFSET_PX,
+			additionalNodeCenters: [overlappingNodeCenter],
+		});
+
+		const isStillOverlapping =
+			Math.abs(result.x - overlappingNodeCenter.x) < expandedHalfWidth &&
+			Math.abs(result.y - overlappingNodeCenter.y) < expandedHalfHeight;
+
+		expect(isStillOverlapping).toBe(false);
+	});
 });
