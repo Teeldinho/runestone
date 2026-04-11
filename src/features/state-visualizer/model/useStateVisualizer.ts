@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import type { AnyStateMachine } from "xstate";
-import { getGraphLayout } from "@/shared/lib";
+import { getGraphLayout, useResponsiveLayout } from "@/shared/lib";
 
 import {
+	GRAPH_DIRECTION,
 	MACHINE_GRAPH_LAYOUT,
 	STATE_VISUALIZER_DETAILS_COPY,
 	STATE_VISUALIZER_GRAPH_SYNTAX,
@@ -78,6 +79,8 @@ export const useStateVisualizer = ({
 	machinesBySectionId,
 	stateValuesBySectionId,
 }: UseStateVisualizerInput): StateVisualizerResult => {
+	const { isDesktopLayout } = useResponsiveLayout();
+
 	const sections = useMemo<MachineGraphSection[]>(() => {
 		return STATE_VISUALIZER_SECTIONS.map((section) => {
 			const machine = machinesBySectionId[section.id];
@@ -87,6 +90,9 @@ export const useStateVisualizer = ({
 				sectionId: section.id,
 				activeStateNodeIds: createActiveStateNodeIds(machine, stateValue),
 			});
+			const layoutDirection = isDesktopLayout
+				? GRAPH_DIRECTION.VERTICAL
+				: GRAPH_DIRECTION.HORIZONTAL;
 			const layout = getGraphLayout({
 				nodes: graphSnapshot.nodes.map((node) => ({
 					id: node.id,
@@ -97,7 +103,7 @@ export const useStateVisualizer = ({
 					source: edge.source,
 					target: edge.target,
 				})),
-				direction: MACHINE_GRAPH_LAYOUT.DIRECTION,
+				direction: layoutDirection,
 				nodeSeparation: MACHINE_GRAPH_LAYOUT.NODE_SEPARATION,
 				rankSeparation: MACHINE_GRAPH_LAYOUT.RANK_SEPARATION,
 			});
@@ -120,7 +126,7 @@ export const useStateVisualizer = ({
 				positionedNodes,
 			};
 		});
-	}, [machinesBySectionId, stateValuesBySectionId]);
+	}, [isDesktopLayout, machinesBySectionId, stateValuesBySectionId]);
 
 	return {
 		sections,

@@ -11,11 +11,12 @@ import {
 } from "@/features/audio-manager";
 import { CAMERA_MODES, useCameraMachine } from "@/features/camera-system";
 import { useGameMachine } from "@/features/dungeon-navigation";
+import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import {
 	STATE_VISUALIZER_SECTION_IDS,
 	useStateVisualizer,
 } from "@/features/state-visualizer";
-import { GAME_PAGE_COPY } from "@/pages/game/config";
+import { GAME_PAGE_COPY, GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 
 import { useGamePage } from "./useGamePage";
 
@@ -83,6 +84,16 @@ vi.mock("@/features/state-visualizer", () => {
 	};
 });
 
+vi.mock("@/features/responsive-layout", () => ({
+	useResponsiveGameLayout: vi.fn().mockReturnValue({
+		isDesktopLayout: true,
+		isMobileLayout: false,
+		isTabletLayout: false,
+		isLandscape: true,
+		isPortrait: false,
+	}),
+}));
+
 vi.mock("@/entities/player", async (importOriginal) => {
 	const actual = await importOriginal<typeof import("@/entities/player")>();
 
@@ -141,20 +152,24 @@ vi.mock("@/shared/lib/playerPositionStore", () => ({
 	setPlayerTeleportTarget: vi.fn(),
 }));
 
+const createGameMachineResult = (overrides = {}) =>
+	({
+		activeStateLabel: ROOM_IDS.ENTRANCE,
+		actionButtons: [],
+		currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+		currentRoomId: ROOM_IDS.ENTRANCE,
+		discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
+		discoveredRooms: [ROOM_IDS.ENTRANCE],
+		enemiesRemaining: 1,
+		handleDungeonRunReset: vi.fn(),
+		handleDungeonEventSend: vi.fn(),
+		hasTreasureKey: false,
+		...overrides,
+	}) as unknown as ReturnType<typeof useGameMachine>;
+
 describe("useGamePage", () => {
 	it("composes page data from machine and visualizer hooks", () => {
-		vi.mocked(useGameMachine).mockReturnValue({
-			activeStateLabel: ROOM_IDS.ENTRANCE,
-			actionButtons: [],
-			currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
-			currentRoomId: ROOM_IDS.ENTRANCE,
-			discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
-			discoveredRooms: [ROOM_IDS.ENTRANCE],
-			enemiesRemaining: 1,
-			handleDungeonRunReset: vi.fn(),
-			handleDungeonEventSend: vi.fn(),
-			hasTreasureKey: false,
-		} as unknown as ReturnType<typeof useGameMachine>);
+		vi.mocked(useGameMachine).mockReturnValue(createGameMachineResult());
 
 		vi.mocked(useStateVisualizer).mockReturnValue({
 			sections: [],
@@ -197,11 +212,50 @@ describe("useGamePage", () => {
 		expect(result.current.cameraStateSnapshot.mode).toBe(
 			CAMERA_MODES.FREE_ORBITAL,
 		);
+		expect(result.current.mobileSheetTabId).toBe(
+			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
+		);
+		expect(result.current.isMobileSheetOpen).toBe(false);
+		expect(result.current.isMobileTabletLandscape).toBe(false);
+		expect(vi.mocked(useResponsiveGameLayout)).toHaveBeenCalled();
 		expect(vi.mocked(useCameraMachine)).toHaveBeenCalled();
 		expect(result.current.handleAudioMuteToggle).toBeDefined();
 		expect(
 			vi.mocked(useAudioController)().handleAudioPlayRequest,
 		).toHaveBeenCalled();
+	});
+
+	it("locks page scroll in mobile or tablet landscape mode and restores styles on cleanup", () => {
+		document.body.style.overflow = "auto";
+		document.body.style.overscrollBehavior = "auto";
+		document.documentElement.style.overflow = "auto";
+		document.documentElement.style.overscrollBehavior = "auto";
+
+		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+			isDesktopLayout: false,
+			isMobileLayout: true,
+			isTabletLayout: false,
+			isLandscape: true,
+			isPortrait: false,
+		});
+		vi.mocked(useGameMachine).mockReturnValue(createGameMachineResult());
+		vi.mocked(useStateVisualizer).mockReturnValue({
+			sections: [],
+		} as unknown as ReturnType<typeof useStateVisualizer>);
+
+		const { unmount } = renderHook(() => useGamePage());
+
+		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.body.style.overscrollBehavior).toBe("none");
+		expect(document.documentElement.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overscrollBehavior).toBe("none");
+
+		unmount();
+
+		expect(document.body.style.overflow).toBe("auto");
+		expect(document.body.style.overscrollBehavior).toBe("auto");
+		expect(document.documentElement.style.overflow).toBe("auto");
+		expect(document.documentElement.style.overscrollBehavior).toBe("auto");
 	});
 });
 
@@ -212,18 +266,12 @@ describe("dungeon reset teleport", () => {
 		);
 		const resetDungeonMachine = vi.fn();
 
-		vi.mocked(useGameMachine).mockReturnValue({
-			activeStateLabel: ROOM_IDS.ENTRANCE,
-			actionButtons: [],
-			currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
-			currentRoomId: ROOM_IDS.ENTRANCE,
-			discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
-			discoveredRooms: [ROOM_IDS.ENTRANCE],
-			enemiesRemaining: 0,
-			handleDungeonRunReset: resetDungeonMachine,
-			handleDungeonEventSend: vi.fn(),
-			hasTreasureKey: false,
-		} as unknown as ReturnType<typeof useGameMachine>);
+		vi.mocked(useGameMachine).mockReturnValue(
+			createGameMachineResult({
+				enemiesRemaining: 0,
+				handleDungeonRunReset: resetDungeonMachine,
+			}),
+		);
 
 		vi.mocked(useStateVisualizer).mockReturnValue({
 			sections: [],

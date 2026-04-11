@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { createFloorOneMachine, ROOM_IDS } from "@/entities/dungeon";
 import {
@@ -16,14 +16,16 @@ import {
 	useCameraMachine,
 } from "@/features/camera-system";
 import { useGameMachine } from "@/features/dungeon-navigation";
+import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import {
 	STATE_VISUALIZER_SECTION_IDS,
 	useStateVisualizer,
 } from "@/features/state-visualizer";
 import { setPlayerTeleportTarget } from "@/shared/lib/playerPositionStore";
+import type { Vector3Tuple } from "@/shared/types";
 import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 
-import { GAME_PAGE_COPY } from "../config";
+import { GAME_PAGE_COPY, GAME_PAGE_MOBILE_SHEET } from "../config";
 
 type GamePageViewModel = {
 	actionButtons: ReturnType<typeof useGameMachine>["actionButtons"];
@@ -38,10 +40,20 @@ type GamePageViewModel = {
 	handleCameraModeSwitch: (event: CameraMachineEvent) => void;
 	hasTreasureKeyLabel: string;
 	handleDungeonRunReset: () => void;
+	handleMobileSheetOpenChange: (isOpen: boolean) => void;
+	handleMobileSheetTabChange: (tabId: string) => void;
+	handleTouchJoystickMove: (velocity: Vector3Tuple) => void;
+	handleTouchJoystickStop: () => void;
 	isAudioMuted: boolean;
+	isMobileSheetOpen: boolean;
+	isMobileTabletLandscape: boolean;
+	mobileSheetTabId: GamePageMobileSheetTabId;
 	playerHp: number;
 	playerMaxHp: number;
 };
+
+type GamePageMobileSheetTabId =
+	(typeof GAME_PAGE_MOBILE_SHEET.TAB_IDS)[keyof typeof GAME_PAGE_MOBILE_SHEET.TAB_IDS];
 
 export const useGamePage = (): GamePageViewModel => {
 	const {
@@ -67,6 +79,39 @@ export const useGamePage = (): GamePageViewModel => {
 		handleAudioMuteToggle,
 		isAudioMuted,
 	} = useAudioController();
+	const { isDesktopLayout, isLandscape } = useResponsiveGameLayout();
+	const isMobileTabletLandscape = !isDesktopLayout && isLandscape;
+	const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
+	const [mobileSheetTabId, setMobileSheetTabId] =
+		useState<GamePageMobileSheetTabId>(
+			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
+		);
+
+	useEffect(() => {
+		if (!isMobileTabletLandscape) {
+			return;
+		}
+
+		const previousBodyOverflow = document.body.style.overflow;
+		const previousBodyOverscrollBehavior =
+			document.body.style.overscrollBehavior;
+		const previousHtmlOverflow = document.documentElement.style.overflow;
+		const previousHtmlOverscrollBehavior =
+			document.documentElement.style.overscrollBehavior;
+
+		document.body.style.overflow = "hidden";
+		document.body.style.overscrollBehavior = "none";
+		document.documentElement.style.overflow = "hidden";
+		document.documentElement.style.overscrollBehavior = "none";
+
+		return () => {
+			document.body.style.overflow = previousBodyOverflow;
+			document.body.style.overscrollBehavior = previousBodyOverscrollBehavior;
+			document.documentElement.style.overflow = previousHtmlOverflow;
+			document.documentElement.style.overscrollBehavior =
+				previousHtmlOverscrollBehavior;
+		};
+	}, [isMobileTabletLandscape]);
 
 	useEffect(() => {
 		handleAudioPlayRequest();
@@ -98,6 +143,36 @@ export const useGamePage = (): GamePageViewModel => {
 		setPlayerTeleportTarget(teleportX, teleportY, teleportZ);
 		resetDungeonMachine();
 	}, [sendPlayerMachineEvent, resetDungeonMachine, entrancePosition]);
+
+	const handleTouchJoystickMove = useCallback(
+		(velocity: Vector3Tuple) => {
+			sendPlayerMachineEvent({
+				type: PLAYER_EVENTS.MOVE,
+				velocity,
+				isSprinting: false,
+			});
+		},
+		[sendPlayerMachineEvent],
+	);
+
+	const handleTouchJoystickStop = useCallback(() => {
+		sendPlayerMachineEvent({ type: PLAYER_EVENTS.STOP });
+	}, [sendPlayerMachineEvent]);
+
+	const handleMobileSheetOpenChange = useCallback((isOpen: boolean) => {
+		setIsMobileSheetOpen(isOpen);
+	}, []);
+
+	const handleMobileSheetTabChange = useCallback((tabId: string) => {
+		if (
+			tabId !== GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART &&
+			tabId !== GAME_PAGE_MOBILE_SHEET.TAB_IDS.HUD
+		) {
+			return;
+		}
+
+		setMobileSheetTabId(tabId as GamePageMobileSheetTabId);
+	}, []);
 
 	const visualizerMachinesBySectionId = useMemo(
 		() => ({
@@ -138,7 +213,14 @@ export const useGamePage = (): GamePageViewModel => {
 			? GAME_PAGE_COPY.TREASURE_KEY_STATUS.ACQUIRED
 			: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 		handleDungeonRunReset,
+		handleMobileSheetOpenChange,
+		handleMobileSheetTabChange,
+		handleTouchJoystickMove,
+		handleTouchJoystickStop,
 		isAudioMuted,
+		isMobileSheetOpen,
+		isMobileTabletLandscape,
+		mobileSheetTabId,
 		playerHp: playerSnapshot.context.stats.hp,
 		playerMaxHp: playerSnapshot.context.stats.maxHp,
 	};

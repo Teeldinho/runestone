@@ -14,8 +14,12 @@ import {
 	INSPECTOR_FLOW_EDGE_LAYOUT,
 	INSPECTOR_FLOW_EDGE_VISUALS,
 	INSPECTOR_FLOW_NODE_VISUALS,
+	INSPECTOR_GUARD_MARKER_INTERACTION,
 } from "../config";
 import { createGuardColorByKey } from "./guardMarkerPalette";
+
+type GuardMarkerDirectionIndicatorMode =
+	(typeof INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE)[keyof typeof INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE];
 
 type InspectorFlowNodeData = {
 	isActive: boolean;
@@ -23,11 +27,19 @@ type InspectorFlowNodeData = {
 	label: string;
 };
 
+type InspectorFlowNodePosition = {
+	x: number;
+	y: number;
+};
+
 type InspectorFlowEdgeData = {
 	eventType: string;
 	guard: string | null;
 	guardMarkers: InspectorFlowEdgeGuardMarker[];
 	markerLaneOffset: number;
+	sourceNodePosition?: InspectorFlowNodePosition;
+	targetNodePosition?: InspectorFlowNodePosition;
+	nearbyNodePositions?: InspectorFlowNodePosition[];
 };
 
 type InspectorFlowEdgeGuardMarker = {
@@ -35,7 +47,9 @@ type InspectorFlowEdgeGuardMarker = {
 	guardKey: string;
 	guardLabel: string;
 	color: string;
-	showDirectionIndicator: boolean;
+	directionIndicatorMode: GuardMarkerDirectionIndicatorMode;
+	collisionOrder: number;
+	collisionGroupSize: number;
 };
 
 type InspectorFlowNode = Node<InspectorFlowNodeData>;
@@ -45,6 +59,10 @@ const getEdgePairKey = (source: string, target: string): string => {
 	return source < target
 		? `${source}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_PAIR_SEPARATOR}${target}`
 		: `${target}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_PAIR_SEPARATOR}${source}`;
+};
+
+const getDirectionKey = (source: string, target: string): string => {
+	return `${source}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_PAIR_SEPARATOR}${target}`;
 };
 
 const splitGuardKeys = (guard: string | null): string[] => {
@@ -64,7 +82,7 @@ const createGuardKeySetByDirectionKey = (
 	const guardKeySetByDirectionKey = new Map<string, Set<string>>();
 
 	for (const graphEdge of graphEdges) {
-		const directionKey = `${graphEdge.source}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_PAIR_SEPARATOR}${graphEdge.target}`;
+		const directionKey = getDirectionKey(graphEdge.source, graphEdge.target);
 		const guardKeySet =
 			guardKeySetByDirectionKey.get(directionKey) ?? new Set();
 
@@ -87,24 +105,45 @@ const mapGuardMarkers = (
 	guardColorByKey: Record<string, string>,
 ): InspectorFlowEdgeGuardMarker[] => {
 	const guardKeys = splitGuardKeys(guard);
+	const directionKey = getDirectionKey(source, target);
+	const reverseDirectionKey = getDirectionKey(target, source);
 	const reverseDirectionGuardKeySet =
-		guardKeySetByDirectionKey.get(
-			`${target}${STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_PAIR_SEPARATOR}${source}`,
-		) ?? new Set();
+		guardKeySetByDirectionKey.get(reverseDirectionKey) ?? new Set();
 
-	return guardKeys.map((guardKey, index) => ({
-		id: [edgeId, guardKey].join(
-			STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_ID_SEGMENT_SEPARATOR,
-		),
-		guardKey,
-		guardLabel: getMachineGraphGuardLabel(guardKey),
-		color:
-			guardColorByKey[guardKey] ??
-			INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_COLORS[
-				index % INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_COLORS.length
-			],
-		showDirectionIndicator: reverseDirectionGuardKeySet.has(guardKey),
-	}));
+	return guardKeys.flatMap((guardKey, index) => {
+		const isBidirectionalGuard =
+			source !== target && reverseDirectionGuardKeySet.has(guardKey);
+		const directionIndicatorMode =
+			source === target
+				? INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE.NONE
+				: isBidirectionalGuard
+					? INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE.DUAL
+					: INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE.SINGLE;
+		const shouldHideDuplicateBidirectionalMarker =
+			isBidirectionalGuard && directionKey > reverseDirectionKey;
+
+		if (shouldHideDuplicateBidirectionalMarker) {
+			return [];
+		}
+
+		return [
+			{
+				id: [edgeId, guardKey].join(
+					STATE_VISUALIZER_GRAPH_SYNTAX.EDGE_ID_SEGMENT_SEPARATOR,
+				),
+				guardKey,
+				guardLabel: getMachineGraphGuardLabel(guardKey),
+				color:
+					guardColorByKey[guardKey] ??
+					INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_COLORS[
+						index % INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_COLORS.length
+					],
+				directionIndicatorMode,
+				collisionOrder: 0,
+				collisionGroupSize: 1,
+			},
+		];
+	});
 };
 
 const createEdgeLaneOffsetById = (
@@ -141,6 +180,121 @@ const createEdgeLaneOffsetById = (
 	return edgeLaneOffsetById;
 };
 
+const createNodePositionById = (
+	graphNodes: PositionedMachineGraphNode[],
+): Map<string, { x: number; y: number }> => {
+	return new Map(
+		graphNodes.map((graphNode) => [graphNode.id, graphNode.position]),
+	);
+};
+
+const getGuardMarkerCollisionBucketKey = (
+	flowEdge: InspectorFlowEdge,
+	nodePositionById: Map<string, { x: number; y: number }>,
+): string | null => {
+	const flowEdgeData = flowEdge.data as InspectorFlowEdgeData;
+	const sourcePosition = nodePositionById.get(flowEdge.source);
+	const targetPosition = nodePositionById.get(flowEdge.target);
+
+	if (!sourcePosition || !targetPosition) {
+		return null;
+	}
+
+	const deltaX = Math.abs(targetPosition.x - sourcePosition.x);
+	const deltaY = Math.abs(targetPosition.y - sourcePosition.y);
+	const isHorizontal = deltaX > deltaY;
+	const midpointX = (sourcePosition.x + targetPosition.x) / 2;
+	const midpointY = (sourcePosition.y + targetPosition.y) / 2;
+	const laneAdjustedX = isHorizontal
+		? midpointX
+		: midpointX + flowEdgeData.markerLaneOffset;
+	const laneAdjustedY = isHorizontal
+		? midpointY + flowEdgeData.markerLaneOffset
+		: midpointY;
+	const collisionBucketSize =
+		INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_GLOBAL_COLLISION_BUCKET_PX;
+	const bucketX = Math.round(laneAdjustedX / collisionBucketSize);
+	const bucketY = Math.round(laneAdjustedY / collisionBucketSize);
+
+	return `${isHorizontal ? "h" : "v"}:${bucketX}:${bucketY}`;
+};
+
+const applyGuardMarkerCollisionGroups = (
+	flowEdges: InspectorFlowEdge[],
+	nodePositionById: Map<string, { x: number; y: number }>,
+): InspectorFlowEdge[] => {
+	if (nodePositionById.size === 0) {
+		return flowEdges;
+	}
+
+	const markerIdsByCollisionBucket = new Map<string, string[]>();
+
+	for (const flowEdge of flowEdges) {
+		const flowEdgeData = flowEdge.data as InspectorFlowEdgeData;
+		const collisionBucketKey = getGuardMarkerCollisionBucketKey(
+			flowEdge,
+			nodePositionById,
+		);
+
+		if (!collisionBucketKey) {
+			continue;
+		}
+
+		const markerIds = markerIdsByCollisionBucket.get(collisionBucketKey) ?? [];
+
+		for (const marker of flowEdgeData.guardMarkers) {
+			markerIds.push(marker.id);
+		}
+
+		markerIdsByCollisionBucket.set(collisionBucketKey, markerIds);
+	}
+
+	const collisionMetaByMarkerId = new Map<
+		string,
+		{
+			order: number;
+			size: number;
+		}
+	>();
+
+	for (const markerIds of markerIdsByCollisionBucket.values()) {
+		const sortedMarkerIds = [...new Set(markerIds)].sort();
+		const markerGroupSize = sortedMarkerIds.length;
+
+		sortedMarkerIds.forEach((markerId, markerIndex) => {
+			collisionMetaByMarkerId.set(markerId, {
+				order: markerIndex,
+				size: markerGroupSize,
+			});
+		});
+	}
+
+	return flowEdges.map((flowEdge) => {
+		const flowEdgeData = flowEdge.data as InspectorFlowEdgeData;
+
+		return {
+			...flowEdge,
+			data: {
+				eventType: flowEdgeData.eventType,
+				guard: flowEdgeData.guard,
+				markerLaneOffset: flowEdgeData.markerLaneOffset,
+				sourceNodePosition: flowEdgeData.sourceNodePosition,
+				targetNodePosition: flowEdgeData.targetNodePosition,
+				nearbyNodePositions: flowEdgeData.nearbyNodePositions,
+				guardMarkers: flowEdgeData.guardMarkers.map((marker) => {
+					const collisionMeta = collisionMetaByMarkerId.get(marker.id);
+
+					return {
+						...marker,
+						collisionOrder: collisionMeta?.order ?? 0,
+						collisionGroupSize: collisionMeta?.size ?? 1,
+					};
+				}),
+			},
+		};
+	});
+};
+
 const getFlowNodeClassName = (
 	kind: MachineGraphNodeKind,
 	isActive: boolean,
@@ -171,15 +325,25 @@ export const mapGraphNodesToFlowNodes = (
 
 export const mapGraphEdgesToFlowEdges = (
 	graphEdges: MachineGraphEdge[],
+	graphNodes: PositionedMachineGraphNode[] = [],
 ): InspectorFlowEdge[] => {
+	const nodePositionById = createNodePositionById(graphNodes);
 	const edgeLaneOffsetById = createEdgeLaneOffsetById(graphEdges);
 	const guardKeySetByDirectionKey = createGuardKeySetByDirectionKey(graphEdges);
 	const guardColorByKey = createGuardColorByKey(
 		graphEdges.flatMap((edge) => splitGuardKeys(edge.guard)),
 	);
-
-	return graphEdges.map((graphEdge) => {
+	const flowEdges = graphEdges.map((graphEdge) => {
 		const laneOffset = edgeLaneOffsetById.get(graphEdge.id) ?? 0;
+		const sourceNodePosition = nodePositionById.get(graphEdge.source);
+		const targetNodePosition = nodePositionById.get(graphEdge.target);
+		const nearbyNodePositions = graphNodes
+			.filter(
+				(graphNode) =>
+					graphNode.id !== graphEdge.source &&
+					graphNode.id !== graphEdge.target,
+			)
+			.map((graphNode) => graphNode.position);
 
 		return {
 			id: graphEdge.id,
@@ -214,12 +378,17 @@ export const mapGraphEdgesToFlowEdges = (
 					guardColorByKey,
 				),
 				markerLaneOffset: laneOffset,
+				sourceNodePosition,
+				targetNodePosition,
+				nearbyNodePositions,
 			},
 			type: INSPECTOR_FLOW_EDGE_VISUALS.TYPE,
 			animated: false,
 			selectable: false,
 		};
 	});
+
+	return applyGuardMarkerCollisionGroups(flowEdges, nodePositionById);
 };
 
 export type {
@@ -228,4 +397,5 @@ export type {
 	InspectorFlowEdgeGuardMarker,
 	InspectorFlowNode,
 	InspectorFlowNodeData,
+	InspectorFlowNodePosition,
 };

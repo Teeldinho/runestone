@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import { renderHook } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createMachine } from "xstate";
 
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/entities/dungeon";
 import { PLAYER_STATES } from "@/entities/player";
 import { CAMERA_MODES } from "@/shared/config";
+import * as sharedLib from "@/shared/lib";
 
 import { STATE_VISUALIZER_SECTION_IDS } from "../config";
 
@@ -125,6 +126,20 @@ const TEST_MACHINES_BY_SECTION_ID: UseStateVisualizerInput["machinesBySectionId"
 	};
 
 describe("useStateVisualizer", () => {
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	beforeEach(() => {
+		vi.spyOn(sharedLib, "useResponsiveLayout").mockReturnValue({
+			isDesktopLayout: true,
+			isMobileLayout: false,
+			isTabletLayout: false,
+			isLandscape: true,
+			isPortrait: false,
+		});
+	});
+
 	it("returns machine sections with positioned graph data", () => {
 		const { result } = renderHook(() =>
 			useStateVisualizer({
@@ -171,6 +186,47 @@ describe("useStateVisualizer", () => {
 
 		expect(libraryNode?.position.y).toBeGreaterThan(
 			entranceNode?.position.y ?? 0,
+		);
+	});
+
+	it("uses left-to-right graph direction on mobile and tablet layouts", () => {
+		vi.spyOn(sharedLib, "useResponsiveLayout").mockReturnValue({
+			isDesktopLayout: false,
+			isMobileLayout: true,
+			isTabletLayout: false,
+			isLandscape: false,
+			isPortrait: true,
+		});
+
+		const { result } = renderHook(() =>
+			useStateVisualizer({
+				machinesBySectionId: TEST_MACHINES_BY_SECTION_ID,
+				stateValuesBySectionId: {
+					[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: ROOM_IDS.ENTRANCE,
+					[STATE_VISUALIZER_SECTION_IDS.CAMERA]:
+						TEST_CAMERA_MACHINE.MODES.FREE_ORBITAL,
+					[STATE_VISUALIZER_SECTION_IDS.AUDIO]:
+						TEST_AUDIO_MACHINE.STATES.PLAYING,
+					[STATE_VISUALIZER_SECTION_IDS.PLAYER]: {
+						[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.ALIVE,
+						[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
+					},
+				},
+			}),
+		);
+
+		const dungeonSection = result.current.sections.find(
+			(section) => section.id === STATE_VISUALIZER_SECTION_IDS.DUNGEON,
+		);
+		const entranceNode = dungeonSection?.positionedNodes.find((node) =>
+			node.id.endsWith(`.${ROOM_IDS.ENTRANCE}`),
+		);
+		const libraryNode = dungeonSection?.positionedNodes.find((node) =>
+			node.id.endsWith(`.${ROOM_IDS.LIBRARY}`),
+		);
+
+		expect(libraryNode?.position.x).toBeGreaterThan(
+			entranceNode?.position.x ?? 0,
 		);
 	});
 

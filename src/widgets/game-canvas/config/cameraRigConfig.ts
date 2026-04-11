@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import { CAMERA_TRANSITION_MS, ROOM_CONFIG } from "@/shared/config";
 
 export const CAMERA_RIG_LERP_ALPHA =
@@ -13,4 +14,15 @@ export const CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE =
 export const CAMERA_RIG_CAMERA_UP = {
 	DEFAULT: [0, 1, 0],
 	TOP_DOWN: [0, 0, 1],
+} as const;
+
+export const CAMERA_RIG_TOUCH_GESTURES = {
+	ORBIT: {
+		ONE: THREE.TOUCH.ROTATE,
+		TWO: THREE.TOUCH.DOLLY_PAN,
+	},
+	TOP_DOWN: {
+		ONE: THREE.TOUCH.PAN,
+		TWO: THREE.TOUCH.DOLLY_PAN,
+	},
 } as const;
