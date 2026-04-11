@@ -9,10 +9,8 @@ export function DamageFlashOverlay() {
 
 	return (
 		<div
-			className="pointer-events-none absolute inset-0 z-50 animate-pulse"
-			style={{
-				boxShadow: "inset 0 0 60px 20px rgba(220, 38, 38, 0.6)",
-			}}
+			className="pointer-events-none absolute inset-0 z-50 animate-pulse shadow-[inset_0_0_60px_20px_var(--color-destructive)]"
+			style={{ opacity: 0.5 }}
 			aria-hidden="true"
 		/>
 	);
