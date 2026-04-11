@@ -1,5 +1,7 @@
 import { useMediaQuery } from "react-responsive";
 
+import { RESPONSIVE_LAYOUT_MEDIA_QUERIES } from "../config";
+
 export interface ResponsiveGameLayout {
 	isDesktopLayout: boolean;
 	isMobileLayout: boolean;
@@ -9,13 +11,26 @@ export interface ResponsiveGameLayout {
 }
 
 export function useResponsiveGameLayout(): ResponsiveGameLayout {
-	const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
-	const isTablet = useMediaQuery({
-		query: "(min-width: 768px) and (max-width: 1023px)",
+	const isDesktopWidth = useMediaQuery({
+		query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.DESKTOP_MIN_WIDTH,
 	});
-	const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
-	const isLandscape = useMediaQuery({ query: "(orientation: landscape)" });
-	const isPortrait = useMediaQuery({ query: "(orientation: portrait)" });
+	const isTabletWidth = useMediaQuery({
+		query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_STANDARD_WIDTH,
+	});
+	const isCoarsePointerTabletWidth = useMediaQuery({
+		query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_COARSE_WIDTH,
+	});
+	const isMobile = useMediaQuery({
+		query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.MOBILE_MAX_WIDTH,
+	});
+	const isLandscape = useMediaQuery({
+		query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.LANDSCAPE,
+	});
+	const isPortrait = useMediaQuery({
+		query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.PORTRAIT,
+	});
+	const isTablet = isTabletWidth || isCoarsePointerTabletWidth;
+	const isDesktop = isDesktopWidth && !isCoarsePointerTabletWidth;
 
 	return {
 		isDesktopLayout: isDesktop,
