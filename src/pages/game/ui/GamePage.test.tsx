@@ -1,10 +1,11 @@
 // @vitest-environment happy-dom
 
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DUNGEON_EVENTS, ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
-import { GAME_PAGE_COPY } from "@/pages/game/config";
+import { GAME_PAGE_COPY, GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
+import { useGamePage } from "@/pages/game/model";
 
 import { GamePage } from "./GamePage";
 
@@ -12,41 +13,51 @@ const TEST_NAVIGATION_ACTION_LABELS = {
 	[DUNGEON_EVENTS.ENTER_LIBRARY]: "Enter Library",
 } as const;
 
-vi.mock("@/pages/game/model", () => ({
-	useGamePage: vi.fn(() => ({
-		actionButtons: [
-			{
-				eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
-				label: TEST_NAVIGATION_ACTION_LABELS[DUNGEON_EVENTS.ENTER_LIBRARY],
-				isDisabled: false,
-				handleDungeonActionTrigger: vi.fn(),
-			},
-		],
-		activeStateLabel: ROOM_IDS.ENTRANCE,
-		cameraStateSnapshot: {
-			fov: 58,
-			mode: CAMERA_MODES.FREE_ORBITAL,
-			position: [0, 8, 10],
-			target: [0, 0, 0],
-			zoom: 1,
+const createGamePageViewModel = (overrides = {}) => ({
+	actionButtons: [
+		{
+			eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
+			label: TEST_NAVIGATION_ACTION_LABELS[DUNGEON_EVENTS.ENTER_LIBRARY],
+			isDisabled: false,
+			handleDungeonActionTrigger: vi.fn(),
 		},
-		canvasMachineRuntime: {
-			currentRoomId: ROOM_IDS.ENTRANCE,
-			enemiesRemaining: 1,
-			hasTreasureKey: false,
-		},
-		currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
-		discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
+	],
+	activeStateLabel: ROOM_IDS.ENTRANCE,
+	cameraStateSnapshot: {
+		fov: 58,
+		mode: CAMERA_MODES.FREE_ORBITAL,
+		position: [0, 8, 10] as [number, number, number],
+		target: [0, 0, 0] as [number, number, number],
+		zoom: 1,
+	},
+	canvasMachineRuntime: {
+		currentRoomId: ROOM_IDS.ENTRANCE,
 		enemiesRemaining: 1,
-		graphSections: [],
-		handleCameraModeSwitch: vi.fn(),
-		handleAudioMuteToggle: vi.fn(),
-		isAudioMuted: false,
-		hasTreasureKeyLabel: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
-		handleDungeonRunReset: vi.fn(),
-		playerHp: 100,
-		playerMaxHp: 100,
-	})),
+		hasTreasureKey: false,
+	},
+	currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+	discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
+	enemiesRemaining: 1,
+	graphSections: [],
+	handleCameraModeSwitch: vi.fn(),
+	handleMobileSheetOpenChange: vi.fn(),
+	handleMobileSheetTabChange: vi.fn(),
+	handleTouchJoystickMove: vi.fn(),
+	handleTouchJoystickStop: vi.fn(),
+	handleAudioMuteToggle: vi.fn(),
+	isAudioMuted: false,
+	isMobileSheetOpen: false,
+	isMobileTabletLandscape: false,
+	mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
+	hasTreasureKeyLabel: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
+	handleDungeonRunReset: vi.fn(),
+	playerHp: 100,
+	playerMaxHp: 100,
+	...overrides,
+});
+
+vi.mock("@/pages/game/model", () => ({
+	useGamePage: vi.fn(),
 }));
 
 vi.mock("@/features/settings", () => ({
@@ -61,6 +72,10 @@ vi.mock("@/features/settings", () => ({
 		handleMusicVolumeChange: vi.fn(),
 		handleSettingsReset: vi.fn(),
 	})),
+}));
+
+vi.mock("@/features/touch-input", () => ({
+	TouchJoystickOverlay: () => <div data-testid="touch-joystick-widget" />,
 }));
 
 vi.mock("@/widgets/game-canvas", () => ({
@@ -95,6 +110,10 @@ vi.mock("@/features/dungeon-navigation", () => ({
 }));
 
 describe("GamePage", () => {
+	beforeEach(() => {
+		vi.mocked(useGamePage).mockReturnValue(createGamePageViewModel());
+	});
+
 	it("renders the HUD widget composition", () => {
 		render(<GamePage />);
 
@@ -104,6 +123,21 @@ describe("GamePage", () => {
 		expect(screen.getByTestId("xstate-inspector-widget")).not.toBeNull();
 		expect(
 			screen.getByTestId("xstate-inspector-details-widget"),
+		).not.toBeNull();
+	});
+
+	it("renders touch overlays and bottom-sheet trigger on mobile and tablet landscape", () => {
+		vi.mocked(useGamePage).mockReturnValue(
+			createGamePageViewModel({ isMobileTabletLandscape: true }),
+		);
+
+		render(<GamePage />);
+
+		expect(screen.getByTestId("touch-joystick-widget")).not.toBeNull();
+		expect(
+			screen.getByRole("button", {
+				name: GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL,
+			}),
 		).not.toBeNull();
 	});
 });
