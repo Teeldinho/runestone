@@ -15,7 +15,7 @@ export function XStateInspectorDetailsPanel({
 	const inspectorPanel = useXStateInspectorPanel({ sections });
 
 	return (
-		<div className="flex h-full min-h-0 flex-col">
+		<div className="flex h-full min-h-0 min-w-0 flex-col overflow-x-hidden">
 			<div
 				className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-2"
 				style={{ borderColor: "var(--panel-border)" }}
@@ -30,18 +30,18 @@ export function XStateInspectorDetailsPanel({
 
 			<ScrollArea className="min-h-0 flex-1">
 				{inspectorPanel.hasSelectedSection && inspectorPanel.selectedSection ? (
-					<div className="space-y-4 p-4">
+					<div className="min-w-0 space-y-4 overflow-x-hidden p-4">
 						<section className="space-y-1">
 							<p className="text-[10px] uppercase tracking-widest text-muted-foreground">
 								{STATE_VISUALIZER_DETAILS_COPY.ACTIVE_STATE_LABEL}
 							</p>
-							<p className="text-sm font-semibold text-panel-title">
+							<p className="break-words text-sm font-semibold text-panel-title">
 								{inspectorPanel.selectedSection.activeStateLabel}
 							</p>
-							<p className="text-xs text-muted-foreground">
+							<p className="break-words text-xs text-muted-foreground">
 								{inspectorPanel.selectedSection.activeStateSummary}
 							</p>
-							<p className="text-xs text-muted-foreground">
+							<p className="break-words text-xs text-muted-foreground">
 								{inspectorPanel.selectedSection.sectionDescription}
 							</p>
 						</section>
@@ -67,7 +67,9 @@ export function XStateInspectorDetailsPanel({
 													: "var(--background)",
 											}}
 										>
-											<span>{stateDetail.label}</span>
+											<span className="min-w-0 break-words">
+												{stateDetail.label}
+											</span>
 											{stateDetail.isActive ? (
 												<Badge variant="outline" className="text-[9px]">
 													{INSPECTOR_COPY.ACTIVE_LABEL}
@@ -91,7 +93,7 @@ export function XStateInspectorDetailsPanel({
 										(guardDetail) => (
 											<li
 												key={guardDetail.id}
-												className="rounded border border-panel-border bg-background px-2 py-1.5 text-xs text-muted-foreground"
+												className="rounded border border-panel-border bg-background px-2 py-1.5 text-xs text-muted-foreground break-words"
 											>
 												{guardDetail.label}
 											</li>
@@ -119,14 +121,14 @@ export function XStateInspectorDetailsPanel({
 												key={transitionDetail.id}
 												className="rounded border border-panel-border bg-background px-2.5 py-2"
 											>
-												<p className="text-xs font-semibold text-foreground">
+												<p className="break-words text-xs font-semibold text-foreground">
 													{transitionDetail.eventLabel}
 												</p>
-												<p className="mt-1 text-[11px] text-muted-foreground">
+												<p className="mt-1 break-words text-[11px] text-muted-foreground">
 													{STATE_VISUALIZER_DETAILS_COPY.TRANSITION_FLOW_PREFIX}
 													: {transitionDetail.flowLabel}
 												</p>
-												<p className="mt-1 text-[11px] text-muted-foreground">
+												<p className="mt-1 break-words text-[11px] text-muted-foreground">
 													{transitionDetail.summary}
 												</p>
 											</li>

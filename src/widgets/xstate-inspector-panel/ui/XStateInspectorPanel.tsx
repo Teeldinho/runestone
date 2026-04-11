@@ -25,9 +25,9 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 	const inspectorPanel = useXStateInspectorPanel({ sections });
 
 	return (
-		<div className="flex h-full min-h-0 flex-col">
+		<div className="flex h-full min-h-0 min-w-0 flex-col gap-y-6 overflow-x-hidden lg:gap-y-4">
 			<div
-				className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3"
+				className="hidden flex-wrap items-center justify-between gap-2 border-b px-3 py-1.5 lg:flex lg:px-4 lg:py-3"
 				style={{ borderColor: "var(--panel-border)" }}
 			>
 				<h2
@@ -43,32 +43,36 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 			</div>
 
 			<div
-				className="border-b px-4 py-2"
+				className="mb-5 min-w-0 border-b px-4 py-2 max-xl:mb-3 max-xl:border-0 max-xl:px-0"
 				style={{ borderColor: "var(--panel-border)" }}
 			>
 				<Tabs
+					className="min-w-0"
 					value={inspectorPanel.selectedSectionId}
 					onValueChange={inspectorPanel.handleSelectedSectionIdChange}
 				>
 					<TabsList
-						className="grid h-auto w-full gap-1 p-1"
+						className="grid h-auto w-full min-w-0 gap-1 p-1"
 						style={inspectorPanel.tabsListStyles}
 					>
 						{inspectorPanel.sectionTabs.map((sectionTab) => (
 							<TabsTrigger
 								key={sectionTab.id}
 								value={sectionTab.id}
-								className="h-7 text-[10px]"
+								className="h-7 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap px-1.5 text-[10px]"
 							>
 								{sectionTab.label}
 							</TabsTrigger>
 						))}
 					</TabsList>
 				</Tabs>
-				{inspectorPanel.selectedSection?.guardIndicators.length ? (
-					<div className="mt-2 grid gap-1.5">
-						<p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+				{inspectorPanel.hasGuardIndicators && inspectorPanel.selectedSection ? (
+					<div className="mt-5 grid grid-cols-1 gap-2 max-xl:landscape:grid-cols-2">
+						<p className="col-span-full mb-1 border-panel-border/30 pb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground max-xl:border-b">
 							{INSPECTOR_COPY.GUARDS_HEADING}
+						</p>
+						<p className="col-span-full -mt-1 mb-1 text-[10px] text-muted-foreground/80">
+							{INSPECTOR_COPY.GUARDS_DIRECTION_HINT}
 						</p>
 						{inspectorPanel.selectedSection.guardIndicators.map(
 							(guardIndicator) => (
@@ -94,8 +98,8 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 				) : null}
 			</div>
 
-			<div className="min-h-0 flex-1 p-3">
-				{inspectorPanel.selectedSection ? (
+			<div className="min-h-0 min-w-0 flex-1 overflow-hidden p-3 max-xl:p-0">
+				{inspectorPanel.hasSelectedSection && inspectorPanel.selectedSection ? (
 					<ReactFlow
 						key={inspectorPanel.selectedSectionId}
 						colorMode="dark"
