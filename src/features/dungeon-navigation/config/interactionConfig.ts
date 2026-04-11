@@ -43,6 +43,8 @@ export const ATTACK_PROMPT = "Attack";
 
 export const INTERACTION_KEY_LABEL = "F";
 export const ATTACK_KEY_LABEL = "E";
+export const INTERACTION_TOUCH_LABEL = "Tap";
+export const ATTACK_TOUCH_LABEL = "Tap";
 export const MOVEMENT_KEYS_LABEL = "WASD / Arrow keys";
 
 export const EMPTY_INTERACTION_CANDIDATES = {

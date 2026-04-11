@@ -1,7 +1,7 @@
 import { Background, Controls, ReactFlow } from "@xyflow/react";
 
 import type { MachineGraphSection } from "@/features/state-visualizer";
-import { Tabs, TabsList, TabsTrigger } from "@/shared/ui";
+import { Separator, Tabs, TabsList, TabsTrigger } from "@/shared/ui";
 import {
 	INSPECTOR_COPY,
 	INSPECTOR_FLOW_BACKGROUND,
@@ -25,11 +25,8 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 	const inspectorPanel = useXStateInspectorPanel({ sections });
 
 	return (
-		<div className="flex h-full min-h-0 min-w-0 flex-col gap-y-6 overflow-x-hidden lg:gap-y-4">
-			<div
-				className="hidden flex-wrap items-center justify-between gap-2 border-b px-3 py-1.5 lg:flex lg:px-4 lg:py-3"
-				style={{ borderColor: "var(--panel-border)" }}
-			>
+		<div className="flex h-full min-h-0 min-w-0 flex-col gap-y-2 overflow-hidden">
+			<div className="hidden flex-wrap items-center justify-between gap-2 border-b border-panel-border/50 px-3 py-1.5 lg:flex lg:px-4 lg:py-3">
 				<h2
 					id="xstate-inspector-heading"
 					className="text-xs font-semibold uppercase tracking-widest"
@@ -42,10 +39,9 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 				</h2>
 			</div>
 
-			<div
-				className="mb-5 min-w-0 border-b px-4 py-2 max-xl:mb-3 max-xl:border-0 max-xl:px-0"
-				style={{ borderColor: "var(--panel-border)" }}
-			>
+			<Separator className="max-xl:hidden bg-panel-border/50" />
+
+			<div className="mb-2 min-w-0 px-3 py-2 max-xl:mb-0 max-xl:px-2">
 				<Tabs
 					className="min-w-0"
 					value={inspectorPanel.selectedSectionId}
@@ -67,38 +63,41 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 					</TabsList>
 				</Tabs>
 				{inspectorPanel.hasGuardIndicators && inspectorPanel.selectedSection ? (
-					<div className="mt-5 grid grid-cols-1 gap-2 max-xl:landscape:grid-cols-2">
-						<p className="col-span-full mb-1 border-panel-border/30 pb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground max-xl:border-b">
-							{INSPECTOR_COPY.GUARDS_HEADING}
-						</p>
-						<p className="col-span-full -mt-1 mb-1 text-[10px] text-muted-foreground/80">
-							{INSPECTOR_COPY.GUARDS_DIRECTION_HINT}
-						</p>
-						{inspectorPanel.selectedSection.guardIndicators.map(
-							(guardIndicator) => (
-								<div
-									key={guardIndicator.id}
-									className="flex items-start gap-2 rounded border border-panel-border bg-background px-2.5 py-1.5"
-								>
-									<span
-										className="mt-0.5 inline-block rounded-full"
-										style={guardIndicator.legendDotStyles}
-									/>
-									<span className="min-w-0 flex-1 text-[11px] leading-snug text-panel-title">
-										{guardIndicator.label}
-									</span>
-									<span className="ml-auto inline-flex shrink-0 items-center rounded border border-panel-border/80 bg-panel px-1.5 py-0.5 text-[10px] font-medium whitespace-nowrap text-muted-foreground">
-										{guardIndicator.transitionCount}{" "}
-										{guardIndicator.transitionCountLabel}
-									</span>
-								</div>
-							),
-						)}
-					</div>
+					<>
+						<Separator className="my-2" />
+						<div className="grid grid-cols-1 gap-2 max-xl:landscape:grid-cols-2">
+							<p className="col-span-full text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+								{INSPECTOR_COPY.GUARDS_HEADING}
+							</p>
+							<p className="col-span-full -mt-1 text-[10px] text-muted-foreground/80">
+								{INSPECTOR_COPY.GUARDS_DIRECTION_HINT}
+							</p>
+							{inspectorPanel.selectedSection.guardIndicators.map(
+								(guardIndicator) => (
+									<div
+										key={guardIndicator.id}
+										className="flex items-start gap-2 rounded-md bg-background px-2.5 py-1.5"
+									>
+										<span
+											className="mt-0.5 inline-block rounded-full"
+											style={guardIndicator.legendDotStyles}
+										/>
+										<span className="min-w-0 flex-1 text-[11px] leading-snug text-panel-title">
+											{guardIndicator.label}
+										</span>
+										<span className="ml-auto inline-flex shrink-0 items-center rounded bg-panel px-1.5 py-0.5 text-[10px] font-medium whitespace-nowrap text-muted-foreground">
+											{guardIndicator.transitionCount}{" "}
+											{guardIndicator.transitionCountLabel}
+										</span>
+									</div>
+								),
+							)}
+						</div>
+					</>
 				) : null}
 			</div>
 
-			<div className="min-h-0 min-w-0 flex-1 overflow-hidden p-3 max-xl:p-0">
+			<div className="min-h-0 min-w-0 flex-1 overflow-hidden p-2 max-xl:p-0">
 				{inspectorPanel.hasSelectedSection && inspectorPanel.selectedSection ? (
 					<ReactFlow
 						key={inspectorPanel.selectedSectionId}
@@ -132,9 +131,8 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 					</ReactFlow>
 				) : (
 					<div
-						className="flex h-full items-center justify-center rounded border text-xs"
+						className="flex h-full items-center justify-center rounded-md text-xs"
 						style={{
-							borderColor: "var(--panel-border)",
 							color: "var(--muted-foreground)",
 						}}
 					>
