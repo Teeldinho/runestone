@@ -179,7 +179,11 @@ export const useCameraRigViewModel = ({
 			positionVectorRef.current.set(...position);
 			camera.position.lerp(positionVectorRef.current, transitionAlpha);
 			if (!pointerLockRef.current?.isLocked) {
-				camera.lookAt(...lookAt);
+				camera.lookAt(
+					camera.position.x,
+					camera.position.y,
+					camera.position.z + 1,
+				);
 			}
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON) {
 			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);

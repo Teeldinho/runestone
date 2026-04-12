@@ -250,6 +250,52 @@ describe("useCameraRigViewModel", () => {
 		expect(thirdPersonControls.update).toHaveBeenCalled();
 	});
 
+	it("keeps the camera looking forward from its current position in first-person without pointer lock to prevent strafe panning", () => {
+		mockHasPlayerPosition.mockReturnValue(true);
+		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
+		
+		const mockLookAt = vi.spyOn(mockCamera, "lookAt");
+
+		renderHook(() =>
+			useCameraRigViewModel({
+				cameraStateSnapshot: {
+					fov: 78,
+					mode: CAMERA_MODES.FIRST_PERSON,
+					position: [0, 1.5, 0],
+					target: [0, 0, 0],
+					zoom: 1,
+				},
+				playerSpawnPosition: [0, 0.9, 0],
+			}),
+		);
+
+		// Manually set pointerLockRef to simulate inactive pointer lock
+		Object.defineProperty(document, "pointerLockElement", {
+			configurable: true,
+			value: null,
+		});
+
+		// Simulate the camera mid-lerp (position hasn't caught up to player)
+		mockCamera.position.set(0.1, 1.5, 0);
+		mockGetPlayerPosition.mockReturnValue([1, 0.9, 0]);
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(mockLookAt).toHaveBeenCalledWith(
+			expect.any(Number), // x
+			expect.any(Number), // y
+			expect.any(Number), // z
+		);
+
+		const lastCallArgs = mockLookAt.mock.lastCall;
+		// The lookAt target should be directly in front of the camera's CURRENT position
+		expect(lastCallArgs?.[0]).toBeCloseTo(mockCamera.position.x, 2);
+		expect(lastCallArgs?.[1]).toBeCloseTo(mockCamera.position.y, 2);
+		expect(lastCallArgs?.[2]).toBeGreaterThan(mockCamera.position.z);
+	});
+
 	it("does not rewrite movement azimuth during free-orbital auto-follow", () => {
 		mockHasPlayerPosition.mockReturnValue(true);
 		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
