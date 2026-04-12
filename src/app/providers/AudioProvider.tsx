@@ -39,7 +39,7 @@ export function AudioProvider({ children }: AudioProviderProps) {
 				window.removeEventListener(eventName, handleFirstInteraction);
 			}
 		};
-	}, []);
+	}, [onCameraSwitch]);
 
 	return (
 		<AudioContext.Provider value={audioController}>
