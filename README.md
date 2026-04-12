@@ -10,7 +10,7 @@ This is an engineering-first game prototype: the machine is not hidden in the co
 
 ---
 
-## FSM in Plain English
+## Finite State Machines
 
 A **Finite State Machine (FSM)** models a system as a finite set of states with explicit transitions between them. At any moment, the system is in exactly one state.
 
@@ -185,6 +185,26 @@ ui/ -> model/ -> lib/ -> config/
 
 ---
 
+## The Backend: Self-Hosted Convex
+
+Our persistent data, state synchronization, and live leaderboards are powered by [Convex](https://convex.dev/). While Convex provides an excellent managed cloud service, we deliberately **self-hosted** our Convex backend.
+
+**Why self-host?**
+- **Infrastructure Autonomy**: By running it ourselves, we validate that the application logic does not implicitly depend on a proprietary cloud black-box. We own our data, our deployment pipeline, and our runtime environment entirely.
+- **Type-Safe Velocity**: Leveraging Convex allows us to write backend mutations and queries in the exact same TypeScript ecosystem as our frontend. With end-to-end type safety, deploying real-time systems (like our live leaderboard) requires significantly less boilerplate compared to traditional REST or GraphQL architectures.
+
+---
+
+## Outstanding Features
+
+Runestone is an expanding foundation. The architecture supports rapid iteration, and our roadmap includes the following ambitious milestones:
+
+- **Procedural Dungeon Generation**: Leveraging our explicit XState room nodes to generate randomized, yet resolvable, floor layouts.
+- **Deeper Enemy State Trees**: Introducing complex "Patrol" and "Heal/Flee" states to adversaries, pushing the limits of actor-driven logic.
+- **Inventory & Loot Persistence**: Securely stashing obtained gear within the Convex backend to load seamlessly when crossing new dungeon borders.
+
+---
+
 ## Camera Modes
 
 | Mode | Hotkey | Description |
@@ -193,6 +213,28 @@ ui/ -> model/ -> lib/ -> config/
 | Top Down | `2` | Fixed overhead angle, zoom only |
 | First Person | `3` | Head-level view with pointer lock |
 | Free Orbital | `4` | Pan + rotate + zoom |
+
+---
+
+## 🧪 Engineering Excellence: SDD & TDD
+
+Runestone is not just a game; it is a demonstration of a robust, professional engineering lifecycle. We employ two core disciplines to ensure correctness and architectural integrity:
+
+### Spec-Driven Development (SDD)
+
+For both technical and non-technical stakeholders, **SDD** means we never "just start coding." Every significant feature is preceded by a **Project Brief**.
+
+- **What it is**: Before a single line of logic is written, we define the `Scope`, `Constraints`, and `Success Criteria` in a formal specification. This ensures that the problem is fully understood and the solution is architected intentionally.
+- **Why it matters**: It prevents feature creep, reduces technical debt, and provides a clear source of truth for what the code is intended to do. It transforms development from a "guess-and-check" process into a precise execution of a documented plan.
+
+### Test-Driven Development (TDD)
+
+For our engineering team, **TDD** is the heartbeat of the codebase. We follow the strict **Red-Green-Refactor** cycle.
+
+- **What it is**: We write a failing test first (the **Red** phase), then implement just enough code to make it pass (the **Green** phase), and refine the internal structure without changing behavior (**Refactor** phase).
+- **Why it matters**: TDD ensures 100% logic coverage for our most critical `model/` and `lib/` layers. It provides a "safety net" that allows us to refactor complex state machines or physics logic with complete confidence.
+
+![Vitest suite execution showing 575 passing tests and 118 test files](./public/screenshots/vitest-full-suite-pass.png)
 
 ---
 
