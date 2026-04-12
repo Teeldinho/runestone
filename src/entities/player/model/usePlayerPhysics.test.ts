@@ -36,7 +36,9 @@ import { usePlayerPhysics } from "./usePlayerPhysics";
 type FakeBody = {
 	translation: () => { x: number; y: number; z: number };
 	linvel: () => { x: number; y: number; z: number };
+	rotation: () => { x: number; y: number; z: number; w: number };
 	setLinvel: ReturnType<typeof vi.fn>;
+	setRotation: ReturnType<typeof vi.fn>;
 	setTranslation: ReturnType<typeof vi.fn>;
 };
 
@@ -46,9 +48,11 @@ const createFakeBody = (): FakeBody => {
 	return {
 		translation: () => ({ x: 2, y: 1, z: -3 }),
 		linvel: () => currentLinvel,
+		rotation: () => ({ x: 0, y: 0, z: 0, w: 1 }),
 		setLinvel: vi.fn((next: { x: number; y: number; z: number }) => {
 			currentLinvel = next;
 		}),
+		setRotation: vi.fn(),
 		setTranslation: vi.fn(),
 	};
 };
