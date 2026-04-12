@@ -5,6 +5,7 @@ import type { Vector3Tuple } from "@/shared/types";
 type OrbitControlsHandle = {
 	target: THREE.Vector3;
 	update: () => void;
+	enableRotate: boolean;
 };
 
 export const setCameraUp = (

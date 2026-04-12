@@ -40,6 +40,7 @@ type PointerLockControlsHandle = {
 };
 
 type UseCameraRigViewModelInput = {
+	cameraControlElement?: HTMLElement | null;
 	cameraStateSnapshot?: CameraStateSnapshot;
 	playerSpawnPosition: Vector3Tuple;
 };
@@ -78,6 +79,7 @@ const shouldSyncMovementAzimuth = ({
 };
 
 export const useCameraRigViewModel = ({
+	cameraControlElement,
 	cameraStateSnapshot,
 	playerSpawnPosition,
 }: UseCameraRigViewModelInput): UseCameraRigViewModelResult => {
@@ -101,6 +103,7 @@ export const useCameraRigViewModel = ({
 	const lookAtVectorRef = useRef(new THREE.Vector3());
 	const positionVectorRef = useRef(new THREE.Vector3());
 	const firstPersonTargetVectorRef = useRef(new THREE.Vector3());
+	const isTouchInitiallyOnLeftRef = useRef(false);
 
 	useEffect(() => {
 		if (!mode) {
@@ -121,13 +124,55 @@ export const useCameraRigViewModel = ({
 		needsFirstPersonSyncRef.current = mode === CAMERA_MODES.FIRST_PERSON;
 	}, [mode]);
 
+	const handlePointerDown = useCallback((event: PointerEvent) => {
+		isTouchInitiallyOnLeftRef.current = event.clientX < window.innerWidth * 0.5;
+	}, []);
+
+	useEffect(() => {
+		const element = cameraControlElement;
+		if (!element) {
+			return;
+		}
+
+		element.addEventListener("pointerdown", handlePointerDown);
+		return () => {
+			element.removeEventListener("pointerdown", handlePointerDown);
+		};
+	}, [cameraControlElement, handlePointerDown]);
+
 	const handleFirstPersonLock = useCallback(() => {}, []);
 	const handleFirstPersonUnlock = useCallback(() => {}, []);
 	const handleOrbitStart = useCallback(() => {
 		isUserInteractingRef.current = true;
+
+		// If a single-finger interaction started on the left (joystick area),
+		// disable rotation to prevent panning while moving.
+		// Zoom (multi-finger) should still work naturally.
+		[
+			thirdPersonOrbitRef,
+			topDownOrbitRef,
+			freeOrbitalOrbitRef,
+			firstPersonOrbitRef,
+		].forEach((ref) => {
+			if (ref.current) {
+				ref.current.enableRotate = !isTouchInitiallyOnLeftRef.current;
+			}
+		});
 	}, []);
 	const handleOrbitEnd = useCallback(() => {
 		isUserInteractingRef.current = false;
+
+		// Re-enable rotation for next interaction
+		[
+			thirdPersonOrbitRef,
+			topDownOrbitRef,
+			freeOrbitalOrbitRef,
+			firstPersonOrbitRef,
+		].forEach((ref) => {
+			if (ref.current) {
+				ref.current.enableRotate = true;
+			}
+		});
 	}, []);
 
 	useFrame(() => {

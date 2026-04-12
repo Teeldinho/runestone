@@ -37,6 +37,7 @@ export function CameraRig({
 		firstPersonOrbitRef,
 		isDesktopLayout,
 	} = useCameraRigViewModel({
+		cameraControlElement,
 		cameraStateSnapshot,
 		playerSpawnPosition,
 	});
