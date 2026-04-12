@@ -541,7 +541,7 @@ describe("useCameraRigViewModel", () => {
 		});
 
 		const initialCameraPosition = mockCamera.position.clone();
-		mockGetPlayerPosition.mockReturnValue([10, 0.9, 0]); // Move player
+		mockGetPlayerPosition.mockReturnValue([2, 0.9, 0]); // Move player slightly
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
