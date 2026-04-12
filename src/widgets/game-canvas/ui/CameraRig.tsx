@@ -12,11 +12,13 @@ import { useCameraRigViewModel } from "../model/useCameraRigViewModel";
 
 type CameraRigProps = {
 	cameraStateSnapshot?: CameraStateSnapshot;
+	firstPersonLookElement?: HTMLElement | null;
 	playerSpawnPosition: Vector3Tuple;
 };
 
 export function CameraRig({
 	cameraStateSnapshot,
+	firstPersonLookElement,
 	playerSpawnPosition,
 }: CameraRigProps) {
 	const {
@@ -30,6 +32,8 @@ export function CameraRig({
 		pointerLockRef,
 		thirdPersonOrbitRef,
 		topDownOrbitRef,
+		firstPersonOrbitRef,
+		isDesktopLayout,
 	} = useCameraRigViewModel({
 		cameraStateSnapshot,
 		playerSpawnPosition,
@@ -83,6 +87,29 @@ export function CameraRig({
 	}
 
 	if (mode === CAMERA_MODES.FIRST_PERSON) {
+		if (!isDesktopLayout) {
+			// Do not mount until the dom element is available — avoids OrbitControls
+			// defaulting to the canvas and stealing joystick touch events.
+			if (!firstPersonLookElement) {
+				return null;
+			}
+
+			return (
+				<OrbitControls
+					key={controlKey}
+					ref={firstPersonOrbitRef as React.RefObject<never>}
+					makeDefault
+					enablePan={false}
+					enableZoom={false}
+					enableRotate={true}
+					minDistance={0.01}
+					maxDistance={0.01}
+					touches={CAMERA_RIG_TOUCH_GESTURES.ORBIT}
+					domElement={firstPersonLookElement}
+				/>
+			);
+		}
+
 		return (
 			<PointerLockControls
 				key={controlKey}

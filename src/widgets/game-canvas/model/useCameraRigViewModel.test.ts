@@ -43,10 +43,14 @@ vi.mock("@/features/dungeon-navigation", async (importOriginal) => {
 
 	return {
 		...original,
-		selectLastTransition: "selectLastTransition",
 		useGameMachineSelector: () => mockLastTransition(),
 	};
 });
+
+const mockIsDesktopLayout = vi.fn();
+vi.mock("@/features/responsive-layout", () => ({
+	useResponsiveGameLayout: () => ({ isDesktopLayout: mockIsDesktopLayout() }),
+}));
 
 import { useCameraRigViewModel } from "./useCameraRigViewModel";
 
@@ -59,6 +63,7 @@ describe("useCameraRigViewModel", () => {
 		mockHasPlayerPosition.mockReturnValue(false);
 		mockGetPlayerPosition.mockReturnValue([0, 0, 0]);
 		mockLastTransition.mockReturnValue(null);
+		mockIsDesktopLayout.mockReturnValue(true);
 	});
 
 	it("syncs the camera mode store immediately from the snapshot mode", () => {
@@ -292,8 +297,70 @@ describe("useCameraRigViewModel", () => {
 		const lastCallArgs = mockLookAt.mock.lastCall;
 		// The lookAt target should be directly in front of the camera's CURRENT position
 		expect(lastCallArgs?.[0]).toBeCloseTo(mockCamera.position.x, 2);
-		expect(lastCallArgs?.[1]).toBeCloseTo(mockCamera.position.y, 2);
 		expect(lastCallArgs?.[2]).toBeGreaterThan(mockCamera.position.z);
+	});
+
+	it("places the orbit target in camera-space (head + forward*0.01) on sync, then tracks camera forward each frame without calling update()", () => {
+		mockIsDesktopLayout.mockReturnValue(false);
+		mockHasPlayerPosition.mockReturnValue(true);
+		mockGetPlayerPosition.mockReturnValue([5, 0.9, 5]);
+
+		// Camera starts looking in +Z (default)
+		mockCamera.position.set(5, 2.6, 5);
+
+		const { result } = renderHook(() =>
+			useCameraRigViewModel({
+				cameraStateSnapshot: {
+					fov: 78,
+					mode: CAMERA_MODES.FIRST_PERSON,
+					position: [5, 2.6, 5],
+					target: [5, 2.6, 6],
+					zoom: 1,
+				},
+				playerSpawnPosition: [0, 0.9, 0],
+			}),
+		);
+
+		const firstPersonOrbitControls = {
+			target: new THREE.Vector3(),
+			update: vi.fn(),
+		};
+		result.current.firstPersonOrbitRef.current =
+			firstPersonOrbitControls as never;
+
+		// Frame 1: Sync \u2014 camera is at [5,2.6,5], forward is +Z so target = [5,2.6,5.01]
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(mockCamera.position.toArray()).toEqual([5, 2.6, 5]);
+		expect(firstPersonOrbitControls.target.x).toBeCloseTo(5, 5);
+		expect(firstPersonOrbitControls.target.y).toBeCloseTo(2.6, 5);
+		expect(firstPersonOrbitControls.target.z).toBeCloseTo(5.01, 3);
+
+		// Frame 2: non-sync path — player moves. Camera should snap to the new head position
+		// and the target should stay 0.01 ahead in camera-forward.
+		// We do NOT expect update() to be called (Drei handles it).
+		mockGetPlayerPosition.mockReturnValue([6, 0.9, 5]);
+
+		const callsAfterSync = firstPersonOrbitControls.update.mock.calls.length;
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		// Camera should have followed the player's new head position: [6, 1.7+0.9, 5]
+		expect(mockCamera.position.x).toBeCloseTo(6, 5);
+		expect(mockCamera.position.y).toBeCloseTo(2.6, 5);
+		expect(mockCamera.position.z).toBeCloseTo(5, 5);
+
+		// Target is still camera-forward 0.01 away from the NEW current position
+		expect(firstPersonOrbitControls.target.x).toBeCloseTo(6, 5);
+		expect(firstPersonOrbitControls.target.y).toBeCloseTo(2.6, 5);
+		expect(firstPersonOrbitControls.target.z).toBeCloseTo(5.01, 3);
+		// update() must NOT be called again in the non-sync path
+		expect(firstPersonOrbitControls.update.mock.calls.length).toBe(
+			callsAfterSync,
+		);
 	});
 
 	it("does not rewrite movement azimuth during free-orbital auto-follow", () => {

@@ -11,6 +11,7 @@ import {
 	selectLastTransition,
 	useGameMachineSelector,
 } from "@/features/dungeon-navigation";
+import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import { setCameraMode } from "@/shared/lib/cameraModeStore";
 import { setCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
 import {
@@ -18,7 +19,6 @@ import {
 	hasPlayerPosition,
 } from "@/shared/lib/playerPositionStore";
 import type { Vector3Tuple } from "@/shared/types";
-
 import {
 	CAMERA_RIG_CAMERA_UP,
 	CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE,
@@ -55,6 +55,8 @@ type UseCameraRigViewModelResult = {
 	pointerLockRef: RefObject<PointerLockControlsHandle | null>;
 	thirdPersonOrbitRef: RefObject<OrbitControlsHandle | null>;
 	topDownOrbitRef: RefObject<OrbitControlsHandle | null>;
+	firstPersonOrbitRef: RefObject<OrbitControlsHandle | null>;
+	isDesktopLayout: boolean;
 };
 
 const shouldSyncMovementAzimuth = ({
@@ -87,14 +89,18 @@ export const useCameraRigViewModel = ({
 	const thirdPersonOrbitRef = useRef<OrbitControlsHandle>(null);
 	const topDownOrbitRef = useRef<OrbitControlsHandle>(null);
 	const freeOrbitalOrbitRef = useRef<OrbitControlsHandle>(null);
+	const firstPersonOrbitRef = useRef<OrbitControlsHandle>(null);
+	const { isDesktopLayout } = useResponsiveGameLayout();
 	const needsFreeOrbitalSyncRef = useRef(false);
 	const needsThirdPersonSyncRef = useRef(false);
 	const needsTopDownSyncRef = useRef(false);
+	const needsFirstPersonSyncRef = useRef(false);
 	const isUserInteractingRef = useRef(false);
 	const previousTrackedPlayerPositionRef = useRef<Vector3Tuple | null>(null);
 	const directionRef = useRef(new THREE.Vector3());
 	const lookAtVectorRef = useRef(new THREE.Vector3());
 	const positionVectorRef = useRef(new THREE.Vector3());
+	const firstPersonTargetVectorRef = useRef(new THREE.Vector3());
 
 	useEffect(() => {
 		if (!mode) {
@@ -112,6 +118,7 @@ export const useCameraRigViewModel = ({
 		needsThirdPersonSyncRef.current = mode === CAMERA_MODES.THIRD_PERSON;
 		needsFreeOrbitalSyncRef.current = mode === CAMERA_MODES.FREE_ORBITAL;
 		needsTopDownSyncRef.current = mode === CAMERA_MODES.TOP_DOWN;
+		needsFirstPersonSyncRef.current = mode === CAMERA_MODES.FIRST_PERSON;
 	}, [mode]);
 
 	const handleFirstPersonLock = useCallback(() => {}, []);
@@ -134,6 +141,7 @@ export const useCameraRigViewModel = ({
 		const { lookAt, position } = getCameraRigTargets({
 			mode: cameraStateSnapshot.mode,
 			playerPosition: trackedPlayerPosition,
+			isDesktopLayout,
 		});
 		const isModeChange = cameraStateSnapshot.mode !== previousModeRef.current;
 		const isFreeOrbitalJump =
@@ -176,14 +184,48 @@ export const useCameraRigViewModel = ({
 			}
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
 			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
-			positionVectorRef.current.set(...position);
-			camera.position.lerp(positionVectorRef.current, transitionAlpha);
-			if (!pointerLockRef.current?.isLocked) {
-				camera.lookAt(
-					camera.position.x,
-					camera.position.y,
-					camera.position.z + 1,
-				);
+			if (!isDesktopLayout && firstPersonOrbitRef.current) {
+				if (needsFirstPersonSyncRef.current || isModeChange) {
+					// Snap camera to head on first mount — target is 0.01 ahead in camera forward
+					camera.position.set(...position);
+					camera.getWorldDirection(firstPersonTargetVectorRef.current);
+					firstPersonTargetVectorRef.current
+						.multiplyScalar(0.01)
+						.add(camera.position);
+					setOrbitTarget(firstPersonOrbitRef.current, [
+						firstPersonTargetVectorRef.current.x,
+						firstPersonTargetVectorRef.current.y,
+						firstPersonTargetVectorRef.current.z,
+					]);
+					needsFirstPersonSyncRef.current = false;
+				} else {
+					// Every frame: snap the camera to the player's head, then keep the
+					// orbit pivot exactly 0.01 m ahead in camera-space.
+					// Using the camera's own forward direction (not a world-space +Z constant)
+					// stops OrbitControls from fighting the user's look direction, which was
+					// the root cause of the erratic azimuth oscillation.
+					camera.position.set(...position);
+					camera.getWorldDirection(firstPersonTargetVectorRef.current);
+					firstPersonTargetVectorRef.current
+						.multiplyScalar(0.01)
+						.add(camera.position);
+					firstPersonOrbitRef.current.target.copy(
+						firstPersonTargetVectorRef.current,
+					);
+					// Do NOT call controls.update() here — Drei's OrbitControls already
+					// calls update() every frame via its own useFrame. A second call in
+					// the same frame would apply spherical deltas twice, causing shaking.
+				}
+			} else {
+				positionVectorRef.current.set(...position);
+				camera.position.lerp(positionVectorRef.current, transitionAlpha);
+				if (!pointerLockRef.current?.isLocked) {
+					camera.lookAt(
+						camera.position.x,
+						camera.position.y,
+						camera.position.z + 1,
+					);
+				}
 			}
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON) {
 			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
@@ -295,6 +337,8 @@ export const useCameraRigViewModel = ({
 		pointerLockRef,
 		thirdPersonOrbitRef,
 		topDownOrbitRef,
+		firstPersonOrbitRef,
+		isDesktopLayout,
 	};
 };
 
