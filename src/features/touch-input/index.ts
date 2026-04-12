@@ -9,5 +9,5 @@ export type {
 	UseTouchJoystickInputResult,
 } from "./model";
 export { useTouchJoystickInput } from "./model";
-export type { TouchJoystickOverlayProps } from "./ui";
-export { TouchJoystickOverlay } from "./ui";
+export type { CameraControlZoneProps, TouchJoystickOverlayProps } from "./ui";
+export { CameraControlZone, TouchJoystickOverlay } from "./ui";

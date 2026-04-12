@@ -1,8 +1,8 @@
-import type { ReactNode, RefObject } from "react";
+import type { ReactNode, Ref } from "react";
 
 type CameraControlZoneProps = {
 	children?: ReactNode;
-	zoneRef: RefObject<HTMLDivElement | null>;
+	zoneRef: Ref<HTMLDivElement | null>;
 };
 
 /**

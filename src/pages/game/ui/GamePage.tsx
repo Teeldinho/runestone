@@ -3,7 +3,10 @@ import { type CSSProperties, useCallback, useState } from "react";
 import { CAMERA_MODES } from "@/features/camera-system";
 import { useSettingsForm } from "@/features/settings";
 import { StateVisualizerWorkspaceProvider } from "@/features/state-visualizer";
-import { CameraControlZone, TouchJoystickOverlay } from "@/features/touch-input";
+import {
+	CameraControlZone,
+	TouchJoystickOverlay,
+} from "@/features/touch-input";
 import { GAME_PAGE_LAYOUT, GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import { useGamePage } from "@/pages/game/model";
 import {
