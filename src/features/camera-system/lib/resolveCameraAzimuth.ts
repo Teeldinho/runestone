@@ -16,7 +16,7 @@ export const resolveCameraAzimuth = ({
 	direction,
 }: ResolveCameraAzimuthInput): number | null => {
 	if (mode === CAMERA_MODES.TOP_DOWN) {
-		return Math.PI;
+		return 0;
 	}
 
 	const horizontalMagnitude = Math.hypot(direction.x, direction.z);

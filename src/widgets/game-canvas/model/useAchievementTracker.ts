@@ -11,7 +11,6 @@ import {
 	hasDefeatedAllEnemies,
 	hasReachedLibrary,
 } from "@/features/achievements";
-import { AUDIO_SPRITE_IDS, useAudioController } from "@/features/audio-manager";
 import {
 	selectAchievementTrackingContext,
 	useGameMachineSelector,
@@ -28,7 +27,6 @@ export const useAchievementTracker = (): UseAchievementTrackerResult => {
 		shallowEqual,
 	);
 	const { onAchievement } = useHaptics();
-	const { handleSoundEffectPlay } = useAudioController();
 
 	const [activeAchievement, setActiveAchievement] =
 		useState<Achievement | null>(null);
@@ -56,7 +54,6 @@ export const useAchievementTracker = (): UseAchievementTrackerResult => {
 			if (!condition || triggeredRef.current.has(id)) return;
 			triggeredRef.current.add(id);
 			onAchievement();
-			handleSoundEffectPlay(AUDIO_SPRITE_IDS.ACHIEVEMENT);
 			setActiveAchievement({
 				id,
 				label: ACHIEVEMENT_COPY[id].label,
@@ -81,7 +78,7 @@ export const useAchievementTracker = (): UseAchievementTrackerResult => {
 			hasDefeatedAllEnemies(achievementTrackingContext),
 			ACHIEVEMENT_IDS.COMBAT_MASTER,
 		);
-	}, [achievementTrackingContext, onAchievement, handleSoundEffectPlay]);
+	}, [achievementTrackingContext, onAchievement]);
 
 	useEffect(() => {
 		return () => {

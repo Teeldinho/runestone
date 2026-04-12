@@ -3,14 +3,15 @@ import * as Tone from "tone";
 import { AUDIO_DEFAULTS, AUDIO_PATHS } from "../config";
 
 let backgroundMusicPlayer: Tone.Player | null = null;
+let isMusicStarted = false;
+let isMusicRequested = false;
+let startBackgroundMusicPromise: Promise<void> | null = null;
 
-const getBackgroundMusicPlayer = (): Tone.Player => {
+const initBackgroundMusicPlayer = async (): Promise<Tone.Player> => {
 	if (!backgroundMusicPlayer) {
-		backgroundMusicPlayer = new Tone.Player({
-			autostart: false,
-			loop: AUDIO_DEFAULTS.MUSIC_LOOP,
-			url: AUDIO_PATHS.MUSIC,
-		});
+		backgroundMusicPlayer = new Tone.Player();
+		await backgroundMusicPlayer.load(AUDIO_PATHS.MUSIC);
+		backgroundMusicPlayer.loop = AUDIO_DEFAULTS.MUSIC_LOOP;
 		backgroundMusicPlayer.toDestination();
 		backgroundMusicPlayer.volume.value = AUDIO_DEFAULTS.MUSIC_VOLUME;
 	}
@@ -19,23 +20,66 @@ const getBackgroundMusicPlayer = (): Tone.Player => {
 };
 
 export const startBackgroundMusicLoop = async (): Promise<void> => {
-	await Tone.start();
-	Tone.Transport.start();
-	getBackgroundMusicPlayer().start();
+	isMusicRequested = true;
+
+	if (isMusicStarted) {
+		return;
+	}
+
+	if (!startBackgroundMusicPromise) {
+		startBackgroundMusicPromise = (async () => {
+			try {
+				await Tone.start();
+				const player = await initBackgroundMusicPlayer();
+
+				if (!isMusicRequested || isMusicStarted) {
+					return;
+				}
+
+				Tone.Transport.start();
+				player.start();
+				isMusicStarted = true;
+			} catch (error) {
+				console.error("[audio] Failed to start background music:", error);
+			}
+		})().finally(() => {
+			startBackgroundMusicPromise = null;
+		});
+	}
+
+	await startBackgroundMusicPromise;
 };
 
 export const pauseBackgroundMusicLoop = (): void => {
+	isMusicRequested = false;
+
+	if (!isMusicStarted || !backgroundMusicPlayer) {
+		return;
+	}
+
 	Tone.Transport.pause();
-	getBackgroundMusicPlayer().stop();
+	backgroundMusicPlayer.stop();
+	isMusicStarted = false;
 };
 
 export const stopBackgroundMusicLoop = (): void => {
+	isMusicRequested = false;
+
+	if (!isMusicStarted || !backgroundMusicPlayer) {
+		return;
+	}
+
 	Tone.Transport.stop();
-	getBackgroundMusicPlayer().stop();
+	backgroundMusicPlayer.stop();
+	isMusicStarted = false;
 };
 
 export const setBackgroundMusicVolume = (volume: number): void => {
-	getBackgroundMusicPlayer().volume.value = volume;
+	if (!backgroundMusicPlayer) {
+		return;
+	}
+
+	backgroundMusicPlayer.volume.value = volume;
 };
 
 export const disposeMusicManager = (): void => {
@@ -45,4 +89,7 @@ export const disposeMusicManager = (): void => {
 
 	backgroundMusicPlayer.dispose();
 	backgroundMusicPlayer = null;
+	isMusicStarted = false;
+	isMusicRequested = false;
+	startBackgroundMusicPromise = null;
 };

@@ -9,12 +9,19 @@ import type { InteractionCandidatesViewModel } from "./useInteractionCandidates"
 type UseInteractionInputOptions = {
 	candidates: InteractionCandidatesViewModel;
 	sendDungeonMachineEvent: (event: { type: DungeonEvent }) => void;
+	enableKeyboardBindings?: boolean;
+};
+
+type InteractionInputHandlers = {
+	handleAttack: () => void;
+	handleInteract: () => void;
 };
 
 export const useInteractionInput = ({
 	candidates,
 	sendDungeonMachineEvent,
-}: UseInteractionInputOptions): void => {
+	enableKeyboardBindings = true,
+}: UseInteractionInputOptions): InteractionInputHandlers => {
 	const cooldownRef = useRef(false);
 
 	const handleInteract = useCallback(() => {
@@ -48,6 +55,10 @@ export const useInteractionInput = ({
 	}, [candidates, sendDungeonMachineEvent]);
 
 	useEffect(() => {
+		if (!enableKeyboardBindings) {
+			return;
+		}
+
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (event.repeat) return;
 
@@ -60,5 +71,10 @@ export const useInteractionInput = ({
 
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
-	}, [handleInteract, handleAttack]);
+	}, [enableKeyboardBindings, handleInteract, handleAttack]);
+
+	return {
+		handleAttack,
+		handleInteract,
+	};
 };

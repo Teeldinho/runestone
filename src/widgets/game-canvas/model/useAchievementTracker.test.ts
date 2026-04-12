@@ -11,7 +11,6 @@ import {
 } from "@/features/achievements";
 
 const mockOnAchievement = vi.fn();
-const mockHandleSoundEffectPlay = vi.fn();
 
 const { mockSnapshotGetter } = vi.hoisted(() => ({
 	mockSnapshotGetter: vi.fn(),
@@ -24,13 +23,6 @@ vi.mock("@/features/dungeon-navigation", () => ({
 
 vi.mock("@/features/haptics-feedback", () => ({
 	useHaptics: () => ({ onAchievement: mockOnAchievement }),
-}));
-
-vi.mock("@/features/audio-manager", () => ({
-	useAudioController: () => ({
-		handleSoundEffectPlay: mockHandleSoundEffectPlay,
-	}),
-	AUDIO_SPRITE_IDS: { ACHIEVEMENT: "ACHIEVEMENT" },
 }));
 
 vi.mock("@/features/achievements", () => ({
@@ -98,12 +90,11 @@ describe("useAchievementTracker", () => {
 		expect(result.current.activeAchievement).toBeNull();
 	});
 
-	it("fires onAchievement and plays ACHIEVEMENT SFX when FIRST_STEPS triggers", () => {
+	it("fires onAchievement when FIRST_STEPS triggers", () => {
 		vi.mocked(hasReachedLibrary).mockReturnValue(true);
 		renderHook(() => useAchievementTracker());
 
 		expect(mockOnAchievement).toHaveBeenCalledTimes(1);
-		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith("ACHIEVEMENT");
 	});
 
 	it("sets activeAchievement to FIRST_STEPS when library is reached", () => {

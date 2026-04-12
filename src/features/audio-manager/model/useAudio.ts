@@ -1,16 +1,10 @@
 import { useMachine } from "@xstate/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import {
-	AUDIO_EVENTS,
-	AUDIO_MACHINE_STATES,
-	type AudioSpriteId,
-} from "../config";
+import { AUDIO_EVENTS, AUDIO_MACHINE_STATES } from "../config";
 import {
 	pauseBackgroundMusicLoop,
-	playSoundEffect,
 	startBackgroundMusicLoop,
-	stopAllSoundEffects,
 	stopBackgroundMusicLoop,
 } from "../lib";
 
@@ -18,6 +12,7 @@ import { audioMachine } from "./audioMachine";
 
 export const useAudio = () => {
 	const [audioSnapshot, sendAudioEvent] = useMachine(audioMachine);
+	const previousAudioStateRef = useRef(audioSnapshot.value);
 	const isAudioMutedRef = useRef(
 		audioSnapshot.matches(AUDIO_MACHINE_STATES.MUTED),
 	);
@@ -27,20 +22,22 @@ export const useAudio = () => {
 	}, [audioSnapshot]);
 
 	useEffect(() => {
-		if (audioSnapshot.matches(AUDIO_MACHINE_STATES.PLAYING)) {
+		const wasPlayingBeforeUpdate =
+			previousAudioStateRef.current === AUDIO_MACHINE_STATES.PLAYING;
+
+		if (
+			audioSnapshot.matches(AUDIO_MACHINE_STATES.PLAYING) &&
+			!wasPlayingBeforeUpdate
+		) {
 			void startBackgroundMusicLoop();
-			return;
+		} else if (
+			audioSnapshot.matches(AUDIO_MACHINE_STATES.PAUSED) ||
+			audioSnapshot.matches(AUDIO_MACHINE_STATES.MUTED)
+		) {
+			pauseBackgroundMusicLoop();
 		}
 
-		if (audioSnapshot.matches(AUDIO_MACHINE_STATES.PAUSED)) {
-			pauseBackgroundMusicLoop();
-			return;
-		}
-
-		if (audioSnapshot.matches(AUDIO_MACHINE_STATES.MUTED)) {
-			pauseBackgroundMusicLoop();
-			stopAllSoundEffects();
-		}
+		previousAudioStateRef.current = audioSnapshot.value;
 	}, [audioSnapshot]);
 
 	const handleAudioPlayRequest = useCallback(() => {
@@ -60,7 +57,6 @@ export const useAudio = () => {
 			type: AUDIO_EVENTS.STOP_REQUESTED,
 		});
 		stopBackgroundMusicLoop();
-		stopAllSoundEffects();
 	}, [sendAudioEvent]);
 
 	const handleAudioMuteToggle = useCallback(() => {
@@ -71,14 +67,6 @@ export const useAudio = () => {
 		});
 	}, [sendAudioEvent]);
 
-	const handleSoundEffectPlay = useCallback((soundEffectId: AudioSpriteId) => {
-		if (isAudioMutedRef.current) {
-			return;
-		}
-
-		playSoundEffect(soundEffectId);
-	}, []);
-
 	return useMemo(
 		() => ({
 			audioState: audioSnapshot.value,
@@ -88,7 +76,6 @@ export const useAudio = () => {
 			handleAudioPauseRequest,
 			handleAudioPlayRequest,
 			handleAudioStopRequest,
-			handleSoundEffectPlay,
 		}),
 		[
 			audioSnapshot,
@@ -96,7 +83,6 @@ export const useAudio = () => {
 			handleAudioPauseRequest,
 			handleAudioPlayRequest,
 			handleAudioStopRequest,
-			handleSoundEffectPlay,
 		],
 	);
 };

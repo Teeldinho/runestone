@@ -17,6 +17,7 @@ import {
 } from "../model";
 
 import { CameraRig } from "./CameraRig";
+import { DamageFlashOverlay } from "./DamageFlashOverlay";
 import { GameOverOverlay } from "./GameOverOverlay";
 import { SceneEnvironment } from "./SceneEnvironment";
 import { SceneFog } from "./SceneFog";
@@ -61,6 +62,7 @@ export function GameCanvas({
 	return (
 		<div className="relative h-full w-full overflow-hidden">
 			<AchievementNotification achievement={activeAchievement} />
+			<DamageFlashOverlay />
 			<GameOverOverlay isGameOver={isGameOver} onRestart={handleGameRestart} />
 			{showFirstPersonLockHint && (
 				<button
@@ -84,7 +86,7 @@ export function GameCanvas({
 				dpr={renderer.dprRange}
 				onContextMenu={(event) => event.preventDefault()}
 				shadows={renderer.shadowsEnabled}
-				style={{ width: "100%", height: "100%" }}
+				style={{ width: "100%", height: "100%", touchAction: "none" }}
 			>
 				<PerformanceMonitor />
 				<AdaptiveDpr pixelated />

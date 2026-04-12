@@ -11,17 +11,25 @@ import {
 } from "@/entities/dungeon";
 import { PLAYER_ENTITY_CONFIG } from "@/entities/player";
 import { createDungeonFloorLayout } from "@/entities/room";
-import type { CameraStateSnapshot } from "@/features/camera-system";
+import {
+	CAMERA_MODES,
+	type CameraStateSnapshot,
+} from "@/features/camera-system";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/types";
 
 import {
 	CANVAS_FOG_DENSITY_MULTIPLIERS_BY_ROOM,
+	CANVAS_FREE_ORBITAL_TORCH_ROOM_LIMIT,
 	CANVAS_RUNE_COLORS_BY_STATE,
 	CANVAS_RUNE_EMISSIVE_MULTIPLIERS,
 	CANVAS_TORCH_INTENSITY_CONFIG,
 } from "../config";
-import { getRoomWorldPosition } from "../lib";
+import {
+	createRoomTorchPositions,
+	getRoomWorldPosition,
+	selectNearestRoomPositions,
+} from "../lib";
 
 import { useCanvasSettings } from "./useCanvasSettings";
 
@@ -29,6 +37,28 @@ type CanvasMachineRuntime = Pick<
 	DungeonContext,
 	"currentRoomId" | "enemiesRemaining" | "hasTreasureKey"
 >;
+
+const resolveTorchRoomPositions = ({
+	currentRoomPosition,
+	floorRooms,
+	mode,
+}: {
+	currentRoomPosition: Vector3Tuple | null;
+	floorRooms: ReturnType<typeof createDungeonFloorLayout>["rooms"];
+	mode: CameraStateSnapshot["mode"] | undefined;
+}): Vector3Tuple[] => {
+	const roomPositions = floorRooms.map((room) => room.position);
+
+	if (mode === CAMERA_MODES.FREE_ORBITAL) {
+		return selectNearestRoomPositions({
+			roomPositions,
+			currentRoomPosition,
+			maxRoomCount: CANVAS_FREE_ORBITAL_TORCH_ROOM_LIMIT,
+		});
+	}
+
+	return currentRoomPosition ? [currentRoomPosition] : [];
+};
 
 const getRuneState = (
 	machineRuntime: CanvasMachineRuntime,
@@ -67,6 +97,7 @@ export const useCanvasMachineSettings = (
 	);
 
 	return useMemo(() => {
+		const cameraMode = cameraStateSnapshot?.mode;
 		const runeState = getRuneState(machineRuntime);
 		const runeColors = CANVAS_RUNE_COLORS_BY_STATE[runeState];
 		const fogDensityMultiplier =
@@ -78,6 +109,19 @@ export const useCanvasMachineSettings = (
 			CANVAS_TORCH_INTENSITY_CONFIG.MIN,
 			CANVAS_TORCH_INTENSITY_CONFIG.MAX,
 		);
+		const currentRoomPosition = getRoomWorldPosition(
+			floorRooms,
+			machineRuntime.currentRoomId,
+			0,
+		);
+		const roomTorchPositions = createRoomTorchPositions({
+			localTorchPositions: GAME_CANVAS_CONFIG.SCENE.TORCH_POSITIONS,
+			roomPositions: resolveTorchRoomPositions({
+				currentRoomPosition,
+				floorRooms,
+				mode: cameraMode,
+			}),
+		});
 		const playerSpawnPosition =
 			getRoomWorldPosition(
 				floorRooms,
@@ -120,6 +164,7 @@ export const useCanvasMachineSettings = (
 				torch: {
 					...baseCanvasSettings.lighting.torch,
 					intensity: torchIntensity,
+					positions: roomTorchPositions,
 				},
 			},
 			isPostprocessingEnabled:

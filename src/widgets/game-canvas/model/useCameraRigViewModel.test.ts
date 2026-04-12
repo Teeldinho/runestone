@@ -84,7 +84,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 58,
 					mode: CAMERA_MODES.FREE_ORBITAL,
-					position: [0, 18, 18],
+					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
 				},
@@ -102,8 +102,8 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([10, 18.9, 13]);
-		expect(freeOrbitalControls.target.toArray()).toEqual([10, 0.9, -5]);
+		expect(mockCamera.position.toArray()).toEqual([10, 16.9, -23]);
+		expect(freeOrbitalControls.target.toArray()).toEqual([10, 2.15, -5]);
 	});
 
 	it("applies free-orbital sync once controls mount after the mode-change frame", () => {
@@ -112,7 +112,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 58,
 					mode: CAMERA_MODES.FREE_ORBITAL,
-					position: [0, 18, 18],
+					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
 				},
@@ -135,8 +135,8 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([10, 18.9, 13]);
-		expect(freeOrbitalControls.target.toArray()).toEqual([10, 0.9, -5]);
+		expect(mockCamera.position.toArray()).toEqual([10, 16.9, -23]);
+		expect(freeOrbitalControls.target.toArray()).toEqual([10, 2.15, -5]);
 	});
 
 	it("keeps top-down mode strictly overhead while following the player", () => {
@@ -161,7 +161,7 @@ describe("useCameraRigViewModel", () => {
 		});
 
 		expect(mockCamera.position.toArray()).toEqual([3, 20, -7]);
-		expect(mockCamera.up.toArray()).toEqual([0, 0, -1]);
+		expect(mockCamera.up.toArray()).toEqual([0, 0, 1]);
 	});
 
 	it("preserves the current orbit while following the player in third-person", () => {
@@ -258,7 +258,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 58,
 					mode: CAMERA_MODES.FREE_ORBITAL,
-					position: [0, 18, 18],
+					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
 				},
@@ -295,7 +295,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 58,
 					mode: CAMERA_MODES.FREE_ORBITAL,
-					position: [0, 18, 18],
+					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
 				},
@@ -331,7 +331,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 58,
 					mode: CAMERA_MODES.FREE_ORBITAL,
-					position: [0, 18, 18],
+					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
 				},
@@ -355,8 +355,8 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([10, 18.9, 18]);
-		expect(freeOrbitalControls.target.toArray()).toEqual([10, 0.9, 0]);
+		expect(mockCamera.position.toArray()).toEqual([10, 16.9, -18]);
+		expect(freeOrbitalControls.target.toArray()).toEqual([10, 2.15, 0]);
 	});
 
 	it("keeps the free-orbital camera stable during ordinary movement", () => {
@@ -367,7 +367,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 58,
 					mode: CAMERA_MODES.FREE_ORBITAL,
-					position: [0, 18, 18],
+					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
 				},
@@ -391,8 +391,8 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([0, 18.9, 18]);
-		expect(freeOrbitalControls.target.toArray()).toEqual([0, 0.9, 0]);
+		expect(mockCamera.position.toArray()).toEqual([0, 16.9, -18]);
+		expect(freeOrbitalControls.target.toArray()).toEqual([0, 2.15, 0]);
 		expect(freeOrbitalControls.update).toHaveBeenCalledTimes(1);
 	});
 });

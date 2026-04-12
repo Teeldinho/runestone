@@ -1,4 +1,4 @@
-import { Text } from "@react-three/drei";
+import { Html } from "@react-three/drei";
 import { ROOM_ENTITY_CONFIG } from "../config";
 import type { RoomLabelSettings } from "../model";
 
@@ -12,17 +12,28 @@ export function RoomLabel({ settings }: RoomLabelProps) {
 	}
 
 	return (
-		<Text
-			anchorX="center"
-			anchorY="middle"
-			color={ROOM_ENTITY_CONFIG.LABEL.COLOR}
-			fontSize={ROOM_ENTITY_CONFIG.LABEL.FONT_SIZE}
-			maxWidth={ROOM_ENTITY_CONFIG.LABEL.MAX_WIDTH}
-			outlineColor={ROOM_ENTITY_CONFIG.LABEL.OUTLINE_COLOR}
-			outlineWidth={ROOM_ENTITY_CONFIG.LABEL.OUTLINE_WIDTH}
+		<Html
 			position={settings.position}
+			center
+			distanceFactor={ROOM_ENTITY_CONFIG.LABEL.DISTANCE_FACTOR}
+			zIndexRange={[...ROOM_ENTITY_CONFIG.LABEL.DOM_Z_INDEX_RANGE]}
+			style={{ pointerEvents: "none" }}
 		>
-			{settings.text}
-		</Text>
+			<span
+				style={{
+					color: ROOM_ENTITY_CONFIG.LABEL.COLOR,
+					fontFamily: "Space Grotesk, sans-serif",
+					fontSize: "1.3rem",
+					fontWeight: 700,
+					letterSpacing: "0.02em",
+					padding: "0.15rem 0.35rem",
+					borderRadius: "0.2rem",
+					textShadow: `0 0 6px ${ROOM_ENTITY_CONFIG.LABEL.OUTLINE_COLOR}, 0 0 1px ${ROOM_ENTITY_CONFIG.LABEL.OUTLINE_COLOR}`,
+					whiteSpace: "nowrap",
+				}}
+			>
+				{settings.text}
+			</span>
+		</Html>
 	);
 }

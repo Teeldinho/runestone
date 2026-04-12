@@ -5,14 +5,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RoomId } from "@/entities/dungeon";
 import { DOOR_SIDES, FLOOR_IDS, ROOM_IDS } from "@/entities/dungeon";
 import { PLAYER_STATES, type PlayerHealthState } from "@/entities/player";
-import { AUDIO_SPRITE_IDS } from "@/features/audio-manager";
 
 const mockOnRoomEnter = vi.fn();
 const mockOnTransition = vi.fn();
 const mockOnFloorComplete = vi.fn();
 const mockOnPlayerDeath = vi.fn();
 const mockOnGuardFail = vi.fn();
-const mockHandleSoundEffectPlay = vi.fn();
 const mockMutate = vi.fn();
 const mockSetPlayerTeleportTarget = vi.fn();
 
@@ -88,18 +86,6 @@ vi.mock("@/features/haptics-feedback", () => ({
 	}),
 }));
 
-vi.mock("@/features/audio-manager", () => ({
-	useAudioController: () => ({
-		handleSoundEffectPlay: mockHandleSoundEffectPlay,
-	}),
-	AUDIO_SPRITE_IDS: {
-		DOOR_OPEN: "DOOR_OPEN",
-		DOOR_LOCKED: "DOOR_LOCKED",
-		ACHIEVEMENT: "ACHIEVEMENT",
-		PLAYER_HIT: "PLAYER_HIT",
-	},
-}));
-
 vi.mock("@/entities/score", () => ({
 	useSubmitDungeonScore: () => ({ mutate: mockMutate }),
 }));
@@ -173,7 +159,7 @@ const MOCK_PROFILE = {
 
 import { useGameSideEffects } from "./useGameSideEffects";
 
-describe("useGameSideEffects — haptics and audio", () => {
+describe("useGameSideEffects — haptics", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockSnapshotGetter.mockReturnValue(createMockSnapshot());
@@ -187,13 +173,10 @@ describe("useGameSideEffects — haptics and audio", () => {
 		expect(mockOnTransition).toHaveBeenCalledTimes(1);
 	});
 
-	it("calls onRoomEnter and plays DOOR_OPEN on the first render (prev room is null)", () => {
+	it("calls onRoomEnter on the first render (prev room is null)", () => {
 		renderHook(() => useGameSideEffects());
 
 		expect(mockOnRoomEnter).toHaveBeenCalledTimes(1);
-		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith(
-			AUDIO_SPRITE_IDS.DOOR_OPEN,
-		);
 	});
 
 	it("calls onRoomEnter again when room changes", () => {
@@ -218,9 +201,6 @@ describe("useGameSideEffects — haptics and audio", () => {
 		rerender();
 
 		expect(mockOnRoomEnter).toHaveBeenCalledTimes(1);
-		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith(
-			AUDIO_SPRITE_IDS.DOOR_OPEN,
-		);
 	});
 
 	it("does NOT call onRoomEnter when room is unchanged between renders", () => {
@@ -347,7 +327,7 @@ describe("useGameSideEffects — haptics and audio", () => {
 		expect(mockOnTransition).not.toHaveBeenCalled();
 	});
 
-	it("plays locked-door feedback when doorway feedback changes", () => {
+	it("triggers guard-fail feedback when doorway feedback changes", () => {
 		const { rerender } = renderHook(() => useGameSideEffects());
 		vi.clearAllMocks();
 
@@ -364,9 +344,6 @@ describe("useGameSideEffects — haptics and audio", () => {
 		rerender();
 
 		expect(mockOnGuardFail).toHaveBeenCalledTimes(1);
-		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith(
-			AUDIO_SPRITE_IDS.DOOR_LOCKED,
-		);
 	});
 });
 
@@ -378,7 +355,7 @@ describe("useGameSideEffects — score submission on floor completion", () => {
 		mockPlayerSnapshotGetter.mockReturnValue(createMockPlayerSnapshot());
 	});
 
-	it("calls onFloorComplete and plays ACHIEVEMENT when status becomes done", () => {
+	it("calls onFloorComplete when status becomes done", () => {
 		const { rerender } = renderHook(() => useGameSideEffects());
 		vi.clearAllMocks();
 
@@ -394,9 +371,6 @@ describe("useGameSideEffects — score submission on floor completion", () => {
 		rerender();
 
 		expect(mockOnFloorComplete).toHaveBeenCalledTimes(1);
-		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith(
-			AUDIO_SPRITE_IDS.ACHIEVEMENT,
-		);
 	});
 
 	it("submits score with correct shape when floor is complete and user is authenticated", () => {
@@ -449,7 +423,7 @@ describe("useGameSideEffects — score submission on floor completion", () => {
 	});
 });
 
-describe("useGameSideEffects — player death haptic and audio", () => {
+describe("useGameSideEffects — player death haptic", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockSnapshotGetter.mockReturnValue(createMockSnapshot());
@@ -457,7 +431,7 @@ describe("useGameSideEffects — player death haptic and audio", () => {
 		mockPlayerSnapshotGetter.mockReturnValue(createMockPlayerSnapshot());
 	});
 
-	it("calls onPlayerDeath and plays PLAYER_HIT when player health becomes dead", () => {
+	it("calls onPlayerDeath when player health becomes dead", () => {
 		const { rerender } = renderHook(() => useGameSideEffects());
 		vi.clearAllMocks();
 
@@ -469,9 +443,6 @@ describe("useGameSideEffects — player death haptic and audio", () => {
 		rerender();
 
 		expect(mockOnPlayerDeath).toHaveBeenCalledTimes(1);
-		expect(mockHandleSoundEffectPlay).toHaveBeenCalledWith(
-			AUDIO_SPRITE_IDS.PLAYER_HIT,
-		);
 	});
 
 	it("does NOT call onPlayerDeath when player is alive", () => {

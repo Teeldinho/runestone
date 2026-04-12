@@ -14,6 +14,9 @@ const mockSceneEnvironment = vi.fn((_props: unknown) => (
 const mockWorldInteractionRuntime = vi.fn(() => (
 	<div data-testid="world-interaction-runtime" />
 ));
+const mockCanvas = vi.fn(({ children }: { children: ReactNode }) => (
+	<div data-testid="canvas">{children}</div>
+));
 
 vi.mock("@react-three/drei", () => ({
 	AdaptiveDpr: () => null,
@@ -25,9 +28,7 @@ vi.mock("@react-three/drei", () => ({
 }));
 
 vi.mock("@react-three/fiber", () => ({
-	Canvas: ({ children }: { children: ReactNode }) => (
-		<div data-testid="canvas">{children}</div>
-	),
+	Canvas: (props: { children: ReactNode }) => mockCanvas(props),
 }));
 
 vi.mock("@react-three/postprocessing", () => ({
@@ -55,6 +56,7 @@ vi.mock("@/entities/enemy", () => ({
 
 vi.mock("@/entities/player", () => ({
 	PlayerMesh: () => null,
+	usePlayerDamageFlash: () => false,
 }));
 
 vi.mock("@/entities/room", () => ({
@@ -69,7 +71,7 @@ vi.mock("@/entities/room", () => ({
 vi.mock("../model", () => ({
 	useAchievementTracker: () => ({ activeAchievement: null }),
 	useCanvasMachineSettings: () => ({
-		camera: { far: 120, fov: 58, near: 0.1, position: [0, 18, 18], zoom: 1 },
+		camera: { far: 120, fov: 58, near: 0.1, position: [0, 16, -18], zoom: 1 },
 		environment: {},
 		fog: {},
 		lighting: {},
@@ -118,12 +120,14 @@ vi.mock("./WorldInteractionRuntime", () => ({
 
 describe("GameCanvas", () => {
 	it("renders the narrow interaction runtime separately from the scene environment", () => {
+		mockCanvas.mockClear();
+
 		render(
 			<GameCanvas
 				cameraStateSnapshot={{
 					fov: 58,
 					mode: CAMERA_MODES.FREE_ORBITAL,
-					position: [0, 18, 18],
+					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
 				}}
@@ -138,5 +142,10 @@ describe("GameCanvas", () => {
 
 		expect(mockSceneEnvironment).toHaveBeenCalledTimes(1);
 		expect(mockWorldInteractionRuntime).toHaveBeenCalledTimes(1);
+		expect(mockCanvas).toHaveBeenCalledWith(
+			expect.objectContaining({
+				style: expect.objectContaining({ touchAction: "none" }),
+			}),
+		);
 	});
 });

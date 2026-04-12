@@ -24,6 +24,7 @@ export type {
 	ResolvePlayerAvatarVisibilityInput,
 	UsePlayerMeshInput,
 } from "./types";
+export { usePlayerDamageFlash } from "./usePlayerDamageFlash";
 export { usePlayerMesh } from "./usePlayerMesh";
 export { usePlayerMeshViewModel } from "./usePlayerMeshViewModel";
 export { usePlayerPhysics } from "./usePlayerPhysics";

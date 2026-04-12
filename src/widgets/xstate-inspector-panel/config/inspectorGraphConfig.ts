@@ -4,10 +4,109 @@ export const INSPECTOR_EDGE_LABELS = {
 
 export const INSPECTOR_COPY = {
 	ACTIVE_LABEL: "Active",
+	TRANSITION_LABEL_SINGULAR: "transition",
+	TRANSITION_LABEL_PLURAL: "transitions",
+	PANEL_TITLE: "Statechart Visualizer (XState)",
+	GUARDS_HEADING: "Guards",
+	GUARDS_DIRECTION_HINT:
+		"Single arrows mark one-way guards; dual arrows mark guards that run in both directions.",
+	EMPTY_GRAPH_MESSAGE: "No machine graph available.",
+	DETAILS_PANEL_TITLE: "State Details",
+	STATES_IN_MACHINE_LABEL: "States in this machine",
+	GUARD_TOOLTIP_TITLE: "Guard",
+	DIRECTION_PREFIX: "Direction:",
+	TRANSITION_SUMMARY_MOVES_FROM: "moves from",
+	TRANSITION_SUMMARY_TO: "to",
+} as const;
+
+export const INSPECTOR_ID_SEGMENT_SEPARATOR = ":";
+
+export const INSPECTOR_ID_SEGMENTS = {
+	INDICATOR: "indicator",
 } as const;
 
 export const INSPECTOR_FLOW_EDGE_VISUALS = {
-	TYPE: "smoothstep",
+	TYPE: "guard-marker",
+} as const;
+
+export const INSPECTOR_FLOW_EDGE_LAYOUT = {
+	LANE_OFFSET_STEP: 18,
+	GUARDED_EDGE_STROKE_COLOR: "var(--dungeon-gold)",
+	GUARDED_EDGE_STROKE_DASHARRAY: "5 4",
+	GUARDED_EDGE_STROKE_OPACITY: 0.55,
+	UNGUARDED_EDGE_STROKE_COLOR: "var(--panel-border)",
+	UNGUARDED_EDGE_STROKE_OPACITY: 0.32,
+	GUARD_MARKER_COLORS: [
+		"var(--dungeon-gold)",
+		"var(--dungeon-rune)",
+		"var(--dungeon-rune-open)",
+		"var(--dungeon-rune-sealed)",
+		"var(--panel-title)",
+		"var(--dungeon-torch)",
+	] as const,
+	GUARD_MARKER_SIZE_PX: 16,
+	GUARD_MARKER_HIT_AREA_PX: 28,
+	GUARD_MARKER_GAP_PX: 26,
+	GUARD_MARKER_LANE_SEPARATION_FACTOR: 1,
+	GUARD_MARKER_DIRECTION_OFFSET_PX: 14,
+	GUARD_MARKER_NO_DIRECTION_OFFSET_PX: 10,
+	GUARD_MARKER_DESKTOP_COLLISION_JITTER_PX: 7,
+	GUARD_MARKER_GLOBAL_COLLISION_BUCKET_PX: 48,
+	GUARD_MARKER_GLOBAL_COLLISION_STEP_PX: 20,
+	GUARD_MARKER_NODE_CLEARANCE_THRESHOLD_PX: 72,
+	GUARD_MARKER_NODE_CLEARANCE_OFFSET_PX: 14,
+	GUARD_MARKER_RING_COLOR: "var(--background)",
+	GUARD_MARKER_RESPONSIVE_SIZE_PX: 16,
+	GUARD_MARKER_RESPONSIVE_HIT_AREA_PX: 28,
+	GUARD_MARKER_RESPONSIVE_GAP_PX: 22,
+	GUARD_MARKER_RESPONSIVE_DIRECTION_OFFSET_PX: 12,
+	GUARD_MARKER_RESPONSIVE_NO_DIRECTION_OFFSET_PX: 8,
+	GUARD_MARKER_RESPONSIVE_NODE_CLEARANCE_THRESHOLD_PX: 60,
+	GUARD_MARKER_RESPONSIVE_NODE_CLEARANCE_OFFSET_PX: 10,
+	GUARD_MARKER_ANIMATE_PULSE_CLASS: "animate-pulse",
+	MOBILE_LANDSCAPE_GRAPH_HEIGHT_PX: 400,
+} as const;
+
+export const INSPECTOR_FLOW_BACKGROUND = {
+	GAP_PX: 20,
+	SIZE_PX: 1,
+} as const;
+
+export const INSPECTOR_GUARD_LEGEND_LAYOUT = {
+	DOT_SIZE_PX: 11,
+} as const;
+
+export const INSPECTOR_GUARD_MARKER_INTERACTION = {
+	HOVER_OPEN_DELAY_MS: 80,
+	HOVER_CLOSE_DELAY_MS: 60,
+	DIRECTION_ARROW_OFFSET_EXTRA_PX: 4,
+	POSITION_CENTER_PERCENT: "50%",
+	TRANSLATE_CENTER: "translate(-50%, -50%)",
+	DIRECTION_INDICATOR_MODE: {
+		NONE: "none",
+		SINGLE: "single",
+		DUAL: "dual",
+	},
+	DIRECTION_ARROW_BY_AXIS: {
+		HORIZONTAL: {
+			POS: "→",
+			NEG: "←",
+		},
+		VERTICAL: {
+			POS: "↓",
+			NEG: "↑",
+		},
+	},
+	DIRECTION_TEXT_BY_LABEL: {
+		UP: "up",
+		DOWN: "down",
+		LEFT: "left",
+		RIGHT: "right",
+	},
+	SELF_LOOP_CLEARANCE_AXIS: {
+		X: "x",
+		Y: "y",
+	},
 } as const;
 
 export const INSPECTOR_FLOW_NODE_VISUALS = {
@@ -27,4 +126,8 @@ export const INSPECTOR_REACT_FLOW_DEFAULTS = {
 	MAX_ZOOM: 1.5,
 	MIN_ZOOM: 0.45,
 	NODE_ORIGIN: [0.5, 0.5] as [number, number],
+} as const;
+
+export const INSPECTOR_REACT_FLOW_SECTION_PADDING = {
+	CAMERA: 0.24,
 } as const;

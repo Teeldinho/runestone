@@ -77,7 +77,7 @@ export const getCameraRigTargets = ({
 
 	return {
 		position: [px + ox, py + oy, pz + oz],
-		lookAt: [px, py, pz],
+		lookAt: [px, py + CAMERA_CONFIG.FREE_ORBITAL.TARGET_OFFSET_Y, pz],
 	};
 };
 

@@ -11,7 +11,13 @@ import {
 	ROOM_GLTF_CONFIG,
 	ROOM_LIGHT_CONFIG,
 } from "../config";
-import { getColumnPlacements, getFloorTilePositions } from "../lib";
+import {
+	getColumnPlacements,
+	getFloorTilePositions,
+	getRoomColumnColliderSettings,
+	getTreasuryChestCollider,
+	getTreasuryChestPosition,
+} from "../lib";
 import type { RoomSurfaceSettings, RoomWallOpening } from "../model";
 
 type RoomMeshProps = {
@@ -77,6 +83,21 @@ export function RoomMesh({
 		[],
 	);
 
+	const columnColliders = useMemo(
+		() => getRoomColumnColliderSettings(ROOM_CONFIG.WIDTH, ROOM_CONFIG.DEPTH),
+		[],
+	);
+
+	const treasuryChestPosition = useMemo(
+		() => getTreasuryChestPosition(ROOM_CONFIG.DEPTH),
+		[],
+	);
+
+	const treasuryChestCollider = useMemo(
+		() => getTreasuryChestCollider(ROOM_CONFIG.DEPTH),
+		[],
+	);
+
 	return (
 		<group position={position}>
 			{/* Floor tiles — GLTF */}
@@ -108,6 +129,18 @@ export function RoomMesh({
 					scale={ROOM_GLTF_CONFIG.COLUMN.SCALE}
 				/>
 			))}
+			{columnColliders.map((columnCollider) => (
+				<RigidBody
+					key={`col-collider-${columnCollider.position[0]}-${columnCollider.position[2]}`}
+					type="fixed"
+					colliders={false}
+				>
+					<CuboidCollider
+						args={columnCollider.args}
+						position={columnCollider.position}
+					/>
+				</RigidBody>
+			))}
 
 			{/* Rune orb (keep procedural — it's game state visual) */}
 			<mesh castShadow position={[0, rune.orbHeight, 0]}>
@@ -130,12 +163,20 @@ export function RoomMesh({
 
 			{/* Treasury chest */}
 			{isTreasury && (
-				<primitive
-					castShadow
-					object={chestScene.clone()}
-					position={[0, 0, -HALF_DEPTH * 0.5]}
-					scale={ROOM_GLTF_CONFIG.CHEST.SCALE}
-				/>
+				<>
+					<primitive
+						castShadow
+						object={chestScene.clone()}
+						position={treasuryChestPosition}
+						scale={ROOM_GLTF_CONFIG.CHEST.SCALE}
+					/>
+					<RigidBody type="fixed" colliders={false}>
+						<CuboidCollider
+							args={treasuryChestCollider.args}
+							position={treasuryChestCollider.position}
+						/>
+					</RigidBody>
+				</>
 			)}
 
 			{showTreasureKey && (

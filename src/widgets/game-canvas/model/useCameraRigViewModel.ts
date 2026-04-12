@@ -82,7 +82,6 @@ export const useCameraRigViewModel = ({
 	const { camera } = useThree();
 	const lastTransition = useGameMachineSelector(selectLastTransition);
 	const mode = cameraStateSnapshot?.mode;
-	const perspectiveCamera = camera as THREE.PerspectiveCamera;
 	const previousModeRef = useRef<string | undefined>(undefined);
 	const pointerLockRef = useRef<PointerLockControlsHandle>(null);
 	const thirdPersonOrbitRef = useRef<OrbitControlsHandle>(null);
@@ -270,11 +269,12 @@ export const useCameraRigViewModel = ({
 			}
 		}
 
-		const fovDiff = Math.abs(perspectiveCamera.fov - cameraStateSnapshot.fov);
-		if (fovDiff > 0.01) {
-			perspectiveCamera.fov +=
-				(cameraStateSnapshot.fov - perspectiveCamera.fov) * transitionAlpha;
-			perspectiveCamera.updateProjectionMatrix();
+		if (camera instanceof THREE.PerspectiveCamera) {
+			const fovDiff = Math.abs(camera.fov - cameraStateSnapshot.fov);
+			if (fovDiff > 0.01) {
+				camera.fov += (cameraStateSnapshot.fov - camera.fov) * transitionAlpha;
+				camera.updateProjectionMatrix();
+			}
 		}
 
 		previousTrackedPlayerPositionRef.current = [...trackedPlayerPosition];

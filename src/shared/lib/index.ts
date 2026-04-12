@@ -9,6 +9,8 @@ export type {
 	PositionedLayoutNode,
 } from "./graphLayout";
 export { getGraphLayout } from "./graphLayout";
+export type { ResponsiveLayoutState } from "./useResponsiveLayout";
+export { useResponsiveLayout } from "./useResponsiveLayout";
 export type { Vec3 } from "./vec3";
 export {
 	addVec3,
