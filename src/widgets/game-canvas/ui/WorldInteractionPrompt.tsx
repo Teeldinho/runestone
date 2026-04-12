@@ -1,125 +1,56 @@
 import { Html } from "@react-three/drei";
-import { useMemo } from "react";
 
 import {
-	ATTACK_KEY_LABEL,
-	ATTACK_TOUCH_LABEL,
-	INTERACTION_KEY_LABEL,
-	INTERACTION_TOUCH_LABEL,
-	type InteractionCandidatesViewModel,
-} from "@/features/dungeon-navigation";
-import { useResponsiveGameLayout } from "@/features/responsive-layout";
+	WORLD_INTERACTION_KEY_STYLE,
+	WORLD_INTERACTION_PROMPT_CONFIG,
+	WORLD_INTERACTION_PROMPT_STYLE,
+} from "../config";
+import { useWorldInteractionPrompt } from "../model";
+import type { WorldInteractionPromptProps } from "../model/useWorldInteractionPrompt";
 
-import { WORLD_INTERACTION_PROMPT_CONFIG } from "../config";
-import {
-	getWorldAttackPromptPosition,
-	getWorldInteractionPromptPosition,
-} from "../lib";
-import type { RoomPositionsById } from "../lib/getWorldInteractionPromptPosition";
+export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
+	const { interact, attack } = useWorldInteractionPrompt(props);
 
-const PROMPT_STYLE: React.CSSProperties = {
-	display: "flex",
-	alignItems: "center",
-	gap: "0.5rem",
-	padding: "0.375rem 0.75rem",
-	fontSize: "0.8rem",
-	fontFamily: "Space Grotesk, sans-serif",
-	fontWeight: 500,
-	borderRadius: "4px",
-	border: "1px solid var(--panel-border)",
-	background: "var(--panel)",
-	color: "var(--foreground)",
-	pointerEvents: "none",
-	whiteSpace: "nowrap",
-	marginTop: "0.25rem",
-};
-
-const KEY_STYLE: React.CSSProperties = {
-	display: "inline-flex",
-	alignItems: "center",
-	justifyContent: "center",
-	minWidth: "1.5rem",
-	height: "1.5rem",
-	padding: "0 0.375rem",
-	fontSize: "0.7rem",
-	fontWeight: 700,
-	borderRadius: "3px",
-	border: "1px solid var(--dungeon-gold)",
-	color: "var(--dungeon-gold)",
-	background: "color-mix(in srgb, var(--dungeon-gold) 10%, transparent)",
-};
-
-type WorldInteractionPromptProps = {
-	interactionCandidates: InteractionCandidatesViewModel;
-	roomPositionsById: RoomPositionsById;
-};
-
-export function WorldInteractionPrompt({
-	interactionCandidates,
-	roomPositionsById,
-}: WorldInteractionPromptProps) {
-	const { isDesktopLayout } = useResponsiveGameLayout();
-	const interactPosition = useMemo(() => {
-		if (!interactionCandidates.hasInteract) {
-			return null;
-		}
-
-		return getWorldInteractionPromptPosition(
-			interactionCandidates.interactTargetId,
-			roomPositionsById,
-		);
-	}, [
-		interactionCandidates.hasInteract,
-		interactionCandidates.interactTargetId,
-		roomPositionsById,
-	]);
-
-	const attackPosition = useMemo(() => {
-		if (!interactionCandidates.hasAttack) {
-			return null;
-		}
-
-		return getWorldAttackPromptPosition(interactionCandidates.attackPosition);
-	}, [interactionCandidates.attackPosition, interactionCandidates.hasAttack]);
-
-	if (!interactionCandidates.hasInteract && !interactionCandidates.hasAttack) {
+	if (!interact.isVisible && !attack.isVisible) {
 		return null;
 	}
 
-	const interactionLabel = isDesktopLayout
-		? INTERACTION_KEY_LABEL
-		: INTERACTION_TOUCH_LABEL;
-	const attackLabel = isDesktopLayout ? ATTACK_KEY_LABEL : ATTACK_TOUCH_LABEL;
-
 	return (
 		<>
-			{interactPosition && interactionCandidates.interactPrompt && (
+			{interact.isVisible && interact.position && (
 				<Html
+					zIndexRange={[10, 20]}
 					position={[
-						interactPosition[0],
-						interactPosition[1],
-						interactPosition[2],
+						interact.position[0],
+						interact.position[1],
+						interact.position[2],
 					]}
 					center
 					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
 					style={{ pointerEvents: "none" }}
 				>
-					<div style={PROMPT_STYLE}>
-						<span style={KEY_STYLE}>{interactionLabel}</span>
-						<span>{interactionCandidates.interactPrompt}</span>
+					<div style={WORLD_INTERACTION_PROMPT_STYLE}>
+						<span style={WORLD_INTERACTION_KEY_STYLE}>{interact.label}</span>
+						<span>{interact.text}</span>
 					</div>
 				</Html>
 			)}
-			{attackPosition && interactionCandidates.attackPrompt && (
+
+			{attack.isVisible && attack.position && (
 				<Html
-					position={[attackPosition[0], attackPosition[1], attackPosition[2]]}
+					zIndexRange={[10, 20]}
+					position={[
+						attack.position[0],
+						attack.position[1],
+						attack.position[2],
+					]}
 					center
 					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
 					style={{ pointerEvents: "none" }}
 				>
-					<div style={PROMPT_STYLE}>
-						<span style={KEY_STYLE}>{attackLabel}</span>
-						<span>{interactionCandidates.attackPrompt}</span>
+					<div style={WORLD_INTERACTION_PROMPT_STYLE}>
+						<span style={WORLD_INTERACTION_KEY_STYLE}>{attack.label}</span>
+						<span>{attack.text}</span>
 					</div>
 				</Html>
 			)}
