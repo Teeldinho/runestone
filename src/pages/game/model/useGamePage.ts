@@ -57,6 +57,7 @@ type GamePageViewModel = {
 	isDesktopLayout: boolean;
 	isMobileSheetOpen: boolean;
 	isMobileTabletLandscape: boolean;
+	isTabletLayout: boolean;
 	mobileSheetTabId: GamePageMobileSheetTabId;
 	playerHp: number;
 	playerMaxHp: number;
@@ -93,7 +94,8 @@ export const useGamePage = (): GamePageViewModel => {
 		handleAudioMuteToggle,
 		isAudioMuted,
 	} = useAudioController();
-	const { isDesktopLayout, isLandscape } = useResponsiveGameLayout();
+	const { isDesktopLayout, isLandscape, isTabletLayout } =
+		useResponsiveGameLayout();
 	const isMobileTabletLandscape = !isDesktopLayout && isLandscape;
 	const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
 	const [mobileSheetTabId, setMobileSheetTabId] =
@@ -250,6 +252,7 @@ export const useGamePage = (): GamePageViewModel => {
 		isDesktopLayout,
 		isMobileSheetOpen,
 		isMobileTabletLandscape,
+		isTabletLayout,
 		mobileSheetTabId,
 		playerHp: playerSnapshot.context.stats.hp,
 		playerMaxHp: playerSnapshot.context.stats.maxHp,
