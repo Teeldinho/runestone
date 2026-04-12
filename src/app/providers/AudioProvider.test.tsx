@@ -7,22 +7,28 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { AudioProvider } from "./AudioProvider";
 import { AUDIO_PROVIDER_UNLOCK_EVENT_LIST } from "./audioProviderEvents";
 
-const { mockStartBackgroundMusicLoop, mockUseAudio } = vi.hoisted(() => {
-	const audioController = {
-		audioState: "playing",
-		isAudioMuted: false,
-		isAudioPlaying: true,
-		handleAudioMuteToggle: vi.fn(),
-		handleAudioPauseRequest: vi.fn(),
-		handleAudioPlayRequest: vi.fn(),
-		handleAudioStopRequest: vi.fn(),
-	};
+const { mockStartBackgroundMusicLoop, mockToneStart, mockUseAudio } =
+	vi.hoisted(() => {
+		const audioController = {
+			audioState: "playing",
+			isAudioMuted: false,
+			isAudioPlaying: true,
+			handleAudioMuteToggle: vi.fn(),
+			handleAudioPauseRequest: vi.fn(),
+			handleAudioPlayRequest: vi.fn(),
+			handleAudioStopRequest: vi.fn(),
+		};
 
-	return {
-		mockUseAudio: vi.fn(() => audioController),
-		mockStartBackgroundMusicLoop: vi.fn(() => Promise.resolve()),
-	};
-});
+		return {
+			mockUseAudio: vi.fn(() => audioController),
+			mockStartBackgroundMusicLoop: vi.fn(() => Promise.resolve()),
+			mockToneStart: vi.fn(() => Promise.resolve()),
+		};
+	});
+
+vi.mock("tone", () => ({
+	start: mockToneStart,
+}));
 
 vi.mock("@/features/audio-manager", () => ({
 	AudioContext: {
@@ -67,5 +73,17 @@ describe("AudioProvider", () => {
 		window.dispatchEvent(new Event(AUDIO_PROVIDER_UNLOCK_EVENT_LIST[1]));
 
 		expect(mockStartBackgroundMusicLoop).toHaveBeenCalledTimes(1);
+	});
+
+	it("calls Tone.start() on first user interaction", async () => {
+		render(
+			<AudioProvider>
+				<div>child</div>
+			</AudioProvider>,
+		);
+
+		window.dispatchEvent(new Event(AUDIO_PROVIDER_UNLOCK_EVENT_LIST[0]));
+
+		expect(mockToneStart).toHaveBeenCalledTimes(1);
 	});
 });

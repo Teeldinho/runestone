@@ -3,7 +3,7 @@ import { CAMERA_MODES } from "@/shared/config";
 export type { CameraMode } from "@/shared/config";
 export { CAMERA_MODES };
 
-export const CAMERA_DEFAULT_MODE = CAMERA_MODES.FREE_ORBITAL;
+export const CAMERA_DEFAULT_MODE = CAMERA_MODES.THIRD_PERSON;
 
 export const CAMERA_HOTKEYS = {
 	THIRD_PERSON: "1",
