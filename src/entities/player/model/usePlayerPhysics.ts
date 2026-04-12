@@ -2,6 +2,7 @@ import { useFrame } from "@react-three/fiber";
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
+import * as THREE from "three";
 import { RELATIVE_CAMERA_MODES } from "@/shared/config";
 import { getCameraMode } from "@/shared/lib/cameraModeStore";
 import { getCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
@@ -9,6 +10,7 @@ import {
 	consumePlayerTeleportTarget,
 	setPlayerPosition,
 } from "@/shared/lib/playerPositionStore";
+import { getQuaternionFromXZ } from "@/shared/lib/vec3";
 import type { Vector3Tuple } from "@/shared/types";
 
 import { PLAYER_ENTITY_CONFIG } from "../config";
@@ -31,8 +33,10 @@ export const usePlayerPhysics = ({
 	isSprinting,
 }: UsePlayerPhysicsInput): UsePlayerPhysicsResult => {
 	const rigidBodyRef = useRef<RapierRigidBody>(null);
+	const targetRotationRef = useRef(new THREE.Quaternion());
+	const currentRotationRef = useRef(new THREE.Quaternion());
 
-	useFrame(() => {
+	useFrame((_, delta) => {
 		const body = rigidBodyRef.current;
 		if (!body) return;
 
@@ -85,6 +89,16 @@ export const usePlayerPhysics = ({
 				},
 				true,
 			);
+
+			// Rotate toward movement direction
+			targetRotationRef.current.copy(getQuaternionFromXZ(vx, vz));
+			currentRotationRef.current.copy(body.rotation() as THREE.Quaternion);
+			currentRotationRef.current.slerp(
+				targetRotationRef.current,
+				PLAYER_ENTITY_CONFIG.MOVEMENT.ROTATION_SPEED * delta,
+			);
+			body.setRotation(currentRotationRef.current, true);
+
 			return;
 		}
 
