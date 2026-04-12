@@ -47,3 +47,13 @@ export const CAMERA_MODE_SWITCHER_OPTIONS = [
 	hotkey: (typeof CAMERA_HOTKEYS)[keyof typeof CAMERA_HOTKEYS];
 	eventType: CameraModeSwitchEventType;
 }[];
+
+export const CAMERA_MODE_ICON_LABELS: Record<
+	(typeof CAMERA_MODES)[keyof typeof CAMERA_MODES],
+	string
+> = {
+	[CAMERA_MODES.THIRD_PERSON]: "3P",
+	[CAMERA_MODES.TOP_DOWN]: "TD",
+	[CAMERA_MODES.FIRST_PERSON]: "1P",
+	[CAMERA_MODES.FREE_ORBITAL]: "FO",
+};

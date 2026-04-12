@@ -55,5 +55,25 @@ export { Input } from "./input";
 export { Label } from "./label";
 export { ScrollArea, ScrollBar } from "./scroll-area";
 export { Separator } from "./separator";
+export {
+	Sheet,
+	SheetClose,
+	SheetContent,
+	SheetDescription,
+	SheetFooter,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
+} from "./sheet";
 export { Slider } from "./slider";
+export {
+	Table,
+	TableBody,
+	TableCaption,
+	TableCell,
+	TableFooter,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "./table";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";

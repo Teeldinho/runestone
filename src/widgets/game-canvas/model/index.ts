@@ -20,3 +20,4 @@ export type { SceneEnvironmentSettingsViewModel } from "./useSceneEnvironmentSet
 export { useSceneEnvironmentSettings } from "./useSceneEnvironmentSettings";
 export type { SceneLightingViewModel } from "./useSceneLighting";
 export { useSceneLighting } from "./useSceneLighting";
+export { useWorldInteractionPrompt } from "./useWorldInteractionPrompt";
