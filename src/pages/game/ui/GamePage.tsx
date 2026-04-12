@@ -189,99 +189,99 @@ export function GamePage() {
 								</div>
 							</div>
 
-							<div className="pointer-events-none absolute bottom-4 left-4 z-30">
-								<div className="pointer-events-auto">
-									<TouchJoystickOverlay
-										onMoveVelocity={handleTouchJoystickMove}
-										onStopVelocity={handleTouchJoystickStop}
-									/>
+							<CameraControlZone zoneRef={cameraControlRef}>
+								<div className="pointer-events-none absolute bottom-4 left-4 z-30">
+									<div className="pointer-events-auto">
+										<TouchJoystickOverlay
+											onMoveVelocity={handleTouchJoystickMove}
+											onStopVelocity={handleTouchJoystickStop}
+										/>
+									</div>
 								</div>
-							</div>
 
-							{cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON && (
-								<div
-									ref={firstPersonLookRef}
-									id="fp-look-zone"
-									className="pointer-events-auto absolute bottom-0 right-0 top-0 z-20 touch-none select-none"
-									style={{ left: "50%" }}
-								/>
-							)}
+								{cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON && (
+									<div
+										ref={firstPersonLookRef}
+										id="fp-look-zone"
+										className="pointer-events-auto absolute bottom-0 right-0 top-0 z-20 touch-none select-none"
+										style={{ left: "50%" }}
+									/>
+								)}
 
-							<CameraControlZone zoneRef={cameraControlRef} />
-
-							<div className="pointer-events-none absolute bottom-4 right-4 z-30 flex w-[11rem] flex-col gap-2 empty:hidden items-end">
-								{hasTouchInteract ? (
+								<div className="pointer-events-none absolute bottom-4 right-4 z-30 flex w-[11rem] flex-col gap-2 empty:hidden items-end">
+									{hasTouchInteract ? (
+										<Button
+											variant="default"
+											size="default"
+											onClick={handleTouchInteract}
+											className="pointer-events-auto relative w-full font-bold"
+										>
+											{touchInteractPrompt}
+											<Badge className="absolute -right-2 -top-2 flex h-4 w-4 animate-pulse items-center justify-center rounded-full bg-dungeon-gold p-0 shadow-[0_0_8px_var(--dungeon-gold)]" />
+										</Button>
+									) : null}
+									{hasTouchAttack ? (
+										<Button
+											variant="default"
+											size="default"
+											onClick={handleTouchAttack}
+											className="pointer-events-auto relative w-full font-bold"
+										>
+											{touchAttackPrompt}
+											<Badge className="absolute -right-2 -top-2 flex h-4 w-4 animate-pulse items-center justify-center rounded-full bg-success p-0 shadow-[0_0_8px_var(--success)]" />
+										</Button>
+									) : null}
 									<Button
-										variant="default"
-										size="default"
-										onClick={handleTouchInteract}
-										className="pointer-events-auto relative w-full font-bold"
-									>
-										{touchInteractPrompt}
-										<Badge className="absolute -right-2 -top-2 flex h-4 w-4 animate-pulse items-center justify-center rounded-full bg-dungeon-gold p-0 shadow-[0_0_8px_var(--dungeon-gold)]" />
-									</Button>
-								) : null}
-								{hasTouchAttack ? (
-									<Button
-										variant="default"
-										size="default"
-										onClick={handleTouchAttack}
-										className="pointer-events-auto relative w-full font-bold"
-									>
-										{touchAttackPrompt}
-										<Badge className="absolute -right-2 -top-2 flex h-4 w-4 animate-pulse items-center justify-center rounded-full bg-success p-0 shadow-[0_0_8px_var(--success)]" />
-									</Button>
-								) : null}
-								<Button
-									variant={isAudioMuted ? "dungeon-outline" : "dungeon-gold"}
-									size={isTabletLayout ? "default" : "icon"}
-									onClick={handleAudioMuteToggle}
-									className={`pointer-events-auto ${isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
-									aria-label={isAudioMuted ? "Unmute audio" : "Mute audio"}
-								>
-									{isAudioMuted ? (
-										<VolumeX className="h-4 w-4" />
-									) : (
-										<Volume2 className="h-4 w-4" />
-									)}
-									{isTabletLayout && (
-										<span className="text-xs uppercase tracking-wide">
-											Audio
-										</span>
-									)}
-								</Button>
-								<LeaderboardSheet>
-									<Button
-										variant="dungeon-outline"
+										variant={isAudioMuted ? "dungeon-outline" : "dungeon-gold"}
 										size={isTabletLayout ? "default" : "icon"}
-										className={`pointer-events-auto flex items-center justify-center gap-2 ${isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
-										aria-label="Open Leaderboard"
-									>
-										<Trophy className="h-4 w-4" />
-										{isTabletLayout && (
-											<span className="text-xs uppercase tracking-wide">
-												Rankings
-											</span>
-										)}
-									</Button>
-								</LeaderboardSheet>
-								<DrawerTrigger asChild>
-									<Button
-										variant={
-											isMobileSheetOpen ? "dungeon-gold" : "dungeon-outline"
-										}
-										size={isTabletLayout ? "default" : "icon"}
+										onClick={handleAudioMuteToggle}
 										className={`pointer-events-auto ${isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
+										aria-label={isAudioMuted ? "Unmute audio" : "Mute audio"}
 									>
-										<Layers className="h-4 w-4" />
+										{isAudioMuted ? (
+											<VolumeX className="h-4 w-4" />
+										) : (
+											<Volume2 className="h-4 w-4" />
+										)}
 										{isTabletLayout && (
 											<span className="text-xs uppercase tracking-wide">
-												{GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}
+												Audio
 											</span>
 										)}
 									</Button>
-								</DrawerTrigger>
-							</div>
+									<LeaderboardSheet>
+										<Button
+											variant="dungeon-outline"
+											size={isTabletLayout ? "default" : "icon"}
+											className={`pointer-events-auto flex items-center justify-center gap-2 ${isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
+											aria-label="Open Leaderboard"
+										>
+											<Trophy className="h-4 w-4" />
+											{isTabletLayout && (
+												<span className="text-xs uppercase tracking-wide">
+													Rankings
+												</span>
+											)}
+										</Button>
+									</LeaderboardSheet>
+									<DrawerTrigger asChild>
+										<Button
+											variant={
+												isMobileSheetOpen ? "dungeon-gold" : "dungeon-outline"
+											}
+											size={isTabletLayout ? "default" : "icon"}
+											className={`pointer-events-auto ${isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
+										>
+											<Layers className="h-4 w-4" />
+											{isTabletLayout && (
+												<span className="text-xs uppercase tracking-wide">
+													{GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}
+												</span>
+											)}
+										</Button>
+									</DrawerTrigger>
+								</div>
+							</CameraControlZone>
 						</section>
 
 						<DrawerContent

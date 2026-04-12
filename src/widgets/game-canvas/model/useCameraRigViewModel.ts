@@ -125,7 +125,11 @@ export const useCameraRigViewModel = ({
 	}, [mode]);
 
 	const handlePointerDown = useCallback((event: PointerEvent) => {
-		isTouchInitiallyOnLeftRef.current = event.clientX < window.innerWidth * 0.5;
+		// Detect if the touch started in the bottom-left "Movement Zone".
+		// We use a generous area to match the enlarged joystick (approx 200px from corners).
+		const isBottomLeft =
+			event.clientX < 200 && event.clientY > window.innerHeight - 200;
+		isTouchInitiallyOnLeftRef.current = isBottomLeft;
 	}, []);
 
 	useEffect(() => {
@@ -145,9 +149,9 @@ export const useCameraRigViewModel = ({
 	const handleOrbitStart = useCallback(() => {
 		isUserInteractingRef.current = true;
 
-		// If a single-finger interaction started on the left (joystick area),
+		// If a single-finger interaction started in the movement zone,
 		// disable rotation to prevent panning while moving.
-		// Zoom (multi-finger) should still work naturally.
+		// Zoom (multi-finger) should still work naturally as it uses deltas between all fingers.
 		[
 			thirdPersonOrbitRef,
 			topDownOrbitRef,
@@ -224,8 +228,9 @@ export const useCameraRigViewModel = ({
 				setOrbitTarget(topDownOrbitRef.current, lookAt);
 				needsTopDownSyncRef.current = false;
 			} else {
+				// While interacting (panning/zooming), we ONLY update the orbit target.
+				// We do NOT call update() or override camera.position to prevent jitter.
 				topDownOrbitRef.current.target.set(...lookAt);
-				// Do not call update() here; OrbitControls will pick it up in its own useFrame.
 			}
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
 			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
@@ -246,9 +251,6 @@ export const useCameraRigViewModel = ({
 				} else {
 					// Every frame: snap the camera to the player's head, then keep the
 					// orbit pivot exactly 0.01 m ahead in camera-space.
-					// Using the camera's own forward direction (not a world-space +Z constant)
-					// stops OrbitControls from fighting the user's look direction, which was
-					// the root cause of the erratic azimuth oscillation.
 					camera.position.set(...position);
 					camera.getWorldDirection(firstPersonTargetVectorRef.current);
 					firstPersonTargetVectorRef.current
@@ -257,9 +259,7 @@ export const useCameraRigViewModel = ({
 					firstPersonOrbitRef.current.target.copy(
 						firstPersonTargetVectorRef.current,
 					);
-					// Do NOT call controls.update() here — Drei's OrbitControls already
-					// calls update() every frame via its own useFrame. A second call in
-					// the same frame would apply spherical deltas twice, causing shaking.
+					// Important: Do NOT call controls.update() or lerp here.
 				}
 			} else {
 				positionVectorRef.current.set(...position);
@@ -294,13 +294,11 @@ export const useCameraRigViewModel = ({
 				setOrbitTarget(thirdPersonOrbitRef.current, transitionTargets.lookAt);
 				thirdPersonOrbitRef.current.update();
 			} else if (isUserInteractingRef.current) {
-				// During manual orbit: snap the pivot to the player's head.
-				// By NOT lerping the camera position here, we let OrbitControls
-				// take full ownership of the rotation/displacement while preserving
-				// the radial distance from the target.
+				// RESOLVE JITTER: During manual orbit, ONLY update the target.
+				// Let OrbitControls handle all camera position and rotation changes.
+				// If we manualy set camera.position here (even via lerp), we fight
+				// the spherical coordinates computed by the controls, causing shaking.
 				thirdPersonOrbitRef.current.target.set(...lookAt);
-				// Do not call update() here; OrbitControls handles its own update during interaction
-				// and calling it twice per frame causes erratic jitter.
 			} else {
 				const desiredCameraPosition = getPreservedOrbitCameraPosition({
 					cameraPosition: camera.position.toArray() as Vector3Tuple,

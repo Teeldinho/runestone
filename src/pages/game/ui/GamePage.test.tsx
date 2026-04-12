@@ -85,7 +85,9 @@ vi.mock("@/features/settings", () => ({
 
 vi.mock("@/features/touch-input", () => ({
 	TouchJoystickOverlay: () => <div data-testid="touch-joystick-widget" />,
-	CameraControlZone: () => <div data-testid="camera-control-zone-widget" />,
+	CameraControlZone: ({ children }: { children: React.ReactNode }) => (
+		<div data-testid="camera-control-zone-widget">{children}</div>
+	),
 }));
 
 vi.mock("@/widgets/game-canvas", () => ({
