@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 export type Vec3 = readonly [number, number, number];
 
 export function addVec3(a: Vec3, b: Vec3): Vec3 {
@@ -28,4 +30,12 @@ export function normalizeVec3(vector: Vec3): Vec3 {
 	}
 
 	return scaleVec3(vector, 1 / magnitude);
+}
+
+export function getQuaternionFromXZ(x: number, z: number): THREE.Quaternion {
+	const angle = Math.atan2(x, z);
+	return new THREE.Quaternion().setFromAxisAngle(
+		new THREE.Vector3(0, 1, 0),
+		angle,
+	);
 }
