@@ -17,7 +17,7 @@ export function CameraControlZone({
 		<div
 			ref={zoneRef}
 			id="camera-control-zone"
-			className="pointer-events-auto absolute inset-y-0 right-0 w-1/2 touch-none select-none"
+			className="pointer-events-auto absolute inset-0 touch-none select-none"
 		>
 			{children}
 		</div>
