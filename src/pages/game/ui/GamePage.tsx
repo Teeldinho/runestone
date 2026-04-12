@@ -181,19 +181,20 @@ export function GamePage() {
 							<div className="pointer-events-none absolute bottom-4 right-4 z-30 flex w-[11rem] flex-col gap-2 empty:hidden items-end">
 								{hasTouchInteract ? (
 									<Button
+										variant="default"
 										size="default"
 										onClick={handleTouchInteract}
-										className="pointer-events-auto w-full animate-pulse border-2 border-dungeon-gold font-bold shadow-[0_0_15px_rgba(255,215,0,0.5)]"
+										className="pointer-events-auto w-full font-bold relative before:pointer-events-none before:absolute before:-inset-0.5 before:rounded-[inherit] before:border-[2px] before:border-dungeon-gold before:animate-pulse before:shadow-[0_0_8px_var(--dungeon-gold)]"
 									>
 										{touchInteractPrompt}
 									</Button>
 								) : null}
 								{hasTouchAttack ? (
 									<Button
+										variant="default"
 										size="default"
-										variant="destructive"
 										onClick={handleTouchAttack}
-										className="pointer-events-auto w-full animate-pulse border-2 border-red-500 font-bold shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+										className="pointer-events-auto w-full font-bold relative before:pointer-events-none before:absolute before:-inset-0.5 before:rounded-[inherit] before:border-[2px] before:border-dungeon-gold before:animate-pulse before:shadow-[0_0_8px_var(--dungeon-gold)]"
 									>
 										{touchAttackPrompt}
 									</Button>
