@@ -66,7 +66,9 @@ export function CameraRig({
 					RIGHT: THREE.MOUSE.ROTATE,
 				}}
 				touches={CAMERA_RIG_TOUCH_GESTURES.ORBIT}
-				domElement={isDesktopLayout ? undefined : (cameraControlElement ?? undefined)}
+				domElement={
+					isDesktopLayout ? undefined : (cameraControlElement ?? undefined)
+				}
 			/>
 		);
 	}
@@ -85,7 +87,9 @@ export function CameraRig({
 				maxPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MAX_POLAR_ANGLE}
 				minPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MIN_POLAR_ANGLE}
 				touches={CAMERA_RIG_TOUCH_GESTURES.ORBIT}
-				domElement={isDesktopLayout ? undefined : (cameraControlElement ?? undefined)}
+				domElement={
+					isDesktopLayout ? undefined : (cameraControlElement ?? undefined)
+				}
 			/>
 		);
 	}
@@ -144,7 +148,9 @@ export function CameraRig({
 				maxAzimuthAngle={Math.PI}
 				zoomSpeed={CAMERA_CONFIG.TOP_DOWN.ZOOM_SPEED}
 				touches={CAMERA_RIG_TOUCH_GESTURES.TOP_DOWN}
-				domElement={isDesktopLayout ? undefined : (cameraControlElement ?? undefined)}
+				domElement={
+					isDesktopLayout ? undefined : (cameraControlElement ?? undefined)
+				}
 			/>
 		);
 	}

@@ -3,14 +3,19 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { CAMERA_EVENTS, CAMERA_HOTKEYS, CAMERA_MODES } from "../config";
+import {
+	CAMERA_DEFAULT_MODE,
+	CAMERA_EVENTS,
+	CAMERA_HOTKEYS,
+	CAMERA_MODES,
+} from "../config";
 import { useCameraMachine } from "./useCameraMachine";
 
 describe("useCameraMachine", () => {
-	it("starts in free orbital mode", () => {
+	it("starts in the default camera mode", () => {
 		const { result } = renderHook(() => useCameraMachine());
 
-		expect(result.current.mode).toBe(CAMERA_MODES.FREE_ORBITAL);
+		expect(result.current.mode).toBe(CAMERA_DEFAULT_MODE);
 	});
 
 	it("switches mode from explicit camera events", () => {

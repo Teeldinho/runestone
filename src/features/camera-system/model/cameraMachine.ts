@@ -1,6 +1,10 @@
 import { setup } from "xstate";
 
-import { CAMERA_MACHINE_ID, CAMERA_MODES } from "../config";
+import {
+	CAMERA_DEFAULT_MODE,
+	CAMERA_MACHINE_ID,
+	CAMERA_MODES,
+} from "../config";
 
 export const createCameraMachine = () =>
 	setup({
@@ -18,7 +22,7 @@ export const createCameraMachine = () =>
 		},
 	}).createMachine({
 		id: CAMERA_MACHINE_ID,
-		initial: CAMERA_MODES.FREE_ORBITAL,
+		initial: CAMERA_DEFAULT_MODE,
 		context: {
 			playerPosition: [0, 0, 0],
 			orbitTarget: [0, 0, 0],

@@ -548,6 +548,8 @@ describe("useCameraRigViewModel", () => {
 		});
 
 		// Camera should NOT have moved linearly via the follow lerp
-		expect(mockCamera.position.toArray()).toEqual(initialCameraPosition.toArray());
+		expect(mockCamera.position.toArray()).toEqual(
+			initialCameraPosition.toArray(),
+		);
 	});
 });
