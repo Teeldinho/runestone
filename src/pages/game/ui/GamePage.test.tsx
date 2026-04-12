@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
 import { cleanup, render, screen } from "@testing-library/react";
+import type React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DUNGEON_EVENTS, ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
@@ -105,6 +106,12 @@ vi.mock("@/widgets/xstate-inspector-panel", () => ({
 
 vi.mock("@/widgets/hud", () => ({
 	GameHud: () => <div data-testid="hud-widget-marker" />,
+}));
+
+vi.mock("@/widgets/leaderboard-panel", () => ({
+	LeaderboardSheet: ({ children }: { children: React.ReactNode }) => (
+		<div data-testid="leaderboard-sheet-widget">{children}</div>
+	),
 }));
 
 vi.mock("@/features/dungeon-navigation", () => ({
