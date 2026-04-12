@@ -4,6 +4,10 @@ import { render, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("tone", () => ({
+	start: vi.fn(() => Promise.resolve()),
+}));
+
 import { AudioProvider } from "./AudioProvider";
 import { AUDIO_PROVIDER_UNLOCK_EVENT_LIST } from "./audioProviderEvents";
 
@@ -30,6 +34,12 @@ vi.mock("@/features/audio-manager", () => ({
 	},
 	startBackgroundMusicLoop: mockStartBackgroundMusicLoop,
 	useAudio: mockUseAudio,
+}));
+
+vi.mock("@/features/haptics-feedback", () => ({
+	useHaptics: vi.fn(() => ({
+		onCameraSwitch: vi.fn(),
+	})),
 }));
 
 describe("AudioProvider", () => {
