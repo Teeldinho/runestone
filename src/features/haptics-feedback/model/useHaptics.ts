@@ -25,10 +25,6 @@ export const useHaptics = () => {
 
 	const triggerHapticPattern = useCallback(
 		(pattern: HapticPattern, shouldThrottle: boolean) => {
-			if (!isSupported) {
-				return;
-			}
-
 			const now = Date.now();
 
 			if (
@@ -41,7 +37,7 @@ export const useHaptics = () => {
 			lastHapticTriggerAtRef.current = now;
 			void trigger(pattern);
 		},
-		[isSupported, trigger],
+		[trigger],
 	);
 
 	const triggerHapticEvent = useCallback(

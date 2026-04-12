@@ -72,6 +72,22 @@ describe("useHaptics", () => {
 		expect(mockTrigger).toHaveBeenCalledWith(HAPTIC_PATTERNS[patternKey]);
 	});
 
+	it("delegates to library trigger even when isSupported is false", () => {
+		mockUseWebHaptics.mockReturnValue({
+			trigger: mockTrigger,
+			cancel: mockCancel,
+			isSupported: false,
+		});
+
+		const { result } = renderHook(() => useHaptics());
+
+		act(() => {
+			result.current.onRoomEnter();
+		});
+
+		expect(mockTrigger).toHaveBeenCalledWith(HAPTIC_PATTERNS.ROOM_ENTER);
+	});
+
 	it("throttles rapid consecutive triggers", () => {
 		vi.useFakeTimers();
 		vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
