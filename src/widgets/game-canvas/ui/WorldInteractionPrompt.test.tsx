@@ -63,7 +63,7 @@ describe("WorldInteractionPrompt", () => {
 		expect(screen.getByText("E")).not.toBeNull();
 	});
 
-	it("renders touch labels on mobile and tablet layouts", () => {
+	it("renders floating colored dots instead of text panels on mobile and tablet layouts", () => {
 		mockUseResponsiveGameLayout.mockReturnValue({
 			isDesktopLayout: false,
 			isLandscape: true,
@@ -72,15 +72,19 @@ describe("WorldInteractionPrompt", () => {
 			isTabletLayout: false,
 		});
 
-		render(
+		const { container } = render(
 			<WorldInteractionPrompt
 				interactionCandidates={interactionCandidates}
 				roomPositionsById={{}}
 			/>,
 		);
 
-		expect(screen.getAllByText("Tap")).toHaveLength(2);
+		expect(screen.queryByText("Tap")).toBeNull();
 		expect(screen.queryByText("F")).toBeNull();
 		expect(screen.queryByText("E")).toBeNull();
+		expect(screen.queryByText("Enter Library")).toBeNull();
+		expect(screen.queryByText("Attack")).toBeNull();
+
+		expect(container.querySelectorAll(".animate-pulse")).toHaveLength(2);
 	});
 });
