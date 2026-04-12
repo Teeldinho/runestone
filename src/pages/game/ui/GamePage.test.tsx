@@ -85,6 +85,7 @@ vi.mock("@/features/settings", () => ({
 
 vi.mock("@/features/touch-input", () => ({
 	TouchJoystickOverlay: () => <div data-testid="touch-joystick-widget" />,
+	CameraControlZone: () => <div data-testid="camera-control-zone-widget" />,
 }));
 
 vi.mock("@/widgets/game-canvas", () => ({

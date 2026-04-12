@@ -29,7 +29,12 @@ export const startBackgroundMusicLoop = async (): Promise<void> => {
 	if (!startBackgroundMusicPromise) {
 		startBackgroundMusicPromise = (async () => {
 			try {
+				console.log("[audio] Tone.js context state:", Tone.getContext().state);
 				await Tone.start();
+				console.log(
+					"[audio] Tone.js context state after start:",
+					Tone.getContext().state,
+				);
 				const player = await initBackgroundMusicPlayer();
 
 				if (!isMusicRequested || isMusicStarted) {

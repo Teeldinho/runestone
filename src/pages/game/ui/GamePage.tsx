@@ -3,7 +3,10 @@ import { type CSSProperties, useCallback, useState } from "react";
 import { CAMERA_MODES } from "@/features/camera-system";
 import { useSettingsForm } from "@/features/settings";
 import { StateVisualizerWorkspaceProvider } from "@/features/state-visualizer";
-import { TouchJoystickOverlay } from "@/features/touch-input";
+import {
+	CameraControlZone,
+	TouchJoystickOverlay,
+} from "@/features/touch-input";
 import { GAME_PAGE_LAYOUT, GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import { useGamePage } from "@/pages/game/model";
 import {
@@ -80,6 +83,11 @@ export function GamePage() {
 	const firstPersonLookRef = useCallback((node: HTMLElement | null) => {
 		setFirstPersonLookElement(node);
 	}, []);
+	const [cameraControlElement, setCameraControlElement] =
+		useState<HTMLElement | null>(null);
+	const cameraControlRef = useCallback((node: HTMLElement | null) => {
+		setCameraControlElement(node);
+	}, []);
 	const gameHudContent = (
 		<div className="p-3">
 			<GameHud
@@ -139,6 +147,7 @@ export function GamePage() {
 							</h2>
 							<div className="h-full w-full" style={{ cursor: "grab" }}>
 								<GameCanvas
+									cameraControlElement={cameraControlElement}
 									cameraStateSnapshot={cameraStateSnapshot}
 									firstPersonLookElement={firstPersonLookElement}
 									machineRuntime={canvasMachineRuntime}
@@ -197,6 +206,8 @@ export function GamePage() {
 									style={{ left: "50%" }}
 								/>
 							)}
+
+							<CameraControlZone zoneRef={cameraControlRef} />
 
 							<div className="pointer-events-none absolute bottom-4 right-4 z-30 flex w-[11rem] flex-col gap-2 empty:hidden items-end">
 								{hasTouchInteract ? (

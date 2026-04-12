@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { createActor } from "xstate";
 
-import { CAMERA_MODES } from "../config/cameraConfig";
+import { CAMERA_DEFAULT_MODE, CAMERA_MODES } from "../config/cameraConfig";
 import { createCameraMachine } from "./cameraMachine";
 
 describe("cameraMachine", () => {
-	it("starts in freeOrbital mode by default", () => {
+	it("starts in the default camera mode", () => {
 		const machine = createCameraMachine();
 		const actor = createActor(machine).start();
 
-		expect(actor.getSnapshot().value).toBe(CAMERA_MODES.FREE_ORBITAL);
+		expect(actor.getSnapshot().value).toBe(CAMERA_DEFAULT_MODE);
 	});
 
 	it("transitions to thirdPerson on SWITCH_TO_THIRD_PERSON event", () => {
@@ -77,8 +77,8 @@ describe("cameraMachine", () => {
 		const machine = createCameraMachine();
 		const actor = createActor(machine).start();
 
-		// Start at freeOrbital
-		expect(actor.getSnapshot().value).toBe(CAMERA_MODES.FREE_ORBITAL);
+		// Start at default mode
+		expect(actor.getSnapshot().value).toBe(CAMERA_DEFAULT_MODE);
 
 		// Jump to firstPerson
 		actor.send({ type: "SWITCH_TO_FIRST_PERSON" });

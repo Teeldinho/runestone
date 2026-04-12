@@ -508,4 +508,48 @@ describe("useCameraRigViewModel", () => {
 		expect(freeOrbitalControls.target.toArray()).toEqual([0, 2.15, 0]);
 		expect(freeOrbitalControls.update).toHaveBeenCalledTimes(1);
 	});
+
+	it("pauses third-person follow lerping when the user is manually orbiting", () => {
+		mockHasPlayerPosition.mockReturnValue(true);
+		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
+		const { result } = renderHook(() =>
+			useCameraRigViewModel({
+				cameraStateSnapshot: {
+					fov: 65,
+					mode: CAMERA_MODES.THIRD_PERSON,
+					position: [0, 2, -4],
+					target: [0, 1, 0],
+					zoom: 1,
+				},
+				playerSpawnPosition: [0, 0.9, 0],
+			}),
+		);
+		const thirdPersonControls = {
+			target: new THREE.Vector3(),
+			update: vi.fn(),
+		};
+		result.current.thirdPersonOrbitRef.current = thirdPersonControls as never;
+
+		// Initial frame to clear sync
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		// User starts orbiting
+		act(() => {
+			result.current.handleOrbitStart();
+		});
+
+		const initialCameraPosition = mockCamera.position.clone();
+		mockGetPlayerPosition.mockReturnValue([2, 0.9, 0]); // Move player slightly
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		// Camera should NOT have moved linearly via the follow lerp
+		expect(mockCamera.position.toArray()).toEqual(
+			initialCameraPosition.toArray(),
+		);
+	});
 });

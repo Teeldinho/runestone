@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect } from "react";
+import * as Tone from "tone";
 
 import {
 	AudioContext,
@@ -17,6 +18,7 @@ export function AudioProvider({ children }: AudioProviderProps) {
 
 	useEffect(() => {
 		const handleFirstInteraction = () => {
+			void Tone.start();
 			void startBackgroundMusicLoop();
 
 			for (const eventName of AUDIO_PROVIDER_UNLOCK_EVENT_LIST) {

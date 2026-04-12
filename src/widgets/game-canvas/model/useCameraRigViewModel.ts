@@ -248,6 +248,13 @@ export const useCameraRigViewModel = ({
 				camera.position.set(...transitionTargets.position);
 				setOrbitTarget(thirdPersonOrbitRef.current, transitionTargets.lookAt);
 				thirdPersonOrbitRef.current.update();
+			} else if (isUserInteractingRef.current) {
+				// During manual orbit: snap the pivot to the player's head.
+				// By NOT lerping the camera position here, we let OrbitControls
+				// take full ownership of the rotation/displacement while preserving
+				// the radial distance from the target.
+				thirdPersonOrbitRef.current.target.set(...lookAt);
+				thirdPersonOrbitRef.current.update();
 			} else {
 				const desiredCameraPosition = getPreservedOrbitCameraPosition({
 					cameraPosition: camera.position.toArray() as Vector3Tuple,
@@ -278,22 +285,31 @@ export const useCameraRigViewModel = ({
 			needsFreeOrbitalSyncRef.current = false;
 		} else if (isFreeOrbitalJump) {
 			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
-			const desiredCameraPosition = getPreservedOrbitCameraPosition({
-				cameraPosition: [
-					camera.position.x,
-					camera.position.y,
-					camera.position.z,
-				],
-				currentTarget: [
-					freeOrbitalOrbitRef.current.target.x,
-					freeOrbitalOrbitRef.current.target.y,
-					freeOrbitalOrbitRef.current.target.z,
-				],
-				nextTarget: lookAt,
-			});
 
-			camera.position.set(...desiredCameraPosition);
-			setOrbitTarget(freeOrbitalOrbitRef.current, lookAt);
+			// Reset camera logic: if it's a jump back to the entrance spawn (lastTransition is null),
+			// force the absolute default orientation instead of preserving the old orbit.
+			if (lastTransition === null) {
+				camera.position.set(...position);
+				setOrbitTarget(freeOrbitalOrbitRef.current, lookAt);
+			} else {
+				const desiredCameraPosition = getPreservedOrbitCameraPosition({
+					cameraPosition: [
+						camera.position.x,
+						camera.position.y,
+						camera.position.z,
+					],
+					currentTarget: [
+						freeOrbitalOrbitRef.current.target.x,
+						freeOrbitalOrbitRef.current.target.y,
+						freeOrbitalOrbitRef.current.target.z,
+					],
+					nextTarget: lookAt,
+				});
+
+				camera.position.set(...desiredCameraPosition);
+				setOrbitTarget(freeOrbitalOrbitRef.current, lookAt);
+			}
+
 			freeOrbitalOrbitRef.current.update();
 		}
 
