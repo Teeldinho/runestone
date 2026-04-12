@@ -180,7 +180,7 @@ export const useCameraRigViewModel = ({
 				needsTopDownSyncRef.current = false;
 			} else {
 				topDownOrbitRef.current.target.set(...lookAt);
-				topDownOrbitRef.current.update();
+				// Do not call update() here; OrbitControls will pick it up in its own useFrame.
 			}
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
 			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
@@ -254,7 +254,8 @@ export const useCameraRigViewModel = ({
 				// take full ownership of the rotation/displacement while preserving
 				// the radial distance from the target.
 				thirdPersonOrbitRef.current.target.set(...lookAt);
-				thirdPersonOrbitRef.current.update();
+				// Do not call update() here; OrbitControls handles its own update during interaction
+				// and calling it twice per frame causes erratic jitter.
 			} else {
 				const desiredCameraPosition = getPreservedOrbitCameraPosition({
 					cameraPosition: camera.position.toArray() as Vector3Tuple,
