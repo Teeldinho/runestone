@@ -4,13 +4,14 @@ import type { RapierRigidBody } from "@react-three/rapier";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
-import type * as THREE from "three";
+import * as THREE from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import {
 	removeEnemyPosition,
 	setEnemyPosition,
 } from "@/shared/lib/enemyPositionStore";
 import { getPlayerPosition } from "@/shared/lib/playerPositionStore";
+import { getQuaternionFromXZ } from "@/shared/lib/vec3";
 import type { Vector3Tuple } from "@/shared/types";
 
 import {
@@ -47,6 +48,8 @@ export function EnemyMesh({
 }: EnemyMeshProps) {
 	const rigidBodyRef = useRef<RapierRigidBody>(null);
 	const groupRef = useRef<THREE.Group>(null);
+	const targetRotationRef = useRef(new THREE.Quaternion());
+	const currentRotationRef = useRef(new THREE.Quaternion());
 
 	const { glowSettings, animationName, behaviorState, send } =
 		useEnemyMeshViewModel({
@@ -105,14 +108,28 @@ export function EnemyMesh({
 		setEnemyPosition(id, current.x, current.y, current.z);
 		const nextPos = getNextPosition(delta, [current.x, current.y, current.z]);
 		const currentLinvel = body.linvel();
+		const vx = (nextPos[0] - current.x) / delta;
+		const vz = (nextPos[2] - current.z) / delta;
 		body.setLinvel(
 			{
-				x: (nextPos[0] - current.x) / delta,
+				x: vx,
 				y: currentLinvel.y,
-				z: (nextPos[2] - current.z) / delta,
+				z: vz,
 			},
 			true,
 		);
+
+		// Rotate toward movement direction
+		const isMoving = Math.abs(vx) > 0.01 || Math.abs(vz) > 0.01;
+		if (isMoving) {
+			targetRotationRef.current.copy(getQuaternionFromXZ(vx, vz));
+			currentRotationRef.current.copy(body.rotation() as THREE.Quaternion);
+			currentRotationRef.current.slerp(
+				targetRotationRef.current,
+				ENEMY_ENTITY_CONFIG.PHYSICS.ROTATION_SPEED * delta,
+			);
+			body.setRotation(currentRotationRef.current, true);
+		}
 	});
 
 	const { scene: rawScene } = useGLTF(ENEMY_GLTF_CONFIG.CHARACTER.PATH);
