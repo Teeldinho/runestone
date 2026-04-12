@@ -1,266 +1,237 @@
 # Runestone
 
-Runestone is a 3D dungeon crawler where the dungeon architecture is a live, running state machine.
-Rooms are states, doors are transitions, rune-locked thresholds are guard conditions, and enemy
-behaviour is driven by machine-managed runtime logic. A live inspector panel renders the state
-graph while the player moves through the dungeon.
+Runestone is a 3D dungeon crawler where the dungeon itself is an executable state machine. Rooms are states, doors are transitions, rune locks are guards, and enemy behavior is actor-driven runtime logic.
 
-This is an engineering-first game prototype. The machine is not just in the code — it is the level.
+This is an engineering-first game prototype: the machine is not hidden in the codebase, it is visible in the level.
 
 **[🏰 Enter the Dungeon](https://runestone.teeldinho.com)**
 
-![Runestone Hero Desktop](./public/screenshots/desktop-hero-view.png)
+![Runestone desktop three-pane layout](./public/screenshots/desktop-three-pane-overview.png)
 
 ---
 
-## What is a Finite State Machine?
+## FSM in Plain English
 
-A **Finite State Machine (FSM)** is a computation model where a system can exist in exactly one
-of a finite number of **states** at any moment. It moves between states through **transitions**,
-which are triggered by events. Optional **guard conditions** can block a transition until a
-required condition is met.
+A **Finite State Machine (FSM)** models a system as a finite set of states with explicit transitions between them. At any moment, the system is in exactly one state.
 
-FSMs shine when behaviour is predictable and bounded. The model solves a common engineering problem: without explicit state representation, systems accumulate tangled conditionals, hidden edge cases, and transitions that are hard to trace or test. When state is made explicit, behaviour becomes visible, auditable, and testable.
+This is useful because behavior becomes auditable instead of implicit. You can answer: where am I, why did I transition, and what must be true before the next transition.
 
 ---
 
-## Why XState? (Enterprise & Senior Use Cases)
+## Why XState Here
 
-**XState** is a JavaScript/TypeScript library that implements statecharts — an extended form of
-FSMs that adds hierarchy, parallelism, guards, context, and invoked actors to the base model.
+Runestone uses XState to make behavior explicit, inspectable, and testable in-game, and the same model applies cleanly to many production software domains.
 
-While often introduced for simple component states, XState is heavily utilized in enterprise architectures to solve complex software engineering problems:
+### Game Entity AI
 
-### 1. The Actor Model (XState v5)
-XState v5 introduces a first-class actor model. Instead of one massive "God machine", systems are composed of isolated machines (actors) that communicate via explicit message passing. In a complex frontend, a checkout flow might spawn a dedicated payment validation actor, pausing its own execution until the child returns a success/failure output. In Runestone, enemies and separate rooms act as independent, orchestrated actors.
+Game artificial intelligence (AI) becomes easier to reason about when every behavior is an explicit state. Instead of ad hoc logic spread across updates, states such as idle, patrol, detect, chase, attack, and dead become a visible contract, with transitions that are intentional and debuggable. In Runestone, each enemy can run as its own actor, which keeps behavior deterministic as the game scales.
 
-### 2. UI as a Strict "State Contract"
-Fragile boolean flags (`isLoading`, `isError`, `isSuccess`) often lead to overlapping, invalid UI configurations (e.g., showing a loading spinner while rendering an error message). By modeling UI as an XState machine, impossible states are mathematically eliminated. The UI component is downgraded to a pure visual projection that simply reflects the current node of the machine (`state.value`).
+### Workflow Automation
 
-### 3. Complex Orchestration & Sagas
-For long-running processes (e.g., multi-step wizard registrations, distributed sagas across microservices, websockets), state machines ensure fault tolerance. They can elegantly handle timeouts, auto-retries, escalations, and debounces declaratively. 
+Multi-step workflows like onboarding, approvals, and internal review chains often become hard to maintain when built with scattered booleans and nested conditionals. A state machine models each step as a state and each user/system event as a transition, so adding or reordering steps is a structural change rather than risky logic surgery across multiple files.
 
-### 4. Hierarchical and Orthogonal States
-State machines easily model parallel activities (orthogonal states). For instance, a video player application can be in a `playing` state while simultaneously being in a `muted` state. Hierarchical (nested) states allow developers to group logic cleanly and avoid transition explosion (e.g., a "CANCEL" event handled uniformly by a parent state machine node).
+### Media Processing Pipelines
 
-### 5. Model-Based Testing (MBT)
-Because the statechart defines all possible nodes and the explicit paths to reach them, QA and testing suites can automatically generate traversal graphs. Hundreds of robust End-to-End browser tests can be completely synthesized without manual scripting, simply by asking the engine to reach every state defined in the contract.
+Media systems naturally move through discrete phases: upload, queue, process, transcode, generate thumbnails, publish, or fail. Each phase has different rules, data, and recovery paths, which makes implicit flow logic fragile over time. XState makes these phases explicit and provides a clear place for retries, timeouts, and fallback behavior.
 
-![XState Live Sidebar Visualization](./public/screenshots/xstate-sidebar-active.png)
+### IoT and Hardware Communication
 
----
+Hardware integrations are inherently stateful: scanning, connecting, connected, reconnecting, and failed all require different behavior. Without a formal state model, reconnect loops and edge cases become difficult to test and reproduce. XState provides an explicit lifecycle that improves reliability and simplifies diagnosing real-world device and network instability.
 
-## How Runestone uses XState
+### Distributed Transaction Orchestration (Sagas)
 
-Every concept in the game maps directly to an XState concept:
+When a business operation spans services (for example inventory, payment, and shipment), partial failure is expected and must be handled deliberately. State machines model both forward steps and compensation paths, making rollback behavior explicit instead of buried in exception branches. This is especially useful when consistency and auditability matter across service boundaries.
 
-| XState Concept  | Runestone Equivalent                              |
-| --------------- | ------------------------------------------------- |
-| State           | Room (Entrance, Library, Guard Room, Treasury, Exit) |
-| Transition      | Doorway / corridor between rooms                  |
-| Guard condition | Rune-locked door (`hasKey`, `enemiesDefeated`)    |
-| Context         | Inventory, HP, score, discovered rooms            |
-| Entry action    | Audio cue, haptic feedback, scene update          |
-| Invoked actor   | Enemy behaviour machine (patrol → detect → attack) |
-| Final state     | Exit chamber — floor complete                     |
+### Real-Time Connections
 
-The machine is not an internal implementation detail hidden from the player. An inspector panel renders the dungeon graph in real time, and the rune-locked doors in the 3D world glow based on whether their guard conditions are met. 
-
-![Dungeon Lighting and Exploration](./public/screenshots/dungeon-lighting-fog.png)
+Real-time channels such as WebSocket and Server-Sent Events (SSE) require precise lifecycle handling: connecting, connected, reconnecting, backoff, and terminal failure. XState centralizes that lifecycle into one contract so transport behavior and user interface (UI) feedback stay in sync. The result is more predictable reconnect behavior, clearer observability, and less duplicated retry logic.
 
 ---
 
-## Project Summary
+## How Runestone Maps to XState
 
-Phase 1 is a single-floor dungeon with five rooms:
+| XState Concept | Runestone Equivalent |
+| --- | --- |
+| State | Room (`Entrance`, `Library`, `Guard Room`, `Treasury`, `Exit`) |
+| Transition | Doorway/corridor between rooms |
+| Guard | Rune lock (`hasKey`, `enemiesDefeated`) |
+| Context | Inventory, health points (HP), score, discovered rooms |
+| Entry Action | Audio cue, haptic pulse, scene updates |
+| Invoked Actor | Enemy AI machine |
+| Final State | Exit chamber (floor complete) |
 
+---
+
+## Interface Tour
+
+### Desktop (three-pane workflow)
+
+When you see the left pane, bottom pane, and right pane together with no joystick or `PANELS` trigger, that is the desktop layout.
+
+<table>
+  <tr>
+    <td><img src="./public/screenshots/desktop-left-pane-statechart.png" alt="Desktop left pane showing statechart visualizer" /></td>
+    <td><img src="./public/screenshots/desktop-right-pane-machine-snapshot.png" alt="Desktop right pane showing machine snapshot and actions" /></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Left pane: statechart visualizer and guard legend</em></td>
+    <td align="center"><em>Right pane: machine snapshot, discovered rooms, actions</em></td>
+  </tr>
+</table>
+
+![Desktop bottom pane with state details](./public/screenshots/desktop-bottom-pane-state-details.png)
+
+### Mobile and Tablet (touch-first flow)
+
+Portrait mode is blocked for gameplay and prompts a rotate notice:
+
+![Mobile portrait rotate requirement](./public/screenshots/mobile-portrait-rotate-required.png)
+
+Landscape gameplay keeps core controls visible (movement joystick, quick actions, and panel trigger):
+
+<table>
+  <tr>
+    <td><img src="./public/screenshots/mobile-landscape-panels-trigger.png" alt="Mobile landscape gameplay with joystick and panels trigger" /></td>
+    <td><img src="./public/screenshots/mobile-landscape-combat-controls.png" alt="Mobile landscape combat controls and interaction prompts" /></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Base landscape heads-up display (HUD) with `PANELS` trigger</em></td>
+    <td align="center"><em>Combat interactions and action buttons</em></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td><img src="./public/screenshots/mobile-landscape-combat-damage.png" alt="Mobile landscape combat with damage feedback vignette" /></td>
+    <td><img src="./public/screenshots/mobile-landscape-death-modal.png" alt="Mobile landscape death modal and restart flow" /></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Damage feedback during combat</em></td>
+    <td align="center"><em>Death state with restart modal</em></td>
+  </tr>
+</table>
+
+Panel surfaces scale from quick sheet to full sheet:
+
+<table>
+  <tr>
+    <td><img src="./public/screenshots/mobile-landscape-statechart-sheet.png" alt="Mobile landscape statechart sheet preview" /></td>
+    <td><img src="./public/screenshots/tablet-statechart-sheet-expanded.png" alt="Tablet expanded statechart panel" /></td>
+    <td><img src="./public/screenshots/tablet-hud-sheet-expanded.png" alt="Tablet expanded HUD panel" /></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Quick sheet preview</em></td>
+    <td align="center"><em>Expanded Statechart view</em></td>
+    <td align="center"><em>Expanded HUD view</em></td>
+  </tr>
+</table>
+
+---
+
+## Phase 1 Scope
+
+Single-floor dungeon progression:
+
+```text
+Entrance -> Library -> Guard Room -> Treasury -> Exit
 ```
-Entrance → Library → Guard Room → Treasury → Exit
-```
 
-**Implemented systems:**
-- 3D dungeon scene with KayKit environment assets and atmospheric fog
-- Four camera modes: third-person, top-down, first-person, free-orbital
+Implemented systems:
+
+- 3D dungeon scene with KayKit assets and atmospheric fog
+- Four camera modes (third-person, top-down, first-person, free-orbital)
 - Machine-authoritative room traversal with doorway-relative arrival
-- Live XState inspector panel (React Flow + dagre layout)
-- Player movement, collision physics (Rapier), health, death, and restart flow
-- Guard-room enemy behaviour and treasury key progression
-- Convex-backed authentication and leaderboard flow
-- Audio (Tone.js) and haptics (Web Haptics API) integration
-- Fully scalable HUD system with settings and interactive tutorials
-
-### Mobile Responsiveness
-Runestone ships with complete touch-screen compatibility, making the 3D physics-based dungeon crawler fully accessible on responsive devices:
-- **Touch Input:** Integrated virtual joysticks for movement and touch-and-drag for orbital camera control.
-- **Adaptive Layouts:** Distinct interfaces mapping strictly to Portrait and Landscape boundaries to preserve gameplay viewing angles.
-- **Bottom-Sheet Flow:** The XState Inspector Sidebar and Settings gracefully map into Shadcn-powered bottom sheets and drawers, maximizing canvas estate.
-
-<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
-  <img src="./public/screenshots/mobile-joystick-view.png" width="30%" alt="Mobile Joystick Interaction" />
-  <img src="./public/screenshots/mobile-inspector-drawer.png" width="30%" alt="Mobile Inspector Drawer" />
-  <img src="./public/screenshots/mobile-portrait-layout.png" width="30%" alt="Mobile Portrait HUD" />
-</div>
-
----
-
-## Why This Project Exists
-
-Runestone is a practical experiment in making state-machine architecture tangible.
-
-Most applications that use state machines keep the machine hidden — it runs in the background,
-invisible to users and developers alike. Runestone inverts that: the machine is the level, the
-level is the machine.
-
-The questions driving the project:
-- What happens when application state is also spatial structure?
-- How do guards, actors, and transitions feel when they are physical and visible?
-- Can a runtime inspector and a playable 3D world share one coherent source of truth?
-
-Answering those questions in code, not theory, is the point. The architectural choices exist to
-preserve that answer — not to add complexity for its own sake.
+- Live XState inspector (React Flow + dagre)
+- Player movement, collision physics (Rapier), health points (HP), death, and restart loop
+- Guard-room enemy behavior and treasury key progression
+- Convex-backed auth and leaderboard flow
+- Audio (Tone.js, Howler) and Web Haptics integration
 
 ---
 
 ## Architecture
 
-Runestone uses **Feature-Sliced Design (FSD)** — a methodology for organising front-end
-codebases into layers where code can only import from layers below it.
+Runestone follows **Feature-Sliced Design (FSD)** to keep imports and responsibilities explicit.
 
-FSD solves the problem of entangled imports in large applications. By enforcing a strict layer
-hierarchy and requiring each slice to expose a public API, it ensures that modules stay
-independently comprehensible, replaceable, and testable.
+| Layer | Responsibility |
+| --- | --- |
+| `app/` | Providers, router, root wiring |
+| `pages/` | Route composition |
+| `widgets/` | Game canvas, heads-up display (HUD), inspector panel |
+| `features/` | Camera, auth, audio, haptics, traversal |
+| `entities/` | Player, enemy, room, dungeon, score |
+| `shared/` | Reusable UI, config, types, infrastructure |
 
-### Layers
+Slice flow:
 
-| Layer       | Responsibility                                                     |
-| ----------- | ------------------------------------------------------------------ |
-| `app/`      | Providers, router, root wiring                                     |
-| `pages/`    | Route-level screen composition                                     |
-| `widgets/`  | Large page sections: game canvas, HUD, inspector panel             |
-| `features/` | User-facing flows: camera, auth, audio, haptics, dungeon navigation |
-| `entities/` | Core domain models: player, enemy, room, dungeon, score            |
-| `shared/`   | Reusable UI primitives, config, types, and infrastructure          |
-
-### Segment naming (within every slice)
-
-| Segment    | Contains                                            |
-| ---------- | --------------------------------------------------- |
-| `ui/`      | React components — render only, zero logic          |
-| `model/`   | Hooks and XState machines — orchestration           |
-| `lib/`     | Pure functions — utilities, calculators, resolvers  |
-| `config/`  | Static constants — no helper functions              |
-| `api/`     | Backend integration — queries, mutations            |
-
-### Data flow
-
-Every slice follows a strict chain:
-
-```
-Component (ui/) → Hook (model/) → Utility (lib/) → Constant (config/)
+```text
+ui/ -> model/ -> lib/ -> config/
 ```
 
-Rendering, orchestration, pure logic, and constants are never mixed. This rule is enforced by automated purity checks that run on every commit.
+---
+
+## Technical Stack
+
+| Component | Technology |
+| --- | --- |
+| Framework | TanStack Start + React 19 |
+| 3D Engine | React Three Fiber + Rapier |
+| State Management | XState v5 (actor model) |
+| Backend | Convex (real-time) |
+| Audio | Tone.js + Howler |
+| Haptics | Web Haptics API |
+| Visualizer | React Flow + dagre |
+| Styling | Tailwind CSS v4 + Class Variance Authority (CVA) |
 
 ---
 
-## Engineering Approach
+## Camera Modes
 
-### Test-Driven Development (TDD)
-**Test-Driven Development** is a practice where you write a failing test *before* writing the implementation it tests. The cycle is: write a failing test (Red), write just enough code to make it pass (Green), then refactor. Repeating this loop produces logic that is covered by design, not retro-fitted. 
-
-Runestone applies TDD strictly to all `model/` and `lib/` segments, requiring **100% test coverage** before a PR can merge.
-
-### Spec-Driven Development (SDD)
-In Runestone, development starts from a written brief. Each work item operates inside a delivery loop: brief → spec → implement → verify → close. This guarantees all features map directly to acceptance criteria, drastically minimizing scope-creep and untracked bugs.
-
----
-
-## Technical Decisions
-
-### React 19 + R3F + Rapier
-The project integrates modern paradigms across a 3D stack:
-- **React 19** for the concurrent component topology.
-- **React Three Fiber (v9)** to orchestrate 3D objects as a declarative tree.
-- **@react-three/rapier (v2)** to bind real-time structural physics safely against the render loop.
-
-### TanStack Start & Router
-TanStack Start implements the application's file-based routing and SSR layout scaffolding, ensuring navigation remains entirely type-safe. The WebGL canvas runs purely client-side without hydration unmounts, while non-WebGl routes (Settings, Leaderboards) benefit from robust static layouts.
-
-### Real-Time with Convex
-Convex provides reactive data flow out of the box without the overhead of GraphQL subscriptions or web-socket polling. It serves as the primary data-authority for zero-friction user onboarding, session persistence, and instant-on leaderboards.
-
----
-
-## Camera and Traversal
-
-Runestone has four camera modes, each controlled by a hotkey (keys 1–4):
-
-| Mode           | Hotkey | Behaviour                                              |
-| -------------- | ------ | ------------------------------------------------------ |
-| Third Person   | `1`    | Offset behind player, polar-constrained orbit          |
-| Top Down       | `2`    | Fixed overhead angle, zoom only, pan locked            |
-| First Person   | `3`    | Head-level view, pointer-lock, subtle head-bob         |
-| Free Orbital   | `4`    | Full 6-DoF orbit, pan + rotate + zoom                  |
-
-All transition logic relies on smooth lerping orchestrated by dedicated configuration constants in the codebase. 
-
-<div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-  <img src="./public/screenshots/gameplay-third-person.png" width="48%" alt="Third Person Gameplay" />
-  <img src="./public/screenshots/gameplay-top-down.png" width="48%" alt="Top Down Isometric View" />
-</div>
+| Mode | Hotkey | Description |
+| --- | --- | --- |
+| Third Person | `1` | Offset behind player, constrained orbit |
+| Top Down | `2` | Fixed overhead angle, zoom only |
+| First Person | `3` | Head-level view with pointer lock |
+| Free Orbital | `4` | Pan + rotate + zoom |
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js ≥ 22.12.0 (`.nvmrc` included — run `nvm use` to align)
-- npm ≥ 11.5.1
-- A [Convex](https://convex.dev) account (free tier sufficient)
 
-### 1. Install dependencies
+- Node.js >= 22.12.0 (`nvm use`)
+- Convex account (free tier is enough)
+
+### Install and Run
 
 ```bash
 npm install
-```
-
-### 2. Configure Convex
-
-```bash
 npx convex dev --once
-```
-
-### 3. Start the development server
-
-```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). On first visit, a username prompt appears. After entering a username, you land on the game page.
+Open [http://localhost:3000](http://localhost:3000). On first visit, enter a username to start.
 
 ---
 
 ## Scripts
 
 ```bash
-npm run dev           # Start dev server (TanStack Start + Convex)
+npm run dev           # Start dev server
 npm run build         # Production build
-npm run typecheck     # TypeScript — must produce zero errors
-npm run lint          # Biome check (read-only)
+npm run typecheck     # TypeScript validation
+npm run lint          # Biome check
 npm run lint:fix      # Biome auto-fix
-npm run lint:fsd      # Steiger FSD architecture validation
-npm run lint:purity   # Segment purity checks (config/lib/ui separation)
+npm run lint:fsd      # FSD architecture validation
 npm run test          # Vitest test suite
-npm run ci:local      # Full local CI parity check before pushing
+npm run ci:local      # Full local CI check
 ```
 
 ---
 
 ## Final Note
 
-Runestone is built as an engineering experiment with production-grade guardrails.
-The goal is not to ship a commercial game — it is to explore what software looks like
-when the state machine is the product, not the plumbing.
+Runestone is an engineering experiment with production-grade guardrails.
 
-Every architectural decision traces back to that premise:
-the dungeon you walk through and the machine you inspect are the same thing.
+The goal is not to ship a commercial game; it is to explore what software feels like when the state machine is the product, not hidden plumbing.
