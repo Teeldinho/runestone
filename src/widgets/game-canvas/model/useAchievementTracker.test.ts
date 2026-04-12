@@ -30,6 +30,7 @@ vi.mock("@/features/achievements", () => ({
 		FIRST_STEPS: "FIRST_STEPS",
 		KEY_HUNTER: "KEY_HUNTER",
 		COMBAT_MASTER: "COMBAT_MASTER",
+		ESCAPE_ARTIST: "ESCAPE_ARTIST",
 	},
 	ACHIEVEMENT_COPY: {
 		FIRST_STEPS: { label: "First Steps", description: "Explored the Library" },
@@ -41,16 +42,22 @@ vi.mock("@/features/achievements", () => ({
 			label: "Combat Master",
 			description: "Defeated all enemies",
 		},
+		ESCAPE_ARTIST: {
+			label: "Escape Artist",
+			description: "Escaped the dungeon",
+		},
 	},
 	ACHIEVEMENT_DISPLAY_DURATION_MS: 3000,
 	hasReachedLibrary: vi.fn(),
 	hasCollectedKey: vi.fn(),
 	hasDefeatedAllEnemies: vi.fn(),
+	hasEscapedFloor: vi.fn(),
 }));
 
 import {
 	hasCollectedKey,
 	hasDefeatedAllEnemies,
+	hasEscapedFloor,
 	hasReachedLibrary,
 } from "@/features/achievements";
 
@@ -78,6 +85,7 @@ describe("useAchievementTracker", () => {
 		vi.mocked(hasReachedLibrary).mockReturnValue(false);
 		vi.mocked(hasCollectedKey).mockReturnValue(false);
 		vi.mocked(hasDefeatedAllEnemies).mockReturnValue(false);
+		vi.mocked(hasEscapedFloor).mockReturnValue(false);
 		mockSnapshotGetter.mockReturnValue(makeSnapshot());
 	});
 

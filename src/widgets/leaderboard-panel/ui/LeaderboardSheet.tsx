@@ -62,55 +62,57 @@ export function LeaderboardSheet({ children }: LeaderboardSheetProps) {
 						) : null}
 
 						{hasEntries ? (
-							<Table className="border border-border/70 rounded-md overflow-hidden">
-								<TableCaption className="sr-only">
-									{LEADERBOARD_PANEL_COPY.TABLE.CAPTION}
-								</TableCaption>
-								<TableHeader className="bg-muted/30">
-									<TableRow>
-										<TableHead className="px-3 py-2 font-medium">
-											{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.RANK}
-										</TableHead>
-										<TableHead className="px-3 py-2 font-medium">
-											{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.PLAYER}
-										</TableHead>
-										<TableHead className="px-3 py-2 font-medium">
-											{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.SCORE}
-										</TableHead>
-										<TableHead className="px-3 py-2 font-medium">
-											{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.TIME}
-										</TableHead>
-										<TableHead className="px-3 py-2 font-medium">
-											{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.ROOMS}
-										</TableHead>
-									</TableRow>
-								</TableHeader>
-
-								<TableBody>
-									{entries.map((entry) => (
-										<TableRow
-											key={entry.rowId}
-											className="border-t border-border/60"
-										>
-											<TableCell className="px-3 py-2 font-semibold text-panel-title">
-												{entry.rankLabel}
-											</TableCell>
-											<TableCell className="px-3 py-2 text-foreground">
-												{entry.playerLabel}
-											</TableCell>
-											<TableCell className="px-3 py-2 text-foreground">
-												{entry.scoreLabel}
-											</TableCell>
-											<TableCell className="px-3 py-2 text-foreground">
-												{entry.runTimeLabel}
-											</TableCell>
-											<TableCell className="px-3 py-2 text-foreground">
-												{entry.roomsDiscoveredLabel}
-											</TableCell>
+							<div className="overflow-hidden rounded-xl border border-border/70">
+								<Table>
+									<TableCaption className="sr-only">
+										{LEADERBOARD_PANEL_COPY.TABLE.CAPTION}
+									</TableCaption>
+									<TableHeader className="bg-muted/30">
+										<TableRow>
+											<TableHead className="px-3 py-2 font-medium">
+												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.RANK}
+											</TableHead>
+											<TableHead className="px-3 py-2 font-medium">
+												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.PLAYER}
+											</TableHead>
+											<TableHead className="px-3 py-2 font-medium">
+												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.SCORE}
+											</TableHead>
+											<TableHead className="px-3 py-2 font-medium">
+												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.TIME}
+											</TableHead>
+											<TableHead className="px-3 py-2 font-medium">
+												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.ROOMS}
+											</TableHead>
 										</TableRow>
-									))}
-								</TableBody>
-							</Table>
+									</TableHeader>
+
+									<TableBody>
+										{entries.map((entry) => (
+											<TableRow
+												key={entry.rowId}
+												className="border-t border-border/60"
+											>
+												<TableCell className="px-3 py-2 font-semibold text-panel-title">
+													{entry.rankLabel}
+												</TableCell>
+												<TableCell className="px-3 py-2 text-foreground">
+													{entry.playerLabel}
+												</TableCell>
+												<TableCell className="px-3 py-2 text-foreground">
+													{entry.scoreLabel}
+												</TableCell>
+												<TableCell className="px-3 py-2 text-foreground">
+													{entry.runTimeLabel}
+												</TableCell>
+												<TableCell className="px-3 py-2 text-foreground">
+													{entry.roomsDiscoveredLabel}
+												</TableCell>
+											</TableRow>
+										))}
+									</TableBody>
+								</Table>
+							</div>
 						) : null}
 					</div>
 				</div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { CAMERA_MODES } from "@/features/camera-system";
+import { useResponsiveGameLayout } from "@/features/responsive-layout";
 
 type UseFirstPersonLockHintInput = {
 	mode: string | undefined;
@@ -19,6 +20,7 @@ export const useFirstPersonLockHint = ({
 }: UseFirstPersonLockHintInput): boolean => {
 	const [isPointerLockActive, setIsPointerLockActive] =
 		useState(getPointerLockActive);
+	const { isDesktopLayout } = useResponsiveGameLayout();
 
 	useEffect(() => {
 		const handlePointerLockChange = () => {
@@ -36,7 +38,11 @@ export const useFirstPersonLockHint = ({
 		};
 	}, []);
 
-	return mode === CAMERA_MODES.FIRST_PERSON && !isPointerLockActive;
+	return (
+		mode === CAMERA_MODES.FIRST_PERSON &&
+		!isPointerLockActive &&
+		isDesktopLayout
+	);
 };
 
 export type { UseFirstPersonLockHintInput };

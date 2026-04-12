@@ -9,6 +9,7 @@ import { CAMERA_RIG_THIRD_PERSON_TRANSITION_PADDING } from "../config";
 type GetCameraRigTargetsInput = {
 	mode: CameraMode;
 	playerPosition: Vector3Tuple;
+	isDesktopLayout?: boolean;
 };
 
 type CameraRigTargets = {
@@ -47,6 +48,7 @@ const getThirdPersonTransitionOffset = (doorSide: DoorSide): Vector3Tuple => {
 export const getCameraRigTargets = ({
 	mode,
 	playerPosition,
+	isDesktopLayout = true,
 }: GetCameraRigTargetsInput): CameraRigTargets => {
 	const [px, py, pz] = playerPosition;
 
@@ -67,16 +69,27 @@ export const getCameraRigTargets = ({
 	}
 
 	if (mode === CAMERA_MODES.TOP_DOWN) {
+		// Zoom in slightly on mobile by reducing the default height
+		const defaultHeight = CAMERA_CONFIG.TOP_DOWN.HEIGHT;
+		const finalHeight = isDesktopLayout ? defaultHeight : defaultHeight * 0.75;
+
 		return {
-			position: [px, CAMERA_CONFIG.TOP_DOWN.HEIGHT, pz],
+			position: [px, finalHeight, pz],
 			lookAt: [px, py, pz],
 		};
 	}
 
+	// FREE_ORBITAL logic
 	const [ox, oy, oz] = CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION;
 
+	// Zoom in slightly on mobile by scaling down the initial offset
+	const mobileScale = 0.8;
+	const finalOx = isDesktopLayout ? ox : ox * mobileScale;
+	const finalOy = isDesktopLayout ? oy : oy * mobileScale;
+	const finalOz = isDesktopLayout ? oz : oz * mobileScale;
+
 	return {
-		position: [px + ox, py + oy, pz + oz],
+		position: [px + finalOx, py + finalOy, pz + finalOz],
 		lookAt: [px, py + CAMERA_CONFIG.FREE_ORBITAL.TARGET_OFFSET_Y, pz],
 	};
 };

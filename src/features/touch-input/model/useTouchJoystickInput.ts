@@ -75,6 +75,9 @@ export const useTouchJoystickInput = ({
 
 	const handlePointerDown = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
+			event.stopPropagation();
+			event.preventDefault();
+
 			if (activePointerIdRef.current !== null) {
 				return;
 			}
@@ -89,6 +92,9 @@ export const useTouchJoystickInput = ({
 
 	const handlePointerMove = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
+			event.stopPropagation();
+			event.preventDefault();
+
 			if (event.pointerId !== activePointerIdRef.current) {
 				return;
 			}
@@ -100,6 +106,9 @@ export const useTouchJoystickInput = ({
 
 	const handlePointerUp = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
+			event.stopPropagation();
+			event.preventDefault();
+
 			if (event.pointerId !== activePointerIdRef.current) {
 				return;
 			}
@@ -112,6 +121,9 @@ export const useTouchJoystickInput = ({
 
 	const handlePointerCancel = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
+			event.stopPropagation();
+			event.preventDefault();
+
 			if (event.pointerId !== activePointerIdRef.current) {
 				return;
 			}

@@ -26,12 +26,14 @@ import { WorldInteractionRuntime } from "./WorldInteractionRuntime";
 
 type GameCanvasProps = {
 	cameraStateSnapshot?: CameraStateSnapshot;
+	firstPersonLookElement?: HTMLElement | null;
 	machineRuntime: CanvasMachineRuntime;
 	postprocessingEnabled: boolean;
 };
 
 export function GameCanvas({
 	cameraStateSnapshot,
+	firstPersonLookElement,
 	machineRuntime,
 	postprocessingEnabled,
 }: GameCanvasProps) {
@@ -92,6 +94,7 @@ export function GameCanvas({
 				<AdaptiveDpr pixelated />
 				<CameraRig
 					cameraStateSnapshot={cameraStateSnapshot}
+					firstPersonLookElement={firstPersonLookElement}
 					playerSpawnPosition={playerSpawnPosition}
 				/>
 				<Suspense fallback={null}>
