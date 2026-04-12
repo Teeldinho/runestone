@@ -25,6 +25,7 @@ import { SceneLighting } from "./SceneLighting";
 import { WorldInteractionRuntime } from "./WorldInteractionRuntime";
 
 type GameCanvasProps = {
+	cameraControlElement?: HTMLElement | null;
 	cameraStateSnapshot?: CameraStateSnapshot;
 	firstPersonLookElement?: HTMLElement | null;
 	machineRuntime: CanvasMachineRuntime;
@@ -32,6 +33,7 @@ type GameCanvasProps = {
 };
 
 export function GameCanvas({
+	cameraControlElement,
 	cameraStateSnapshot,
 	firstPersonLookElement,
 	machineRuntime,
@@ -93,6 +95,7 @@ export function GameCanvas({
 				<PerformanceMonitor />
 				<AdaptiveDpr pixelated />
 				<CameraRig
+					cameraControlElement={cameraControlElement}
 					cameraStateSnapshot={cameraStateSnapshot}
 					firstPersonLookElement={firstPersonLookElement}
 					playerSpawnPosition={playerSpawnPosition}
