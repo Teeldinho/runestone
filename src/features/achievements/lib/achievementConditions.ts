@@ -17,3 +17,6 @@ export const hasDefeatedAllEnemies = (
 ): boolean =>
 	ctx.discoveredRooms.includes(ROOM_IDS.GUARD_ROOM) &&
 	ctx.enemiesRemaining === 0;
+
+export const hasEscapedFloor = (ctx: AchievementTrackingContext): boolean =>
+	ctx.discoveredRooms.includes(ROOM_IDS.EXIT);

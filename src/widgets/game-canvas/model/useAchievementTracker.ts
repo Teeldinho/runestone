@@ -9,6 +9,7 @@ import {
 	type AchievementId,
 	hasCollectedKey,
 	hasDefeatedAllEnemies,
+	hasEscapedFloor,
 	hasReachedLibrary,
 } from "@/features/achievements";
 import {
@@ -77,6 +78,10 @@ export const useAchievementTracker = (): UseAchievementTrackerResult => {
 		trigger(
 			hasDefeatedAllEnemies(achievementTrackingContext),
 			ACHIEVEMENT_IDS.COMBAT_MASTER,
+		);
+		trigger(
+			hasEscapedFloor(achievementTrackingContext),
+			ACHIEVEMENT_IDS.ESCAPE_ARTIST,
 		);
 	}, [achievementTrackingContext, onAchievement]);
 
