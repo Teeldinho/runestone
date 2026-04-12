@@ -1,5 +1,5 @@
 import { Html } from "@react-three/drei";
-
+import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import {
 	WORLD_INTERACTION_KEY_STYLE,
 	WORLD_INTERACTION_PROMPT_CONFIG,
@@ -10,6 +10,7 @@ import type { WorldInteractionPromptProps } from "../model/useWorldInteractionPr
 
 export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
 	const { interact, attack } = useWorldInteractionPrompt(props);
+	const { isDesktopLayout } = useResponsiveGameLayout();
 
 	if (!interact.isVisible && !attack.isVisible) {
 		return null;
@@ -29,7 +30,13 @@ export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
 					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
 					style={{ pointerEvents: "none" }}
 				>
-					<div style={WORLD_INTERACTION_PROMPT_STYLE}>
+					<div
+						style={{
+							...WORLD_INTERACTION_PROMPT_STYLE,
+							transform: isDesktopLayout ? "none" : "scale(0.6)",
+							transformOrigin: "center",
+						}}
+					>
 						<span style={WORLD_INTERACTION_KEY_STYLE}>{interact.label}</span>
 						<span>{interact.text}</span>
 					</div>
@@ -48,7 +55,13 @@ export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
 					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
 					style={{ pointerEvents: "none" }}
 				>
-					<div style={WORLD_INTERACTION_PROMPT_STYLE}>
+					<div
+						style={{
+							...WORLD_INTERACTION_PROMPT_STYLE,
+							transform: isDesktopLayout ? "none" : "scale(0.6)",
+							transformOrigin: "center",
+						}}
+					>
 						<span style={WORLD_INTERACTION_KEY_STYLE}>{attack.label}</span>
 						<span>{attack.text}</span>
 					</div>

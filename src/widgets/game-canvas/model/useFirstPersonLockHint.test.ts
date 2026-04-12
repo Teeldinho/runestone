@@ -4,11 +4,24 @@ import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { CAMERA_MODES } from "@/features/camera-system";
+import { useResponsiveGameLayout } from "@/features/responsive-layout";
+
+vi.mock("@/features/responsive-layout", () => ({
+	useResponsiveGameLayout: vi.fn(),
+}));
 
 import { useFirstPersonLockHint } from "./useFirstPersonLockHint";
 
 describe("useFirstPersonLockHint", () => {
 	it("shows the hint in first-person until pointer lock is active", () => {
+		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+			isDesktopLayout: true,
+			isMobileLayout: false,
+			isTabletLayout: false,
+			isLandscape: true,
+			isPortrait: false,
+		});
+
 		Object.defineProperty(document, "pointerLockElement", {
 			configurable: true,
 			value: null,
@@ -33,6 +46,14 @@ describe("useFirstPersonLockHint", () => {
 	});
 
 	it("does not show the hint outside first-person mode", () => {
+		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+			isDesktopLayout: true,
+			isMobileLayout: false,
+			isTabletLayout: false,
+			isLandscape: true,
+			isPortrait: false,
+		});
+
 		const { result } = renderHook(() =>
 			useFirstPersonLockHint({ mode: CAMERA_MODES.FREE_ORBITAL }),
 		);
@@ -41,20 +62,12 @@ describe("useFirstPersonLockHint", () => {
 	});
 
 	it("does not show the hint on touch devices even in first-person without pointer lock", () => {
-		const originalMatchMedia = window.matchMedia;
-
-		Object.defineProperty(window, "matchMedia", {
-			writable: true,
-			value: vi.fn().mockImplementation((query) => ({
-				matches: query === "(pointer: coarse)",
-				media: query,
-				onchange: null,
-				addListener: vi.fn(), 
-				removeListener: vi.fn(),
-				addEventListener: vi.fn(),
-				removeEventListener: vi.fn(),
-				dispatchEvent: vi.fn(),
-			})),
+		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+			isDesktopLayout: false,
+			isMobileLayout: true,
+			isTabletLayout: false,
+			isLandscape: true,
+			isPortrait: false,
 		});
 
 		Object.defineProperty(document, "pointerLockElement", {
@@ -67,7 +80,5 @@ describe("useFirstPersonLockHint", () => {
 		);
 
 		expect(result.current).toBe(false);
-
-		window.matchMedia = originalMatchMedia;
 	});
 });

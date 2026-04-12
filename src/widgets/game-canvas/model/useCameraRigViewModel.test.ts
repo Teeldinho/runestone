@@ -253,7 +253,7 @@ describe("useCameraRigViewModel", () => {
 	it("keeps the camera looking forward from its current position in first-person without pointer lock to prevent strafe panning", () => {
 		mockHasPlayerPosition.mockReturnValue(true);
 		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
-		
+
 		const mockLookAt = vi.spyOn(mockCamera, "lookAt");
 
 		renderHook(() =>

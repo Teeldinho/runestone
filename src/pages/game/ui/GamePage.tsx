@@ -183,7 +183,7 @@ export function GamePage() {
 									<Button
 										size="default"
 										onClick={handleTouchInteract}
-										className="pointer-events-auto w-full"
+										className="pointer-events-auto w-full animate-pulse border-2 border-dungeon-gold font-bold shadow-[0_0_15px_rgba(255,215,0,0.5)]"
 									>
 										{touchInteractPrompt}
 									</Button>
@@ -191,8 +191,9 @@ export function GamePage() {
 								{hasTouchAttack ? (
 									<Button
 										size="default"
+										variant="destructive"
 										onClick={handleTouchAttack}
-										className="pointer-events-auto w-full"
+										className="pointer-events-auto w-full animate-pulse border-2 border-red-500 font-bold shadow-[0_0_15px_rgba(239,68,68,0.5)]"
 									>
 										{touchAttackPrompt}
 									</Button>
