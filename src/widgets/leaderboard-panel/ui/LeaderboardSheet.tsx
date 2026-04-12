@@ -6,6 +6,13 @@ import {
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
+	Table,
+	TableBody,
+	TableCaption,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
 } from "@/shared/ui";
 import { LEADERBOARD_PANEL_COPY } from "@/widgets/leaderboard-panel/config";
 import { useLeaderboardPanel } from "@/widgets/leaderboard-panel/model";
@@ -34,7 +41,7 @@ export function LeaderboardSheet({ children }: LeaderboardSheetProps) {
 					</SheetDescription>
 				</SheetHeader>
 
-				<div className="flex-1 min-h-0 overflow-y-auto pr-4 pb-4">
+				<div className="flex-1 min-h-0 overflow-y-auto px-4 pb-4">
 					<div className="space-y-4">
 						{isLoading ? (
 							<p role="status" className="text-sm text-muted-foreground">
@@ -55,56 +62,55 @@ export function LeaderboardSheet({ children }: LeaderboardSheetProps) {
 						) : null}
 
 						{hasEntries ? (
-							<div className="overflow-hidden rounded-md border border-border/70">
-								<table className="w-full text-left text-sm">
-									<caption className="sr-only">
-										{LEADERBOARD_PANEL_COPY.TABLE.CAPTION}
-									</caption>
-									<thead className="bg-muted/30 text-muted-foreground">
-										<tr>
-											<th className="px-3 py-2 font-medium">
-												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.RANK}
-											</th>
-											<th className="px-3 py-2 font-medium">
-												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.PLAYER}
-											</th>
-											<th className="px-3 py-2 font-medium">
-												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.SCORE}
-											</th>
-											<th className="px-3 py-2 font-medium">
-												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.TIME}
-											</th>
-											<th className="px-3 py-2 font-medium">
-												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.ROOMS}
-											</th>
-										</tr>
-									</thead>
-									<tbody>
-										{entries.map((entry) => (
-											<tr
-												key={entry.rowId}
-												className="border-t border-border/60"
-											>
-												<td className="px-3 py-2 font-semibold text-panel-title">
-													{entry.rankLabel}
-												</td>
-												<td className="px-3 py-2 text-foreground">
-													{entry.playerLabel}
-												</td>
-												<td className="px-3 py-2 text-foreground">
-													{entry.scoreLabel}
-												</td>
-												<td className="px-3 py-2 text-foreground">
-													{entry.runTimeLabel}
-												</td>
-												<td className="px-3 py-2 text-foreground">
-													{entry.roomsDiscoveredLabel}
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
+							<Table className="border border-border/70 rounded-md overflow-hidden">
+								<TableCaption className="sr-only">
+									{LEADERBOARD_PANEL_COPY.TABLE.CAPTION}
+								</TableCaption>
+								<TableHeader className="bg-muted/30">
+									<TableRow>
+										<TableHead className="px-3 py-2 font-medium">
+											{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.RANK}
+										</TableHead>
+										<TableHead className="px-3 py-2 font-medium">
+											{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.PLAYER}
+										</TableHead>
+										<TableHead className="px-3 py-2 font-medium">
+											{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.SCORE}
+										</TableHead>
+										<TableHead className="px-3 py-2 font-medium">
+											{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.TIME}
+										</TableHead>
+										<TableHead className="px-3 py-2 font-medium">
+											{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.ROOMS}
+										</TableHead>
+									</TableRow>
+								</TableHeader>
+
+								<TableBody>
+									{entries.map((entry) => (
+										<TableRow
+											key={entry.rowId}
+											className="border-t border-border/60"
+										>
+											<TableCell className="px-3 py-2 font-semibold text-panel-title">
+												{entry.rankLabel}
+											</TableCell>
+											<TableCell className="px-3 py-2 text-foreground">
+												{entry.playerLabel}
+											</TableCell>
+											<TableCell className="px-3 py-2 text-foreground">
+												{entry.scoreLabel}
+											</TableCell>
+											<TableCell className="px-3 py-2 text-foreground">
+												{entry.runTimeLabel}
+											</TableCell>
+											<TableCell className="px-3 py-2 text-foreground">
+												{entry.roomsDiscoveredLabel}
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
 						) : null}
 					</div>
 				</div>
