@@ -38,7 +38,8 @@ export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
 									...WORLD_INTERACTION_KEY_STYLE,
 									color: "var(--dungeon-gold)",
 									borderColor: "var(--dungeon-gold)",
-									background: "color-mix(in srgb, var(--dungeon-gold) 10%, transparent)",
+									background:
+										"color-mix(in srgb, var(--dungeon-gold) 10%, transparent)",
 								}}
 							>
 								{interact.label}
@@ -70,7 +71,8 @@ export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
 									...WORLD_INTERACTION_KEY_STYLE,
 									color: "var(--success)",
 									borderColor: "var(--success)",
-									background: "color-mix(in srgb, var(--success) 10%, transparent)",
+									background:
+										"color-mix(in srgb, var(--success) 10%, transparent)",
 								}}
 							>
 								{attack.label}
