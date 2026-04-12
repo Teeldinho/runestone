@@ -66,4 +66,14 @@ export {
 	SheetTrigger,
 } from "./sheet";
 export { Slider } from "./slider";
+export {
+	Table,
+	TableBody,
+	TableCaption,
+	TableCell,
+	TableFooter,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "./table";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
