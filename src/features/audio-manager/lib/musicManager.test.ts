@@ -54,6 +54,9 @@ const {
 vi.mock("tone", () => ({
 	start: mockToneStart,
 	Player: mockTonePlayer,
+	getContext: vi.fn(() => ({
+		state: "suspended",
+	})),
 	Transport: {
 		start: mockTransportStart,
 		pause: mockTransportPause,

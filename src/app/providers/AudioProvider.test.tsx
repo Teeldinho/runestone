@@ -7,8 +7,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { AudioProvider } from "./AudioProvider";
 import { AUDIO_PROVIDER_UNLOCK_EVENT_LIST } from "./audioProviderEvents";
 
-const { mockStartBackgroundMusicLoop, mockToneStart, mockUseAudio } = vi.hoisted(
-	() => {
+const { mockStartBackgroundMusicLoop, mockToneStart, mockUseAudio } =
+	vi.hoisted(() => {
 		const audioController = {
 			audioState: "playing",
 			isAudioMuted: false,
@@ -24,8 +24,7 @@ const { mockStartBackgroundMusicLoop, mockToneStart, mockUseAudio } = vi.hoisted
 			mockStartBackgroundMusicLoop: vi.fn(() => Promise.resolve()),
 			mockToneStart: vi.fn(() => Promise.resolve()),
 		};
-	},
-);
+	});
 
 vi.mock("tone", () => ({
 	start: mockToneStart,
