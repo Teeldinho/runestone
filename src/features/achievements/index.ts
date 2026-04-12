@@ -7,6 +7,7 @@ export {
 export {
 	hasCollectedKey,
 	hasDefeatedAllEnemies,
+	hasEscapedFloor,
 	hasReachedLibrary,
 } from "./lib";
 export type { Achievement, AchievementId } from "./model";

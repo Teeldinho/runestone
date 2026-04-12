@@ -37,6 +37,8 @@ describe("useTouchJoystickInput", () => {
 				currentTarget: {
 					setPointerCapture: vi.fn(),
 				},
+				stopPropagation: vi.fn(),
+				preventDefault: vi.fn(),
 			} as unknown as ReactPointerEvent<HTMLDivElement>);
 		});
 
@@ -46,6 +48,8 @@ describe("useTouchJoystickInput", () => {
 		act(() => {
 			result.current.handlePointerUp({
 				pointerId: 1,
+				stopPropagation: vi.fn(),
+				preventDefault: vi.fn(),
 			} as unknown as ReactPointerEvent<HTMLDivElement>);
 		});
 

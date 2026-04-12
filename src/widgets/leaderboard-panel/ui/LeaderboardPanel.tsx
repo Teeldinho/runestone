@@ -46,7 +46,7 @@ export function LeaderboardPanel() {
 				) : null}
 
 				{hasEntries ? (
-					<div className="overflow-hidden rounded-md border border-border/70">
+					<div className="overflow-hidden rounded-xl border border-border/70">
 						<table className="w-full text-left text-sm">
 							<caption className="sr-only">
 								{LEADERBOARD_PANEL_COPY.TABLE.CAPTION}

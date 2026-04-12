@@ -2,6 +2,7 @@ export const ACHIEVEMENT_IDS = {
 	FIRST_STEPS: "FIRST_STEPS",
 	KEY_HUNTER: "KEY_HUNTER",
 	COMBAT_MASTER: "COMBAT_MASTER",
+	ESCAPE_ARTIST: "ESCAPE_ARTIST",
 } as const;
 
 export const ACHIEVEMENT_COPY = {
@@ -16,6 +17,10 @@ export const ACHIEVEMENT_COPY = {
 	COMBAT_MASTER: {
 		label: "Combat Master",
 		description: "Defeated all enemies",
+	},
+	ESCAPE_ARTIST: {
+		label: "Escape Artist",
+		description: "Escaped the dungeon",
 	},
 } as const;
 

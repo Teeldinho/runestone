@@ -1,11 +1,13 @@
 import { Layers, RotateCcw, Trophy, Volume2, VolumeX } from "lucide-react";
-import type { CSSProperties } from "react";
+import { type CSSProperties, useCallback, useState } from "react";
+import { CAMERA_MODES } from "@/features/camera-system";
 import { useSettingsForm } from "@/features/settings";
 import { StateVisualizerWorkspaceProvider } from "@/features/state-visualizer";
 import { TouchJoystickOverlay } from "@/features/touch-input";
 import { GAME_PAGE_LAYOUT, GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import { useGamePage } from "@/pages/game/model";
 import {
+	Badge,
 	Button,
 	Card,
 	CardContent,
@@ -70,6 +72,14 @@ export function GamePage() {
 		touchInteractPrompt,
 	} = useGamePage();
 	const settings = useSettingsForm();
+
+	// Ref-callback pattern: re-renders (and thus syncs to OrbitControls) when the
+	// element mounts or unmounts, unlike a plain useRef which stays stable.
+	const [firstPersonLookElement, setFirstPersonLookElement] =
+		useState<HTMLElement | null>(null);
+	const firstPersonLookRef = useCallback((node: HTMLElement | null) => {
+		setFirstPersonLookElement(node);
+	}, []);
 	const gameHudContent = (
 		<div className="p-3">
 			<GameHud
@@ -130,6 +140,7 @@ export function GamePage() {
 							<div className="h-full w-full" style={{ cursor: "grab" }}>
 								<GameCanvas
 									cameraStateSnapshot={cameraStateSnapshot}
+									firstPersonLookElement={firstPersonLookElement}
 									machineRuntime={canvasMachineRuntime}
 									postprocessingEnabled={settings.postprocessingEnabled}
 								/>
@@ -178,23 +189,36 @@ export function GamePage() {
 								</div>
 							</div>
 
+							{cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON && (
+								<div
+									ref={firstPersonLookRef}
+									id="fp-look-zone"
+									className="pointer-events-auto absolute bottom-0 right-0 top-0 z-20 touch-none select-none"
+									style={{ left: "50%" }}
+								/>
+							)}
+
 							<div className="pointer-events-none absolute bottom-4 right-4 z-30 flex w-[11rem] flex-col gap-2 empty:hidden items-end">
 								{hasTouchInteract ? (
 									<Button
+										variant="default"
 										size="default"
 										onClick={handleTouchInteract}
-										className="pointer-events-auto w-full"
+										className="pointer-events-auto relative w-full font-bold"
 									>
 										{touchInteractPrompt}
+										<Badge className="absolute -right-2 -top-2 flex h-4 w-4 animate-pulse items-center justify-center rounded-full bg-dungeon-gold p-0 shadow-[0_0_8px_var(--dungeon-gold)]" />
 									</Button>
 								) : null}
 								{hasTouchAttack ? (
 									<Button
+										variant="default"
 										size="default"
 										onClick={handleTouchAttack}
-										className="pointer-events-auto w-full"
+										className="pointer-events-auto relative w-full font-bold"
 									>
 										{touchAttackPrompt}
+										<Badge className="absolute -right-2 -top-2 flex h-4 w-4 animate-pulse items-center justify-center rounded-full bg-success p-0 shadow-[0_0_8px_var(--success)]" />
 									</Button>
 								) : null}
 								<Button

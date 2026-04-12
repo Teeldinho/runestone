@@ -142,18 +142,6 @@ export function RoomMesh({
 				</RigidBody>
 			))}
 
-			{/* Rune orb (keep procedural — it's game state visual) */}
-			<mesh castShadow position={[0, rune.orbHeight, 0]}>
-				<sphereGeometry
-					args={[rune.orbRadius, rune.orbWidthSegments, rune.orbHeightSegments]}
-				/>
-				<meshStandardMaterial
-					color={rune.activeColor}
-					emissive={rune.openColor}
-					emissiveIntensity={rune.emissiveIntensity}
-				/>
-			</mesh>
-
 			{showGrid && (
 				<gridHelper
 					args={[grid.size, grid.divisions, rune.sealedColor, pillar.color]}
