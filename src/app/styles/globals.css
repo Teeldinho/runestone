@@ -79,6 +79,9 @@
 	--color-panel-border: var(--panel-border);
 	--color-panel-title: var(--panel-title);
 	--color-panel-body: var(--panel-body);
+	--color-dungeon-gold: var(--dungeon-gold);
+	--color-dungeon-gold-dim: var(--dungeon-gold-dim);
+	--color-dungeon-rune: var(--dungeon-rune);
 	--color-dungeon-stone-base: var(--dungeon-stone-base);
 	--color-dungeon-stone-detail: var(--dungeon-stone-detail);
 	--color-dungeon-torch: var(--dungeon-torch);

@@ -1,4 +1,4 @@
-import { Volume2, VolumeX } from "lucide-react";
+import { Layers, RotateCcw, Trophy, Volume2, VolumeX } from "lucide-react";
 import type { CSSProperties } from "react";
 import { useSettingsForm } from "@/features/settings";
 import { StateVisualizerWorkspaceProvider } from "@/features/state-visualizer";
@@ -30,6 +30,7 @@ import {
 } from "@/widgets/camera-mode-switcher";
 import { GameCanvas } from "@/widgets/game-canvas";
 import { GameHud } from "@/widgets/hud";
+import { LeaderboardSheet } from "@/widgets/leaderboard-panel";
 import {
 	XStateInspectorDetailsPanel,
 	XStateInspectorPanel,
@@ -61,6 +62,7 @@ export function GamePage() {
 		isDesktopLayout,
 		isMobileSheetOpen,
 		isMobileTabletLandscape,
+		isTabletLayout,
 		mobileSheetTabId,
 		playerHp,
 		playerMaxHp,
@@ -134,18 +136,33 @@ export function GamePage() {
 							</div>
 
 							<div className="pointer-events-none absolute inset-x-0 top-0 z-30 p-3 flex justify-between">
-								<div className="pointer-events-auto">
+								<div className="pointer-events-auto flex flex-col gap-1.5">
+									<span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
+										Camera
+									</span>
 									<MobileCameraModeSwitcher
 										activeCameraMode={cameraStateSnapshot.mode}
 										handleCameraModeSwitch={handleCameraModeSwitch}
 									/>
+									<Button
+										variant="dungeon-outline"
+										size="default"
+										onClick={handleDungeonRunReset}
+										className="pointer-events-auto w-full"
+										aria-label="Restart Run"
+									>
+										<RotateCcw className="h-4 w-4" />
+										<span className="text-xs uppercase tracking-wide">
+											Reset Run
+										</span>
+									</Button>
 								</div>
-								<div className="w-fit rounded border border-panel-border bg-panel/80 px-3 py-2 shadow-lg backdrop-blur-md">
-									<div className="flex items-center gap-2">
-										<span className="rune-text text-[10px] text-dungeon-gold">
+								<div className="h-fit w-fit rounded border border-panel-border bg-panel px-3 py-1 shadow-lg backdrop-blur-md">
+									<div className="flex items-center gap-2 leading-none">
+										<span className="rune-text text-[10px] leading-none text-dungeon-gold">
 											HP
 										</span>
-										<span className="rune-value text-sm">
+										<span className="rune-value text-sm leading-none">
 											{playerHp} / {playerMaxHp}
 										</span>
 									</div>
@@ -161,7 +178,7 @@ export function GamePage() {
 								</div>
 							</div>
 
-							<div className="pointer-events-none absolute bottom-4 right-4 z-30 flex w-[11rem] flex-col gap-2">
+							<div className="pointer-events-none absolute bottom-4 right-4 z-30 flex w-[11rem] flex-col gap-2 empty:hidden items-end">
 								{hasTouchInteract ? (
 									<Button
 										size="default"
@@ -181,25 +198,52 @@ export function GamePage() {
 									</Button>
 								) : null}
 								<Button
-									variant="secondary"
-									size="default"
+									variant={isAudioMuted ? "dungeon-outline" : "dungeon-gold"}
+									size={isTabletLayout ? "default" : "icon"}
 									onClick={handleAudioMuteToggle}
-									className="pointer-events-auto w-full"
+									className={`pointer-events-auto ${isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
 									aria-label={isAudioMuted ? "Unmute audio" : "Mute audio"}
 								>
 									{isAudioMuted ? (
 										<VolumeX className="h-4 w-4" />
 									) : (
-										<Volume2 className="h-4 w-4 text-[var(--dungeon-gold)]" />
+										<Volume2 className="h-4 w-4" />
+									)}
+									{isTabletLayout && (
+										<span className="text-xs uppercase tracking-wide">
+											Audio
+										</span>
 									)}
 								</Button>
+								<LeaderboardSheet>
+									<Button
+										variant="dungeon-outline"
+										size={isTabletLayout ? "default" : "icon"}
+										className={`pointer-events-auto flex items-center justify-center gap-2 ${isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
+										aria-label="Open Leaderboard"
+									>
+										<Trophy className="h-4 w-4" />
+										{isTabletLayout && (
+											<span className="text-xs uppercase tracking-wide">
+												Rankings
+											</span>
+										)}
+									</Button>
+								</LeaderboardSheet>
 								<DrawerTrigger asChild>
 									<Button
-										variant="outline"
-										size="default"
-										className="pointer-events-auto w-full text-xs uppercase tracking-wide"
+										variant={
+											isMobileSheetOpen ? "dungeon-gold" : "dungeon-outline"
+										}
+										size={isTabletLayout ? "default" : "icon"}
+										className={`pointer-events-auto ${isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
 									>
-										{GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}
+										<Layers className="h-4 w-4" />
+										{isTabletLayout && (
+											<span className="text-xs uppercase tracking-wide">
+												{GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}
+											</span>
+										)}
 									</Button>
 								</DrawerTrigger>
 							</div>
@@ -411,6 +455,15 @@ export function GamePage() {
 							<Volume2 className="h-4 w-4 text-[var(--dungeon-gold)]" />
 						)}
 					</button>
+					<LeaderboardSheet>
+						<button
+							type="button"
+							className="dungeon-btn w-auto px-2 py-1"
+							aria-label="Open Leaderboard"
+						>
+							<Trophy className="h-4 w-4 text-[var(--dungeon-gold)]" />
+						</button>
+					</LeaderboardSheet>
 				</div>
 			</header>
 

@@ -14,4 +14,8 @@ export {
 	CANVAS_TORCH_INTENSITY_CONFIG,
 } from "./canvasRuntimeConfig";
 export { GAME_CANVAS_COPY, GAME_OVER_COPY } from "./gameCopy";
-export { WORLD_INTERACTION_PROMPT_CONFIG } from "./worldInteractionPromptConfig";
+export {
+	WORLD_INTERACTION_KEY_STYLE,
+	WORLD_INTERACTION_PROMPT_CONFIG,
+	WORLD_INTERACTION_PROMPT_STYLE,
+} from "./worldInteractionPromptConfig";

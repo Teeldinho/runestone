@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
 import { cleanup, render, screen } from "@testing-library/react";
+import type React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DUNGEON_EVENTS, ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
@@ -53,6 +54,7 @@ const createGamePageViewModel = (overrides = {}) => ({
 	isDesktopLayout: true,
 	isMobileSheetOpen: false,
 	isMobileTabletLandscape: false,
+	isTabletLayout: false,
 	mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 	hasTreasureKeyLabel: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 	handleDungeonRunReset: vi.fn(),
@@ -107,6 +109,12 @@ vi.mock("@/widgets/hud", () => ({
 	GameHud: () => <div data-testid="hud-widget-marker" />,
 }));
 
+vi.mock("@/widgets/leaderboard-panel", () => ({
+	LeaderboardSheet: ({ children }: { children: React.ReactNode }) => (
+		<div data-testid="leaderboard-sheet-widget">{children}</div>
+	),
+}));
+
 vi.mock("@/features/dungeon-navigation", () => ({
 	useInteractionCandidates: vi.fn(() => ({
 		interactPrompt: null,
@@ -147,6 +155,7 @@ describe("GamePage", () => {
 				hasTouchAttack: true,
 				hasTouchInteract: true,
 				isMobileTabletLandscape: true,
+				isTabletLayout: true,
 				touchAttackPrompt: "Attack",
 				touchInteractPrompt: "Enter Library",
 			}),
