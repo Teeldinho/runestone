@@ -10,6 +10,23 @@ This is an engineering-first game prototype: the machine is not hidden in the co
 
 ---
 
+## Methodology
+
+Runestone is developed as an engineering-first project, defined by a rigorous lifecycle that prioritizes predictability and correctness. We employ two core disciplines to ensure architectural integrity:
+
+### Spec-Driven Development (SDD)
+
+Every non-trivial feature begins with a **Project Brief** documenting its scope, technical constraints, and success criteria. By defining the problem space before writing code, we ensuring that every implementation is intentional and mapped to a documented requirement. This practice effectively eliminates feature creep and significantly reduces long-term technical debt.
+
+### Test-Driven Development (TDD)
+
+The codebase is governed by a strict **Red-Green-Refactor** cycle. We author failing tests to define a component's contract before implementation begins, ensuring 100% logic coverage for our critical `model/` and `lib/` layers. This provides a robust safety net, allowing for complex refactors of state machines and physics logic with absolute confidence in system stability.
+
+![Vitest suite execution showing 575 passing tests and 118 test files](./public/screenshots/vitest-full-suite-pass.png)
+
+---
+
+
 ## Finite State Machines
 
 A **Finite State Machine (FSM)** models a system as a finite set of states with explicit transitions between them. At any moment, the system is in exactly one state.
@@ -213,28 +230,6 @@ Runestone is an expanding foundation. The architecture supports rapid iteration,
 | Top Down | `2` | Fixed overhead angle, zoom only |
 | First Person | `3` | Head-level view with pointer lock |
 | Free Orbital | `4` | Pan + rotate + zoom |
-
----
-
-## 🧪 Engineering Excellence: SDD & TDD
-
-Runestone is not just a game; it is a demonstration of a robust, professional engineering lifecycle. We employ two core disciplines to ensure correctness and architectural integrity:
-
-### Spec-Driven Development (SDD)
-
-For both technical and non-technical stakeholders, **SDD** means we never "just start coding." Every significant feature is preceded by a **Project Brief**.
-
-- **What it is**: Before a single line of logic is written, we define the `Scope`, `Constraints`, and `Success Criteria` in a formal specification. This ensures that the problem is fully understood and the solution is architected intentionally.
-- **Why it matters**: It prevents feature creep, reduces technical debt, and provides a clear source of truth for what the code is intended to do. It transforms development from a "guess-and-check" process into a precise execution of a documented plan.
-
-### Test-Driven Development (TDD)
-
-For our engineering team, **TDD** is the heartbeat of the codebase. We follow the strict **Red-Green-Refactor** cycle.
-
-- **What it is**: We write a failing test first (the **Red** phase), then implement just enough code to make it pass (the **Green** phase), and refine the internal structure without changing behavior (**Refactor** phase).
-- **Why it matters**: TDD ensures 100% logic coverage for our most critical `model/` and `lib/` layers. It provides a "safety net" that allows us to refactor complex state machines or physics logic with complete confidence.
-
-![Vitest suite execution showing 575 passing tests and 118 test files](./public/screenshots/vitest-full-suite-pass.png)
 
 ---
 
