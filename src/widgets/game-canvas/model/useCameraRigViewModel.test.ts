@@ -150,6 +150,7 @@ describe("useCameraRigViewModel", () => {
 
 		renderHook(() =>
 			useCameraRigViewModel({
+				cameraControlElement: null,
 				cameraStateSnapshot: {
 					fov: 60,
 					mode: CAMERA_MODES.TOP_DOWN,

@@ -37,6 +37,7 @@ export function CameraRig({
 		firstPersonOrbitRef,
 		isDesktopLayout,
 	} = useCameraRigViewModel({
+		cameraControlElement,
 		cameraStateSnapshot,
 		playerSpawnPosition,
 	});
@@ -87,6 +88,8 @@ export function CameraRig({
 				maxPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MAX_POLAR_ANGLE}
 				minPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MIN_POLAR_ANGLE}
 				touches={CAMERA_RIG_TOUCH_GESTURES.ORBIT}
+				onStart={handleOrbitStart}
+				onEnd={handleOrbitEnd}
 				domElement={
 					isDesktopLayout ? undefined : (cameraControlElement ?? undefined)
 				}
@@ -113,6 +116,8 @@ export function CameraRig({
 					minDistance={0.01}
 					maxDistance={0.01}
 					touches={CAMERA_RIG_TOUCH_GESTURES.ORBIT}
+					onStart={handleOrbitStart}
+					onEnd={handleOrbitEnd}
 					domElement={firstPersonLookElement}
 				/>
 			);
@@ -148,6 +153,8 @@ export function CameraRig({
 				maxAzimuthAngle={Math.PI}
 				zoomSpeed={CAMERA_CONFIG.TOP_DOWN.ZOOM_SPEED}
 				touches={CAMERA_RIG_TOUCH_GESTURES.TOP_DOWN}
+				onStart={handleOrbitStart}
+				onEnd={handleOrbitEnd}
 				domElement={
 					isDesktopLayout ? undefined : (cameraControlElement ?? undefined)
 				}

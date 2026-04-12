@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { addVec3, distanceVec3, normalizeVec3, subtractVec3 } from "./vec3";
+import {
+	addVec3,
+	distanceVec3,
+	getQuaternionFromXZ,
+	normalizeVec3,
+	subtractVec3,
+} from "./vec3";
 
 describe("vec3", () => {
 	it("adds vectors", () => {
@@ -22,5 +28,17 @@ describe("vec3", () => {
 		expect(normalizedVector[0]).toBeCloseTo(0, 8);
 		expect(normalizedVector[1]).toBeCloseTo(0.6, 8);
 		expect(normalizedVector[2]).toBeCloseTo(0.8, 8);
+	});
+
+	it("calculates quaternion orientation from XZ vector", () => {
+		// Moving along Z axis (0, 0, 1) should be 0 degrees rotation (pointing forward)
+		const qForward = getQuaternionFromXZ(0, 1);
+		expect(qForward.y).toBeCloseTo(0);
+		expect(qForward.w).toBeCloseTo(1);
+
+		// Moving along X axis (1, 0, 0) should be 90 degrees rotation
+		const qRight = getQuaternionFromXZ(1, 0);
+		expect(qRight.y).toBeCloseTo(Math.sin(Math.PI / 4));
+		expect(qRight.w).toBeCloseTo(Math.cos(Math.PI / 4));
 	});
 });
