@@ -1,10 +1,8 @@
 # Runestone
 
-Runestone is a 3D dungeon crawler where the dungeon itself is an executable state machine. Rooms are states, doors are transitions, rune locks are guards, and enemy behavior is actor-driven runtime logic.
+Runestone is a 3D exploration of manifest logic. By literalizing a Finite State Machine into a navigable dungeon—where rooms represent states and corridors function as explicit transitions—the project renders complex state management into a tangible, inspectable environment.
 
-This is an engineering-first game prototype: the machine is not hidden in the codebase, it is visible in the level.
-
-**[🏰 Enter the Dungeon](https://runestone.teeldinho.com)**
+**[🏰 Enter the Dungeon - Play Now!](https://runestone.teeldinho.com)**
 
 ![Runestone desktop three-pane layout](./public/screenshots/desktop-three-pane-overview.png)
 
@@ -12,20 +10,27 @@ This is an engineering-first game prototype: the machine is not hidden in the co
 
 ## Methodology
 
-Runestone is developed as an engineering-first project, defined by a rigorous lifecycle that prioritizes predictability and correctness. We employ two core disciplines to ensure architectural integrity:
+The development of Runestone is guided by a formal lifecycle focused on systemic reliability. We prioritize architectural correctness over rapid prototyping, utilizing a series of controlled engineering cycles to ensure that every system remains auditable and predictable.
 
 ### Spec-Driven Development (SDD)
+**Spec-Driven Development** is the engineering practice of formalizing a feature's blueprint before implementation begins.
 
-Every non-trivial feature begins with a **Project Brief** documenting its scope, technical constraints, and success criteria. By defining the problem space before writing code, we ensuring that every implementation is intentional and mapped to a documented requirement. This practice effectively eliminates feature creep and significantly reduces long-term technical debt.
+*   **The Concept**: A discipline of formalizing constraints and success criteria as a prerequisite for implementation.
+*   **The Rationale**: Unvetted code is the primary driver of technical debt. By articulating edge cases in a specification, we move beyond opportunistic prototyping toward a standard of high-integrity engineering.
+*   **The Outcome**: Systems that are "Right-First-Time" by design, drastically reducing the surface area for logic drift and ensuring the codebase scales without losing structural integrity.
+
+![Implementation plan](./public/screenshots/implementation-sdd.png)
 
 ### Test-Driven Development (TDD)
+**Test-Driven Development** is a verification-first cycle where functional contracts are drafted through tests before implementation logic is authored.
 
-The codebase is governed by a strict **Red-Green-Refactor** cycle. We author failing tests to define a component's contract before implementation begins, ensuring 100% logic coverage for our critical `model/` and `lib/` layers. This provides a robust safety net, allowing for complex refactors of state machines and physics logic with absolute confidence in system stability.
+*   **The Concept**: Defining a component's behavioral contract through failing tests using the Red-Green-Refactor cycle.
+*   **Technical Justification**: Writing tests first forces the design of cleaner, decoupled APIs. It ensures that our model hooks are built for testability and that business logic is never implicitly coupled to the UI layer.
+*   **The Outcome**: Produces a self-documenting test suite that proves the engine's correctness at every commit, transforming "working code" from an assumption into a verified certainty.
 
-![Vitest suite execution showing 575 passing tests and 118 test files](./public/screenshots/vitest-full-suite-pass.png)
+![Vitest suite execution showing passing tests and test files](./public/screenshots/vitest-full-suite-pass.png)
 
 ---
-
 
 ## Finite State Machines
 
@@ -37,7 +42,7 @@ This is useful because behavior becomes auditable instead of implicit. You can a
 
 ## Why XState Here
 
-Runestone uses XState to make behavior explicit, inspectable, and testable in-game, and the same model applies cleanly to many production software domains.
+Runestone uses XState to make behavior explicit, inspectable, and testable in-game, and the same model applies cleanly to many production software domains. Here are a few use cases:
 
 ### Game Entity AI
 
@@ -79,6 +84,27 @@ Real-time channels such as WebSocket and Server-Sent Events (SSE) require precis
 
 ---
 
+## The Actor Model Engine: Core State Machines
+
+Runestone behavior is grounded in the **actor model**, where every major system operates as a self-contained, auditable event loop. By literalizing these logic units into finite state machines, we ensure that every transition in the dungeon, the player’s behavior, or the camera angle is a deliberate structural shift rather than a cascading side effect.
+
+### Spatial Logic: The Dungeon Machine
+Manages the physical state of the dungeon. It tracks which rooms are "active," handles the logic of moving between areas, and acts as a gatekeeper for progress—locking doorways until specific criteria, such as defeating guards or collecting keys, are met.
+![Dungeon State Machine Visualization](./public/screenshots/xstate-dungeon-graph.png)
+
+### Perspectives: The Camera Machine
+Resolves the transition between our four view modes. Instead of simple toggles, every perspective change is a structural shift, preserving camera transforms whether you are in **First-Person (1P)**, **Third-Person (3P)**, **Top-Down (TD)**, or **Free Orbital (FO)**.
+![Camera State Machine Visualization](./public/screenshots/xstate-camera-graph.png)
+
+### Atmosphere: The Audio Machine
+Handles the global sound environment using the actor model to track the audio lifecycle through **Paused**, **Playing**, and **Muted** states. This provides a centralized point for managing volume transitions and ensuring audio persistence across scene loads.
+![Audio State Machine Visualization](./public/screenshots/xstate-audio-graph.png)
+
+### Vitality & Movement: The Player Machine
+Orchestrates the complex lifecycle of the explorer. It manages parallel states for movement (Idle, Walking, Running) and vitality (Healthy, Damaged, Dead), ensuring combat interactions and damage feedback are always synchronized.
+![Player State Machine Visualization](./public/screenshots/xstate-player-graph.png)
+
+--- 
 ## Interface Tour
 
 ### Desktop (three-pane workflow)
@@ -98,48 +124,71 @@ When you see the left pane, bottom pane, and right pane together with no joystic
 
 ![Desktop bottom pane with state details](./public/screenshots/desktop-bottom-pane-state-details.png)
 
-### Mobile and Tablet (touch-first flow)
+### Mobile and Tablet Interaction
 
-Portrait mode is blocked for gameplay and prompts a rotate notice:
+Runestone strictly enforces a landscape gameplay environment for optimal 3D perspective. The interface adaptively scales between compact mobile handsets and expanded tablet displays, with a consistent ergonomic pattern:
 
-![Mobile portrait rotate requirement](./public/screenshots/mobile-portrait-rotate-required.png)
+*   **Mobile HUD**: Optimized for reachability on smaller screens using **icon-only** triggers for side-panels and audio controls.
+*   **Tablet HUD**: Leverages additional screen real-estate with expanded **icon + text** buttons for immediate tactical clarity.
 
-Landscape gameplay keeps core controls visible (movement joystick, quick actions, and panel trigger):
+![Mobile landscape gameplay with compact HUD](./public/screenshots/mobile-landscape-hud.png)
+<p align="center"><em>Compact Mobile HUD featuring icon-only controls for maximized viewport visibility</em></p>
+
+![Tablet landscape HUD with optimized scaling](./public/screenshots/tablet-landscape-hud.png)
+<p align="center"><em>Tablet landscape HUD showcasing expanded icon-plus-text interface triggers</em></p>
+
+### Combat and Resilience
+
+The player actor handles interaction prompts and resilience feedback through explicit state changes, showcased here in the expanded tablet perspective:
 
 <table>
   <tr>
-    <td><img src="./public/screenshots/mobile-landscape-panels-trigger.png" alt="Mobile landscape gameplay with joystick and panels trigger" /></td>
-    <td><img src="./public/screenshots/mobile-landscape-combat-controls.png" alt="Mobile landscape combat controls and interaction prompts" /></td>
+    <td><img src="./public/screenshots/tablet-landscape-combat.png" alt="In-game interaction prompts" /></td>
+    <td><img src="./public/screenshots/tablet-landscape-damage.png" alt="Damage feedback vignette" /></td>
   </tr>
   <tr>
-    <td align="center"><em>Base landscape heads-up display (HUD) with `PANELS` trigger</em></td>
-    <td align="center"><em>Combat interactions and action buttons</em></td>
+    <td align="center"><em>Contextual interaction prompts (Attack/Pick Up Key)</em></td>
+    <td align="center"><em>Visual damage feedback vignette</em></td>
   </tr>
 </table>
 
+![Termination state death modal](./public/screenshots/tablet-landscape-death.png)
+<p align="center"><em>The 'YOU DIED' termination state with restart loop (Tablet view)</em></p>
+
+### Camera Mode Showcase
+Transitioning between perspectives is handled with mathematical precision by the camera actor:
+
+#### Camera Modes
+
+| Mode | Hotkey | Description |
+| --- | --- | --- |
+| **Third-Person (3P)** | `1` | Offset behind player, constrained orbit |
+| **Top-Down (TD)** | `2` | Fixed overhead angle, zoom only |
+| **First-Person (1P)** | `3` | Head-level view with pointer lock |
+| **Free Orbital (FO)** | `4` | Pan + rotate + zoom |
+
+#### Perspectives
+
 <table>
   <tr>
-    <td><img src="./public/screenshots/mobile-landscape-combat-damage.png" alt="Mobile landscape combat with damage feedback vignette" /></td>
-    <td><img src="./public/screenshots/mobile-landscape-death-modal.png" alt="Mobile landscape death modal and restart flow" /></td>
+    <td>
+      <h5>Third Person (3P):</h5>
+      <img src="./public/screenshots/tablet-camera-3p.png" alt="Third-person perspective" />
+    </td>
+    <td>
+      <h5>Top Down (TD):</h5>
+      <img src="./public/screenshots/tablet-camera-td.png" alt="Top-down perspective" />
+    </td>
   </tr>
   <tr>
-    <td align="center"><em>Damage feedback during combat</em></td>
-    <td align="center"><em>Death state with restart modal</em></td>
-  </tr>
-</table>
-
-Panel surfaces scale from quick sheet to full sheet:
-
-<table>
-  <tr>
-    <td><img src="./public/screenshots/mobile-landscape-statechart-sheet.png" alt="Mobile landscape statechart sheet preview" /></td>
-    <td><img src="./public/screenshots/tablet-statechart-sheet-expanded.png" alt="Tablet expanded statechart panel" /></td>
-    <td><img src="./public/screenshots/tablet-hud-sheet-expanded.png" alt="Tablet expanded HUD panel" /></td>
-  </tr>
-  <tr>
-    <td align="center"><em>Quick sheet preview</em></td>
-    <td align="center"><em>Expanded Statechart view</em></td>
-    <td align="center"><em>Expanded HUD view</em></td>
+    <td>
+      <h5>First Person (1P):</h5>
+      <img src="./public/screenshots/tablet-camera-1p.png" alt="First-person perspective" />
+    </td>
+    <td>
+      <h5>Free Orbital (FO):</h5>
+      <img src="./public/screenshots/tablet-camera-fo.png" alt="Free orbital perspective" />
+    </td>
   </tr>
 </table>
 
@@ -219,17 +268,6 @@ Runestone is an expanding foundation. The architecture supports rapid iteration,
 - **Procedural Dungeon Generation**: Leveraging our explicit XState room nodes to generate randomized, yet resolvable, floor layouts.
 - **Deeper Enemy State Trees**: Introducing complex "Patrol" and "Heal/Flee" states to adversaries, pushing the limits of actor-driven logic.
 - **Inventory & Loot Persistence**: Securely stashing obtained gear within the Convex backend to load seamlessly when crossing new dungeon borders.
-
----
-
-## Camera Modes
-
-| Mode | Hotkey | Description |
-| --- | --- | --- |
-| Third Person | `1` | Offset behind player, constrained orbit |
-| Top Down | `2` | Fixed overhead angle, zoom only |
-| First Person | `3` | Head-level view with pointer lock |
-| Free Orbital | `4` | Pan + rotate + zoom |
 
 ---
 
