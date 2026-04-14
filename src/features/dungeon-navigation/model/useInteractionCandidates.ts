@@ -8,11 +8,11 @@ import type {
 import {
 	getEnemyPositions,
 	subscribeToEnemyPositions,
-} from "@/shared/lib/enemyPositionStore";
+} from "@/shared/lib";
 import {
 	getPlayerPosition,
 	subscribeToPlayerPosition,
-} from "@/shared/lib/playerPositionStore";
+} from "@/shared/lib";
 import type { Vector3Tuple } from "@/shared/lib";
 
 import { ATTACK_PROMPT, EMPTY_INTERACTION_CANDIDATES } from "../config";

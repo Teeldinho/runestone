@@ -4,7 +4,7 @@ import { useRef, useSyncExternalStore } from "react";
 import {
 	getCameraMode,
 	subscribeToCameraMode,
-} from "@/shared/lib/cameraModeStore";
+} from "@/shared/lib";
 import type { Vector3Tuple } from "@/shared/lib";
 import { PLAYER_STATES } from "../config";
 import { resolvePlayerAvatarVisibility, selectPlayerAnimation } from "../lib";

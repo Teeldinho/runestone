@@ -26,7 +26,7 @@ import {
 	STATE_VISUALIZER_SECTION_IDS,
 	useStateVisualizer,
 } from "@/features/state-visualizer";
-import { setPlayerTeleportTarget } from "@/shared/lib/playerPositionStore";
+import { setPlayerTeleportTarget } from "@/shared/lib";
 import type { Vector3Tuple } from "@/shared/lib";
 import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 

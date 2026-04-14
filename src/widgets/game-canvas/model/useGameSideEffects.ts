@@ -20,7 +20,7 @@ import {
 } from "@/features/dungeon-navigation";
 import { useHaptics } from "@/features/haptics-feedback";
 import { SCORE_VALUES } from "@/shared/config";
-import { setPlayerTeleportTarget } from "@/shared/lib/playerPositionStore";
+import { setPlayerTeleportTarget } from "@/shared/lib";
 
 import {
 	getDoorwayArrivalPosition,

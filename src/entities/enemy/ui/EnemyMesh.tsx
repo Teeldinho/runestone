@@ -9,9 +9,9 @@ import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.j
 import {
 	removeEnemyPosition,
 	setEnemyPosition,
-} from "@/shared/lib/enemyPositionStore";
-import { getPlayerPosition } from "@/shared/lib/playerPositionStore";
-import { getQuaternionFromXZ } from "@/shared/lib/vec3";
+} from "@/shared/lib";
+import { getPlayerPosition } from "@/shared/lib";
+import { getQuaternionFromXZ } from "@/shared/lib";
 import type { Vector3Tuple } from "@/shared/lib";
 
 import {

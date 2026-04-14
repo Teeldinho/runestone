@@ -11,7 +11,7 @@ import { createDungeonFloorLayout } from "@/entities/room";
 import {
 	getPlayerPosition,
 	subscribeToPlayerPosition,
-} from "@/shared/lib/playerPositionStore";
+} from "@/shared/lib";
 import type { Vector3Tuple } from "@/shared/lib";
 
 import { resolveNearInteractableTarget } from "../lib";
