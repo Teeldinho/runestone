@@ -5,7 +5,7 @@ import {
 	getCameraMode,
 	subscribeToCameraMode,
 } from "@/shared/lib/cameraModeStore";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 import { PLAYER_STATES } from "../config";
 import { resolvePlayerAvatarVisibility, selectPlayerAnimation } from "../lib";
 import { usePlayerMachineRuntime } from "./playerMachineRuntime";

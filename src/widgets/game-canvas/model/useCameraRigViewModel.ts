@@ -18,7 +18,7 @@ import {
 	getPlayerPosition,
 	hasPlayerPosition,
 } from "@/shared/lib/playerPositionStore";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 import {
 	CAMERA_RIG_CAMERA_UP,
 	CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE,

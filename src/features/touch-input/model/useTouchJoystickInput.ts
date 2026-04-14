@@ -6,7 +6,7 @@ import {
 	useState,
 } from "react";
 
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { TOUCH_JOYSTICK_CONFIG } from "../config";
 import { resolveJoystickVector } from "../lib";

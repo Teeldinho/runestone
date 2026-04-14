@@ -14,7 +14,7 @@ import {
 	type RoomId,
 } from "@/entities/dungeon";
 import { ROOM_CONFIG } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import {
 	DOOR_GUARDS,

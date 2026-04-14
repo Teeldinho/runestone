@@ -12,7 +12,7 @@ import {
 } from "@/shared/lib/enemyPositionStore";
 import { getPlayerPosition } from "@/shared/lib/playerPositionStore";
 import { getQuaternionFromXZ } from "@/shared/lib/vec3";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import {
 	ENEMY_ANIMATION_PATHS,

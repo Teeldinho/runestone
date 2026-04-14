@@ -13,7 +13,7 @@ import {
 	getPlayerPosition,
 	subscribeToPlayerPosition,
 } from "@/shared/lib/playerPositionStore";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { ATTACK_PROMPT, EMPTY_INTERACTION_CANDIDATES } from "../config";
 import { resolveInteractionCandidates } from "../lib";

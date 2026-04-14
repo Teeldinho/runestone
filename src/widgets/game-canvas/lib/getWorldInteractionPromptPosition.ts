@@ -6,7 +6,7 @@ import {
 	ROOM_IDS,
 	type RoomId,
 } from "@/entities/dungeon";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { WORLD_INTERACTION_PROMPT_CONFIG } from "../config";
 import { getDoorwayAnchorPosition } from "./getDoorwayAnchorPosition";

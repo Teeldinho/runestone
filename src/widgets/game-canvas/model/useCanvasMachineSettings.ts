@@ -16,7 +16,7 @@ import {
 	type CameraStateSnapshot,
 } from "@/features/camera-system";
 import { GAME_CANVAS_CONFIG } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import {
 	CANVAS_FOG_DENSITY_MULTIPLIERS_BY_ROOM,

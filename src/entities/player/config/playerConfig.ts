@@ -1,4 +1,4 @@
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import type { PlayerHealthState } from "./playerStates";
 import { PLAYER_STATES } from "./playerStates";

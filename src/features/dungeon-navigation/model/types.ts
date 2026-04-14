@@ -1,5 +1,5 @@
 import type { RoomId } from "@/entities/dungeon";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import type { NAVIGATION_INTENTS } from "../config";
 

@@ -1,4 +1,4 @@
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { TOUCH_JOYSTICK_CONFIG } from "../config";
 import { useTouchJoystickInput } from "../model";

@@ -1,6 +1,6 @@
 import { DOOR_SIDES, type LastTransition } from "@/entities/dungeon";
 import { DOORWAY_NAVIGATION_CONFIG } from "@/features/dungeon-navigation";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { getDoorwayAnchorPosition } from "./getDoorwayAnchorPosition";
 

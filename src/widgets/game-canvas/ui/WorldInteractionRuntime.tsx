@@ -8,7 +8,7 @@ import {
 	useInteractionInput,
 	useSendDungeonMachineEvent,
 } from "@/features/dungeon-navigation";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import type { RoomPositionsById } from "../lib/getWorldInteractionPromptPosition";
 

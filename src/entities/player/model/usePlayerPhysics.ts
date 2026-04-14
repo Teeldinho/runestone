@@ -11,7 +11,7 @@ import {
 	setPlayerPosition,
 } from "@/shared/lib/playerPositionStore";
 import { getQuaternionFromXZ } from "@/shared/lib/vec3";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { PLAYER_ENTITY_CONFIG } from "../config";
 import {

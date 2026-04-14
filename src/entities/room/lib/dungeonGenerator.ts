@@ -1,7 +1,7 @@
 import { DUNGEON_GENERATOR_CONFIG } from "@/entities/room/config";
 import { MACHINE_STATE_TYPES } from "@/shared/config";
 import { getGraphLayout } from "@/shared/lib";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 type RoomId = string;
 

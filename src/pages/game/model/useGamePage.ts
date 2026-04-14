@@ -27,7 +27,7 @@ import {
 	useStateVisualizer,
 } from "@/features/state-visualizer";
 import { setPlayerTeleportTarget } from "@/shared/lib/playerPositionStore";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 
 import { GAME_PAGE_COPY, GAME_PAGE_MOBILE_SHEET } from "../config";

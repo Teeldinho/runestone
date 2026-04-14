@@ -1,4 +1,4 @@
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 import { PLAYER_ENTITY_CONFIG } from "../config";
 import type { PlayerMeshInput, PlayerMeshSettings } from "../model";
 

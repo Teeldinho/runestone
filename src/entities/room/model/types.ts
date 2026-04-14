@@ -1,4 +1,4 @@
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 import type { ROOM_DOOR_GUARDS, ROOM_KINDS } from "../config";
 
 export type RoomKind = (typeof ROOM_KINDS)[keyof typeof ROOM_KINDS];

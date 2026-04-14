@@ -5,7 +5,7 @@ import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import type * as THREE from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import {
 	PLAYER_ANIMATION_PATHS,

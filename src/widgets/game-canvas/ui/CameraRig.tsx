@@ -5,7 +5,7 @@ import * as THREE from "three";
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { CAMERA_MODES } from "@/features/camera-system";
 import { CAMERA_CONFIG } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { CAMERA_RIG_TOUCH_GESTURES } from "../config";
 import { useCameraRigViewModel } from "../model/useCameraRigViewModel";

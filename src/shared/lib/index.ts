@@ -11,7 +11,7 @@ export type {
 export { getGraphLayout } from "./graphLayout";
 export type { ResponsiveLayoutState } from "./useResponsiveLayout";
 export { useResponsiveLayout } from "./useResponsiveLayout";
-export type { Vec3 } from "./vec3";
+export type { Vec3, Vector3Tuple } from "./vec3";
 export {
 	addVec3,
 	distanceVec3,

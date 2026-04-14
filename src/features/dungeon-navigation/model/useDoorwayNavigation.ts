@@ -12,7 +12,7 @@ import {
 	getPlayerPosition,
 	subscribeToPlayerPosition,
 } from "@/shared/lib/playerPositionStore";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { resolveNearInteractableTarget } from "../lib";
 import {

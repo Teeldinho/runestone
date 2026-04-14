@@ -1,5 +1,5 @@
 import { PLAYER_EYE_HEIGHT } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import type { CameraHotkey, CameraMode } from "./cameraConfig";
 import { CAMERA_HOTKEYS, CAMERA_MODES } from "./cameraConfig";
