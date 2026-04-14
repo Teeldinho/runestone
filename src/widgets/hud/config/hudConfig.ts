@@ -21,4 +21,5 @@ export const HUD_COPY = {
 		ROOM_STATE: "Room State",
 		TREASURE_KEY: "Treasure Key",
 	},
+	VITALITY: "VITALITY",
 } as const;
