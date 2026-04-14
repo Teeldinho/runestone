@@ -1,5 +1,5 @@
-import { USERNAME_RULES } from "../config/authConfig";
-import { USERNAME_PATTERN } from "../config/usernameValidationConfig";
+import { USERNAME_RULES } from "../config";
+import { USERNAME_PATTERN } from "./usernamePattern";
 
 export const normalizeUsernameInput = (input: string): string => input.trim();
 

@@ -3,6 +3,8 @@ export { CAMERA_MODES } from "./cameraModesConfig";
 export type { ChainMultiplier, ScoreValueKey, StorageKey } from "./constants";
 export {
 	CAMERA_DEFAULT_ZOOM,
+	CAMERA_LERP_DECAY_RATE,
+	CAMERA_LERP_FRAME_COUNT,
 	CAMERA_TRANSITION_MS,
 	CHAIN_MULTIPLIER_MAX_INDEX,
 	CHAIN_MULTIPLIERS,

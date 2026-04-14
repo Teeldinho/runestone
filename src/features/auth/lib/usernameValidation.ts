@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import { AUTH_COPY, USERNAME_RULES } from "../config/authConfig";
-import { USERNAME_PATTERN } from "../config/usernameValidationConfig";
+import { AUTH_COPY, USERNAME_RULES } from "../config";
+import { USERNAME_PATTERN } from "./usernamePattern";
 
 const usernameSchema = z
 	.string()

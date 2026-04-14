@@ -10,4 +10,3 @@ export {
 export type { AuthEventType } from "./authEvents";
 export { AUTH_EVENTS } from "./authEvents";
 export { AUTH_CONTEXT_KEYS, AUTH_INITIAL_CONTEXT } from "./authMachineConfig";
-export { USERNAME_PATTERN } from "./usernameValidationConfig";

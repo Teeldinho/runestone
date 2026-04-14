@@ -9,7 +9,7 @@ import {
 	Input,
 } from "@/shared/ui";
 import { AUTH_COPY, USERNAME_RULES } from "../config";
-import { USERNAME_PATTERN } from "../config/usernameValidationConfig";
+import { USERNAME_PATTERN } from "../lib";
 import { type UsernameFormInput, useUsernameForm } from "../model";
 
 type UsernameFormProps = {

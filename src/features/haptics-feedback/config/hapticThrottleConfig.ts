@@ -1,8 +1,6 @@
 import { HAPTIC_EVENT_NAMES, type HapticEventName } from "./hapticEvents";
 
-export const HAPTICS_DEBUG_MODE_ENABLED = import.meta.env.DEV;
-
-const THROTTLED_HAPTIC_EVENT_LIST: readonly HapticEventName[] = [
+export const THROTTLED_HAPTIC_EVENT_LIST: readonly HapticEventName[] = [
 	HAPTIC_EVENT_NAMES.ON_ROOM_ENTER,
 	HAPTIC_EVENT_NAMES.ON_GUARD_SUCCESS,
 	HAPTIC_EVENT_NAMES.ON_GUARD_FAIL,
@@ -10,8 +8,4 @@ const THROTTLED_HAPTIC_EVENT_LIST: readonly HapticEventName[] = [
 	HAPTIC_EVENT_NAMES.ON_KEY_PICKUP,
 	HAPTIC_EVENT_NAMES.ON_CAMERA_SWITCH,
 	HAPTIC_EVENT_NAMES.ON_TRANSITION,
-];
-
-export const THROTTLED_HAPTIC_EVENTS: ReadonlySet<HapticEventName> = new Set(
-	THROTTLED_HAPTIC_EVENT_LIST,
-);
+] as const;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ENEMY_COLLIDER_CONFIG } from "../config";
+import { ENEMY_COLLIDER_CONFIG, ENEMY_GLOW_CONFIG } from "../config";
 import {
 	computeEnemyGlowOffsetY,
 	computeEnemySpawnHeightOffset,
@@ -23,10 +23,15 @@ describe("enemyGeometry", () => {
 	describe("computeEnemyGlowOffsetY", () => {
 		it("should compute negative spawn offset plus tube radius", () => {
 			const spawnOffset = computeEnemySpawnHeightOffset();
-			const tubeRadius = ENEMY_COLLIDER_CONFIG.RADIUS;
+			const tubeRadius = ENEMY_GLOW_CONFIG.TUBE_RADIUS;
 			const expected = -spawnOffset + tubeRadius;
 			const result = computeEnemyGlowOffsetY();
 			expect(result).toBeCloseTo(expected);
+		});
+
+		it("should equal approximately -0.87", () => {
+			const result = computeEnemyGlowOffsetY();
+			expect(result).toBeCloseTo(-0.87, 2);
 		});
 	});
 });

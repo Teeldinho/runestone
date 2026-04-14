@@ -1,15 +1,6 @@
-import * as THREE from "three";
-import { CAMERA_TRANSITION_MS } from "@/shared/config";
-import {
-	computeCameraRigLerpAlpha,
-	computeCameraRigTransitionJumpDistance,
-} from "../lib/cameraMath";
+export const CAMERA_RIG_LERP_ALPHA = 0.0769;
 
-export const CAMERA_RIG_LERP_ALPHA =
-	computeCameraRigLerpAlpha(CAMERA_TRANSITION_MS);
-
-export const CAMERA_RIG_TRANSITION_JUMP_DISTANCE =
-	computeCameraRigTransitionJumpDistance();
+export const CAMERA_RIG_TRANSITION_JUMP_DISTANCE = 6;
 
 export const CAMERA_RIG_THIRD_PERSON_TRANSITION_PADDING = 0.2;
 
@@ -23,11 +14,11 @@ export const CAMERA_RIG_CAMERA_UP = {
 
 export const CAMERA_RIG_TOUCH_GESTURES = {
 	ORBIT: {
-		ONE: THREE.TOUCH.ROTATE,
-		TWO: THREE.TOUCH.DOLLY_PAN,
+		ONE: 0,
+		TWO: 1,
 	},
 	TOP_DOWN: {
-		ONE: THREE.TOUCH.PAN,
-		TWO: THREE.TOUCH.DOLLY_PAN,
+		ONE: 2,
+		TWO: 1,
 	},
 } as const;
