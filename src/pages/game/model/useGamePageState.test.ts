@@ -6,9 +6,39 @@ import { describe, expect, it, vi } from "vitest";
 import { ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { PLAYER_STATES, usePlayerMachineRuntime } from "@/entities/player";
 import { useGameMachine } from "@/features/dungeon-navigation";
+import {
+	STATE_VISUALIZER_SECTION_IDS,
+	useStateVisualizer,
+} from "@/features/state-visualizer";
 import { GAME_PAGE_COPY } from "../config";
 
 import { useGamePageState } from "./useGamePageState";
+
+vi.mock("@/features/state-visualizer", () => ({
+	STATE_VISUALIZER_SECTION_IDS: {
+		DUNGEON: "DUNGEON",
+		CAMERA: "CAMERA",
+		AUDIO: "AUDIO",
+		PLAYER: "PLAYER",
+	},
+	useStateVisualizer: vi.fn(() => ({
+		sections: [],
+	})),
+}));
+
+vi.mock("@/features/audio-manager", () => ({
+	audioMachine: {},
+	useAudioController: vi.fn(() => ({
+		audioState: { isMuted: false },
+	})),
+}));
+
+vi.mock("@/features/camera-system", () => ({
+	createCameraMachine: vi.fn(() => ({})),
+	useCameraMachine: vi.fn(() => ({
+		mode: "FREE_ORBITAL",
+	})),
+}));
 
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachine: vi.fn(),
@@ -198,6 +228,21 @@ describe("useGamePageState", () => {
 			sendPlayerMachineEvent: vi.fn(),
 		} as unknown as ReturnType<typeof usePlayerMachineRuntime>);
 
+		const mockSections = [
+			{
+				id: STATE_VISUALIZER_SECTION_IDS.DUNGEON,
+				label: "Dungeon",
+				activeStateLabel: "entrance",
+				guardKeys: [],
+				nodes: [],
+				edges: [],
+				positionedNodes: [],
+			},
+		];
+		vi.mocked(useStateVisualizer).mockReturnValue({
+			sections: mockSections,
+		});
+
 		const { result } = renderHook(() => useGamePageState());
 
 		expect(result.current.canvasMachineRuntime).toEqual({
@@ -205,5 +250,6 @@ describe("useGamePageState", () => {
 			enemiesRemaining: 3,
 			hasTreasureKey: false,
 		});
+		expect(result.current.graphSections).toEqual(mockSections);
 	});
 });

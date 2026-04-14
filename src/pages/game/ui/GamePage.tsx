@@ -8,7 +8,15 @@ import {
 	TouchJoystickOverlay,
 } from "@/features/touch-input";
 import { GAME_PAGE_LAYOUT, GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
-import { useGamePage } from "@/pages/game/model";
+import {
+	useGamePageAudio,
+	useGamePageCamera,
+	useGamePageLayout,
+	useGamePageReset,
+	useGamePageSheet,
+	useGamePageState,
+	useGamePageTouch,
+} from "@/pages/game/model";
 import {
 	Badge,
 	Button,
@@ -42,38 +50,47 @@ import {
 } from "@/widgets/xstate-inspector-panel";
 
 export function GamePage() {
+	const audio = useGamePageAudio();
+	const camera = useGamePageCamera();
+	const layout = useGamePageLayout();
+	const reset = useGamePageReset();
+	const sheet = useGamePageSheet();
+	const state = useGamePageState();
+	const touch = useGamePageTouch();
+
 	const {
 		actionButtons,
 		activeStateLabel,
-		cameraStateSnapshot,
 		canvasMachineRuntime,
 		currentRoomLabel,
 		discoveredRoomLabels,
 		enemiesRemaining,
 		graphSections,
-		handleAudioMuteToggle,
-		handleCameraModeSwitch,
+		hasTreasureKeyLabel,
+		playerHp,
+		playerMaxHp,
+	} = state;
+
+	const { cameraStateSnapshot, handleCameraModeSwitch } = camera;
+	const { handleAudioMuteToggle, isAudioMuted } = audio;
+	const {
 		handleMobileSheetOpenChange,
 		handleMobileSheetTabChange,
+		isMobileSheetOpen,
+		mobileSheetTabId,
+	} = sheet;
+	const {
 		handleTouchAttack,
 		handleTouchInteract,
 		handleTouchJoystickMove,
 		handleTouchJoystickStop,
 		hasTouchAttack,
 		hasTouchInteract,
-		hasTreasureKeyLabel,
-		handleDungeonRunReset,
-		isAudioMuted,
-		isDesktopLayout,
-		isMobileSheetOpen,
-		isMobileTabletLandscape,
-		isTabletLayout,
-		mobileSheetTabId,
-		playerHp,
-		playerMaxHp,
 		touchAttackPrompt,
 		touchInteractPrompt,
-	} = useGamePage();
+	} = touch;
+	const { handleDungeonRunReset } = reset;
+	const { isDesktopLayout, isMobileTabletLandscape, isTabletLayout } = layout;
 	const settings = useSettingsForm();
 
 	// Ref-callback pattern: re-renders (and thus syncs to OrbitControls) when the

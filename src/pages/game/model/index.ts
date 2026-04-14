@@ -1,5 +1,3 @@
-export type { GamePageViewModel } from "./useGamePage";
-export { useGamePage } from "./useGamePage";
 export { useGamePageAudio } from "./useGamePageAudio";
 export { useGamePageCamera } from "./useGamePageCamera";
 export { useGamePageLayout } from "./useGamePageLayout";

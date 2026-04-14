@@ -2,71 +2,88 @@
 
 import { cleanup, render, screen } from "@testing-library/react";
 import type React from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { DUNGEON_EVENTS, ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
-import { GAME_PAGE_COPY, GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
-import { useGamePage } from "@/pages/game/model";
-
+import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
+import {
+	useGamePageAudio,
+	useGamePageLayout,
+	useGamePageReset,
+	useGamePageSheet,
+	useGamePageTouch,
+} from "@/pages/game/model";
 import { GamePage } from "./GamePage";
 
 const TEST_NAVIGATION_ACTION_LABELS = {
 	[DUNGEON_EVENTS.ENTER_LIBRARY]: "Enter Library",
 } as const;
 
-const createGamePageViewModel = (overrides = {}) => ({
-	actionButtons: [
-		{
-			eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
-			label: TEST_NAVIGATION_ACTION_LABELS[DUNGEON_EVENTS.ENTER_LIBRARY],
-			isDisabled: false,
-			handleDungeonActionTrigger: vi.fn(),
-		},
-	],
-	activeStateLabel: ROOM_IDS.ENTRANCE,
-	cameraStateSnapshot: {
-		fov: 58,
-		mode: CAMERA_MODES.FREE_ORBITAL,
-		position: [0, 8, 10] as [number, number, number],
-		target: [0, 0, 0] as [number, number, number],
-		zoom: 1,
-	},
-	canvasMachineRuntime: {
-		currentRoomId: ROOM_IDS.ENTRANCE,
-		enemiesRemaining: 1,
-		hasTreasureKey: false,
-	},
-	currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
-	discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
-	enemiesRemaining: 1,
-	graphSections: [],
-	handleCameraModeSwitch: vi.fn(),
-	handleMobileSheetOpenChange: vi.fn(),
-	handleMobileSheetTabChange: vi.fn(),
-	handleTouchAttack: vi.fn(),
-	handleTouchInteract: vi.fn(),
-	handleTouchJoystickMove: vi.fn(),
-	handleTouchJoystickStop: vi.fn(),
-	hasTouchAttack: false,
-	hasTouchInteract: false,
-	handleAudioMuteToggle: vi.fn(),
-	isAudioMuted: false,
-	isDesktopLayout: true,
-	isMobileSheetOpen: false,
-	isMobileTabletLandscape: false,
-	isTabletLayout: false,
-	mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
-	hasTreasureKeyLabel: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
-	handleDungeonRunReset: vi.fn(),
-	playerHp: 100,
-	playerMaxHp: 100,
-	touchAttackPrompt: null,
-	touchInteractPrompt: null,
-	...overrides,
-});
-
 vi.mock("@/pages/game/model", () => ({
-	useGamePage: vi.fn(),
+	useGamePageAudio: vi.fn(() => ({
+		isAudioMuted: false,
+		handleAudioMuteToggle: vi.fn(),
+		handleAudioPlayRequest: vi.fn(),
+	})),
+	useGamePageCamera: vi.fn(() => ({
+		cameraStateSnapshot: {
+			fov: 58,
+			mode: CAMERA_MODES.FREE_ORBITAL,
+			position: [0, 8, 10] as [number, number, number],
+			target: [0, 0, 0] as [number, number, number],
+			zoom: 1,
+		},
+		handleCameraModeSwitch: vi.fn(),
+		cameraMode: CAMERA_MODES.FREE_ORBITAL,
+	})),
+	useGamePageLayout: vi.fn(() => ({
+		isDesktopLayout: true,
+		isTabletLayout: false,
+		isMobileTabletLandscape: false,
+	})),
+	useGamePageReset: vi.fn(() => ({
+		entrancePosition: [0, 0, 0] as const,
+		handleDungeonRunReset: vi.fn(),
+	})),
+	useGamePageSheet: vi.fn(() => ({
+		isMobileSheetOpen: false,
+		mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
+		handleMobileSheetOpenChange: vi.fn(),
+		handleMobileSheetTabChange: vi.fn(),
+	})),
+	useGamePageState: vi.fn(() => ({
+		actionButtons: [
+			{
+				eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
+				label: TEST_NAVIGATION_ACTION_LABELS[DUNGEON_EVENTS.ENTER_LIBRARY],
+				isDisabled: false,
+				handleDungeonActionTrigger: vi.fn(),
+			},
+		],
+		activeStateLabel: ROOM_IDS.ENTRANCE,
+		canvasMachineRuntime: {
+			currentRoomId: ROOM_IDS.ENTRANCE,
+			enemiesRemaining: 1,
+			hasTreasureKey: false,
+		},
+		currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+		discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
+		enemiesRemaining: 1,
+		graphSections: [],
+		hasTreasureKeyLabel: "Treasure Key: Missing",
+		playerHp: 100,
+		playerMaxHp: 100,
+	})),
+	useGamePageTouch: vi.fn(() => ({
+		hasTouchAttack: false,
+		hasTouchInteract: false,
+		touchAttackPrompt: null,
+		touchInteractPrompt: null,
+		handleTouchAttack: vi.fn(),
+		handleTouchInteract: vi.fn(),
+		handleTouchJoystickMove: vi.fn(),
+		handleTouchJoystickStop: vi.fn(),
+	})),
 }));
 
 vi.mock("@/features/settings", () => ({
@@ -116,27 +133,11 @@ vi.mock("@/widgets/leaderboard-panel", () => ({
 	),
 }));
 
-vi.mock("@/features/dungeon-navigation", () => ({
-	useInteractionCandidates: vi.fn(() => ({
-		interactPrompt: null,
-		interactEvent: null,
-		attackPrompt: null,
-		hasInteract: false,
-		hasAttack: false,
-	})),
-	useInteractionInput: vi.fn(),
-	useSendDungeonMachineEvent: vi.fn(() => vi.fn()),
-}));
-
 afterEach(() => {
 	cleanup();
 });
 
 describe("GamePage", () => {
-	beforeEach(() => {
-		vi.mocked(useGamePage).mockReturnValue(createGamePageViewModel());
-	});
-
 	it("renders the HUD widget composition", () => {
 		render(<GamePage />);
 
@@ -150,17 +151,36 @@ describe("GamePage", () => {
 	});
 
 	it("renders touch overlays and bottom-sheet trigger on mobile and tablet landscape", () => {
-		vi.mocked(useGamePage).mockReturnValue(
-			createGamePageViewModel({
-				isDesktopLayout: false,
-				hasTouchAttack: true,
-				hasTouchInteract: true,
-				isMobileTabletLandscape: true,
-				isTabletLayout: true,
-				touchAttackPrompt: "Attack",
-				touchInteractPrompt: "Enter Library",
-			}),
-		);
+		vi.mocked(useGamePageLayout).mockReturnValue({
+			isDesktopLayout: false,
+			isTabletLayout: true,
+			isMobileTabletLandscape: true,
+		});
+		vi.mocked(useGamePageTouch).mockReturnValue({
+			hasTouchAttack: true,
+			hasTouchInteract: true,
+			touchAttackPrompt: "Attack",
+			touchInteractPrompt: "Enter Library",
+			handleTouchAttack: vi.fn(),
+			handleTouchInteract: vi.fn(),
+			handleTouchJoystickMove: vi.fn(),
+			handleTouchJoystickStop: vi.fn(),
+		});
+		vi.mocked(useGamePageSheet).mockReturnValue({
+			isMobileSheetOpen: false,
+			mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
+			handleMobileSheetOpenChange: vi.fn(),
+			handleMobileSheetTabChange: vi.fn(),
+		});
+		vi.mocked(useGamePageAudio).mockReturnValue({
+			isAudioMuted: false,
+			handleAudioMuteToggle: vi.fn(),
+			handleAudioPlayRequest: vi.fn(),
+		});
+		vi.mocked(useGamePageReset).mockReturnValue({
+			entrancePosition: [0, 0.9, 0] as [number, 0.9, number],
+			handleDungeonRunReset: vi.fn(),
+		});
 
 		render(<GamePage />);
 
@@ -183,12 +203,11 @@ describe("GamePage", () => {
 	});
 
 	it("renders rotate-device banner in touch portrait mode", () => {
-		vi.mocked(useGamePage).mockReturnValue(
-			createGamePageViewModel({
-				isDesktopLayout: false,
-				isMobileTabletLandscape: false,
-			}),
-		);
+		vi.mocked(useGamePageLayout).mockReturnValue({
+			isDesktopLayout: false,
+			isTabletLayout: false,
+			isMobileTabletLandscape: false,
+		});
 
 		render(<GamePage />);
 
