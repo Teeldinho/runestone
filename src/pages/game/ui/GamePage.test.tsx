@@ -178,7 +178,7 @@ describe("GamePage", () => {
 			handleAudioPlayRequest: vi.fn(),
 		});
 		vi.mocked(useGamePageReset).mockReturnValue({
-			entrancePosition: [0, 0.9, 0] as [number, 0.9, number],
+			entrancePosition: [0, 0, 0] as [number, number, number],
 			handleDungeonRunReset: vi.fn(),
 		});
 
