@@ -44,14 +44,16 @@ export function GamePage() {
 		<div className="p-3">
 			<GameHud
 				actionButtons={actionButtons}
-				activeStateLabel={activeStateLabel}
-				currentRoomLabel={currentRoomLabel}
-				discoveredRoomLabels={discoveredRoomLabels}
-				enemiesRemaining={enemiesRemaining}
-				handleDungeonRunReset={handleDungeonRunReset}
-				hasTreasureKeyLabel={hasTreasureKeyLabel}
-				playerHp={playerHp}
-				playerMaxHp={playerMaxHp}
+				hudActions={{ handleDungeonRunReset }}
+				hudData={{
+					activeStateLabel,
+					currentRoomLabel,
+					discoveredRoomLabels,
+					enemiesRemaining,
+					hasTreasureKeyLabel,
+					playerHp,
+					playerMaxHp,
+				}}
 			/>
 		</div>
 	);

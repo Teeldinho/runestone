@@ -20,5 +20,7 @@ export type GameHudViewModel = {
 	actionButtons: HudActionButton[];
 	discoveredRoomLabels: string[];
 	handleDungeonRunReset: () => void;
+	hpPercentage: number;
+	isLowHp: boolean;
 	machineSnapshotEntries: HudMachineSnapshotEntry[];
 };

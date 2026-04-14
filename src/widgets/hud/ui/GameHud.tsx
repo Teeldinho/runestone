@@ -1,5 +1,5 @@
-import { HUD_COPY } from "@/widgets/hud/config";
 import { useGameHud } from "@/widgets/hud/model";
+import type { HudActionButton } from "@/widgets/hud/model/types";
 
 import { HudActions } from "./HudActions";
 import { HudDiscoveredRooms } from "./HudDiscoveredRooms";
@@ -7,36 +7,37 @@ import { HudHealthBar } from "./HudHealthBar";
 import { HudMachineSnapshot } from "./HudMachineSnapshot";
 
 type GameHudProps = {
-	actionButtons: Parameters<typeof useGameHud>[0]["actionButtons"];
-	activeStateLabel: Parameters<typeof useGameHud>[0]["activeStateLabel"];
-	currentRoomLabel: Parameters<typeof useGameHud>[0]["currentRoomLabel"];
-	discoveredRoomLabels: Parameters<
-		typeof useGameHud
-	>[0]["discoveredRoomLabels"];
-	enemiesRemaining: Parameters<typeof useGameHud>[0]["enemiesRemaining"];
-	handleDungeonRunReset: Parameters<
-		typeof useGameHud
-	>[0]["handleDungeonRunReset"];
-	hasTreasureKeyLabel: Parameters<typeof useGameHud>[0]["hasTreasureKeyLabel"];
-	playerHp: Parameters<typeof useGameHud>[0]["playerHp"];
-	playerMaxHp: Parameters<typeof useGameHud>[0]["playerMaxHp"];
+	actionButtons: HudActionButton[];
+	hudActions: {
+		handleDungeonRunReset: () => void;
+	};
+	hudData: {
+		activeStateLabel: string;
+		currentRoomLabel: string;
+		discoveredRoomLabels: string[];
+		enemiesRemaining: number;
+		hasTreasureKeyLabel: string;
+		playerHp: number;
+		playerMaxHp: number;
+	};
 };
 
-export function GameHud({ playerHp, playerMaxHp, ...props }: GameHudProps) {
+export function GameHud({ actionButtons, hudActions, hudData }: GameHudProps) {
 	const gameHudViewModel = useGameHud({
-		playerHp,
-		playerMaxHp,
-		...props,
+		...hudData,
+		actionButtons,
+		handleDungeonRunReset: hudActions.handleDungeonRunReset,
 	});
-
-	const machineSnapshotEntries = gameHudViewModel.machineSnapshotEntries.filter(
-		(entry) => entry.label !== HUD_COPY.SNAPSHOT_LABELS.PLAYER_HP,
-	);
 
 	return (
 		<div className="flex flex-col gap-6">
-			<HudHealthBar playerHp={playerHp} playerMaxHp={playerMaxHp} />
-			<HudMachineSnapshot entries={machineSnapshotEntries} />
+			<HudHealthBar
+				hpPercentage={gameHudViewModel.hpPercentage}
+				isLowHp={gameHudViewModel.isLowHp}
+				playerHp={hudData.playerHp}
+				playerMaxHp={hudData.playerMaxHp}
+			/>
+			<HudMachineSnapshot entries={gameHudViewModel.machineSnapshotEntries} />
 			<HudDiscoveredRooms roomLabels={gameHudViewModel.discoveredRoomLabels} />
 			<HudActions
 				actionButtons={gameHudViewModel.actionButtons}

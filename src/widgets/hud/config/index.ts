@@ -1,1 +1,5 @@
-export { HUD_COPY, HUD_DISPLAY_VARIANTS } from "./hudConfig";
+export {
+	HUD_COPY,
+	HUD_DISPLAY_VARIANTS,
+	LOW_HP_THRESHOLD_PERCENT,
+} from "./hudConfig";

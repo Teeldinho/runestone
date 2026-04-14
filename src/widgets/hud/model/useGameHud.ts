@@ -2,7 +2,11 @@ import { useMemo } from "react";
 
 import { DUNGEON_EVENTS } from "@/entities/dungeon";
 
-import { HUD_COPY, HUD_DISPLAY_VARIANTS } from "../config";
+import {
+	HUD_COPY,
+	HUD_DISPLAY_VARIANTS,
+	LOW_HP_THRESHOLD_PERCENT,
+} from "../config";
 
 import type { GameHudViewModel, HudActionButton } from "./types";
 
@@ -34,13 +38,21 @@ export const useGameHud = ({
 	playerHp,
 	playerMaxHp,
 }: UseGameHudParams): GameHudViewModel => {
-	return useMemo(
-		() => ({
+	return useMemo(() => {
+		const hpPercentage = Math.max(
+			0,
+			Math.min(100, (playerHp / playerMaxHp) * 100),
+		);
+		const isLowHp = hpPercentage < LOW_HP_THRESHOLD_PERCENT;
+
+		return {
 			actionButtons: actionButtons.filter(
 				(button) => !SIDEBAR_EXCLUDED_EVENTS.has(button.eventType),
 			),
 			discoveredRoomLabels,
 			handleDungeonRunReset,
+			hpPercentage,
+			isLowHp,
 			machineSnapshotEntries: [
 				{
 					displayVariant: HUD_DISPLAY_VARIANTS.TEXT,
@@ -62,23 +74,17 @@ export const useGameHud = ({
 					label: HUD_COPY.SNAPSHOT_LABELS.ENEMIES_REMAINING,
 					value: String(enemiesRemaining),
 				},
-				{
-					displayVariant: HUD_DISPLAY_VARIANTS.TEXT,
-					label: HUD_COPY.SNAPSHOT_LABELS.PLAYER_HP,
-					value: `${playerHp} / ${playerMaxHp}`,
-				},
 			],
-		}),
-		[
-			actionButtons,
-			activeStateLabel,
-			currentRoomLabel,
-			discoveredRoomLabels,
-			enemiesRemaining,
-			handleDungeonRunReset,
-			hasTreasureKeyLabel,
-			playerHp,
-			playerMaxHp,
-		],
-	);
+		};
+	}, [
+		actionButtons,
+		activeStateLabel,
+		currentRoomLabel,
+		discoveredRoomLabels,
+		enemiesRemaining,
+		handleDungeonRunReset,
+		hasTreasureKeyLabel,
+		playerHp,
+		playerMaxHp,
+	]);
 };

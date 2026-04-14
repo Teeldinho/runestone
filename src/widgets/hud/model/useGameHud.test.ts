@@ -67,11 +67,6 @@ describe("useGameHud", () => {
 				label: HUD_COPY.SNAPSHOT_LABELS.ENEMIES_REMAINING,
 				value: "1",
 			},
-			{
-				displayVariant: "text",
-				label: HUD_COPY.SNAPSHOT_LABELS.PLAYER_HP,
-				value: "80 / 100",
-			},
 		]);
 		expect(result.current.actionButtons).toHaveLength(1);
 		expect(result.current.actionButtons[0]?.handleDungeonActionTrigger).toBe(
@@ -84,14 +79,33 @@ describe("useGameHud", () => {
 		]);
 	});
 
-	it("formats hp display as 'current / max'", () => {
+	it("computes hpPercentage and isLowHp from playerHp and playerMaxHp", () => {
 		const { result } = renderHook(() =>
-			useGameHud({ ...BASE_PARAMS, playerHp: 45, playerMaxHp: 100 }),
+			useGameHud({ ...BASE_PARAMS, playerHp: 80, playerMaxHp: 100 }),
 		);
 
-		const hpEntry = result.current.machineSnapshotEntries.find(
-			(e) => e.label === HUD_COPY.SNAPSHOT_LABELS.PLAYER_HP,
+		expect(result.current.hpPercentage).toBe(80);
+		expect(result.current.isLowHp).toBe(false);
+	});
+
+	it("marks hp as low when below 30 percent", () => {
+		const { result } = renderHook(() =>
+			useGameHud({ ...BASE_PARAMS, playerHp: 20, playerMaxHp: 100 }),
 		);
-		expect(hpEntry?.value).toBe("45 / 100");
+
+		expect(result.current.hpPercentage).toBe(20);
+		expect(result.current.isLowHp).toBe(true);
+	});
+
+	it("clamps hpPercentage to 0-100 range", () => {
+		const { result: result1 } = renderHook(() =>
+			useGameHud({ ...BASE_PARAMS, playerHp: -10, playerMaxHp: 100 }),
+		);
+		expect(result1.current.hpPercentage).toBe(0);
+
+		const { result: result2 } = renderHook(() =>
+			useGameHud({ ...BASE_PARAMS, playerHp: 150, playerMaxHp: 100 }),
+		);
+		expect(result2.current.hpPercentage).toBe(100);
 	});
 });

@@ -1,3 +1,5 @@
+export const LOW_HP_THRESHOLD_PERCENT = 30;
+
 export const HUD_DISPLAY_VARIANTS = {
 	BADGE: "badge",
 	TEXT: "text",
