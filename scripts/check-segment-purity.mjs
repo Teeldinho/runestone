@@ -126,11 +126,20 @@ const parseTopLevelDeclarations = (fileContent) => {
 	return declarations;
 };
 
-const formatViolation = ({ filePath, lineNumber, ruleId, message }) =>
-	`${filePath}:${lineNumber} [${ruleId}] ${message}`;
+const formatViolation = ({
+	filePath,
+	lineNumber,
+	ruleId,
+	message,
+	severity,
+}) =>
+	severity === "ERROR"
+		? `${filePath}:${lineNumber} [${ruleId}] ${message}`
+		: `${filePath}:${lineNumber} [${ruleId}] (warning) ${message}`;
 
 const run = async () => {
 	const violations = [];
+	const warnings = [];
 
 	for (const directoryName of TARGET_DIRECTORIES) {
 		const directoryPath = path.join(PROJECT_ROOT, directoryName);
@@ -169,6 +178,7 @@ const run = async () => {
 						filePath: relativePath,
 						lineNumber: helperDeclaration.lineNumber,
 						ruleId: "ENF-CONST-32",
+						severity: "ERROR",
 						message:
 							"config files must be static-only; move helper functions to lib/ or model/",
 					});
@@ -181,9 +191,33 @@ const run = async () => {
 						filePath: relativePath,
 						lineNumber: helperDeclaration.lineNumber,
 						ruleId: "ENF-UI-34",
+						severity: "ERROR",
 						message:
 							"ui files are render-only; move helper functions to model/ or lib/",
 					});
+				}
+
+				// ENF-COMP-06: Orchestrator components calling hooks but receiving too many props
+				// Heuristic: file in ui/*.tsx that calls use[A-Z] and has a Props interface with >6 entries
+				const callsHook = /use[A-Z]\w+\s*\(/u.test(fileContent);
+				if (callsHook) {
+					// Match Props interface or type alias
+					const propsMatch = fileContent.match(
+						/(?:type\s+\w+Props\s*=\s*\{|interface\s+\w+Props\s*\{)([\s\S]*?)\n\}/u,
+					);
+					if (propsMatch) {
+						const propCount = (propsMatch[1].match(/^\s+\w+\s*:/gm) || [])
+							.length;
+						if (propCount > 6) {
+							warnings.push({
+								filePath: relativePath,
+								lineNumber: 1,
+								ruleId: "ENF-COMP-06",
+								severity: "WARNING",
+								message: `Layout component calls a hook but receives ${propCount} props (>6 max). Extract a layout hook that calls useX() directly instead of receiving props.`,
+							});
+						}
+					}
 				}
 			}
 
@@ -193,6 +227,7 @@ const run = async () => {
 						filePath: relativePath,
 						lineNumber: helperDeclaration.lineNumber,
 						ruleId: "ENF-CONST-33",
+						severity: "ERROR",
 						message:
 							"config files must not declare helper functions; move to lib/",
 					});
@@ -209,6 +244,14 @@ const run = async () => {
 		console.error(`\nTotal violations: ${violations.length}`);
 		process.exitCode = 1;
 		return;
+	}
+
+	if (warnings.length > 0) {
+		console.warn("[lint:purity] Segment purity warnings detected:\n");
+		for (const warning of warnings) {
+			console.warn(`- ${formatViolation(warning)}`);
+		}
+		console.warn(`\nTotal warnings: ${warnings.length}`);
 	}
 
 	console.info("[lint:purity] Segment purity checks passed");
