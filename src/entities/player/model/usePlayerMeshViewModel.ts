@@ -1,11 +1,8 @@
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef, useSyncExternalStore } from "react";
-import {
-	getCameraMode,
-	subscribeToCameraMode,
-} from "@/shared/lib";
 import type { Vector3Tuple } from "@/shared/lib";
+import { getCameraMode, subscribeToCameraMode } from "@/shared/lib";
 import { PLAYER_STATES } from "../config";
 import { resolvePlayerAvatarVisibility, selectPlayerAnimation } from "../lib";
 import { usePlayerMachineRuntime } from "./playerMachineRuntime";

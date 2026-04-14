@@ -1,7 +1,9 @@
 import {
+	DOOR_SIDES,
 	type DoorSide,
 	DUNGEON_EVENTS,
-	FLOOR_ONE_EVENT_DOOR_TRANSITIONS,
+	ROOM_IDS,
+	type RoomId,
 } from "@/entities/dungeon";
 
 export const NAVIGATION_ACTION_EVENTS = [
@@ -19,6 +21,19 @@ export const NAVIGATION_ACTION_EVENTS = [
 
 export type NavigationActionEvent = (typeof NAVIGATION_ACTION_EVENTS)[number];
 
+const DOOR_NAVIGATION_EVENTS = [
+	DUNGEON_EVENTS.ENTER_LIBRARY,
+	DUNGEON_EVENTS.ENTER_GUARD_ROOM,
+	DUNGEON_EVENTS.ENTER_TREASURY,
+	DUNGEON_EVENTS.ENTER_EXIT,
+	DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
+	DUNGEON_EVENTS.RETURN_TO_LIBRARY,
+	DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM,
+	DUNGEON_EVENTS.RETURN_TO_TREASURY,
+] as const;
+
+export type DoorNavigationEvent = (typeof DOOR_NAVIGATION_EVENTS)[number];
+
 export const NAVIGATION_ACTION_LABELS: Record<NavigationActionEvent, string> = {
 	[DUNGEON_EVENTS.ENTER_LIBRARY]: "Enter Library",
 	[DUNGEON_EVENTS.ENTER_GUARD_ROOM]: "Enter Guard Room",
@@ -33,16 +48,39 @@ export const NAVIGATION_ACTION_LABELS: Record<NavigationActionEvent, string> = {
 };
 
 export const DOOR_TRANSITION_MAP: Record<
-	string,
-	{ direction: DoorSide; roomId: string }
-> = Object.fromEntries(
-	Object.entries(FLOOR_ONE_EVENT_DOOR_TRANSITIONS).map(
-		([eventType, transition]) => [
-			eventType,
-			{
-				direction: transition.departureDoorSide,
-				roomId: transition.fromRoom,
-			},
-		],
-	),
-) as Record<string, { direction: DoorSide; roomId: string }>;
+	DoorNavigationEvent,
+	{ direction: DoorSide; roomId: RoomId }
+> = {
+	[DUNGEON_EVENTS.ENTER_LIBRARY]: {
+		direction: DOOR_SIDES.SOUTH,
+		roomId: ROOM_IDS.ENTRANCE,
+	},
+	[DUNGEON_EVENTS.ENTER_GUARD_ROOM]: {
+		direction: DOOR_SIDES.SOUTH,
+		roomId: ROOM_IDS.LIBRARY,
+	},
+	[DUNGEON_EVENTS.ENTER_TREASURY]: {
+		direction: DOOR_SIDES.SOUTH,
+		roomId: ROOM_IDS.GUARD_ROOM,
+	},
+	[DUNGEON_EVENTS.ENTER_EXIT]: {
+		direction: DOOR_SIDES.SOUTH,
+		roomId: ROOM_IDS.TREASURY,
+	},
+	[DUNGEON_EVENTS.RETURN_TO_ENTRANCE]: {
+		direction: DOOR_SIDES.NORTH,
+		roomId: ROOM_IDS.LIBRARY,
+	},
+	[DUNGEON_EVENTS.RETURN_TO_LIBRARY]: {
+		direction: DOOR_SIDES.NORTH,
+		roomId: ROOM_IDS.GUARD_ROOM,
+	},
+	[DUNGEON_EVENTS.RETURN_TO_GUARD_ROOM]: {
+		direction: DOOR_SIDES.NORTH,
+		roomId: ROOM_IDS.TREASURY,
+	},
+	[DUNGEON_EVENTS.RETURN_TO_TREASURY]: {
+		direction: DOOR_SIDES.NORTH,
+		roomId: ROOM_IDS.EXIT,
+	},
+} as const;

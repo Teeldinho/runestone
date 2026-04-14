@@ -6,13 +6,13 @@ import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
+import type { Vector3Tuple } from "@/shared/lib";
 import {
+	getPlayerPosition,
+	getQuaternionFromXZ,
 	removeEnemyPosition,
 	setEnemyPosition,
 } from "@/shared/lib";
-import { getPlayerPosition } from "@/shared/lib";
-import { getQuaternionFromXZ } from "@/shared/lib";
-import type { Vector3Tuple } from "@/shared/lib";
 
 import {
 	ENEMY_ANIMATION_PATHS,

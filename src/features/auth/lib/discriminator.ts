@@ -1,4 +1,5 @@
-import { USERNAME_RULES } from "../config";
+import { USERNAME_RULES } from "../config/authConfig";
+import { USERNAME_PATTERN } from "../config/usernameValidationConfig";
 
 export const normalizeUsernameInput = (input: string): string => input.trim();
 
@@ -13,6 +14,6 @@ export const isUsernameValid = (username: string): boolean => {
 	return (
 		normalizedUsername.length >= USERNAME_RULES.MIN_LENGTH &&
 		normalizedUsername.length <= USERNAME_RULES.MAX_LENGTH &&
-		USERNAME_RULES.PATTERN.test(normalizedUsername)
+		USERNAME_PATTERN.test(normalizedUsername)
 	);
 };

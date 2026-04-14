@@ -5,15 +5,13 @@ import type {
 	DungeonInteractableId,
 	RoomId,
 } from "@/entities/dungeon";
+import type { Vector3Tuple } from "@/shared/lib";
 import {
 	getEnemyPositions,
-	subscribeToEnemyPositions,
-} from "@/shared/lib";
-import {
 	getPlayerPosition,
+	subscribeToEnemyPositions,
 	subscribeToPlayerPosition,
 } from "@/shared/lib";
-import type { Vector3Tuple } from "@/shared/lib";
 
 import { ATTACK_PROMPT, EMPTY_INTERACTION_CANDIDATES } from "../config";
 import { resolveInteractionCandidates } from "../lib";

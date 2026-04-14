@@ -11,11 +11,8 @@ import {
 	type HapticEventName,
 	type HapticPattern,
 	type HapticPatternKey,
-	THROTTLED_HAPTIC_EVENTS,
+	isHapticEventThrottled,
 } from "../config";
-
-const isHapticEventThrottled = (eventName: HapticEventName): boolean =>
-	THROTTLED_HAPTIC_EVENTS.has(eventName);
 
 export const useHaptics = () => {
 	const { trigger, cancel, isSupported } = useWebHaptics({

@@ -8,11 +8,8 @@ import {
 	type RoomId,
 } from "@/entities/dungeon";
 import { createDungeonFloorLayout } from "@/entities/room";
-import {
-	getPlayerPosition,
-	subscribeToPlayerPosition,
-} from "@/shared/lib";
 import type { Vector3Tuple } from "@/shared/lib";
+import { getPlayerPosition, subscribeToPlayerPosition } from "@/shared/lib";
 
 import { resolveNearInteractableTarget } from "../lib";
 import {

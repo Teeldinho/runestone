@@ -1,1 +1,1 @@
-export {};
+export { isHapticEventThrottled } from "./hapticThrottleHelpers";

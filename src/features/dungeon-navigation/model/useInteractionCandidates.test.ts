@@ -7,8 +7,8 @@ import { ROOM_IDS } from "@/entities/dungeon";
 import {
 	clearEnemyPositions,
 	setEnemyPosition,
+	setPlayerPosition,
 } from "@/shared/lib";
-import { setPlayerPosition } from "@/shared/lib";
 
 const mockRuntimeContext = vi.hoisted(() => ({
 	currentRoomId: null as string | null,

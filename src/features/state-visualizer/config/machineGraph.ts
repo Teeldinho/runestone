@@ -1,3 +1,8 @@
+import {
+	GUARD_LABEL_CAPTURE_PATTERN,
+	GUARD_TOKEN_SPLIT_PATTERN,
+} from "../lib/machineGraphParsing";
+
 export const GRAPH_DIRECTION = {
 	VERTICAL: "TB",
 	HORIZONTAL: "LR",
@@ -29,8 +34,8 @@ export const STATE_VISUALIZER_GRAPH_SYNTAX = {
 	MACHINE_GUARD_PREFIX: "xstate.",
 	UNGUARDED_EDGE_TOKEN: "unguarded",
 	STATE_PATH_DELIMITER: " | ",
-	GUARD_LABEL_CAPTURE_PATTERN: /\[(.+?)\]/,
-	GUARD_TOKEN_SPLIT_PATTERN: /&&|\band\b|&|,/gi,
+	GUARD_LABEL_CAPTURE_PATTERN,
+	GUARD_TOKEN_SPLIT_PATTERN,
 } as const;
 
 export const STATE_VISUALIZER_NODE_KINDS = {
