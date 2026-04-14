@@ -12,13 +12,13 @@ import {
 	useGameMachineSelector,
 } from "@/features/dungeon-navigation";
 import { useResponsiveGameLayout } from "@/features/responsive-layout";
-import { setCameraMode } from "@/shared/lib/cameraModeStore";
-import { setCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
+import type { Vector3Tuple } from "@/shared/lib";
 import {
 	getPlayerPosition,
 	hasPlayerPosition,
-} from "@/shared/lib/playerPositionStore";
-import type { Vector3Tuple } from "@/shared/types";
+	setCameraAzimuth,
+	setCameraMode,
+} from "@/shared/lib";
 import {
 	CAMERA_RIG_CAMERA_UP,
 	CAMERA_RIG_FREE_ORBITAL_RECENTER_DISTANCE,

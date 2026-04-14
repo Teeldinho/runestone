@@ -1,7 +1,7 @@
 import { useMachine } from "@xstate/react";
 import { useEffect, useMemo } from "react";
 import { ENEMY_CONFIG, XSTATE_ACTOR_STATUS } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import {
 	ENEMY_GLOW_COLORS_BY_STATE,

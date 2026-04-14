@@ -1,5 +1,5 @@
 import { ROOM_ENTITY_CONFIG } from "@/entities/room/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { getColumnPlacements } from "./roomGltfLayout";
 

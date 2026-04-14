@@ -2,7 +2,7 @@ import { DOOR_SIDES, type DoorSide } from "@/entities/dungeon";
 import { CAMERA_MODES, type CameraMode } from "@/features/camera-system";
 import { DOORWAY_NAVIGATION_CONFIG } from "@/features/dungeon-navigation";
 import { CAMERA_CONFIG, PLAYER_EYE_HEIGHT } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { CAMERA_RIG_THIRD_PERSON_TRANSITION_PADDING } from "../config";
 

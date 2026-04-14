@@ -15,7 +15,7 @@ import {
 	type RoomLabelSettings,
 	type RoomWallOpening,
 } from "@/entities/room";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 type SceneRoomMeshSettings = {
 	roomId: string;

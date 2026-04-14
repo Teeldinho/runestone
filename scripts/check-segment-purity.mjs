@@ -187,19 +187,16 @@ const run = async () => {
 				}
 			}
 
-			const staticConstantDeclaration = declarations.find(
-				(declaration) => declaration.kind === "static_constant",
-			);
-			const helperDeclaration = helperDeclarations[0];
-
-			if (staticConstantDeclaration && helperDeclaration) {
-				violations.push({
-					filePath: relativePath,
-					lineNumber: helperDeclaration.lineNumber,
-					ruleId: "ENF-CONST-33",
-					message:
-						"do not mix static constants and helper functions in one file; split into config/ and lib/model",
-				});
+			if (relativePath.includes("/config/") && helperDeclarations.length > 0) {
+				for (const helperDeclaration of helperDeclarations) {
+					violations.push({
+						filePath: relativePath,
+						lineNumber: helperDeclaration.lineNumber,
+						ruleId: "ENF-CONST-33",
+						message:
+							"config files must not declare helper functions; move to lib/",
+					});
+				}
 			}
 		}
 	}

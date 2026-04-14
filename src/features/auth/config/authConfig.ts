@@ -10,7 +10,6 @@ export const AUTH_STATUS = {
 export const USERNAME_RULES = {
 	MIN_LENGTH: 3,
 	MAX_LENGTH: 20,
-	PATTERN: /^[A-Za-z0-9_]+$/,
 } as const;
 
 export const AUTH_ERROR_MESSAGES = {

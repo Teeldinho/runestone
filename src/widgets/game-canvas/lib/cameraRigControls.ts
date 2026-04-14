@@ -1,6 +1,6 @@
 import type * as THREE from "three";
 
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 type OrbitControlsHandle = {
 	target: THREE.Vector3;

@@ -12,7 +12,7 @@ import {
 	DUNGEON_MACHINE_SYSTEM_EVENTS,
 	useSendDungeonMachineEvent,
 } from "@/features/dungeon-navigation";
-import { setPlayerTeleportTarget } from "@/shared/lib/playerPositionStore";
+import { setPlayerTeleportTarget } from "@/shared/lib";
 
 type UseGameOverStateResult = {
 	isGameOver: boolean;

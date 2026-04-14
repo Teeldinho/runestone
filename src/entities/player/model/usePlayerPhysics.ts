@@ -4,14 +4,14 @@ import type { RefObject } from "react";
 import { useRef } from "react";
 import * as THREE from "three";
 import { RELATIVE_CAMERA_MODES } from "@/shared/config";
-import { getCameraMode } from "@/shared/lib/cameraModeStore";
-import { getCameraAzimuth } from "@/shared/lib/cameraOrientationStore";
+import type { Vector3Tuple } from "@/shared/lib";
 import {
 	consumePlayerTeleportTarget,
+	getCameraAzimuth,
+	getCameraMode,
+	getQuaternionFromXZ,
 	setPlayerPosition,
-} from "@/shared/lib/playerPositionStore";
-import { getQuaternionFromXZ } from "@/shared/lib/vec3";
-import type { Vector3Tuple } from "@/shared/types";
+} from "@/shared/lib";
 
 import { PLAYER_ENTITY_CONFIG } from "../config";
 import {

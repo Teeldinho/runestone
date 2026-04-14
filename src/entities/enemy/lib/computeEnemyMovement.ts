@@ -1,5 +1,5 @@
 import { ENEMY_CONFIG } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import type { EnemyBehaviorState } from "../config";
 import { ENEMY_MACHINE_STATES } from "../config";

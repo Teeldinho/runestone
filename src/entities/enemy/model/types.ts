@@ -1,4 +1,4 @@
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 import type { ENEMY_EVENTS } from "../config/enemyEvents";
 import type { EnemyBehaviorState } from "../config/enemyMachineStates";
 

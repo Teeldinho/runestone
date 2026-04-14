@@ -1,4 +1,4 @@
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 const enemyPositionsById = new Map<string, Vector3Tuple>();
 let enemyPositionsSnapshot: readonly Vector3Tuple[] = [];

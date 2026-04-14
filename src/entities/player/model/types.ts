@@ -1,5 +1,5 @@
 import type { CameraMode } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 import type { PLAYER_EVENTS } from "../config/playerEvents";
 import type { PlayerHealthState } from "../config/playerStates";
 

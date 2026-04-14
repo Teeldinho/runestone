@@ -1,10 +1,6 @@
-import * as THREE from "three";
-import { CAMERA_TRANSITION_MS, ROOM_CONFIG } from "@/shared/config";
+export const CAMERA_RIG_LERP_ALPHA = 0.0769;
 
-export const CAMERA_RIG_LERP_ALPHA =
-	1 - Math.exp((-4 * 16) / CAMERA_TRANSITION_MS);
-
-export const CAMERA_RIG_TRANSITION_JUMP_DISTANCE = ROOM_CONFIG.WIDTH * 0.5;
+export const CAMERA_RIG_TRANSITION_JUMP_DISTANCE = 6;
 
 export const CAMERA_RIG_THIRD_PERSON_TRANSITION_PADDING = 0.2;
 
@@ -18,11 +14,11 @@ export const CAMERA_RIG_CAMERA_UP = {
 
 export const CAMERA_RIG_TOUCH_GESTURES = {
 	ORBIT: {
-		ONE: THREE.TOUCH.ROTATE,
-		TWO: THREE.TOUCH.DOLLY_PAN,
+		ONE: 0,
+		TWO: 2,
 	},
 	TOP_DOWN: {
-		ONE: THREE.TOUCH.PAN,
-		TWO: THREE.TOUCH.DOLLY_PAN,
+		ONE: 1,
+		TWO: 2,
 	},
 } as const;

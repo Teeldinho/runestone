@@ -2,7 +2,7 @@ import { CorridorMesh } from "@/entities/corridor";
 import { EnemyMesh } from "@/entities/enemy";
 import { PlayerMesh } from "@/entities/player";
 import { RoomLabel, RoomMesh } from "@/entities/room";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 import {
 	type CanvasEnvironmentSettings,
 	useEnemySceneController,

@@ -3,7 +3,7 @@ import type {
 	CameraHotkey,
 	CameraMode,
 } from "@/features/camera-system/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 export type CameraStateSnapshot = {
 	fov: number;
