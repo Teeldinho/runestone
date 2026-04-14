@@ -33,6 +33,7 @@ import {
 	getThirdPersonTransitionTargets,
 	setCameraUp,
 	setOrbitTarget,
+	shouldSyncMovementAzimuth,
 } from "../lib";
 
 type PointerLockControlsHandle = {
@@ -58,24 +59,6 @@ type UseCameraRigViewModelResult = {
 	topDownOrbitRef: RefObject<OrbitControlsHandle | null>;
 	firstPersonOrbitRef: RefObject<OrbitControlsHandle | null>;
 	isDesktopLayout: boolean;
-};
-
-const shouldSyncMovementAzimuth = ({
-	isModeChange,
-	isUserInteracting,
-	mode,
-	needsFreeOrbitalSync,
-}: {
-	isModeChange: boolean;
-	isUserInteracting: boolean;
-	mode: CameraStateSnapshot["mode"];
-	needsFreeOrbitalSync: boolean;
-}): boolean => {
-	if (mode !== CAMERA_MODES.FREE_ORBITAL) {
-		return true;
-	}
-
-	return isModeChange || needsFreeOrbitalSync || isUserInteracting;
 };
 
 export const useCameraRigViewModel = ({
@@ -159,6 +142,7 @@ export const useCameraRigViewModel = ({
 			}
 		});
 	}, []);
+
 	const handleOrbitEnd = useCallback(() => {
 		isUserInteractingRef.current = false;
 
@@ -183,12 +167,15 @@ export const useCameraRigViewModel = ({
 		const trackedPlayerPosition = hasPlayerPosition()
 			? getPlayerPosition()
 			: playerSpawnPosition;
+
 		const { lookAt, position } = getCameraRigTargets({
 			mode: cameraStateSnapshot.mode,
 			playerPosition: trackedPlayerPosition,
 			isDesktopLayout,
 		});
+
 		const isModeChange = cameraStateSnapshot.mode !== previousModeRef.current;
+
 		const isFreeOrbitalJump =
 			cameraStateSnapshot.mode === CAMERA_MODES.FREE_ORBITAL &&
 			!isModeChange &&
@@ -199,6 +186,7 @@ export const useCameraRigViewModel = ({
 				nextTarget: trackedPlayerPosition,
 				previousTarget: previousTrackedPlayerPositionRef.current,
 			});
+
 		const isThirdPersonJump =
 			cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON &&
 			!isModeChange &&
@@ -208,6 +196,7 @@ export const useCameraRigViewModel = ({
 				nextTarget: trackedPlayerPosition,
 				previousTarget: previousTrackedPlayerPositionRef.current,
 			});
+
 		const transitionAlpha = isModeChange ? 1 : CAMERA_RIG_LERP_ALPHA;
 
 		previousModeRef.current = cameraStateSnapshot.mode;
@@ -229,6 +218,7 @@ export const useCameraRigViewModel = ({
 			}
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON) {
 			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
+
 			if (!isDesktopLayout && firstPersonOrbitRef.current) {
 				if (needsFirstPersonSyncRef.current || isModeChange) {
 					// Snap camera to head on first mount — target is 0.01 ahead in camera forward
@@ -263,7 +253,9 @@ export const useCameraRigViewModel = ({
 				}
 			} else {
 				positionVectorRef.current.set(...position);
+
 				camera.position.lerp(positionVectorRef.current, transitionAlpha);
+
 				if (!pointerLockRef.current?.isLocked) {
 					camera.lookAt(
 						camera.position.x,
@@ -274,6 +266,7 @@ export const useCameraRigViewModel = ({
 			}
 		} else if (cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON) {
 			setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
+
 			if (!thirdPersonOrbitRef.current) {
 				if (isModeChange) {
 					camera.position.set(...position);
@@ -368,10 +361,12 @@ export const useCameraRigViewModel = ({
 			})
 		) {
 			camera.getWorldDirection(directionRef.current);
+
 			const nextAzimuth = resolveCameraAzimuth({
 				mode: cameraStateSnapshot.mode,
 				direction: directionRef.current,
 			});
+
 			if (nextAzimuth !== null) {
 				setCameraAzimuth(nextAzimuth);
 			}
@@ -379,6 +374,7 @@ export const useCameraRigViewModel = ({
 
 		if (camera instanceof THREE.PerspectiveCamera) {
 			const fovDiff = Math.abs(camera.fov - cameraStateSnapshot.fov);
+
 			if (fovDiff > 0.01) {
 				camera.fov += (cameraStateSnapshot.fov - camera.fov) * transitionAlpha;
 				camera.updateProjectionMatrix();

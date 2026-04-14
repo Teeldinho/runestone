@@ -4,6 +4,7 @@ import type { CorridorMeshSettings } from "@/entities/corridor";
 import {
 	createFloorOneMachine,
 	DOOR_SIDES,
+	type DoorSide,
 	FLOOR_ONE_MACHINE_RULES,
 	ROOM_IDS,
 } from "@/entities/dungeon";
@@ -39,15 +40,13 @@ export const useSceneEnvironmentSettings =
 
 		return useMemo(() => {
 			const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
-			const lockedDoorSidesByRoomId = {
+			const lockedDoorSidesByRoomId: Partial<Record<string, DoorSide[]>> = {
 				[ROOM_IDS.GUARD_ROOM]:
 					hasTreasureKey &&
 					enemiesRemaining === FLOOR_ONE_MACHINE_RULES.NO_ENEMIES_REMAINING
-						? ([] as const)
-						: ([DOOR_SIDES.SOUTH] as const),
-				[ROOM_IDS.TREASURY]: hasTreasureKey
-					? ([] as const)
-					: ([DOOR_SIDES.SOUTH] as const),
+						? []
+						: [DOOR_SIDES.SOUTH],
+				[ROOM_IDS.TREASURY]: hasTreasureKey ? [] : [DOOR_SIDES.SOUTH],
 			};
 			const corridorMeshSettings = createSceneCorridorMeshSettings(
 				floorLayout.corridors,

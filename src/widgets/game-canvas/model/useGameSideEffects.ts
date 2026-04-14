@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import type { RoomId } from "@/entities/dungeon";
-import { createFloorOneMachine, FLOOR_IDS } from "@/entities/dungeon";
+import { createFloorOneMachine } from "@/entities/dungeon";
 import {
 	PLAYER_ENTITY_CONFIG,
 	PLAYER_STATES,
@@ -19,11 +19,12 @@ import {
 	useGameMachineSelector,
 } from "@/features/dungeon-navigation";
 import { useHaptics } from "@/features/haptics-feedback";
-import { SCORE_VALUES } from "@/shared/config";
 import { setPlayerTeleportTarget } from "@/shared/lib";
 
 import {
+	buildScoreSubmission,
 	getDoorwayArrivalPosition,
+	getPlayerHealthState,
 	getRoomWorldPosition,
 	shouldSubmitFloorScore,
 } from "../lib";
@@ -124,13 +125,13 @@ export const useGameSideEffects = (): void => {
 
 		hasSubmittedRef.current = true;
 		onFloorComplete();
-		submitScore.mutate({
-			userId: authenticatedProfile.id,
-			dungeonId: FLOOR_IDS.FLOOR_ONE,
-			score: discoveredRooms.length * SCORE_VALUES.ROOM_DISCOVERY,
-			timeMs: Date.now() - startTimeMsRef.current,
-			roomsDiscovered: discoveredRooms.length,
-		});
+		submitScore.mutate(
+			buildScoreSubmission(
+				authenticatedProfile,
+				discoveredRooms.length,
+				startTimeMsRef.current,
+			),
+		);
 	}, [
 		activeStateLabel,
 		discoveredRooms,
@@ -140,10 +141,7 @@ export const useGameSideEffects = (): void => {
 	]);
 
 	useEffect(() => {
-		const healthState =
-			playerSnapshot.value[
-				PLAYER_STATES.REGIONS.HEALTH as keyof typeof playerSnapshot.value
-			];
+		const healthState = getPlayerHealthState(playerSnapshot.value);
 
 		if (healthState !== PLAYER_STATES.HEALTH.DEAD) {
 			hasTriggeredDeathRef.current = false;

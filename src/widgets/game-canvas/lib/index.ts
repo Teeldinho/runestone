@@ -12,10 +12,16 @@ export {
 export {
 	getCameraRigTargets,
 	getThirdPersonTransitionTargets,
+	shouldSyncMovementAzimuth,
 } from "./cameraRigTargets";
 export { createRoomTorchPositions } from "./createRoomTorchPositions";
 export { createTorchSettings } from "./createTorchSettings";
 export { shouldSubmitFloorScore } from "./floorCompletion";
+export {
+	buildScoreSubmission,
+	computeDungeonRunScore,
+	getPlayerHealthState,
+} from "./gameSideEffectHelpers";
 export { getDoorwayAnchorPosition } from "./getDoorwayAnchorPosition";
 export { getDoorwayArrivalPosition } from "./getDoorwayArrivalPosition";
 export { getRoomWorldPosition } from "./getRoomWorldPosition";

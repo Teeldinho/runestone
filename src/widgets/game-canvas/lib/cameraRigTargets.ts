@@ -22,6 +22,13 @@ type GetThirdPersonTransitionTargetsInput = {
 	playerPosition: Vector3Tuple;
 };
 
+type ShouldSyncMovementAzimuthInput = {
+	isModeChange: boolean;
+	isUserInteracting: boolean;
+	mode: CameraMode;
+	needsFreeOrbitalSync: boolean;
+};
+
 const getThirdPersonTransitionOffset = (doorSide: DoorSide): Vector3Tuple => {
 	const [, offsetY] = CAMERA_CONFIG.THIRD_PERSON.OFFSET;
 	const transitionDistance = Math.max(
@@ -107,8 +114,22 @@ export const getThirdPersonTransitionTargets = ({
 	};
 };
 
+export const shouldSyncMovementAzimuth = ({
+	isModeChange,
+	isUserInteracting,
+	mode,
+	needsFreeOrbitalSync,
+}: ShouldSyncMovementAzimuthInput): boolean => {
+	if (mode !== CAMERA_MODES.FREE_ORBITAL) {
+		return true;
+	}
+
+	return isModeChange || needsFreeOrbitalSync || isUserInteracting;
+};
+
 export type {
 	CameraRigTargets,
 	GetCameraRigTargetsInput,
 	GetThirdPersonTransitionTargetsInput,
+	ShouldSyncMovementAzimuthInput,
 };
