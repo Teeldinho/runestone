@@ -1,5 +1,9 @@
 export { computeEnemyMovement } from "./computeEnemyMovement";
 export {
+	computeEnemyGlowOffsetY,
+	computeEnemySpawnHeightOffset,
+} from "./enemyGeometry";
+export {
 	applyDamageToEnemy,
 	applyDeathToEnemy,
 } from "./enemyMachineActions";

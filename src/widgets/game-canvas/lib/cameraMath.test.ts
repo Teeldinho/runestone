@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { CAMERA_TRANSITION_MS } from "@/shared/config";
 import {
 	computeCameraRigLerpAlpha,

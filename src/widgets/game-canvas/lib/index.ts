@@ -1,3 +1,7 @@
+export {
+	computeCameraRigLerpAlpha,
+	computeCameraRigTransitionJumpDistance,
+} from "./cameraMath";
 export type { OrbitControlsHandle } from "./cameraRigControls";
 export { setCameraUp, setOrbitTarget } from "./cameraRigControls";
 export {

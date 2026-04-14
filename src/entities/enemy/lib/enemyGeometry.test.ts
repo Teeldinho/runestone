@@ -1,8 +1,8 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { ENEMY_COLLIDER_CONFIG } from "../config";
 import {
-	computeEnemySpawnHeightOffset,
 	computeEnemyGlowOffsetY,
+	computeEnemySpawnHeightOffset,
 } from "./enemyGeometry";
 
 describe("enemyGeometry", () => {

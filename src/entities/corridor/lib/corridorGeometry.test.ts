@@ -60,7 +60,7 @@ describe("corridorGeometry", () => {
 			{
 				id: CORRIDOR_DIRECTIONS.EAST,
 				position: [10, -0.12, 0],
-				rotationYRad: Math.PI / 2,
+				rotationYRad: CORRIDOR_ENTITY_CONFIG.GEOMETRY.HORIZONTAL_ROTATION_Y_RAD,
 			},
 			{
 				id: CORRIDOR_DIRECTIONS.SOUTH,
@@ -70,7 +70,7 @@ describe("corridorGeometry", () => {
 			{
 				id: CORRIDOR_DIRECTIONS.WEST,
 				position: [-10, -0.12, 0],
-				rotationYRad: Math.PI / 2,
+				rotationYRad: CORRIDOR_ENTITY_CONFIG.GEOMETRY.HORIZONTAL_ROTATION_Y_RAD,
 			},
 		]);
 	});

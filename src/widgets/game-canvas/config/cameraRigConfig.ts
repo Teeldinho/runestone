@@ -1,10 +1,15 @@
 import * as THREE from "three";
-import { CAMERA_TRANSITION_MS, ROOM_CONFIG } from "@/shared/config";
+import { CAMERA_TRANSITION_MS } from "@/shared/config";
+import {
+	computeCameraRigLerpAlpha,
+	computeCameraRigTransitionJumpDistance,
+} from "../lib/cameraMath";
 
 export const CAMERA_RIG_LERP_ALPHA =
-	1 - Math.exp((-4 * 16) / CAMERA_TRANSITION_MS);
+	computeCameraRigLerpAlpha(CAMERA_TRANSITION_MS);
 
-export const CAMERA_RIG_TRANSITION_JUMP_DISTANCE = ROOM_CONFIG.WIDTH * 0.5;
+export const CAMERA_RIG_TRANSITION_JUMP_DISTANCE =
+	computeCameraRigTransitionJumpDistance();
 
 export const CAMERA_RIG_THIRD_PERSON_TRANSITION_PADDING = 0.2;
 

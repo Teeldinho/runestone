@@ -8,7 +8,7 @@ export const SCORE_VALUES = {
 } as const;
 
 export const CHAIN_MULTIPLIERS = [1, 1, 1.5, 1.5, 2, 2, 2.5, 3] as const;
-export const CHAIN_MULTIPLIER_MAX_INDEX = CHAIN_MULTIPLIERS.length - 1;
+export const CHAIN_MULTIPLIER_MAX_INDEX = 7;
 
 export const TIME_BONUS_CAP_PERCENT = 0.05;
 export const CAMERA_TRANSITION_MS = 800;

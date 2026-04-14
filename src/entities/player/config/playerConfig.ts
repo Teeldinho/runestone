@@ -1,3 +1,4 @@
+import { DUNGEON_THEME_COLORS } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
 
 import type { PlayerHealthState } from "./playerStates";
@@ -11,15 +12,15 @@ const PLAYER_AURA_STYLES_BY_HEALTH: Record<
 	}
 > = {
 	[PLAYER_STATES.HEALTH.ALIVE]: {
-		color: "#00d7ff",
+		color: DUNGEON_THEME_COLORS.RUNE_ACTIVE,
 		emissiveIntensity: 2.0,
 	},
 	[PLAYER_STATES.HEALTH.DAMAGED]: {
-		color: "#ffb347",
+		color: DUNGEON_THEME_COLORS.TORCH_FLAME,
 		emissiveIntensity: 1.1,
 	},
 	[PLAYER_STATES.HEALTH.DEAD]: {
-		color: "#06090f",
+		color: DUNGEON_THEME_COLORS.FOG_BASE,
 		emissiveIntensity: 0.15,
 	},
 };
@@ -31,14 +32,13 @@ const PLAYER_CAPSULE_CONFIG = {
 	RADIUS: 0.35,
 } as const;
 
-const PLAYER_SPAWN_HEIGHT_OFFSET =
-	PLAYER_CAPSULE_CONFIG.HALF_HEIGHT + PLAYER_CAPSULE_CONFIG.RADIUS;
+const PLAYER_SPAWN_HEIGHT_OFFSET = 0.9;
 
 const PLAYER_AURA_CONFIG = {
 	MATERIAL_OPACITY: 0.85,
 	RADIAL_SEGMENTS: 20,
 	RADIUS: 0.55,
-	ROTATION_X_RAD: Math.PI / 2,
+	ROTATION_X_RAD: 1.571,
 	TUBULAR_SEGMENTS: 32,
 	TUBE_RADIUS: 0.08,
 } as const;
@@ -61,7 +61,7 @@ export const PLAYER_ENTITY_CONFIG = {
 		SPAWN_HEIGHT_OFFSET: PLAYER_SPAWN_HEIGHT_OFFSET,
 	},
 	BODY: {
-		COLOR: "#a5f3fc",
+		COLOR: DUNGEON_THEME_COLORS.ROOM_LABEL,
 		HEIGHT: 1.5,
 		METALNESS: 0.22,
 		POSITION_Y: 0.75,
@@ -70,7 +70,7 @@ export const PLAYER_ENTITY_CONFIG = {
 		ROUGHNESS: 0.56,
 	},
 	HEAD: {
-		COLOR: "#f5c451",
+		COLOR: DUNGEON_THEME_COLORS.RUNE_OPEN,
 		HEIGHT_SEGMENTS: 16,
 		OFFSET_Y: 1.65,
 		RADIUS: 0.26,
@@ -78,7 +78,7 @@ export const PLAYER_ENTITY_CONFIG = {
 	},
 	AURA: {
 		...PLAYER_AURA_CONFIG,
-		OFFSET_Y: -PLAYER_SPAWN_HEIGHT_OFFSET + PLAYER_AURA_CONFIG.TUBE_RADIUS,
+		OFFSET_Y: -0.82,
 	},
 	AURA_STYLES_BY_HEALTH: PLAYER_AURA_STYLES_BY_HEALTH,
 } as const;
