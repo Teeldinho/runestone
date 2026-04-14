@@ -9,6 +9,8 @@ pre-commit:
         fi
     biome:
       run: npm run lint:fix
+    lint:ci:
+      run: npm run lint:ci
     purity:
       run: npm run lint:purity
     fsd:
@@ -18,13 +20,7 @@ pre-push:
   commands:
     theme:
       run: npm run theme:check
-    lint:
-      run: npm run lint:ci
-    purity:
-      run: npm run lint:purity
     typecheck:
       run: npm run typecheck
-    fsd:
-      run: npm run lint:fsd
     test:
       run: npm run test:run

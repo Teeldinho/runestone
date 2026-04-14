@@ -33,6 +33,7 @@ todos.json
 .factory/
 .goose/
 .junie/
+.kilo/
 .kilocode/
 .kiro/
 .kode/
