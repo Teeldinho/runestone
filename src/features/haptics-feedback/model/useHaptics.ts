@@ -7,12 +7,12 @@ import {
 	HAPTIC_EVENT_NAMES,
 	HAPTIC_EVENT_PATTERN_KEYS,
 	HAPTIC_PATTERNS,
-	HAPTICS_DEBUG_MODE_ENABLED,
 	type HapticEventName,
 	type HapticPattern,
 	type HapticPatternKey,
 	isHapticEventThrottled,
 } from "../config";
+import { HAPTICS_DEBUG_MODE_ENABLED } from "../lib";
 
 export const useHaptics = () => {
 	const { trigger, cancel, isSupported } = useWebHaptics({

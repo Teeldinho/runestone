@@ -15,10 +15,10 @@ export const CAMERA_RIG_CAMERA_UP = {
 export const CAMERA_RIG_TOUCH_GESTURES = {
 	ORBIT: {
 		ONE: 0,
-		TWO: 1,
+		TWO: 2,
 	},
 	TOP_DOWN: {
-		ONE: 2,
-		TWO: 1,
+		ONE: 1,
+		TWO: 2,
 	},
 } as const;
