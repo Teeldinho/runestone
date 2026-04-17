@@ -19,6 +19,11 @@ export {
 	useGameMachineSelector,
 	useSendDungeonMachineEvent,
 } from "./gameMachineRuntime";
+export { interactionCooldownMachine } from "./interactionCooldownMachine";
+export type {
+	InteractionCooldownMachineContext,
+	InteractionCooldownMachineEvent,
+} from "./interactionCooldownMachineTypes";
 export { useDoorwayNavigation } from "./useDoorwayNavigation";
 export { useGameMachine } from "./useGameMachine";
 export type { InteractionCandidatesViewModel } from "./useInteractionCandidates";
