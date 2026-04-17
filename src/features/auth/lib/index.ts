@@ -13,5 +13,4 @@ export {
 	readSessionUuid,
 	writePersistedUsername,
 } from "./sessionStorage";
-export { USERNAME_PATTERN } from "./usernamePattern";
 export { getUsernameValidationError } from "./usernameValidation";
