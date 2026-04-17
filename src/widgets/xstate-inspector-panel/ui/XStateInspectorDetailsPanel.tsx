@@ -56,12 +56,7 @@ export function XStateInspectorDetailsPanel({
 									(stateDetail) => (
 										<li
 											key={stateDetail.id}
-											className="flex items-center justify-between rounded-md px-2 py-1.5 text-xs"
-											style={{
-												background: stateDetail.isActive
-													? "color-mix(in srgb, var(--primary) 9%, transparent)"
-													: "var(--background)",
-											}}
+											className={`flex items-center justify-between rounded-md px-2 py-1.5 text-xs ${stateDetail.isActive ? "bg-[color-mix(in_srgb,var(--primary)_9%,transparent)]" : "bg-background"}`}
 										>
 											<span className="min-w-0 break-words">
 												{stateDetail.label}

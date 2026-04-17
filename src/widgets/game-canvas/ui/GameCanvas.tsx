@@ -71,14 +71,14 @@ export function GameCanvas({
 			{showFirstPersonLockHint && (
 				<button
 					id="game-canvas-fp-lock"
-					className="absolute inset-0 z-10 flex cursor-crosshair items-center justify-center bg-transparent text-sm font-medium"
-					style={{ color: "color-mix(in srgb, white 60%, transparent)" }}
+					className="absolute inset-0 z-10 flex cursor-crosshair items-center justify-center bg-transparent text-[color-mix(in_srgb,white_60%,transparent)] text-sm font-medium"
 					type="button"
 				>
 					{GAME_CANVAS_COPY.FIRST_PERSON_LOCK_HINT}
 				</button>
 			)}
 			<Canvas
+				className="h-full w-full touch-none"
 				aria-label={GAME_CANVAS_COPY.CANVAS_ARIA_LABEL}
 				camera={{
 					far: camera.far,
@@ -90,7 +90,6 @@ export function GameCanvas({
 				dpr={renderer.dprRange}
 				onContextMenu={(event) => event.preventDefault()}
 				shadows={renderer.shadowsEnabled}
-				style={{ width: "100%", height: "100%", touchAction: "none" }}
 			>
 				<PerformanceMonitor />
 				<AdaptiveDpr pixelated />
