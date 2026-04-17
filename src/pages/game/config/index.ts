@@ -25,3 +25,8 @@ export const GAME_PAGE_MOBILE_SHEET = {
 		HUD: "HUD",
 	},
 } as const;
+
+export const GAME_PAGE_SCROLL_LOCK = {
+	OVERFLOW_LOCKED: "hidden",
+	OVERSCROLL_BEHAVIOR_LOCKED: "none",
+} as const;

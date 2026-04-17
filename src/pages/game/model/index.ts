@@ -6,5 +6,8 @@ export { useGamePageDesktopHeaderModel } from "./useGamePageDesktopHeaderModel";
 export { useGamePageDesktopLayoutModel } from "./useGamePageDesktopLayoutModel";
 export { useGamePageHudPanelModel } from "./useGamePageHudPanelModel";
 export { useGamePageLayoutMode } from "./useGamePageLayoutMode";
+export { useGamePageMachineState } from "./useGamePageMachineState";
 export { useGamePageMobileLayoutModel } from "./useGamePageMobileLayoutModel";
+export { useGamePageMobileSheetState } from "./useGamePageMobileSheetState";
+export { useGamePageScrollLock } from "./useGamePageScrollLock";
 export { useGamePageViewModelContext } from "./useGamePageViewModelContext";
