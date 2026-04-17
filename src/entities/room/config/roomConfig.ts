@@ -124,6 +124,9 @@ export const ROOM_ENTITY_CONFIG = {
 		MAX_WIDTH: 10,
 		OUTLINE_COLOR: DUNGEON_THEME_COLORS.FOG_BASE,
 		OUTLINE_WIDTH: 0.025,
+		WRAPPER_CLASS_NAME: "pointer-events-none",
+		TEXT_CLASS_NAME:
+			"rounded-[0.2rem] px-[0.35rem] py-[0.15rem] text-[1.3rem] font-bold tracking-[0.02em] text-panel-title [font-family:Space_Grotesk,sans-serif] whitespace-nowrap [text-shadow:0_0_6px_var(--dungeon-fog),0_0_1px_var(--dungeon-fog)]",
 	},
 	GEOMETRY: {
 		EDGE_DIVISOR: 2,

@@ -2,9 +2,8 @@ import { Html } from "@react-three/drei";
 import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import { Badge } from "@/shared/ui";
 import {
-	WORLD_INTERACTION_KEY_STYLE,
+	WORLD_INTERACTION_PROMPT_CLASS_NAMES,
 	WORLD_INTERACTION_PROMPT_CONFIG,
-	WORLD_INTERACTION_PROMPT_STYLE,
 } from "../config";
 import { useWorldInteractionPrompt } from "../model";
 import type { WorldInteractionPromptProps } from "../model/useWorldInteractionPrompt";
@@ -29,18 +28,11 @@ export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
 					]}
 					center
 					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
-					style={{ pointerEvents: "none" }}
 				>
 					{isDesktopLayout ? (
-						<div style={WORLD_INTERACTION_PROMPT_STYLE}>
+						<div className={WORLD_INTERACTION_PROMPT_CLASS_NAMES.PANEL}>
 							<span
-								style={{
-									...WORLD_INTERACTION_KEY_STYLE,
-									color: "var(--dungeon-gold)",
-									borderColor: "var(--dungeon-gold)",
-									background:
-										"color-mix(in srgb, var(--dungeon-gold) 10%, transparent)",
-								}}
+								className={`${WORLD_INTERACTION_PROMPT_CLASS_NAMES.KEY_BASE} ${WORLD_INTERACTION_PROMPT_CLASS_NAMES.INTERACT_KEY}`}
 							>
 								{interact.label}
 							</span>
@@ -62,18 +54,11 @@ export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
 					]}
 					center
 					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
-					style={{ pointerEvents: "none" }}
 				>
 					{isDesktopLayout ? (
-						<div style={WORLD_INTERACTION_PROMPT_STYLE}>
+						<div className={WORLD_INTERACTION_PROMPT_CLASS_NAMES.PANEL}>
 							<span
-								style={{
-									...WORLD_INTERACTION_KEY_STYLE,
-									color: "var(--success)",
-									borderColor: "var(--success)",
-									background:
-										"color-mix(in srgb, var(--success) 10%, transparent)",
-								}}
+								className={`${WORLD_INTERACTION_PROMPT_CLASS_NAMES.KEY_BASE} ${WORLD_INTERACTION_PROMPT_CLASS_NAMES.ATTACK_KEY}`}
 							>
 								{attack.label}
 							</span>

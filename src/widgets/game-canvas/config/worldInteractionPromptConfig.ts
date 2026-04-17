@@ -1,4 +1,3 @@
-import type React from "react";
 import { ENEMY_SPAWN_HEIGHT_OFFSET } from "@/entities/enemy";
 import { ROOM_ENTITY_CONFIG } from "@/entities/room";
 
@@ -9,34 +8,13 @@ export const WORLD_INTERACTION_PROMPT_CONFIG = {
 	KEY_HEIGHT: ROOM_ENTITY_CONFIG.TREASURE_KEY.HEIGHT + 1.35,
 } as const;
 
-export const WORLD_INTERACTION_PROMPT_STYLE: React.CSSProperties = {
-	display: "flex",
-	alignItems: "center",
-	gap: "0.5rem",
-	padding: "0.5rem 1rem",
-	fontSize: "0.95rem",
-	fontFamily: "Space Grotesk, sans-serif",
-	fontWeight: 500,
-	borderRadius: "4px",
-	border: "1px solid var(--panel-border)",
-	background: "var(--panel)",
-	color: "var(--foreground)",
-	pointerEvents: "none",
-	whiteSpace: "nowrap",
-	marginTop: "0.25rem",
-};
-
-export const WORLD_INTERACTION_KEY_STYLE: React.CSSProperties = {
-	display: "inline-flex",
-	alignItems: "center",
-	justifyContent: "center",
-	minWidth: "2rem",
-	height: "2rem",
-	padding: "0 0.5rem",
-	fontSize: "0.9rem",
-	fontWeight: 700,
-	borderRadius: "3px",
-	border: "1px solid var(--dungeon-gold)",
-	color: "var(--dungeon-gold)",
-	background: "color-mix(in srgb, var(--dungeon-gold) 10%, transparent)",
-};
+export const WORLD_INTERACTION_PROMPT_CLASS_NAMES = {
+	PANEL:
+		"mt-1 flex items-center gap-2 rounded-[4px] border border-panel-border bg-panel px-4 py-2 text-[0.95rem] font-medium [font-family:Space_Grotesk,sans-serif] whitespace-nowrap pointer-events-none",
+	KEY_BASE:
+		"inline-flex h-8 min-w-8 items-center justify-center rounded-[3px] px-2 text-[0.9rem] font-bold",
+	INTERACT_KEY:
+		"border border-dungeon-gold bg-[color-mix(in_srgb,var(--dungeon-gold)_10%,transparent)] text-dungeon-gold",
+	ATTACK_KEY:
+		"border border-success bg-[color-mix(in_srgb,var(--success)_10%,transparent)] text-success",
+} as const;
