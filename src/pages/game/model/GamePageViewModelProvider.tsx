@@ -1,7 +1,15 @@
 import type { ReactNode } from "react";
 
-import { gamePageViewModelContext } from "./gamePageViewModelContext";
-import { useGamePage } from "./useGamePage";
+import {
+	gamePageAudioContext,
+	gamePageCanvasContext,
+	gamePageHudContext,
+	gamePageLayoutContext,
+	gamePageMobileSheetContext,
+	gamePageTouchContext,
+	gamePageVisualizerContext,
+} from "./gamePageSliceContexts";
+import { useGamePageSlices } from "./useGamePageSlices";
 
 type GamePageViewModelProviderProps = {
 	children: ReactNode;
@@ -10,11 +18,24 @@ type GamePageViewModelProviderProps = {
 export function GamePageViewModelProvider({
 	children,
 }: GamePageViewModelProviderProps) {
-	const gamePageViewModel = useGamePage();
+	const { audio, canvas, hud, layout, mobileSheet, touch, visualizer } =
+		useGamePageSlices();
 
 	return (
-		<gamePageViewModelContext.Provider value={gamePageViewModel}>
-			{children}
-		</gamePageViewModelContext.Provider>
+		<gamePageAudioContext.Provider value={audio}>
+			<gamePageCanvasContext.Provider value={canvas}>
+				<gamePageHudContext.Provider value={hud}>
+					<gamePageLayoutContext.Provider value={layout}>
+						<gamePageMobileSheetContext.Provider value={mobileSheet}>
+							<gamePageTouchContext.Provider value={touch}>
+								<gamePageVisualizerContext.Provider value={visualizer}>
+									{children}
+								</gamePageVisualizerContext.Provider>
+							</gamePageTouchContext.Provider>
+						</gamePageMobileSheetContext.Provider>
+					</gamePageLayoutContext.Provider>
+				</gamePageHudContext.Provider>
+			</gamePageCanvasContext.Provider>
+		</gamePageAudioContext.Provider>
 	);
 }

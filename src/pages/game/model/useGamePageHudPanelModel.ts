@@ -1,41 +1,10 @@
-import type { GamePageViewModel } from "./useGamePage";
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import type { GamePageHudSlice } from "./types";
+import { useGamePageHudContext } from "./useGamePageSliceContexts";
 
-type GamePageHudPanelModel = Pick<
-	GamePageViewModel,
-	| "actionButtons"
-	| "activeStateLabel"
-	| "currentRoomLabel"
-	| "discoveredRoomLabels"
-	| "enemiesRemaining"
-	| "handleDungeonRunReset"
-	| "hasTreasureKeyLabel"
-	| "playerHp"
-	| "playerMaxHp"
->;
+type GamePageHudPanelModel = GamePageHudSlice;
 
 export const useGamePageHudPanelModel = (): GamePageHudPanelModel => {
-	const {
-		actionButtons,
-		activeStateLabel,
-		currentRoomLabel,
-		discoveredRoomLabels,
-		enemiesRemaining,
-		handleDungeonRunReset,
-		hasTreasureKeyLabel,
-		playerHp,
-		playerMaxHp,
-	} = useGamePageViewModelContext();
+	const hud = useGamePageHudContext();
 
-	return {
-		actionButtons,
-		activeStateLabel,
-		currentRoomLabel,
-		discoveredRoomLabels,
-		enemiesRemaining,
-		handleDungeonRunReset,
-		hasTreasureKeyLabel,
-		playerHp,
-		playerMaxHp,
-	};
+	return hud;
 };

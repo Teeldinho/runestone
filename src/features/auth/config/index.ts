@@ -5,6 +5,7 @@ export {
 	AUTH_ROUTE_PATHS,
 	AUTH_STATUS,
 	AUTH_STORAGE_KEYS,
+	USERNAME_PATTERN,
 	USERNAME_RULES,
 } from "./authConfig";
 export type { AuthEventType } from "./authEvents";

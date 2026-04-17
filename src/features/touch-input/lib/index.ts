@@ -3,3 +3,4 @@ export type {
 	ResolveJoystickVectorInput,
 } from "./resolveJoystickVector";
 export { resolveJoystickVector } from "./resolveJoystickVector";
+export { resolveTouchJoystickPointerAction } from "./touchJoystickPointerLifecycle";

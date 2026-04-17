@@ -12,6 +12,8 @@ export const USERNAME_RULES = {
 	MAX_LENGTH: 20,
 } as const;
 
+export const USERNAME_PATTERN = /^[A-Za-z0-9_]+$/;
+
 export const AUTH_ERROR_MESSAGES = {
 	USERNAME_SUBMIT_FAILED: "We could not create your profile. Please try again.",
 	MISSING_CONTEXT: "useAuthContext must be used within AuthProvider",

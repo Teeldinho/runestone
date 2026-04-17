@@ -1,15 +1,14 @@
 import { useSettingsForm } from "@/features/settings";
 
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import { useGamePageCanvasContext } from "./useGamePageSliceContexts";
 
 export const useGamePageMobileCanvasStageModel = () => {
-	const { cameraStateSnapshot, canvasMachineRuntime } =
-		useGamePageViewModelContext();
+	const canvas = useGamePageCanvasContext();
 	const { postprocessingEnabled } = useSettingsForm();
 
 	return {
-		cameraStateSnapshot,
-		canvasMachineRuntime,
+		cameraStateSnapshot: canvas.cameraStateSnapshot,
+		canvasMachineRuntime: canvas.canvasMachineRuntime,
 		postprocessingEnabled,
 	};
 };

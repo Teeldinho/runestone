@@ -1,11 +1,10 @@
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import { useGamePageMobileSheetContext } from "./useGamePageSliceContexts";
 
 export const useGamePageMobileLayoutShellModel = () => {
-	const { handleMobileSheetOpenChange, isMobileSheetOpen } =
-		useGamePageViewModelContext();
+	const mobileSheet = useGamePageMobileSheetContext();
 
 	return {
-		handleMobileSheetOpenChange,
-		isMobileSheetOpen,
+		handleMobileSheetOpenChange: mobileSheet.handleMobileSheetOpenChange,
+		isMobileSheetOpen: mobileSheet.isMobileSheetOpen,
 	};
 };

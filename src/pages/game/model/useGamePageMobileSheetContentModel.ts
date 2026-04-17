@@ -1,19 +1,19 @@
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import {
+	useGamePageCanvasContext,
+	useGamePageMobileSheetContext,
+	useGamePageVisualizerContext,
+} from "./useGamePageSliceContexts";
 
 export const useGamePageMobileSheetContentModel = () => {
-	const {
-		cameraStateSnapshot,
-		graphSections,
-		handleCameraModeSwitch,
-		handleMobileSheetTabChange,
-		mobileSheetTabId,
-	} = useGamePageViewModelContext();
+	const canvas = useGamePageCanvasContext();
+	const mobileSheet = useGamePageMobileSheetContext();
+	const visualizer = useGamePageVisualizerContext();
 
 	return {
-		cameraStateSnapshot,
-		graphSections,
-		handleCameraModeSwitch,
-		handleMobileSheetTabChange,
-		mobileSheetTabId,
+		cameraStateSnapshot: canvas.cameraStateSnapshot,
+		graphSections: visualizer.graphSections,
+		handleCameraModeSwitch: canvas.handleCameraModeSwitch,
+		handleMobileSheetTabChange: mobileSheet.handleMobileSheetTabChange,
+		mobileSheetTabId: mobileSheet.mobileSheetTabId,
 	};
 };

@@ -1,29 +1,30 @@
 import { useSettingsForm } from "@/features/settings";
 
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import {
+	useGamePageAudioContext,
+	useGamePageCanvasContext,
+	useGamePageHudContext,
+	useGamePageLayoutContext,
+	useGamePageVisualizerContext,
+} from "./useGamePageSliceContexts";
 
 export const useGamePageDesktopLayoutModel = () => {
-	const {
-		cameraStateSnapshot,
-		canvasMachineRuntime,
-		currentRoomLabel,
-		graphSections,
-		handleAudioMuteToggle,
-		handleCameraModeSwitch,
-		isAudioMuted,
-		isMobileTabletLandscape,
-	} = useGamePageViewModelContext();
+	const audio = useGamePageAudioContext();
+	const canvas = useGamePageCanvasContext();
+	const hud = useGamePageHudContext();
+	const layout = useGamePageLayoutContext();
+	const visualizer = useGamePageVisualizerContext();
 	const { postprocessingEnabled } = useSettingsForm();
 
 	return {
-		cameraStateSnapshot,
-		canvasMachineRuntime,
-		currentRoomLabel,
-		graphSections,
-		handleAudioMuteToggle,
-		handleCameraModeSwitch,
-		isAudioMuted,
-		isMobileTabletLandscape,
+		cameraStateSnapshot: canvas.cameraStateSnapshot,
+		canvasMachineRuntime: canvas.canvasMachineRuntime,
+		currentRoomLabel: hud.currentRoomLabel,
+		graphSections: visualizer.graphSections,
+		handleAudioMuteToggle: audio.handleAudioMuteToggle,
+		handleCameraModeSwitch: canvas.handleCameraModeSwitch,
+		isAudioMuted: audio.isAudioMuted,
+		isMobileTabletLandscape: layout.isMobileTabletLandscape,
 		postprocessingEnabled,
 	};
 };

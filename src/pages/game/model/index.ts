@@ -1,5 +1,5 @@
 export { GamePageViewModelProvider } from "./GamePageViewModelProvider";
-export type { GamePageViewModel } from "./useGamePage";
+export type { GamePageViewModel } from "./types";
 export { useGamePage } from "./useGamePage";
 export { useGamePageCameraElements } from "./useGamePageCameraElements";
 export { useGamePageDesktopHeaderModel } from "./useGamePageDesktopHeaderModel";
@@ -15,4 +15,12 @@ export { useGamePageMobileSheetContentModel } from "./useGamePageMobileSheetCont
 export { useGamePageMobileSheetState } from "./useGamePageMobileSheetState";
 export { useGamePageMobileTopBarModel } from "./useGamePageMobileTopBarModel";
 export { useGamePageScrollLock } from "./useGamePageScrollLock";
-export { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+export {
+	useGamePageAudioContext,
+	useGamePageCanvasContext,
+	useGamePageHudContext,
+	useGamePageLayoutContext,
+	useGamePageMobileSheetContext,
+	useGamePageTouchContext,
+	useGamePageVisualizerContext,
+} from "./useGamePageSliceContexts";

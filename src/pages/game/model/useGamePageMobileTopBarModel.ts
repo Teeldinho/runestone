@@ -1,19 +1,17 @@
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import {
+	useGamePageCanvasContext,
+	useGamePageHudContext,
+} from "./useGamePageSliceContexts";
 
 export const useGamePageMobileTopBarModel = () => {
-	const {
-		cameraStateSnapshot,
-		handleCameraModeSwitch,
-		handleDungeonRunReset,
-		playerHp,
-		playerMaxHp,
-	} = useGamePageViewModelContext();
+	const canvas = useGamePageCanvasContext();
+	const hud = useGamePageHudContext();
 
 	return {
-		cameraStateSnapshot,
-		handleCameraModeSwitch,
-		handleDungeonRunReset,
-		playerHp,
-		playerMaxHp,
+		cameraStateSnapshot: canvas.cameraStateSnapshot,
+		handleCameraModeSwitch: canvas.handleCameraModeSwitch,
+		handleDungeonRunReset: hud.handleDungeonRunReset,
+		playerHp: hud.playerHp,
+		playerMaxHp: hud.playerMaxHp,
 	};
 };

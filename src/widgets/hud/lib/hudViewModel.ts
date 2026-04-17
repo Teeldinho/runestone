@@ -3,21 +3,9 @@ import {
 	HUD_DISPLAY_VARIANTS,
 	HUD_EVENT_FILTERS,
 	HUD_HEALTH,
+	HUD_HEALTH_FILL_CLASSES,
 	HUD_MACHINE_SNAPSHOT,
 } from "../config";
-
-const SIDEBAR_EXCLUDED_EVENT_TYPES = new Set<string>(
-	HUD_EVENT_FILTERS.SIDEBAR_EXCLUDED_EVENT_TYPES,
-);
-
-const SIDEBAR_EXCLUDED_SNAPSHOT_LABELS = new Set<string>(
-	HUD_MACHINE_SNAPSHOT.SIDEBAR_EXCLUDED_LABELS,
-);
-
-const HUD_HEALTH_FILL_CLASSES = {
-	DEFAULT: "hp-bar-fill",
-	LOW: "hp-bar-fill hp-bar-fill-low",
-} as const;
 
 export type HudActionButtonInput = {
 	eventType: string;
@@ -68,7 +56,10 @@ const getSafeHealthPercentage = ({ playerHp, playerMaxHp }: HudHealthInput) => {
 
 export const filterHudActionButtons = (actionButtons: HudActionButtonInput[]) =>
 	actionButtons.filter(
-		(actionButton) => !SIDEBAR_EXCLUDED_EVENT_TYPES.has(actionButton.eventType),
+		(actionButton) =>
+			!HUD_EVENT_FILTERS.SIDEBAR_EXCLUDED_EVENT_TYPES.includes(
+				actionButton.eventType,
+			),
 	);
 
 export const buildHudMachineSnapshotEntries = ({
@@ -111,7 +102,9 @@ export const getSidebarSnapshotEntries = (
 ) =>
 	machineSnapshotEntries.filter(
 		(snapshotEntry) =>
-			!SIDEBAR_EXCLUDED_SNAPSHOT_LABELS.has(snapshotEntry.label),
+			!HUD_MACHINE_SNAPSHOT.SIDEBAR_EXCLUDED_LABELS.includes(
+				snapshotEntry.label,
+			),
 	);
 
 export const buildHudHealthViewModel = ({

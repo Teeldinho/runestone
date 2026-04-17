@@ -8,8 +8,7 @@ import {
 	FieldLabel,
 	Input,
 } from "@/shared/ui";
-import { AUTH_COPY, USERNAME_RULES } from "../config";
-import { USERNAME_PATTERN } from "../lib";
+import { AUTH_COPY, USERNAME_PATTERN, USERNAME_RULES } from "../config";
 import { type UsernameFormInput, useUsernameForm } from "../model";
 
 type UsernameFormProps = {

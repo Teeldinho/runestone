@@ -10,64 +10,106 @@ import { useGamePageMobileActionPanelModel } from "./useGamePageMobileActionPane
 import { useGamePageMobileCanvasStageModel } from "./useGamePageMobileCanvasStageModel";
 import { useGamePageMobileSheetContentModel } from "./useGamePageMobileSheetContentModel";
 import { useGamePageMobileTopBarModel } from "./useGamePageMobileTopBarModel";
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import {
+	useGamePageAudioContext,
+	useGamePageCanvasContext,
+	useGamePageHudContext,
+	useGamePageLayoutContext,
+	useGamePageMobileSheetContext,
+	useGamePageTouchContext,
+	useGamePageVisualizerContext,
+} from "./useGamePageSliceContexts";
 
-vi.mock("./useGamePageViewModelContext", () => ({
-	useGamePageViewModelContext: vi.fn(),
+vi.mock("./useGamePageSliceContexts", () => ({
+	useGamePageAudioContext: vi.fn(),
+	useGamePageCanvasContext: vi.fn(),
+	useGamePageHudContext: vi.fn(),
+	useGamePageLayoutContext: vi.fn(),
+	useGamePageMobileSheetContext: vi.fn(),
+	useGamePageTouchContext: vi.fn(),
+	useGamePageVisualizerContext: vi.fn(),
 }));
 
 vi.mock("@/features/settings", () => ({
 	useSettingsForm: vi.fn(),
 }));
 
-const createGamePageViewModel = () => ({
-	actionButtons: [],
-	activeStateLabel: ROOM_IDS.ENTRANCE,
-	cameraStateSnapshot: {
-		fov: 58,
-		mode: CAMERA_MODES.FREE_ORBITAL,
-		position: [0, 8, 10] as [number, number, number],
-		target: [0, 0, 0] as [number, number, number],
-		zoom: 1,
+const createGamePageContextSlices = () => ({
+	audio: {
+		handleAudioMuteToggle: vi.fn(),
+		isAudioMuted: false,
 	},
-	canvasMachineRuntime: {
-		currentRoomId: ROOM_IDS.ENTRANCE,
+	canvas: {
+		cameraStateSnapshot: {
+			fov: 58,
+			mode: CAMERA_MODES.FREE_ORBITAL,
+			position: [0, 8, 10] as [number, number, number],
+			target: [0, 0, 0] as [number, number, number],
+			zoom: 1,
+		},
+		canvasMachineRuntime: {
+			currentRoomId: ROOM_IDS.ENTRANCE,
+			enemiesRemaining: 2,
+			hasTreasureKey: false,
+		},
+		handleCameraModeSwitch: vi.fn(),
+	},
+	hud: {
+		actionButtons: [],
+		activeStateLabel: ROOM_IDS.ENTRANCE,
+		currentRoomLabel: "Entrance",
+		discoveredRoomLabels: ["Entrance"],
 		enemiesRemaining: 2,
-		hasTreasureKey: false,
+		hasTreasureKeyLabel: "Missing",
+		handleDungeonRunReset: vi.fn(),
+		playerHp: 90,
+		playerMaxHp: 100,
 	},
-	currentRoomLabel: "Entrance",
-	discoveredRoomLabels: ["Entrance"],
-	enemiesRemaining: 2,
-	graphSections: [],
-	handleAudioMuteToggle: vi.fn(),
-	handleCameraModeSwitch: vi.fn(),
-	hasTreasureKeyLabel: "Missing",
-	handleDungeonRunReset: vi.fn(),
-	handleMobileSheetOpenChange: vi.fn(),
-	handleMobileSheetTabChange: vi.fn(),
-	handleTouchJoystickMove: vi.fn(),
-	handleTouchJoystickStop: vi.fn(),
-	handleTouchAttack: vi.fn(),
-	handleTouchInteract: vi.fn(),
-	hasTouchAttack: true,
-	hasTouchInteract: true,
-	isAudioMuted: false,
-	isDesktopLayout: false,
-	isMobileSheetOpen: true,
-	isMobileTabletLandscape: true,
-	isTabletLayout: true,
-	mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
-	playerHp: 90,
-	playerMaxHp: 100,
-	touchAttackPrompt: "Attack",
-	touchInteractPrompt: "Open Door",
+	layout: {
+		isDesktopLayout: false,
+		isMobileTabletLandscape: true,
+		isTabletLayout: true,
+	},
+	mobileSheet: {
+		handleMobileSheetOpenChange: vi.fn(),
+		handleMobileSheetTabChange: vi.fn(),
+		isMobileSheetOpen: true,
+		mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
+	},
+	touch: {
+		handleTouchJoystickMove: vi.fn(),
+		handleTouchJoystickStop: vi.fn(),
+		handleTouchAttack: vi.fn(),
+		handleTouchInteract: vi.fn(),
+		hasTouchAttack: true,
+		hasTouchInteract: true,
+		touchAttackPrompt: "Attack",
+		touchInteractPrompt: "Open Door",
+	},
+	visualizer: {
+		graphSections: [],
+	},
 });
+
+const mockGamePageContextSlices = (
+	contextSlices: ReturnType<typeof createGamePageContextSlices>,
+) => {
+	vi.mocked(useGamePageAudioContext).mockReturnValue(contextSlices.audio);
+	vi.mocked(useGamePageCanvasContext).mockReturnValue(contextSlices.canvas);
+	vi.mocked(useGamePageHudContext).mockReturnValue(contextSlices.hud);
+	vi.mocked(useGamePageLayoutContext).mockReturnValue(contextSlices.layout);
+	vi.mocked(useGamePageMobileSheetContext).mockReturnValue(
+		contextSlices.mobileSheet,
+	);
+	vi.mocked(useGamePageTouchContext).mockReturnValue(contextSlices.touch);
+	vi.mocked(useGamePageVisualizerContext).mockReturnValue(
+		contextSlices.visualizer,
+	);
+};
 
 describe("game page mobile focused models", () => {
 	it("builds canvas stage model", () => {
-		vi.mocked(useGamePageViewModelContext).mockReturnValue(
-			createGamePageViewModel(),
-		);
+		mockGamePageContextSlices(createGamePageContextSlices());
 		vi.mocked(useSettingsForm).mockReturnValue({
 			postprocessingEnabled: true,
 		} as ReturnType<typeof useSettingsForm>);
@@ -81,41 +123,45 @@ describe("game page mobile focused models", () => {
 	});
 
 	it("builds top bar model", () => {
-		const viewModel = createGamePageViewModel();
-		vi.mocked(useGamePageViewModelContext).mockReturnValue(viewModel);
+		const contextSlices = createGamePageContextSlices();
+		mockGamePageContextSlices(contextSlices);
 
 		const { result } = renderHook(() => useGamePageMobileTopBarModel());
 
 		expect(result.current.handleDungeonRunReset).toBe(
-			viewModel.handleDungeonRunReset,
+			contextSlices.hud.handleDungeonRunReset,
 		);
 		expect(result.current.playerHp).toBe(90);
 		expect(result.current.playerMaxHp).toBe(100);
 	});
 
 	it("builds action panel model", () => {
-		const viewModel = createGamePageViewModel();
-		vi.mocked(useGamePageViewModelContext).mockReturnValue(viewModel);
+		const contextSlices = createGamePageContextSlices();
+		mockGamePageContextSlices(contextSlices);
 
 		const { result } = renderHook(() => useGamePageMobileActionPanelModel());
 
-		expect(result.current.handleTouchAttack).toBe(viewModel.handleTouchAttack);
+		expect(result.current.handleTouchAttack).toBe(
+			contextSlices.touch.handleTouchAttack,
+		);
 		expect(result.current.hasTouchInteract).toBe(true);
 		expect(result.current.touchInteractPrompt).toBe("Open Door");
 	});
 
 	it("builds sheet content model", () => {
-		const viewModel = createGamePageViewModel();
-		vi.mocked(useGamePageViewModelContext).mockReturnValue(viewModel);
+		const contextSlices = createGamePageContextSlices();
+		mockGamePageContextSlices(contextSlices);
 
 		const { result } = renderHook(() => useGamePageMobileSheetContentModel());
 
 		expect(result.current.mobileSheetTabId).toBe(
 			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 		);
-		expect(result.current.graphSections).toBe(viewModel.graphSections);
+		expect(result.current.graphSections).toBe(
+			contextSlices.visualizer.graphSections,
+		);
 		expect(result.current.handleMobileSheetTabChange).toBe(
-			viewModel.handleMobileSheetTabChange,
+			contextSlices.mobileSheet.handleMobileSheetTabChange,
 		);
 	});
 });

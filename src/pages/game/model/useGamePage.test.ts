@@ -229,38 +229,38 @@ describe("useGamePage", () => {
 				},
 			}),
 		);
-		expect(result.current.canvasMachineRuntime).toEqual({
+		expect(result.current.canvas.canvasMachineRuntime).toEqual({
 			currentRoomId: ROOM_IDS.ENTRANCE,
 			enemiesRemaining: 1,
 			hasTreasureKey: false,
 		});
-		expect(result.current.hasTreasureKeyLabel).toBe(
+		expect(result.current.hud.hasTreasureKeyLabel).toBe(
 			GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 		);
-		expect(result.current.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
-		expect(result.current.currentRoomLabel).toBe(
+		expect(result.current.hud.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
+		expect(result.current.hud.currentRoomLabel).toBe(
 			ROOM_LABELS[ROOM_IDS.ENTRANCE],
 		);
-		expect(result.current.isAudioMuted).toBe(false);
-		expect(result.current.isDesktopLayout).toBe(true);
-		expect(result.current.cameraStateSnapshot.mode).toBe(
+		expect(result.current.audio.isAudioMuted).toBe(false);
+		expect(result.current.layout.isDesktopLayout).toBe(true);
+		expect(result.current.canvas.cameraStateSnapshot.mode).toBe(
 			CAMERA_MODES.FREE_ORBITAL,
 		);
-		expect(result.current.mobileSheetTabId).toBe(
+		expect(result.current.mobileSheet.mobileSheetTabId).toBe(
 			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 		);
-		expect(result.current.hasTouchAttack).toBe(false);
-		expect(result.current.hasTouchInteract).toBe(false);
-		expect(result.current.touchAttackPrompt).toBeNull();
-		expect(result.current.touchInteractPrompt).toBeNull();
+		expect(result.current.touch.hasTouchAttack).toBe(false);
+		expect(result.current.touch.hasTouchInteract).toBe(false);
+		expect(result.current.touch.touchAttackPrompt).toBeNull();
+		expect(result.current.touch.touchInteractPrompt).toBeNull();
 		act(() => {
-			result.current.handleTouchInteract();
-			result.current.handleTouchAttack();
+			result.current.touch.handleTouchInteract();
+			result.current.touch.handleTouchAttack();
 		});
 		expect(handleTouchInteract).toHaveBeenCalledTimes(1);
 		expect(handleTouchAttack).toHaveBeenCalledTimes(1);
-		expect(result.current.isMobileSheetOpen).toBe(false);
-		expect(result.current.isMobileTabletLandscape).toBe(false);
+		expect(result.current.mobileSheet.isMobileSheetOpen).toBe(false);
+		expect(result.current.layout.isMobileTabletLandscape).toBe(false);
 		expect(useInteractionInput).toHaveBeenCalledWith(
 			expect.objectContaining({
 				candidates: expect.objectContaining({
@@ -273,7 +273,7 @@ describe("useGamePage", () => {
 		);
 		expect(vi.mocked(useResponsiveGameLayout)).toHaveBeenCalled();
 		expect(vi.mocked(useCameraMachine)).toHaveBeenCalled();
-		expect(result.current.handleAudioMuteToggle).toBeDefined();
+		expect(result.current.audio.handleAudioMuteToggle).toBeDefined();
 		expect(
 			vi.mocked(useAudioController)().handleAudioPlayRequest,
 		).toHaveBeenCalled();
@@ -334,7 +334,7 @@ describe("dungeon reset teleport", () => {
 		const { result } = renderHook(() => useGamePage());
 
 		act(() => {
-			result.current.handleDungeonRunReset();
+			result.current.hud.handleDungeonRunReset();
 		});
 
 		expect(resetDungeonMachine).toHaveBeenCalledTimes(1);
