@@ -10,13 +10,7 @@ export function GamePageDesktopHeader() {
 	return (
 		<header className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-panel-border px-4 py-2">
 			<div className="flex items-center gap-3">
-				<span
-					className="text-lg font-bold tracking-[0.2em]"
-					style={{
-						color: "var(--dungeon-gold)",
-						fontFamily: "Space Grotesk, sans-serif",
-					}}
-				>
+				<span className="rune-text text-lg font-bold tracking-[0.2em] text-dungeon-gold">
 					RUNESTONE
 				</span>
 				<span className="rune-text">·</span>
@@ -26,7 +20,7 @@ export function GamePageDesktopHeader() {
 			<div className="flex items-center gap-2 sm:gap-4">
 				<span className="flex shrink-0 items-center gap-2 whitespace-nowrap">
 					<span className="rune-text">Room:</span>
-					<span className="rune-value" style={{ color: "var(--panel-title)" }}>
+					<span className="rune-value text-panel-title">
 						{currentRoomLabel}
 					</span>
 				</span>
