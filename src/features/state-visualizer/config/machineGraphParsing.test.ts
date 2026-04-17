@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import {
 	GUARD_LABEL_CAPTURE_PATTERN,
 	GUARD_TOKEN_SPLIT_PATTERN,
@@ -21,11 +22,14 @@ describe("GUARD_LABEL_CAPTURE_PATTERN", () => {
 describe("GUARD_TOKEN_SPLIT_PATTERN", () => {
 	it("splits on && operator", () => {
 		const result = "isAlive && hasKey".split(GUARD_TOKEN_SPLIT_PATTERN);
-		expect(result.map((s) => s.trim())).toEqual(["isAlive", "hasKey"]);
+		expect(result.map((segment) => segment.trim())).toEqual([
+			"isAlive",
+			"hasKey",
+		]);
 	});
 
 	it("splits on comma", () => {
 		const result = "a,b,c".split(GUARD_TOKEN_SPLIT_PATTERN);
-		expect(result.map((s) => s.trim())).toEqual(["a", "b", "c"]);
+		expect(result.map((segment) => segment.trim())).toEqual(["a", "b", "c"]);
 	});
 });

@@ -1,7 +1,7 @@
 import {
 	GUARD_LABEL_CAPTURE_PATTERN,
 	GUARD_TOKEN_SPLIT_PATTERN,
-} from "../lib/machineGraphParsing";
+} from "./machineGraphParsing";
 
 export const GRAPH_DIRECTION = {
 	VERTICAL: "TB",
