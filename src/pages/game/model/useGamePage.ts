@@ -1,17 +1,14 @@
 import type { RoomId } from "@/entities/dungeon";
-import { usePlayerMachineRuntime } from "@/entities/player";
-import {
-	type CameraMachineEvent,
-	type CameraStateSnapshot,
-	useCameraMachine,
+import type {
+	CameraMachineEvent,
+	CameraStateSnapshot,
 } from "@/features/camera-system";
-import { useGameMachine } from "@/features/dungeon-navigation";
-import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import type { Vector3Tuple } from "@/shared/lib";
 import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 
-import { GAME_PAGE_COPY } from "../config";
+import { deriveTreasureKeyStatusLabel } from "../lib/deriveTreasureKeyStatusLabel";
 import { useGamePageAudio } from "./useGamePageAudio";
+import { useGamePageMachineState } from "./useGamePageMachineState";
 import {
 	type GamePageMobileSheetTabId,
 	useGamePageMobileSheet,
@@ -21,7 +18,9 @@ import { useGamePageTouch } from "./useGamePageTouch";
 import { useGamePageVisualizer } from "./useGamePageVisualizer";
 
 type GamePageViewModel = {
-	actionButtons: ReturnType<typeof useGameMachine>["actionButtons"];
+	actionButtons: ReturnType<
+		typeof useGamePageMachineState
+	>["gameMachine"]["actionButtons"];
 	activeStateLabel: string;
 	cameraStateSnapshot: CameraStateSnapshot;
 	canvasMachineRuntime: CanvasMachineRuntime;
@@ -54,26 +53,25 @@ type GamePageViewModel = {
 };
 
 export const useGamePage = (): GamePageViewModel => {
+	const { cameraMachine, gameMachine, layout, playerMachine } =
+		useGamePageMachineState();
 	const {
 		activeStateLabel,
 		actionButtons,
-		currentRoomLabel,
 		currentRoomId,
+		currentRoomLabel,
 		discoveredRoomLabels,
 		enemiesRemaining,
-		handleDungeonEventSend: sendDungeonEvent,
+		handleDungeonEventSend,
 		handleDungeonRunReset: resetDungeonMachine,
 		hasTreasureKey,
-	} = useGameMachine();
-	const { snapshot: playerSnapshot, sendPlayerMachineEvent } =
-		usePlayerMachineRuntime();
+	} = gameMachine;
 	const {
 		cameraStateSnapshot,
 		handleCameraModeSwitch,
 		mode: cameraMode,
-	} = useCameraMachine();
-	const { isDesktopLayout, isLandscape, isTabletLayout } =
-		useResponsiveGameLayout();
+	} = cameraMachine;
+	const { sendPlayerMachineEvent, snapshot: playerSnapshot } = playerMachine;
 	const { audioState, handleAudioMuteToggle, isAudioMuted } =
 		useGamePageAudio();
 	const {
@@ -86,17 +84,16 @@ export const useGamePage = (): GamePageViewModel => {
 		touchAttackPrompt,
 		touchInteractPrompt,
 	} = useGamePageTouch({
-		handleDungeonEventSend: sendDungeonEvent,
+		handleDungeonEventSend,
 		sendPlayerMachineEvent,
 	});
-	const isMobileTabletLandscape = !isDesktopLayout && isLandscape;
 	const {
 		handleMobileSheetOpenChange,
 		handleMobileSheetTabChange,
 		isMobileSheetOpen,
 		mobileSheetTabId,
 	} = useGamePageMobileSheet({
-		isMobileTabletLandscape,
+		isMobileTabletLandscape: layout.isMobileTabletLandscape,
 	});
 	const { handleDungeonRunReset } = useGamePageReset({
 		resetDungeonMachine,
@@ -124,9 +121,7 @@ export const useGamePage = (): GamePageViewModel => {
 		graphSections,
 		handleAudioMuteToggle,
 		handleCameraModeSwitch,
-		hasTreasureKeyLabel: hasTreasureKey
-			? GAME_PAGE_COPY.TREASURE_KEY_STATUS.ACQUIRED
-			: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
+		hasTreasureKeyLabel: deriveTreasureKeyStatusLabel(hasTreasureKey),
 		handleDungeonRunReset,
 		handleMobileSheetOpenChange,
 		handleMobileSheetTabChange,
@@ -137,10 +132,10 @@ export const useGamePage = (): GamePageViewModel => {
 		hasTouchAttack,
 		hasTouchInteract,
 		isAudioMuted,
-		isDesktopLayout,
+		isDesktopLayout: layout.isDesktopLayout,
 		isMobileSheetOpen,
-		isMobileTabletLandscape,
-		isTabletLayout,
+		isMobileTabletLandscape: layout.isMobileTabletLandscape,
+		isTabletLayout: layout.isTabletLayout,
 		mobileSheetTabId,
 		playerHp: playerSnapshot.context.stats.hp,
 		playerMaxHp: playerSnapshot.context.stats.maxHp,

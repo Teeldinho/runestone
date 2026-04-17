@@ -1,7 +1,7 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties } from "react";
 
 import { GAME_PAGE_LAYOUT } from "@/pages/game/config";
-import type { GamePageViewModel } from "@/pages/game/model";
+import { useGamePageDesktopLayoutModel } from "@/pages/game/model";
 import { ScrollArea } from "@/shared/ui";
 import { CameraModeSwitcher } from "@/widgets/camera-mode-switcher";
 import { GameCanvas } from "@/widgets/game-canvas";
@@ -10,24 +10,18 @@ import {
 	XStateInspectorPanel,
 } from "@/widgets/xstate-inspector-panel";
 
-type GamePageDesktopWorkspacePanelsProps = {
-	gameHudContent: ReactNode;
-	postprocessingEnabled: boolean;
-	viewModel: Pick<
-		GamePageViewModel,
-		| "cameraStateSnapshot"
-		| "canvasMachineRuntime"
-		| "graphSections"
-		| "handleCameraModeSwitch"
-		| "isMobileTabletLandscape"
-	>;
-};
+import { GamePageHudPanel } from "./GamePageHudPanel";
 
-export function GamePageDesktopWorkspacePanels({
-	gameHudContent,
-	postprocessingEnabled,
-	viewModel,
-}: GamePageDesktopWorkspacePanelsProps) {
+export function GamePageDesktopWorkspacePanels() {
+	const {
+		cameraStateSnapshot,
+		canvasMachineRuntime,
+		graphSections,
+		handleCameraModeSwitch,
+		isMobileTabletLandscape,
+		postprocessingEnabled,
+	} = useGamePageDesktopLayoutModel();
+
 	return (
 		<div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
 			<aside
@@ -41,7 +35,7 @@ export function GamePageDesktopWorkspacePanels({
 					} as CSSProperties
 				}
 			>
-				<XStateInspectorPanel sections={viewModel.graphSections} />
+				<XStateInspectorPanel sections={graphSections} />
 			</aside>
 
 			<div className="order-1 flex min-h-0 min-w-0 flex-1 flex-col lg:order-2 lg:overflow-hidden">
@@ -55,16 +49,16 @@ export function GamePageDesktopWorkspacePanels({
 
 					<div className="min-h-0 flex-1" style={{ cursor: "grab" }}>
 						<GameCanvas
-							cameraStateSnapshot={viewModel.cameraStateSnapshot}
-							machineRuntime={viewModel.canvasMachineRuntime}
+							cameraStateSnapshot={cameraStateSnapshot}
+							machineRuntime={canvasMachineRuntime}
 							postprocessingEnabled={postprocessingEnabled}
 						/>
 					</div>
 
 					<div className="shrink-0 border-t border-panel-border p-2">
 						<CameraModeSwitcher
-							activeCameraMode={viewModel.cameraStateSnapshot.mode}
-							handleCameraModeSwitch={viewModel.handleCameraModeSwitch}
+							activeCameraMode={cameraStateSnapshot.mode}
+							handleCameraModeSwitch={handleCameraModeSwitch}
 						/>
 					</div>
 				</section>
@@ -77,7 +71,7 @@ export function GamePageDesktopWorkspacePanels({
 						maxHeight: `${GAME_PAGE_LAYOUT.DETAILS_PANEL_HEIGHT_DVH}dvh`,
 					}}
 				>
-					<XStateInspectorDetailsPanel sections={viewModel.graphSections} />
+					<XStateInspectorDetailsPanel sections={graphSections} />
 				</section>
 			</div>
 
@@ -92,10 +86,12 @@ export function GamePageDesktopWorkspacePanels({
 					} as CSSProperties
 				}
 			>
-				{viewModel.isMobileTabletLandscape ? (
-					gameHudContent
+				{isMobileTabletLandscape ? (
+					<GamePageHudPanel />
 				) : (
-					<ScrollArea className="flex-1">{gameHudContent}</ScrollArea>
+					<ScrollArea className="flex-1">
+						<GamePageHudPanel />
+					</ScrollArea>
 				)}
 			</aside>
 		</div>

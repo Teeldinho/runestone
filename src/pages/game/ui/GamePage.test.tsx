@@ -65,9 +65,134 @@ const createGamePageViewModel = (overrides = {}) => ({
 	...overrides,
 });
 
-vi.mock("@/pages/game/model", () => ({
-	useGamePage: vi.fn(),
-}));
+vi.mock("@/pages/game/model", () => {
+	const useGamePage = vi.fn();
+
+	return {
+		GamePageViewModelProvider: ({
+			children,
+		}: {
+			children: React.ReactNode;
+		}) => <>{children}</>,
+		useGamePage,
+		useGamePageCameraElements: () => ({
+			cameraControlElement: null,
+			cameraControlRef: vi.fn(),
+			firstPersonLookElement: null,
+			firstPersonLookRef: vi.fn(),
+		}),
+		useGamePageDesktopLayoutModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				cameraStateSnapshot: viewModel.cameraStateSnapshot,
+				canvasMachineRuntime: viewModel.canvasMachineRuntime,
+				currentRoomLabel: viewModel.currentRoomLabel,
+				graphSections: viewModel.graphSections,
+				handleAudioMuteToggle: viewModel.handleAudioMuteToggle,
+				handleCameraModeSwitch: viewModel.handleCameraModeSwitch,
+				isAudioMuted: viewModel.isAudioMuted,
+				isMobileTabletLandscape: viewModel.isMobileTabletLandscape,
+				postprocessingEnabled: true,
+			};
+		},
+		useGamePageDesktopHeaderModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				currentRoomLabel: viewModel.currentRoomLabel,
+				handleAudioMuteToggle: viewModel.handleAudioMuteToggle,
+				isAudioMuted: viewModel.isAudioMuted,
+			};
+		},
+		useGamePageHudPanelModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				actionButtons: viewModel.actionButtons,
+				activeStateLabel: viewModel.activeStateLabel,
+				currentRoomLabel: viewModel.currentRoomLabel,
+				discoveredRoomLabels: viewModel.discoveredRoomLabels,
+				enemiesRemaining: viewModel.enemiesRemaining,
+				handleDungeonRunReset: viewModel.handleDungeonRunReset,
+				hasTreasureKeyLabel: viewModel.hasTreasureKeyLabel,
+				playerHp: viewModel.playerHp,
+				playerMaxHp: viewModel.playerMaxHp,
+			};
+		},
+		useGamePageLayoutMode: () => {
+			const viewModel = useGamePage();
+
+			return {
+				isDesktopLayout: viewModel.isDesktopLayout,
+				isMobileTabletLandscape: viewModel.isMobileTabletLandscape,
+			};
+		},
+		useGamePageMobileLayoutShellModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				handleMobileSheetOpenChange: viewModel.handleMobileSheetOpenChange,
+				isMobileSheetOpen: viewModel.isMobileSheetOpen,
+			};
+		},
+		useGamePageMobileCanvasStageModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				cameraStateSnapshot: viewModel.cameraStateSnapshot,
+				canvasMachineRuntime: viewModel.canvasMachineRuntime,
+				postprocessingEnabled: true,
+			};
+		},
+		useGamePageMobileTopBarModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				cameraStateSnapshot: viewModel.cameraStateSnapshot,
+				handleCameraModeSwitch: viewModel.handleCameraModeSwitch,
+				handleDungeonRunReset: viewModel.handleDungeonRunReset,
+				playerHp: viewModel.playerHp,
+				playerMaxHp: viewModel.playerMaxHp,
+			};
+		},
+		useGamePageMobileJoystickModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				handleTouchJoystickMove: viewModel.handleTouchJoystickMove,
+				handleTouchJoystickStop: viewModel.handleTouchJoystickStop,
+			};
+		},
+		useGamePageMobileActionPanelModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				handleAudioMuteToggle: viewModel.handleAudioMuteToggle,
+				handleTouchAttack: viewModel.handleTouchAttack,
+				handleTouchInteract: viewModel.handleTouchInteract,
+				hasTouchAttack: viewModel.hasTouchAttack,
+				hasTouchInteract: viewModel.hasTouchInteract,
+				isAudioMuted: viewModel.isAudioMuted,
+				isMobileSheetOpen: viewModel.isMobileSheetOpen,
+				isTabletLayout: viewModel.isTabletLayout,
+				touchAttackPrompt: viewModel.touchAttackPrompt,
+				touchInteractPrompt: viewModel.touchInteractPrompt,
+			};
+		},
+		useGamePageMobileSheetContentModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				cameraStateSnapshot: viewModel.cameraStateSnapshot,
+				graphSections: viewModel.graphSections,
+				handleCameraModeSwitch: viewModel.handleCameraModeSwitch,
+				handleMobileSheetTabChange: viewModel.handleMobileSheetTabChange,
+				mobileSheetTabId: viewModel.mobileSheetTabId,
+			};
+		},
+	};
+});
 
 vi.mock("@/features/settings", () => ({
 	useSettingsForm: vi.fn(() => ({

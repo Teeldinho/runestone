@@ -1,18 +1,12 @@
 import { Trophy, Volume2, VolumeX } from "lucide-react";
 
+import { useGamePageDesktopHeaderModel } from "@/pages/game/model";
 import { LeaderboardSheet } from "@/widgets/leaderboard-panel";
 
-type GamePageDesktopHeaderProps = {
-	currentRoomLabel: string;
-	handleAudioMuteToggle: () => void;
-	isAudioMuted: boolean;
-};
+export function GamePageDesktopHeader() {
+	const { currentRoomLabel, handleAudioMuteToggle, isAudioMuted } =
+		useGamePageDesktopHeaderModel();
 
-export function GamePageDesktopHeader({
-	currentRoomLabel,
-	handleAudioMuteToggle,
-	isAudioMuted,
-}: GamePageDesktopHeaderProps) {
 	return (
 		<header className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-panel-border px-4 py-2">
 			<div className="flex items-center gap-3">
