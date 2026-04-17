@@ -1,19 +1,13 @@
 import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
 
 export const useGamePageMobileSheetContentModel = () => {
-	const {
-		cameraStateSnapshot,
-		graphSections,
-		handleCameraModeSwitch,
-		handleMobileSheetTabChange,
-		mobileSheetTabId,
-	} = useGamePageViewModelContext();
+	const { canvas, mobileSheet, visualizer } = useGamePageViewModelContext();
 
 	return {
-		cameraStateSnapshot,
-		graphSections,
-		handleCameraModeSwitch,
-		handleMobileSheetTabChange,
-		mobileSheetTabId,
+		cameraStateSnapshot: canvas.cameraStateSnapshot,
+		graphSections: visualizer.graphSections,
+		handleCameraModeSwitch: canvas.handleCameraModeSwitch,
+		handleMobileSheetTabChange: mobileSheet.handleMobileSheetTabChange,
+		mobileSheetTabId: mobileSheet.mobileSheetTabId,
 	};
 };

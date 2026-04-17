@@ -21,46 +21,60 @@ vi.mock("@/features/settings", () => ({
 }));
 
 const createGamePageViewModel = () => ({
-	actionButtons: [],
-	activeStateLabel: ROOM_IDS.ENTRANCE,
-	cameraStateSnapshot: {
-		fov: 58,
-		mode: CAMERA_MODES.FREE_ORBITAL,
-		position: [0, 8, 10] as [number, number, number],
-		target: [0, 0, 0] as [number, number, number],
-		zoom: 1,
+	audio: {
+		handleAudioMuteToggle: vi.fn(),
+		isAudioMuted: false,
 	},
-	canvasMachineRuntime: {
-		currentRoomId: ROOM_IDS.ENTRANCE,
+	canvas: {
+		cameraStateSnapshot: {
+			fov: 58,
+			mode: CAMERA_MODES.FREE_ORBITAL,
+			position: [0, 8, 10] as [number, number, number],
+			target: [0, 0, 0] as [number, number, number],
+			zoom: 1,
+		},
+		canvasMachineRuntime: {
+			currentRoomId: ROOM_IDS.ENTRANCE,
+			enemiesRemaining: 2,
+			hasTreasureKey: false,
+		},
+		handleCameraModeSwitch: vi.fn(),
+	},
+	hud: {
+		actionButtons: [],
+		activeStateLabel: ROOM_IDS.ENTRANCE,
+		currentRoomLabel: "Entrance",
+		discoveredRoomLabels: ["Entrance"],
 		enemiesRemaining: 2,
-		hasTreasureKey: false,
+		hasTreasureKeyLabel: "Missing",
+		handleDungeonRunReset: vi.fn(),
+		playerHp: 90,
+		playerMaxHp: 100,
 	},
-	currentRoomLabel: "Entrance",
-	discoveredRoomLabels: ["Entrance"],
-	enemiesRemaining: 2,
-	graphSections: [],
-	handleAudioMuteToggle: vi.fn(),
-	handleCameraModeSwitch: vi.fn(),
-	hasTreasureKeyLabel: "Missing",
-	handleDungeonRunReset: vi.fn(),
-	handleMobileSheetOpenChange: vi.fn(),
-	handleMobileSheetTabChange: vi.fn(),
-	handleTouchJoystickMove: vi.fn(),
-	handleTouchJoystickStop: vi.fn(),
-	handleTouchAttack: vi.fn(),
-	handleTouchInteract: vi.fn(),
-	hasTouchAttack: true,
-	hasTouchInteract: true,
-	isAudioMuted: false,
-	isDesktopLayout: false,
-	isMobileSheetOpen: true,
-	isMobileTabletLandscape: true,
-	isTabletLayout: true,
-	mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
-	playerHp: 90,
-	playerMaxHp: 100,
-	touchAttackPrompt: "Attack",
-	touchInteractPrompt: "Open Door",
+	layout: {
+		isDesktopLayout: false,
+		isMobileTabletLandscape: true,
+		isTabletLayout: true,
+	},
+	mobileSheet: {
+		handleMobileSheetOpenChange: vi.fn(),
+		handleMobileSheetTabChange: vi.fn(),
+		isMobileSheetOpen: true,
+		mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
+	},
+	touch: {
+		handleTouchJoystickMove: vi.fn(),
+		handleTouchJoystickStop: vi.fn(),
+		handleTouchAttack: vi.fn(),
+		handleTouchInteract: vi.fn(),
+		hasTouchAttack: true,
+		hasTouchInteract: true,
+		touchAttackPrompt: "Attack",
+		touchInteractPrompt: "Open Door",
+	},
+	visualizer: {
+		graphSections: [],
+	},
 });
 
 describe("game page mobile focused models", () => {
@@ -87,7 +101,7 @@ describe("game page mobile focused models", () => {
 		const { result } = renderHook(() => useGamePageMobileTopBarModel());
 
 		expect(result.current.handleDungeonRunReset).toBe(
-			viewModel.handleDungeonRunReset,
+			viewModel.hud.handleDungeonRunReset,
 		);
 		expect(result.current.playerHp).toBe(90);
 		expect(result.current.playerMaxHp).toBe(100);
@@ -99,7 +113,9 @@ describe("game page mobile focused models", () => {
 
 		const { result } = renderHook(() => useGamePageMobileActionPanelModel());
 
-		expect(result.current.handleTouchAttack).toBe(viewModel.handleTouchAttack);
+		expect(result.current.handleTouchAttack).toBe(
+			viewModel.touch.handleTouchAttack,
+		);
 		expect(result.current.hasTouchInteract).toBe(true);
 		expect(result.current.touchInteractPrompt).toBe("Open Door");
 	});
@@ -113,9 +129,11 @@ describe("game page mobile focused models", () => {
 		expect(result.current.mobileSheetTabId).toBe(
 			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 		);
-		expect(result.current.graphSections).toBe(viewModel.graphSections);
+		expect(result.current.graphSections).toBe(
+			viewModel.visualizer.graphSections,
+		);
 		expect(result.current.handleMobileSheetTabChange).toBe(
-			viewModel.handleMobileSheetTabChange,
+			viewModel.mobileSheet.handleMobileSheetTabChange,
 		);
 	});
 });

@@ -1,19 +1,13 @@
 import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
 
 export const useGamePageMobileTopBarModel = () => {
-	const {
-		cameraStateSnapshot,
-		handleCameraModeSwitch,
-		handleDungeonRunReset,
-		playerHp,
-		playerMaxHp,
-	} = useGamePageViewModelContext();
+	const { canvas, hud } = useGamePageViewModelContext();
 
 	return {
-		cameraStateSnapshot,
-		handleCameraModeSwitch,
-		handleDungeonRunReset,
-		playerHp,
-		playerMaxHp,
+		cameraStateSnapshot: canvas.cameraStateSnapshot,
+		handleCameraModeSwitch: canvas.handleCameraModeSwitch,
+		handleDungeonRunReset: hud.handleDungeonRunReset,
+		playerHp: hud.playerHp,
+		playerMaxHp: hud.playerMaxHp,
 	};
 };

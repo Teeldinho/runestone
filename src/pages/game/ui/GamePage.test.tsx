@@ -14,56 +14,113 @@ const TEST_NAVIGATION_ACTION_LABELS = {
 	[DUNGEON_EVENTS.ENTER_LIBRARY]: "Enter Library",
 } as const;
 
-const createGamePageViewModel = (overrides = {}) => ({
-	actionButtons: [
-		{
-			eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
-			label: TEST_NAVIGATION_ACTION_LABELS[DUNGEON_EVENTS.ENTER_LIBRARY],
-			isDisabled: false,
-			handleDungeonActionTrigger: vi.fn(),
+const createGamePageViewModel = (overrides = {}) => {
+	const defaultViewModel = {
+		audio: {
+			handleAudioMuteToggle: vi.fn(),
+			isAudioMuted: false,
 		},
-	],
-	activeStateLabel: ROOM_IDS.ENTRANCE,
-	cameraStateSnapshot: {
-		fov: 58,
-		mode: CAMERA_MODES.FREE_ORBITAL,
-		position: [0, 8, 10] as [number, number, number],
-		target: [0, 0, 0] as [number, number, number],
-		zoom: 1,
-	},
-	canvasMachineRuntime: {
-		currentRoomId: ROOM_IDS.ENTRANCE,
-		enemiesRemaining: 1,
-		hasTreasureKey: false,
-	},
-	currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
-	discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
-	enemiesRemaining: 1,
-	graphSections: [],
-	handleCameraModeSwitch: vi.fn(),
-	handleMobileSheetOpenChange: vi.fn(),
-	handleMobileSheetTabChange: vi.fn(),
-	handleTouchAttack: vi.fn(),
-	handleTouchInteract: vi.fn(),
-	handleTouchJoystickMove: vi.fn(),
-	handleTouchJoystickStop: vi.fn(),
-	hasTouchAttack: false,
-	hasTouchInteract: false,
-	handleAudioMuteToggle: vi.fn(),
-	isAudioMuted: false,
-	isDesktopLayout: true,
-	isMobileSheetOpen: false,
-	isMobileTabletLandscape: false,
-	isTabletLayout: false,
-	mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
-	hasTreasureKeyLabel: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
-	handleDungeonRunReset: vi.fn(),
-	playerHp: 100,
-	playerMaxHp: 100,
-	touchAttackPrompt: null,
-	touchInteractPrompt: null,
-	...overrides,
-});
+		canvas: {
+			cameraStateSnapshot: {
+				fov: 58,
+				mode: CAMERA_MODES.FREE_ORBITAL,
+				position: [0, 8, 10] as [number, number, number],
+				target: [0, 0, 0] as [number, number, number],
+				zoom: 1,
+			},
+			canvasMachineRuntime: {
+				currentRoomId: ROOM_IDS.ENTRANCE,
+				enemiesRemaining: 1,
+				hasTreasureKey: false,
+			},
+			handleCameraModeSwitch: vi.fn(),
+		},
+		hud: {
+			actionButtons: [
+				{
+					eventType: DUNGEON_EVENTS.ENTER_LIBRARY,
+					label: TEST_NAVIGATION_ACTION_LABELS[DUNGEON_EVENTS.ENTER_LIBRARY],
+					isDisabled: false,
+					handleDungeonActionTrigger: vi.fn(),
+				},
+			],
+			activeStateLabel: ROOM_IDS.ENTRANCE,
+			currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+			discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
+			enemiesRemaining: 1,
+			hasTreasureKeyLabel: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
+			handleDungeonRunReset: vi.fn(),
+			playerHp: 100,
+			playerMaxHp: 100,
+		},
+		layout: {
+			isDesktopLayout: true,
+			isMobileTabletLandscape: false,
+			isTabletLayout: false,
+		},
+		mobileSheet: {
+			handleMobileSheetOpenChange: vi.fn(),
+			handleMobileSheetTabChange: vi.fn(),
+			isMobileSheetOpen: false,
+			mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
+		},
+		touch: {
+			handleTouchAttack: vi.fn(),
+			handleTouchInteract: vi.fn(),
+			handleTouchJoystickMove: vi.fn(),
+			handleTouchJoystickStop: vi.fn(),
+			hasTouchAttack: false,
+			hasTouchInteract: false,
+			touchAttackPrompt: null,
+			touchInteractPrompt: null,
+		},
+		visualizer: {
+			graphSections: [],
+		},
+	};
+
+	const overrideSlices = overrides as {
+		audio?: Partial<(typeof defaultViewModel)["audio"]>;
+		canvas?: Partial<(typeof defaultViewModel)["canvas"]>;
+		hud?: Partial<(typeof defaultViewModel)["hud"]>;
+		layout?: Partial<(typeof defaultViewModel)["layout"]>;
+		mobileSheet?: Partial<(typeof defaultViewModel)["mobileSheet"]>;
+		touch?: Partial<(typeof defaultViewModel)["touch"]>;
+		visualizer?: Partial<(typeof defaultViewModel)["visualizer"]>;
+	};
+
+	return {
+		...defaultViewModel,
+		audio: {
+			...defaultViewModel.audio,
+			...overrideSlices.audio,
+		},
+		canvas: {
+			...defaultViewModel.canvas,
+			...overrideSlices.canvas,
+		},
+		hud: {
+			...defaultViewModel.hud,
+			...overrideSlices.hud,
+		},
+		layout: {
+			...defaultViewModel.layout,
+			...overrideSlices.layout,
+		},
+		mobileSheet: {
+			...defaultViewModel.mobileSheet,
+			...overrideSlices.mobileSheet,
+		},
+		touch: {
+			...defaultViewModel.touch,
+			...overrideSlices.touch,
+		},
+		visualizer: {
+			...defaultViewModel.visualizer,
+			...overrideSlices.visualizer,
+		},
+	};
+};
 
 vi.mock("@/pages/game/model", () => {
 	const useGamePage = vi.fn();
@@ -85,14 +142,14 @@ vi.mock("@/pages/game/model", () => {
 			const viewModel = useGamePage();
 
 			return {
-				cameraStateSnapshot: viewModel.cameraStateSnapshot,
-				canvasMachineRuntime: viewModel.canvasMachineRuntime,
-				currentRoomLabel: viewModel.currentRoomLabel,
-				graphSections: viewModel.graphSections,
-				handleAudioMuteToggle: viewModel.handleAudioMuteToggle,
-				handleCameraModeSwitch: viewModel.handleCameraModeSwitch,
-				isAudioMuted: viewModel.isAudioMuted,
-				isMobileTabletLandscape: viewModel.isMobileTabletLandscape,
+				cameraStateSnapshot: viewModel.canvas.cameraStateSnapshot,
+				canvasMachineRuntime: viewModel.canvas.canvasMachineRuntime,
+				currentRoomLabel: viewModel.hud.currentRoomLabel,
+				graphSections: viewModel.visualizer.graphSections,
+				handleAudioMuteToggle: viewModel.audio.handleAudioMuteToggle,
+				handleCameraModeSwitch: viewModel.canvas.handleCameraModeSwitch,
+				isAudioMuted: viewModel.audio.isAudioMuted,
+				isMobileTabletLandscape: viewModel.layout.isMobileTabletLandscape,
 				postprocessingEnabled: true,
 			};
 		},
@@ -100,48 +157,49 @@ vi.mock("@/pages/game/model", () => {
 			const viewModel = useGamePage();
 
 			return {
-				currentRoomLabel: viewModel.currentRoomLabel,
-				handleAudioMuteToggle: viewModel.handleAudioMuteToggle,
-				isAudioMuted: viewModel.isAudioMuted,
+				currentRoomLabel: viewModel.hud.currentRoomLabel,
+				handleAudioMuteToggle: viewModel.audio.handleAudioMuteToggle,
+				isAudioMuted: viewModel.audio.isAudioMuted,
 			};
 		},
 		useGamePageHudPanelModel: () => {
 			const viewModel = useGamePage();
 
 			return {
-				actionButtons: viewModel.actionButtons,
-				activeStateLabel: viewModel.activeStateLabel,
-				currentRoomLabel: viewModel.currentRoomLabel,
-				discoveredRoomLabels: viewModel.discoveredRoomLabels,
-				enemiesRemaining: viewModel.enemiesRemaining,
-				handleDungeonRunReset: viewModel.handleDungeonRunReset,
-				hasTreasureKeyLabel: viewModel.hasTreasureKeyLabel,
-				playerHp: viewModel.playerHp,
-				playerMaxHp: viewModel.playerMaxHp,
+				actionButtons: viewModel.hud.actionButtons,
+				activeStateLabel: viewModel.hud.activeStateLabel,
+				currentRoomLabel: viewModel.hud.currentRoomLabel,
+				discoveredRoomLabels: viewModel.hud.discoveredRoomLabels,
+				enemiesRemaining: viewModel.hud.enemiesRemaining,
+				handleDungeonRunReset: viewModel.hud.handleDungeonRunReset,
+				hasTreasureKeyLabel: viewModel.hud.hasTreasureKeyLabel,
+				playerHp: viewModel.hud.playerHp,
+				playerMaxHp: viewModel.hud.playerMaxHp,
 			};
 		},
 		useGamePageLayoutMode: () => {
 			const viewModel = useGamePage();
 
 			return {
-				isDesktopLayout: viewModel.isDesktopLayout,
-				isMobileTabletLandscape: viewModel.isMobileTabletLandscape,
+				isDesktopLayout: viewModel.layout.isDesktopLayout,
+				isMobileTabletLandscape: viewModel.layout.isMobileTabletLandscape,
 			};
 		},
 		useGamePageMobileLayoutShellModel: () => {
 			const viewModel = useGamePage();
 
 			return {
-				handleMobileSheetOpenChange: viewModel.handleMobileSheetOpenChange,
-				isMobileSheetOpen: viewModel.isMobileSheetOpen,
+				handleMobileSheetOpenChange:
+					viewModel.mobileSheet.handleMobileSheetOpenChange,
+				isMobileSheetOpen: viewModel.mobileSheet.isMobileSheetOpen,
 			};
 		},
 		useGamePageMobileCanvasStageModel: () => {
 			const viewModel = useGamePage();
 
 			return {
-				cameraStateSnapshot: viewModel.cameraStateSnapshot,
-				canvasMachineRuntime: viewModel.canvasMachineRuntime,
+				cameraStateSnapshot: viewModel.canvas.cameraStateSnapshot,
+				canvasMachineRuntime: viewModel.canvas.canvasMachineRuntime,
 				postprocessingEnabled: true,
 			};
 		},
@@ -149,46 +207,47 @@ vi.mock("@/pages/game/model", () => {
 			const viewModel = useGamePage();
 
 			return {
-				cameraStateSnapshot: viewModel.cameraStateSnapshot,
-				handleCameraModeSwitch: viewModel.handleCameraModeSwitch,
-				handleDungeonRunReset: viewModel.handleDungeonRunReset,
-				playerHp: viewModel.playerHp,
-				playerMaxHp: viewModel.playerMaxHp,
+				cameraStateSnapshot: viewModel.canvas.cameraStateSnapshot,
+				handleCameraModeSwitch: viewModel.canvas.handleCameraModeSwitch,
+				handleDungeonRunReset: viewModel.hud.handleDungeonRunReset,
+				playerHp: viewModel.hud.playerHp,
+				playerMaxHp: viewModel.hud.playerMaxHp,
 			};
 		},
 		useGamePageMobileJoystickModel: () => {
 			const viewModel = useGamePage();
 
 			return {
-				handleTouchJoystickMove: viewModel.handleTouchJoystickMove,
-				handleTouchJoystickStop: viewModel.handleTouchJoystickStop,
+				handleTouchJoystickMove: viewModel.touch.handleTouchJoystickMove,
+				handleTouchJoystickStop: viewModel.touch.handleTouchJoystickStop,
 			};
 		},
 		useGamePageMobileActionPanelModel: () => {
 			const viewModel = useGamePage();
 
 			return {
-				handleAudioMuteToggle: viewModel.handleAudioMuteToggle,
-				handleTouchAttack: viewModel.handleTouchAttack,
-				handleTouchInteract: viewModel.handleTouchInteract,
-				hasTouchAttack: viewModel.hasTouchAttack,
-				hasTouchInteract: viewModel.hasTouchInteract,
-				isAudioMuted: viewModel.isAudioMuted,
-				isMobileSheetOpen: viewModel.isMobileSheetOpen,
-				isTabletLayout: viewModel.isTabletLayout,
-				touchAttackPrompt: viewModel.touchAttackPrompt,
-				touchInteractPrompt: viewModel.touchInteractPrompt,
+				handleAudioMuteToggle: viewModel.audio.handleAudioMuteToggle,
+				handleTouchAttack: viewModel.touch.handleTouchAttack,
+				handleTouchInteract: viewModel.touch.handleTouchInteract,
+				hasTouchAttack: viewModel.touch.hasTouchAttack,
+				hasTouchInteract: viewModel.touch.hasTouchInteract,
+				isAudioMuted: viewModel.audio.isAudioMuted,
+				isMobileSheetOpen: viewModel.mobileSheet.isMobileSheetOpen,
+				isTabletLayout: viewModel.layout.isTabletLayout,
+				touchAttackPrompt: viewModel.touch.touchAttackPrompt,
+				touchInteractPrompt: viewModel.touch.touchInteractPrompt,
 			};
 		},
 		useGamePageMobileSheetContentModel: () => {
 			const viewModel = useGamePage();
 
 			return {
-				cameraStateSnapshot: viewModel.cameraStateSnapshot,
-				graphSections: viewModel.graphSections,
-				handleCameraModeSwitch: viewModel.handleCameraModeSwitch,
-				handleMobileSheetTabChange: viewModel.handleMobileSheetTabChange,
-				mobileSheetTabId: viewModel.mobileSheetTabId,
+				cameraStateSnapshot: viewModel.canvas.cameraStateSnapshot,
+				graphSections: viewModel.visualizer.graphSections,
+				handleCameraModeSwitch: viewModel.canvas.handleCameraModeSwitch,
+				handleMobileSheetTabChange:
+					viewModel.mobileSheet.handleMobileSheetTabChange,
+				mobileSheetTabId: viewModel.mobileSheet.mobileSheetTabId,
 			};
 		},
 	};
@@ -277,13 +336,17 @@ describe("GamePage", () => {
 	it("renders touch overlays and bottom-sheet trigger on mobile and tablet landscape", () => {
 		vi.mocked(useGamePage).mockReturnValue(
 			createGamePageViewModel({
-				isDesktopLayout: false,
-				hasTouchAttack: true,
-				hasTouchInteract: true,
-				isMobileTabletLandscape: true,
-				isTabletLayout: true,
-				touchAttackPrompt: "Attack",
-				touchInteractPrompt: "Enter Library",
+				layout: {
+					isDesktopLayout: false,
+					isMobileTabletLandscape: true,
+					isTabletLayout: true,
+				},
+				touch: {
+					hasTouchAttack: true,
+					hasTouchInteract: true,
+					touchAttackPrompt: "Attack",
+					touchInteractPrompt: "Enter Library",
+				},
 			}),
 		);
 
@@ -310,8 +373,10 @@ describe("GamePage", () => {
 	it("renders rotate-device banner in touch portrait mode", () => {
 		vi.mocked(useGamePage).mockReturnValue(
 			createGamePageViewModel({
-				isDesktopLayout: false,
-				isMobileTabletLandscape: false,
+				layout: {
+					isDesktopLayout: false,
+					isMobileTabletLandscape: false,
+				},
 			}),
 		);
 
