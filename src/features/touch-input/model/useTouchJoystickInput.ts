@@ -8,12 +8,14 @@ import {
 
 import type { Vector3Tuple } from "@/shared/lib";
 
-import { TOUCH_JOYSTICK_CONFIG } from "../config";
+import {
+	TOUCH_JOYSTICK_CONFIG,
+	TOUCH_JOYSTICK_POINTER_ACTIONS,
+	TOUCH_JOYSTICK_POINTER_PHASES,
+} from "../config";
 import {
 	resolveJoystickVector,
 	resolveTouchJoystickPointerAction,
-	TOUCH_JOYSTICK_POINTER_ACTIONS,
-	TOUCH_JOYSTICK_POINTER_PHASES,
 } from "../lib";
 
 type UseTouchJoystickInputOptions = {

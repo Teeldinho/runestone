@@ -1,22 +1,9 @@
-const TOUCH_JOYSTICK_POINTER_PHASES = {
-	DOWN: "down",
-	MOVE: "move",
-	UP: "up",
-	CANCEL: "cancel",
-} as const;
-
-const TOUCH_JOYSTICK_POINTER_ACTIONS = {
-	ACTIVATE: "activate",
-	UPDATE: "update",
-	RELEASE: "release",
-	IGNORE: "ignore",
-} as const;
-
-type TouchJoystickPointerPhase =
-	(typeof TOUCH_JOYSTICK_POINTER_PHASES)[keyof typeof TOUCH_JOYSTICK_POINTER_PHASES];
-
-type TouchJoystickPointerAction =
-	(typeof TOUCH_JOYSTICK_POINTER_ACTIONS)[keyof typeof TOUCH_JOYSTICK_POINTER_ACTIONS];
+import {
+	TOUCH_JOYSTICK_POINTER_ACTIONS,
+	TOUCH_JOYSTICK_POINTER_PHASES,
+	type TouchJoystickPointerAction,
+	type TouchJoystickPointerPhase,
+} from "../config";
 
 const shouldUpdatePointer = (
 	activePointerId: number | null,
@@ -50,6 +37,3 @@ export const resolveTouchJoystickPointerAction = ({
 		? TOUCH_JOYSTICK_POINTER_ACTIONS.RELEASE
 		: TOUCH_JOYSTICK_POINTER_ACTIONS.IGNORE;
 };
-
-export type { TouchJoystickPointerAction, TouchJoystickPointerPhase };
-export { TOUCH_JOYSTICK_POINTER_ACTIONS, TOUCH_JOYSTICK_POINTER_PHASES };

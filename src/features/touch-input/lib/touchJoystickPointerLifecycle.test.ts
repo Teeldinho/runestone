@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
-	resolveTouchJoystickPointerAction,
 	TOUCH_JOYSTICK_POINTER_ACTIONS,
 	TOUCH_JOYSTICK_POINTER_PHASES,
-} from "./touchJoystickPointerLifecycle";
+} from "../config";
+import { resolveTouchJoystickPointerAction } from "./touchJoystickPointerLifecycle";
 
 describe("resolveTouchJoystickPointerAction", () => {
 	it("returns activate when no pointer is active on pointer down", () => {
