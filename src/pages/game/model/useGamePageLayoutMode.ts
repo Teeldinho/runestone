@@ -1,11 +1,10 @@
 import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
 
 export const useGamePageLayoutMode = () => {
-	const { isDesktopLayout, isMobileTabletLandscape } =
-		useGamePageViewModelContext();
+	const { layout } = useGamePageViewModelContext();
 
 	return {
-		isDesktopLayout,
-		isMobileTabletLandscape,
+		isDesktopLayout: layout.isDesktopLayout,
+		isMobileTabletLandscape: layout.isMobileTabletLandscape,
 	};
 };

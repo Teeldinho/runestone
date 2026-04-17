@@ -1,41 +1,10 @@
 import type { GamePageViewModel } from "./types";
 import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
 
-type GamePageHudPanelModel = Pick<
-	GamePageViewModel,
-	| "actionButtons"
-	| "activeStateLabel"
-	| "currentRoomLabel"
-	| "discoveredRoomLabels"
-	| "enemiesRemaining"
-	| "handleDungeonRunReset"
-	| "hasTreasureKeyLabel"
-	| "playerHp"
-	| "playerMaxHp"
->;
+type GamePageHudPanelModel = GamePageViewModel["hud"];
 
 export const useGamePageHudPanelModel = (): GamePageHudPanelModel => {
-	const {
-		actionButtons,
-		activeStateLabel,
-		currentRoomLabel,
-		discoveredRoomLabels,
-		enemiesRemaining,
-		handleDungeonRunReset,
-		hasTreasureKeyLabel,
-		playerHp,
-		playerMaxHp,
-	} = useGamePageViewModelContext();
+	const { hud } = useGamePageViewModelContext();
 
-	return {
-		actionButtons,
-		activeStateLabel,
-		currentRoomLabel,
-		discoveredRoomLabels,
-		enemiesRemaining,
-		handleDungeonRunReset,
-		hasTreasureKeyLabel,
-		playerHp,
-		playerMaxHp,
-	};
+	return hud;
 };

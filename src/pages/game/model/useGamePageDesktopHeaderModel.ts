@@ -1,12 +1,11 @@
 import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
 
 export const useGamePageDesktopHeaderModel = () => {
-	const { currentRoomLabel, handleAudioMuteToggle, isAudioMuted } =
-		useGamePageViewModelContext();
+	const { audio, hud } = useGamePageViewModelContext();
 
 	return {
-		currentRoomLabel,
-		handleAudioMuteToggle,
-		isAudioMuted,
+		currentRoomLabel: hud.currentRoomLabel,
+		handleAudioMuteToggle: audio.handleAudioMuteToggle,
+		isAudioMuted: audio.isAudioMuted,
 	};
 };

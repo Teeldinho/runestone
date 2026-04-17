@@ -1,6 +1,5 @@
 import type { RoomId } from "@/entities/dungeon";
 
-import { createGamePageViewModel } from "../lib/createGamePageViewModel";
 import { deriveTreasureKeyStatusLabel } from "../lib/deriveTreasureKeyStatusLabel";
 import type { GamePageViewModel } from "./types";
 import { useGamePageAudio } from "./useGamePageAudio";
@@ -64,37 +63,54 @@ export const useGamePage = (): GamePageViewModel => {
 		playerStateValue: playerSnapshot.value,
 	});
 
-	return createGamePageViewModel({
-		actionButtons,
-		activeStateLabel,
-		cameraStateSnapshot,
-		currentRoomId: currentRoomId as RoomId,
-		currentRoomLabel,
-		discoveredRoomLabels,
-		enemiesRemaining,
-		graphSections,
-		handleAudioMuteToggle,
-		handleCameraModeSwitch,
-		handleDungeonRunReset,
-		handleMobileSheetOpenChange,
-		handleMobileSheetTabChange,
-		handleTouchJoystickMove,
-		handleTouchJoystickStop,
-		handleTouchAttack,
-		handleTouchInteract,
-		hasTouchAttack,
-		hasTouchInteract,
-		hasTreasureKey,
-		hasTreasureKeyLabel: deriveTreasureKeyStatusLabel(hasTreasureKey),
-		isAudioMuted,
-		isDesktopLayout: layout.isDesktopLayout,
-		isMobileSheetOpen,
-		isMobileTabletLandscape: layout.isMobileTabletLandscape,
-		isTabletLayout: layout.isTabletLayout,
-		mobileSheetTabId,
-		playerHp: playerSnapshot.context.stats.hp,
-		playerMaxHp: playerSnapshot.context.stats.maxHp,
-		touchAttackPrompt,
-		touchInteractPrompt,
-	});
+	return {
+		audio: {
+			handleAudioMuteToggle,
+			isAudioMuted,
+		},
+		canvas: {
+			cameraStateSnapshot,
+			canvasMachineRuntime: {
+				currentRoomId: currentRoomId as RoomId,
+				enemiesRemaining,
+				hasTreasureKey,
+			},
+			handleCameraModeSwitch,
+		},
+		hud: {
+			actionButtons,
+			activeStateLabel,
+			currentRoomLabel,
+			discoveredRoomLabels,
+			enemiesRemaining,
+			handleDungeonRunReset,
+			hasTreasureKeyLabel: deriveTreasureKeyStatusLabel(hasTreasureKey),
+			playerHp: playerSnapshot.context.stats.hp,
+			playerMaxHp: playerSnapshot.context.stats.maxHp,
+		},
+		layout: {
+			isDesktopLayout: layout.isDesktopLayout,
+			isMobileTabletLandscape: layout.isMobileTabletLandscape,
+			isTabletLayout: layout.isTabletLayout,
+		},
+		mobileSheet: {
+			handleMobileSheetOpenChange,
+			handleMobileSheetTabChange,
+			isMobileSheetOpen,
+			mobileSheetTabId,
+		},
+		touch: {
+			handleTouchAttack,
+			handleTouchInteract,
+			handleTouchJoystickMove,
+			handleTouchJoystickStop,
+			hasTouchAttack,
+			hasTouchInteract,
+			touchAttackPrompt,
+			touchInteractPrompt,
+		},
+		visualizer: {
+			graphSections,
+		},
+	};
 };

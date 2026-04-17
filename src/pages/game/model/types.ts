@@ -1,4 +1,3 @@
-import type { RoomId } from "@/entities/dungeon";
 import type {
 	CameraMachineEvent,
 	CameraStateSnapshot,
@@ -10,47 +9,76 @@ import type { useGamePageMachineState } from "./useGamePageMachineState";
 import type { GamePageMobileSheetTabId } from "./useGamePageMobileSheet";
 import type { useGamePageVisualizer } from "./useGamePageVisualizer";
 
-type GamePageViewModel = {
+type GamePageHudSlice = {
 	actionButtons: ReturnType<
 		typeof useGamePageMachineState
 	>["gameMachine"]["actionButtons"];
 	activeStateLabel: string;
-	cameraStateSnapshot: CameraStateSnapshot;
-	canvasMachineRuntime: CanvasMachineRuntime;
 	currentRoomLabel: string;
 	discoveredRoomLabels: string[];
 	enemiesRemaining: number;
-	graphSections: ReturnType<typeof useGamePageVisualizer>["graphSections"];
-	handleAudioMuteToggle: () => void;
-	handleCameraModeSwitch: (event: CameraMachineEvent) => void;
 	handleDungeonRunReset: () => void;
+	hasTreasureKeyLabel: string;
+	playerHp: number;
+	playerMaxHp: number;
+};
+
+type GamePageCanvasSlice = {
+	cameraStateSnapshot: CameraStateSnapshot;
+	canvasMachineRuntime: CanvasMachineRuntime;
+	handleCameraModeSwitch: (event: CameraMachineEvent) => void;
+};
+
+type GamePageAudioSlice = {
+	handleAudioMuteToggle: () => void;
+	isAudioMuted: boolean;
+};
+
+type GamePageLayoutSlice = {
+	isDesktopLayout: boolean;
+	isMobileTabletLandscape: boolean;
+	isTabletLayout: boolean;
+};
+
+type GamePageMobileSheetSlice = {
 	handleMobileSheetOpenChange: (isOpen: boolean) => void;
 	handleMobileSheetTabChange: (tabId: string) => void;
+	isMobileSheetOpen: boolean;
+	mobileSheetTabId: GamePageMobileSheetTabId;
+};
+
+type GamePageTouchSlice = {
 	handleTouchJoystickMove: (velocity: Vector3Tuple) => void;
 	handleTouchJoystickStop: () => void;
 	handleTouchAttack: () => void;
 	handleTouchInteract: () => void;
 	hasTouchAttack: boolean;
 	hasTouchInteract: boolean;
-	hasTreasureKeyLabel: string;
-	isAudioMuted: boolean;
-	isDesktopLayout: boolean;
-	isMobileSheetOpen: boolean;
-	isMobileTabletLandscape: boolean;
-	isTabletLayout: boolean;
-	mobileSheetTabId: GamePageMobileSheetTabId;
-	playerHp: number;
-	playerMaxHp: number;
 	touchAttackPrompt: string | null;
 	touchInteractPrompt: string | null;
 };
 
-type CreateGamePageViewModelInput = Omit<
-	GamePageViewModel,
-	"canvasMachineRuntime"
-> & {
-	currentRoomId: RoomId;
-	hasTreasureKey: boolean;
+type GamePageVisualizerSlice = {
+	graphSections: ReturnType<typeof useGamePageVisualizer>["graphSections"];
 };
 
-export type { CreateGamePageViewModelInput, GamePageViewModel };
+type GamePageViewModel = {
+	audio: GamePageAudioSlice;
+	canvas: GamePageCanvasSlice;
+	hud: GamePageHudSlice;
+	layout: GamePageLayoutSlice;
+	mobileSheet: GamePageMobileSheetSlice;
+	touch: GamePageTouchSlice;
+	visualizer: GamePageVisualizerSlice;
+};
+
+export type {
+	GamePageAudioSlice,
+	GamePageCanvasSlice,
+	GamePageHudSlice,
+	GamePageLayoutSlice,
+	GamePageMobileSheetSlice,
+	GamePageTouchSlice,
+	GamePageViewModel,
+	GamePageVisualizerSlice,
+};
