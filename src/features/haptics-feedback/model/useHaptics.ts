@@ -12,11 +12,12 @@ import {
 	type HapticPatternKey,
 	isHapticEventThrottled,
 } from "../config";
-import { HAPTICS_DEBUG_MODE_ENABLED } from "../lib";
+
+const isHapticsDebugModeEnabled = import.meta.env.DEV;
 
 export const useHaptics = () => {
 	const { trigger, cancel, isSupported } = useWebHaptics({
-		debug: HAPTICS_DEBUG_MODE_ENABLED,
+		debug: isHapticsDebugModeEnabled,
 	});
 	const lastHapticTriggerAtRef = useRef(0);
 
