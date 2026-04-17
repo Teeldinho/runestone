@@ -1,7 +1,11 @@
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import {
+	useGamePageCanvasContext,
+	useGamePageHudContext,
+} from "./useGamePageSliceContexts";
 
 export const useGamePageMobileTopBarModel = () => {
-	const { canvas, hud } = useGamePageViewModelContext();
+	const canvas = useGamePageCanvasContext();
+	const hud = useGamePageHudContext();
 
 	return {
 		cameraStateSnapshot: canvas.cameraStateSnapshot,

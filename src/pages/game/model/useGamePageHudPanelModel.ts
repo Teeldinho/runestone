@@ -1,10 +1,10 @@
-import type { GamePageViewModel } from "./types";
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import type { GamePageHudSlice } from "./types";
+import { useGamePageHudContext } from "./useGamePageSliceContexts";
 
-type GamePageHudPanelModel = GamePageViewModel["hud"];
+type GamePageHudPanelModel = GamePageHudSlice;
 
 export const useGamePageHudPanelModel = (): GamePageHudPanelModel => {
-	const { hud } = useGamePageViewModelContext();
+	const hud = useGamePageHudContext();
 
 	return hud;
 };

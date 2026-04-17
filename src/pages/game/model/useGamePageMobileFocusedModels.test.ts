@@ -10,17 +10,31 @@ import { useGamePageMobileActionPanelModel } from "./useGamePageMobileActionPane
 import { useGamePageMobileCanvasStageModel } from "./useGamePageMobileCanvasStageModel";
 import { useGamePageMobileSheetContentModel } from "./useGamePageMobileSheetContentModel";
 import { useGamePageMobileTopBarModel } from "./useGamePageMobileTopBarModel";
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import {
+	useGamePageAudioContext,
+	useGamePageCanvasContext,
+	useGamePageHudContext,
+	useGamePageLayoutContext,
+	useGamePageMobileSheetContext,
+	useGamePageTouchContext,
+	useGamePageVisualizerContext,
+} from "./useGamePageSliceContexts";
 
-vi.mock("./useGamePageViewModelContext", () => ({
-	useGamePageViewModelContext: vi.fn(),
+vi.mock("./useGamePageSliceContexts", () => ({
+	useGamePageAudioContext: vi.fn(),
+	useGamePageCanvasContext: vi.fn(),
+	useGamePageHudContext: vi.fn(),
+	useGamePageLayoutContext: vi.fn(),
+	useGamePageMobileSheetContext: vi.fn(),
+	useGamePageTouchContext: vi.fn(),
+	useGamePageVisualizerContext: vi.fn(),
 }));
 
 vi.mock("@/features/settings", () => ({
 	useSettingsForm: vi.fn(),
 }));
 
-const createGamePageViewModel = () => ({
+const createGamePageContextSlices = () => ({
 	audio: {
 		handleAudioMuteToggle: vi.fn(),
 		isAudioMuted: false,
@@ -77,11 +91,25 @@ const createGamePageViewModel = () => ({
 	},
 });
 
+const mockGamePageContextSlices = (
+	contextSlices: ReturnType<typeof createGamePageContextSlices>,
+) => {
+	vi.mocked(useGamePageAudioContext).mockReturnValue(contextSlices.audio);
+	vi.mocked(useGamePageCanvasContext).mockReturnValue(contextSlices.canvas);
+	vi.mocked(useGamePageHudContext).mockReturnValue(contextSlices.hud);
+	vi.mocked(useGamePageLayoutContext).mockReturnValue(contextSlices.layout);
+	vi.mocked(useGamePageMobileSheetContext).mockReturnValue(
+		contextSlices.mobileSheet,
+	);
+	vi.mocked(useGamePageTouchContext).mockReturnValue(contextSlices.touch);
+	vi.mocked(useGamePageVisualizerContext).mockReturnValue(
+		contextSlices.visualizer,
+	);
+};
+
 describe("game page mobile focused models", () => {
 	it("builds canvas stage model", () => {
-		vi.mocked(useGamePageViewModelContext).mockReturnValue(
-			createGamePageViewModel(),
-		);
+		mockGamePageContextSlices(createGamePageContextSlices());
 		vi.mocked(useSettingsForm).mockReturnValue({
 			postprocessingEnabled: true,
 		} as ReturnType<typeof useSettingsForm>);
@@ -95,34 +123,34 @@ describe("game page mobile focused models", () => {
 	});
 
 	it("builds top bar model", () => {
-		const viewModel = createGamePageViewModel();
-		vi.mocked(useGamePageViewModelContext).mockReturnValue(viewModel);
+		const contextSlices = createGamePageContextSlices();
+		mockGamePageContextSlices(contextSlices);
 
 		const { result } = renderHook(() => useGamePageMobileTopBarModel());
 
 		expect(result.current.handleDungeonRunReset).toBe(
-			viewModel.hud.handleDungeonRunReset,
+			contextSlices.hud.handleDungeonRunReset,
 		);
 		expect(result.current.playerHp).toBe(90);
 		expect(result.current.playerMaxHp).toBe(100);
 	});
 
 	it("builds action panel model", () => {
-		const viewModel = createGamePageViewModel();
-		vi.mocked(useGamePageViewModelContext).mockReturnValue(viewModel);
+		const contextSlices = createGamePageContextSlices();
+		mockGamePageContextSlices(contextSlices);
 
 		const { result } = renderHook(() => useGamePageMobileActionPanelModel());
 
 		expect(result.current.handleTouchAttack).toBe(
-			viewModel.touch.handleTouchAttack,
+			contextSlices.touch.handleTouchAttack,
 		);
 		expect(result.current.hasTouchInteract).toBe(true);
 		expect(result.current.touchInteractPrompt).toBe("Open Door");
 	});
 
 	it("builds sheet content model", () => {
-		const viewModel = createGamePageViewModel();
-		vi.mocked(useGamePageViewModelContext).mockReturnValue(viewModel);
+		const contextSlices = createGamePageContextSlices();
+		mockGamePageContextSlices(contextSlices);
 
 		const { result } = renderHook(() => useGamePageMobileSheetContentModel());
 
@@ -130,10 +158,10 @@ describe("game page mobile focused models", () => {
 			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 		);
 		expect(result.current.graphSections).toBe(
-			viewModel.visualizer.graphSections,
+			contextSlices.visualizer.graphSections,
 		);
 		expect(result.current.handleMobileSheetTabChange).toBe(
-			viewModel.mobileSheet.handleMobileSheetTabChange,
+			contextSlices.mobileSheet.handleMobileSheetTabChange,
 		);
 	});
 });

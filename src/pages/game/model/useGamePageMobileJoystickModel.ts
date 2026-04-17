@@ -1,7 +1,7 @@
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import { useGamePageTouchContext } from "./useGamePageSliceContexts";
 
 export const useGamePageMobileJoystickModel = () => {
-	const { touch } = useGamePageViewModelContext();
+	const touch = useGamePageTouchContext();
 
 	return {
 		handleTouchJoystickMove: touch.handleTouchJoystickMove,

@@ -1,10 +1,19 @@
 import { useSettingsForm } from "@/features/settings";
 
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import {
+	useGamePageAudioContext,
+	useGamePageCanvasContext,
+	useGamePageHudContext,
+	useGamePageLayoutContext,
+	useGamePageVisualizerContext,
+} from "./useGamePageSliceContexts";
 
 export const useGamePageDesktopLayoutModel = () => {
-	const { audio, canvas, hud, layout, visualizer } =
-		useGamePageViewModelContext();
+	const audio = useGamePageAudioContext();
+	const canvas = useGamePageCanvasContext();
+	const hud = useGamePageHudContext();
+	const layout = useGamePageLayoutContext();
+	const visualizer = useGamePageVisualizerContext();
 	const { postprocessingEnabled } = useSettingsForm();
 
 	return {

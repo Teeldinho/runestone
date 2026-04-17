@@ -1,7 +1,11 @@
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import {
+	useGamePageAudioContext,
+	useGamePageHudContext,
+} from "./useGamePageSliceContexts";
 
 export const useGamePageDesktopHeaderModel = () => {
-	const { audio, hud } = useGamePageViewModelContext();
+	const audio = useGamePageAudioContext();
+	const hud = useGamePageHudContext();
 
 	return {
 		currentRoomLabel: hud.currentRoomLabel,

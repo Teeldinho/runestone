@@ -1,9 +1,9 @@
 import { useSettingsForm } from "@/features/settings";
 
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import { useGamePageCanvasContext } from "./useGamePageSliceContexts";
 
 export const useGamePageMobileCanvasStageModel = () => {
-	const { canvas } = useGamePageViewModelContext();
+	const canvas = useGamePageCanvasContext();
 	const { postprocessingEnabled } = useSettingsForm();
 
 	return {

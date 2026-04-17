@@ -1,7 +1,7 @@
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import { useGamePageLayoutContext } from "./useGamePageSliceContexts";
 
 export const useGamePageLayoutMode = () => {
-	const { layout } = useGamePageViewModelContext();
+	const layout = useGamePageLayoutContext();
 
 	return {
 		isDesktopLayout: layout.isDesktopLayout,

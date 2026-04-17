@@ -1,7 +1,15 @@
-import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
+import {
+	useGamePageAudioContext,
+	useGamePageLayoutContext,
+	useGamePageMobileSheetContext,
+	useGamePageTouchContext,
+} from "./useGamePageSliceContexts";
 
 export const useGamePageMobileActionPanelModel = () => {
-	const { audio, layout, mobileSheet, touch } = useGamePageViewModelContext();
+	const audio = useGamePageAudioContext();
+	const layout = useGamePageLayoutContext();
+	const mobileSheet = useGamePageMobileSheetContext();
+	const touch = useGamePageTouchContext();
 
 	return {
 		handleAudioMuteToggle: audio.handleAudioMuteToggle,
