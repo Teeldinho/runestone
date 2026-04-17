@@ -1,5 +1,4 @@
 import { Layers, RotateCcw, Trophy, Volume2, VolumeX } from "lucide-react";
-import type { ReactNode } from "react";
 
 import { CAMERA_MODES } from "@/features/camera-system";
 import { StateVisualizerWorkspaceProvider } from "@/features/state-visualizer";
@@ -8,7 +7,10 @@ import {
 	TouchJoystickOverlay,
 } from "@/features/touch-input";
 import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
-import type { GamePageViewModel } from "@/pages/game/model";
+import {
+	useGamePageCameraElements,
+	useGamePageMobileLayoutModel,
+} from "@/pages/game/model";
 import {
 	Badge,
 	Button,
@@ -37,48 +39,12 @@ import {
 	XStateInspectorPanel,
 } from "@/widgets/xstate-inspector-panel";
 
-type GamePageMobileLayoutProps = {
-	cameraElements: {
-		cameraControlElement: HTMLElement | null;
-		cameraControlRef: (node: HTMLElement | null) => void;
-		firstPersonLookElement: HTMLElement | null;
-		firstPersonLookRef: (node: HTMLElement | null) => void;
-	};
-	gameHudContent: ReactNode;
-	postprocessingEnabled: boolean;
-	viewModel: Pick<
-		GamePageViewModel,
-		| "cameraStateSnapshot"
-		| "canvasMachineRuntime"
-		| "graphSections"
-		| "handleAudioMuteToggle"
-		| "handleCameraModeSwitch"
-		| "handleDungeonRunReset"
-		| "handleMobileSheetOpenChange"
-		| "handleMobileSheetTabChange"
-		| "handleTouchAttack"
-		| "handleTouchInteract"
-		| "handleTouchJoystickMove"
-		| "handleTouchJoystickStop"
-		| "hasTouchAttack"
-		| "hasTouchInteract"
-		| "isAudioMuted"
-		| "isMobileSheetOpen"
-		| "isTabletLayout"
-		| "mobileSheetTabId"
-		| "playerHp"
-		| "playerMaxHp"
-		| "touchAttackPrompt"
-		| "touchInteractPrompt"
-	>;
-};
+import { GamePageHudPanel } from "./GamePageHudPanel";
 
-export function GamePageMobileLayout({
-	cameraElements,
-	gameHudContent,
-	postprocessingEnabled,
-	viewModel,
-}: GamePageMobileLayoutProps) {
+export function GamePageMobileLayout() {
+	const cameraElements = useGamePageCameraElements();
+	const viewModel = useGamePageMobileLayoutModel();
+
 	return (
 		<main
 			id="main-content"
@@ -104,7 +70,7 @@ export function GamePageMobileLayout({
 								cameraStateSnapshot={viewModel.cameraStateSnapshot}
 								firstPersonLookElement={cameraElements.firstPersonLookElement}
 								machineRuntime={viewModel.canvasMachineRuntime}
-								postprocessingEnabled={postprocessingEnabled}
+								postprocessingEnabled={viewModel.postprocessingEnabled}
 							/>
 						</div>
 
@@ -330,7 +296,7 @@ export function GamePageMobileLayout({
 
 											<Card className="min-w-0 bg-panel/80 py-0 ring-panel-border/45">
 												<CardContent className="px-0 py-0">
-													{gameHudContent}
+													<GamePageHudPanel />
 												</CardContent>
 											</Card>
 										</div>

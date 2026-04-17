@@ -1,22 +1,9 @@
-import type { GamePageViewModel } from "@/pages/game/model";
+import { useGamePageHudPanelModel } from "@/pages/game/model";
 import { GameHud } from "@/widgets/hud";
 
-type GamePageHudPanelProps = {
-	viewModel: Pick<
-		GamePageViewModel,
-		| "actionButtons"
-		| "activeStateLabel"
-		| "currentRoomLabel"
-		| "discoveredRoomLabels"
-		| "enemiesRemaining"
-		| "handleDungeonRunReset"
-		| "hasTreasureKeyLabel"
-		| "playerHp"
-		| "playerMaxHp"
-	>;
-};
+export function GamePageHudPanel() {
+	const viewModel = useGamePageHudPanelModel();
 
-export function GamePageHudPanel({ viewModel }: GamePageHudPanelProps) {
 	return (
 		<div className="p-3">
 			<GameHud
