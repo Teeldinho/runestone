@@ -1,36 +1,24 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-
-import type { DungeonEvent } from "@/entities/dungeon";
-import { createFloorOneMachine, ROOM_IDS } from "@/entities/dungeon";
-import {
-	createPlayerMachine,
-	PLAYER_ENTITY_CONFIG,
-	PLAYER_EVENTS,
-	usePlayerMachineRuntime,
-} from "@/entities/player";
-import { createDungeonFloorLayout } from "@/entities/room";
-import { audioMachine, useAudioController } from "@/features/audio-manager";
+import type { RoomId } from "@/entities/dungeon";
+import { usePlayerMachineRuntime } from "@/entities/player";
 import {
 	type CameraMachineEvent,
 	type CameraStateSnapshot,
-	createCameraMachine,
 	useCameraMachine,
 } from "@/features/camera-system";
-import {
-	useGameMachine,
-	useInteractionCandidates,
-	useInteractionInput,
-} from "@/features/dungeon-navigation";
+import { useGameMachine } from "@/features/dungeon-navigation";
 import { useResponsiveGameLayout } from "@/features/responsive-layout";
-import {
-	STATE_VISUALIZER_SECTION_IDS,
-	useStateVisualizer,
-} from "@/features/state-visualizer";
 import type { Vector3Tuple } from "@/shared/lib";
-import { setPlayerTeleportTarget } from "@/shared/lib";
 import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 
-import { GAME_PAGE_COPY, GAME_PAGE_MOBILE_SHEET } from "../config";
+import { GAME_PAGE_COPY } from "../config";
+import { useGamePageAudio } from "./useGamePageAudio";
+import {
+	type GamePageMobileSheetTabId,
+	useGamePageMobileSheet,
+} from "./useGamePageMobileSheet";
+import { useGamePageReset } from "./useGamePageReset";
+import { useGamePageTouch } from "./useGamePageTouch";
+import { useGamePageVisualizer } from "./useGamePageVisualizer";
 
 type GamePageViewModel = {
 	actionButtons: ReturnType<typeof useGameMachine>["actionButtons"];
@@ -40,7 +28,7 @@ type GamePageViewModel = {
 	currentRoomLabel: string;
 	discoveredRoomLabels: string[];
 	enemiesRemaining: number;
-	graphSections: ReturnType<typeof useStateVisualizer>["sections"];
+	graphSections: ReturnType<typeof useGamePageVisualizer>["graphSections"];
 	handleAudioMuteToggle: () => void;
 	handleCameraModeSwitch: (event: CameraMachineEvent) => void;
 	hasTreasureKeyLabel: string;
@@ -65,9 +53,6 @@ type GamePageViewModel = {
 	touchInteractPrompt: string | null;
 };
 
-type GamePageMobileSheetTabId =
-	(typeof GAME_PAGE_MOBILE_SHEET.TAB_IDS)[keyof typeof GAME_PAGE_MOBILE_SHEET.TAB_IDS];
-
 export const useGamePage = (): GamePageViewModel => {
 	const {
 		activeStateLabel,
@@ -76,11 +61,10 @@ export const useGamePage = (): GamePageViewModel => {
 		currentRoomId,
 		discoveredRoomLabels,
 		enemiesRemaining,
-		handleDungeonEventSend,
+		handleDungeonEventSend: sendDungeonEvent,
 		handleDungeonRunReset: resetDungeonMachine,
 		hasTreasureKey,
 	} = useGameMachine();
-	const interactionCandidates = useInteractionCandidates();
 	const { snapshot: playerSnapshot, sendPlayerMachineEvent } =
 		usePlayerMachineRuntime();
 	const {
@@ -88,137 +72,41 @@ export const useGamePage = (): GamePageViewModel => {
 		handleCameraModeSwitch,
 		mode: cameraMode,
 	} = useCameraMachine();
-	const {
-		audioState,
-		handleAudioPlayRequest,
-		handleAudioMuteToggle,
-		isAudioMuted,
-	} = useAudioController();
 	const { isDesktopLayout, isLandscape, isTabletLayout } =
 		useResponsiveGameLayout();
-	const isMobileTabletLandscape = !isDesktopLayout && isLandscape;
-	const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
-	const [mobileSheetTabId, setMobileSheetTabId] =
-		useState<GamePageMobileSheetTabId>(
-			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
-		);
-	const sendDungeonMachineEvent = useCallback(
-		(event: { type: DungeonEvent }) => {
-			handleDungeonEventSend(event.type);
-		},
-		[handleDungeonEventSend],
-	);
-	const touchInteractionHandlers = useInteractionInput({
-		candidates: interactionCandidates,
-		enableKeyboardBindings: false,
-		sendDungeonMachineEvent,
+	const { audioState, handleAudioMuteToggle, isAudioMuted } =
+		useGamePageAudio();
+	const {
+		handleTouchAttack,
+		handleTouchInteract,
+		handleTouchJoystickMove,
+		handleTouchJoystickStop,
+		hasTouchAttack,
+		hasTouchInteract,
+		touchAttackPrompt,
+		touchInteractPrompt,
+	} = useGamePageTouch({
+		handleDungeonEventSend: sendDungeonEvent,
+		sendPlayerMachineEvent,
 	});
-
-	useEffect(() => {
-		if (!isMobileTabletLandscape) {
-			return;
-		}
-
-		const previousBodyOverflow = document.body.style.overflow;
-		const previousBodyOverscrollBehavior =
-			document.body.style.overscrollBehavior;
-		const previousHtmlOverflow = document.documentElement.style.overflow;
-		const previousHtmlOverscrollBehavior =
-			document.documentElement.style.overscrollBehavior;
-
-		document.body.style.overflow = "hidden";
-		document.body.style.overscrollBehavior = "none";
-		document.documentElement.style.overflow = "hidden";
-		document.documentElement.style.overscrollBehavior = "none";
-
-		return () => {
-			document.body.style.overflow = previousBodyOverflow;
-			document.body.style.overscrollBehavior = previousBodyOverscrollBehavior;
-			document.documentElement.style.overflow = previousHtmlOverflow;
-			document.documentElement.style.overscrollBehavior =
-				previousHtmlOverscrollBehavior;
-		};
-	}, [isMobileTabletLandscape]);
-
-	useEffect(() => {
-		handleAudioPlayRequest();
-	}, [handleAudioPlayRequest]);
-
-	const entrancePosition = useMemo(() => {
-		const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
-		const entrance = floorLayout.rooms.find(
-			(room) => room.roomId === ROOM_IDS.ENTRANCE,
-		);
-
-		if (entrance) {
-			const [entranceX, , entranceZ] = entrance.position;
-
-			return [
-				entranceX,
-				PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
-				entranceZ,
-			] as const;
-		}
-
-		return [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0] as const;
-	}, []);
-
-	const handleDungeonRunReset = useCallback(() => {
-		const [teleportX, teleportY, teleportZ] = entrancePosition;
-
-		sendPlayerMachineEvent({ type: PLAYER_EVENTS.RESTART });
-		setPlayerTeleportTarget(teleportX, teleportY, teleportZ);
-		resetDungeonMachine();
-	}, [sendPlayerMachineEvent, resetDungeonMachine, entrancePosition]);
-
-	const handleTouchJoystickMove = useCallback(
-		(velocity: Vector3Tuple) => {
-			sendPlayerMachineEvent({
-				type: PLAYER_EVENTS.MOVE,
-				velocity,
-				isSprinting: false,
-			});
-		},
-		[sendPlayerMachineEvent],
-	);
-
-	const handleTouchJoystickStop = useCallback(() => {
-		sendPlayerMachineEvent({ type: PLAYER_EVENTS.STOP });
-	}, [sendPlayerMachineEvent]);
-
-	const handleMobileSheetOpenChange = useCallback((isOpen: boolean) => {
-		setIsMobileSheetOpen(isOpen);
-	}, []);
-
-	const handleMobileSheetTabChange = useCallback((tabId: string) => {
-		if (
-			tabId !== GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART &&
-			tabId !== GAME_PAGE_MOBILE_SHEET.TAB_IDS.HUD
-		) {
-			return;
-		}
-
-		setMobileSheetTabId(tabId as GamePageMobileSheetTabId);
-	}, []);
-
-	const visualizerMachinesBySectionId = useMemo(
-		() => ({
-			[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: createFloorOneMachine(),
-			[STATE_VISUALIZER_SECTION_IDS.CAMERA]: createCameraMachine(),
-			[STATE_VISUALIZER_SECTION_IDS.AUDIO]: audioMachine,
-			[STATE_VISUALIZER_SECTION_IDS.PLAYER]: createPlayerMachine(),
-		}),
-		[],
-	);
-
-	const { sections } = useStateVisualizer({
-		machinesBySectionId: visualizerMachinesBySectionId,
-		stateValuesBySectionId: {
-			[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: currentRoomId,
-			[STATE_VISUALIZER_SECTION_IDS.CAMERA]: cameraMode,
-			[STATE_VISUALIZER_SECTION_IDS.AUDIO]: audioState,
-			[STATE_VISUALIZER_SECTION_IDS.PLAYER]: playerSnapshot.value,
-		},
+	const isMobileTabletLandscape = !isDesktopLayout && isLandscape;
+	const {
+		handleMobileSheetOpenChange,
+		handleMobileSheetTabChange,
+		isMobileSheetOpen,
+		mobileSheetTabId,
+	} = useGamePageMobileSheet({
+		isMobileTabletLandscape,
+	});
+	const { handleDungeonRunReset } = useGamePageReset({
+		resetDungeonMachine,
+		sendPlayerMachineEvent,
+	});
+	const { graphSections } = useGamePageVisualizer({
+		audioState,
+		cameraMode,
+		currentRoomId: currentRoomId as RoomId,
+		playerStateValue: playerSnapshot.value,
 	});
 
 	return {
@@ -233,7 +121,7 @@ export const useGamePage = (): GamePageViewModel => {
 		currentRoomLabel,
 		discoveredRoomLabels,
 		enemiesRemaining,
-		graphSections: sections,
+		graphSections,
 		handleAudioMuteToggle,
 		handleCameraModeSwitch,
 		hasTreasureKeyLabel: hasTreasureKey
@@ -244,10 +132,10 @@ export const useGamePage = (): GamePageViewModel => {
 		handleMobileSheetTabChange,
 		handleTouchJoystickMove,
 		handleTouchJoystickStop,
-		handleTouchAttack: touchInteractionHandlers.handleAttack,
-		handleTouchInteract: touchInteractionHandlers.handleInteract,
-		hasTouchAttack: interactionCandidates.hasAttack,
-		hasTouchInteract: interactionCandidates.hasInteract,
+		handleTouchAttack,
+		handleTouchInteract,
+		hasTouchAttack,
+		hasTouchInteract,
 		isAudioMuted,
 		isDesktopLayout,
 		isMobileSheetOpen,
@@ -256,8 +144,8 @@ export const useGamePage = (): GamePageViewModel => {
 		mobileSheetTabId,
 		playerHp: playerSnapshot.context.stats.hp,
 		playerMaxHp: playerSnapshot.context.stats.maxHp,
-		touchAttackPrompt: interactionCandidates.attackPrompt,
-		touchInteractPrompt: interactionCandidates.interactPrompt,
+		touchAttackPrompt,
+		touchInteractPrompt,
 	};
 };
 
