@@ -1,9 +1,5 @@
 import { AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
-import { Physics } from "@react-three/rapier";
-import { Suspense } from "react";
-import { AchievementNotification } from "@/features/achievements";
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { GAME_CANVAS_COPY } from "../config";
 import {
@@ -17,12 +13,8 @@ import {
 } from "../model";
 
 import { CameraRig } from "./CameraRig";
-import { DamageFlashOverlay } from "./DamageFlashOverlay";
-import { GameOverOverlay } from "./GameOverOverlay";
-import { SceneEnvironment } from "./SceneEnvironment";
-import { SceneFog } from "./SceneFog";
-import { SceneLighting } from "./SceneLighting";
-import { WorldInteractionRuntime } from "./WorldInteractionRuntime";
+import { GameCanvasOverlays } from "./GameCanvasOverlays";
+import { GameCanvasSceneContent } from "./GameCanvasSceneContent";
 
 type GameCanvasProps = {
 	cameraControlElement?: HTMLElement | null;
@@ -65,18 +57,12 @@ export function GameCanvas({
 
 	return (
 		<div className="relative h-full w-full overflow-hidden">
-			<AchievementNotification achievement={activeAchievement} />
-			<DamageFlashOverlay />
-			<GameOverOverlay isGameOver={isGameOver} onRestart={handleGameRestart} />
-			{showFirstPersonLockHint && (
-				<button
-					id="game-canvas-fp-lock"
-					className="absolute inset-0 z-10 flex cursor-crosshair items-center justify-center bg-transparent text-[color-mix(in_srgb,white_60%,transparent)] text-sm font-medium"
-					type="button"
-				>
-					{GAME_CANVAS_COPY.FIRST_PERSON_LOCK_HINT}
-				</button>
-			)}
+			<GameCanvasOverlays
+				activeAchievement={activeAchievement}
+				handleGameRestart={handleGameRestart}
+				isGameOver={isGameOver}
+				showFirstPersonLockHint={showFirstPersonLockHint}
+			/>
 			<Canvas
 				className="h-full w-full touch-none"
 				aria-label={GAME_CANVAS_COPY.CANVAS_ARIA_LABEL}
@@ -99,31 +85,14 @@ export function GameCanvas({
 					firstPersonLookElement={firstPersonLookElement}
 					playerSpawnPosition={playerSpawnPosition}
 				/>
-				<Suspense fallback={null}>
-					<SceneFog fog={fog} />
-					<SceneLighting lighting={lighting} />
-					{isPostprocessingEnabled && (
-						<EffectComposer>
-							<Bloom
-								luminanceThreshold={postprocessing.bloom.luminanceThreshold}
-								luminanceSmoothing={postprocessing.bloom.luminanceSmoothing}
-								intensity={postprocessing.bloom.intensity}
-								mipmapBlur={postprocessing.bloom.mipmapBlur}
-							/>
-							<Vignette
-								offset={postprocessing.vignette.offset}
-								darkness={postprocessing.vignette.darkness}
-							/>
-						</EffectComposer>
-					)}
-					<Physics>
-						<SceneEnvironment
-							environment={environment}
-							playerSpawnPosition={playerSpawnPosition}
-						/>
-						<WorldInteractionRuntime />
-					</Physics>
-				</Suspense>
+				<GameCanvasSceneContent
+					environment={environment}
+					fog={fog}
+					isPostprocessingEnabled={isPostprocessingEnabled}
+					lighting={lighting}
+					playerSpawnPosition={playerSpawnPosition}
+					postprocessing={postprocessing}
+				/>
 			</Canvas>
 		</div>
 	);

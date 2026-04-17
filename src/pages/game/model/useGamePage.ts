@@ -2,13 +2,13 @@ import type { RoomId } from "@/entities/dungeon";
 
 import { createGamePageViewModel } from "../lib/createGamePageViewModel";
 import { deriveTreasureKeyStatusLabel } from "../lib/deriveTreasureKeyStatusLabel";
+import type { GamePageViewModel } from "./types";
 import { useGamePageAudio } from "./useGamePageAudio";
 import { useGamePageMachineState } from "./useGamePageMachineState";
 import { useGamePageMobileSheet } from "./useGamePageMobileSheet";
 import { useGamePageReset } from "./useGamePageReset";
 import { useGamePageTouch } from "./useGamePageTouch";
 import { useGamePageVisualizer } from "./useGamePageVisualizer";
-import type { GamePageViewModel } from "./types";
 
 export const useGamePage = (): GamePageViewModel => {
 	const { cameraMachine, gameMachine, layout, playerMachine } =

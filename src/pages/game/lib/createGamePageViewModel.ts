@@ -1,4 +1,7 @@
-import type { CreateGamePageViewModelInput, GamePageViewModel } from "../model/types";
+import type {
+	CreateGamePageViewModelInput,
+	GamePageViewModel,
+} from "../model/types";
 
 export const createGamePageViewModel = ({
 	actionButtons,

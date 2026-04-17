@@ -51,8 +51,5 @@ export const resolveTouchJoystickPointerAction = ({
 		: TOUCH_JOYSTICK_POINTER_ACTIONS.IGNORE;
 };
 
-export {
-	TOUCH_JOYSTICK_POINTER_ACTIONS,
-	TOUCH_JOYSTICK_POINTER_PHASES,
-};
 export type { TouchJoystickPointerAction, TouchJoystickPointerPhase };
+export { TOUCH_JOYSTICK_POINTER_ACTIONS, TOUCH_JOYSTICK_POINTER_PHASES };
