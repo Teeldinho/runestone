@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import { DUNGEON_EVENTS } from "@/entities/dungeon";
 import { HUD_COPY, HUD_DISPLAY_VARIANTS } from "@/widgets/hud/config";
 
@@ -90,6 +91,7 @@ describe("hudViewModel", () => {
 	it("builds hp view model with clamped percentage and low-health flag", () => {
 		expect(buildHudHealthViewModel({ playerHp: 25, playerMaxHp: 100 })).toEqual(
 			{
+				fillClassName: "hp-bar-fill hp-bar-fill-low",
 				hpPercentage: 25,
 				isLowHp: true,
 				label: "25 / 100",
@@ -99,6 +101,7 @@ describe("hudViewModel", () => {
 		expect(
 			buildHudHealthViewModel({ playerHp: 150, playerMaxHp: 100 }),
 		).toEqual({
+			fillClassName: "hp-bar-fill",
 			hpPercentage: 100,
 			isLowHp: false,
 			label: "150 / 100",

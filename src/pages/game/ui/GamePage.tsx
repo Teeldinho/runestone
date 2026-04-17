@@ -91,15 +91,15 @@ export function GamePage() {
 	const gameHudContent = (
 		<div className="p-3">
 			<GameHud
-				actionButtons={actionButtons}
-				activeStateLabel={activeStateLabel}
-				currentRoomLabel={currentRoomLabel}
-				discoveredRoomLabels={discoveredRoomLabels}
-				enemiesRemaining={enemiesRemaining}
-				handleDungeonRunReset={handleDungeonRunReset}
-				hasTreasureKeyLabel={hasTreasureKeyLabel}
-				playerHp={playerHp}
-				playerMaxHp={playerMaxHp}
+				actions={{ actionButtons, handleDungeonRunReset }}
+				playerStats={{ playerHp, playerMaxHp }}
+				snapshot={{
+					activeStateLabel,
+					currentRoomLabel,
+					discoveredRoomLabels,
+					enemiesRemaining,
+					hasTreasureKeyLabel,
+				}}
 			/>
 		</div>
 	);
