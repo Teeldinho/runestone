@@ -13,6 +13,7 @@ export const GAME_PAGE_LAYOUT = {
 
 export const GAME_PAGE_MOBILE_SHEET = {
 	HEIGHT_DVH: 90,
+	HEIGHT_CLASS_NAME: "h-[90dvh]",
 	OPEN_BUTTON_LABEL: "Panels",
 	TITLE: "Game Surfaces",
 	DESCRIPTION: "Open the state visualizer and HUD panels.",

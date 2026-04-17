@@ -128,33 +128,67 @@ vi.mock("@/pages/game/model", () => {
 				isMobileTabletLandscape: viewModel.isMobileTabletLandscape,
 			};
 		},
-		useGamePageMobileLayoutModel: () => {
+		useGamePageMobileLayoutShellModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				handleMobileSheetOpenChange: viewModel.handleMobileSheetOpenChange,
+				isMobileSheetOpen: viewModel.isMobileSheetOpen,
+			};
+		},
+		useGamePageMobileCanvasStageModel: () => {
 			const viewModel = useGamePage();
 
 			return {
 				cameraStateSnapshot: viewModel.cameraStateSnapshot,
 				canvasMachineRuntime: viewModel.canvasMachineRuntime,
-				graphSections: viewModel.graphSections,
-				handleAudioMuteToggle: viewModel.handleAudioMuteToggle,
+				postprocessingEnabled: true,
+			};
+		},
+		useGamePageMobileTopBarModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				cameraStateSnapshot: viewModel.cameraStateSnapshot,
 				handleCameraModeSwitch: viewModel.handleCameraModeSwitch,
 				handleDungeonRunReset: viewModel.handleDungeonRunReset,
-				handleMobileSheetOpenChange: viewModel.handleMobileSheetOpenChange,
-				handleMobileSheetTabChange: viewModel.handleMobileSheetTabChange,
-				handleTouchAttack: viewModel.handleTouchAttack,
-				handleTouchInteract: viewModel.handleTouchInteract,
+				playerHp: viewModel.playerHp,
+				playerMaxHp: viewModel.playerMaxHp,
+			};
+		},
+		useGamePageMobileJoystickModel: () => {
+			const viewModel = useGamePage();
+
+			return {
 				handleTouchJoystickMove: viewModel.handleTouchJoystickMove,
 				handleTouchJoystickStop: viewModel.handleTouchJoystickStop,
+			};
+		},
+		useGamePageMobileActionPanelModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				handleAudioMuteToggle: viewModel.handleAudioMuteToggle,
+				handleTouchAttack: viewModel.handleTouchAttack,
+				handleTouchInteract: viewModel.handleTouchInteract,
 				hasTouchAttack: viewModel.hasTouchAttack,
 				hasTouchInteract: viewModel.hasTouchInteract,
 				isAudioMuted: viewModel.isAudioMuted,
 				isMobileSheetOpen: viewModel.isMobileSheetOpen,
 				isTabletLayout: viewModel.isTabletLayout,
-				mobileSheetTabId: viewModel.mobileSheetTabId,
-				playerHp: viewModel.playerHp,
-				playerMaxHp: viewModel.playerMaxHp,
-				postprocessingEnabled: true,
 				touchAttackPrompt: viewModel.touchAttackPrompt,
 				touchInteractPrompt: viewModel.touchInteractPrompt,
+			};
+		},
+		useGamePageMobileSheetContentModel: () => {
+			const viewModel = useGamePage();
+
+			return {
+				cameraStateSnapshot: viewModel.cameraStateSnapshot,
+				graphSections: viewModel.graphSections,
+				handleCameraModeSwitch: viewModel.handleCameraModeSwitch,
+				handleMobileSheetTabChange: viewModel.handleMobileSheetTabChange,
+				mobileSheetTabId: viewModel.mobileSheetTabId,
 			};
 		},
 	};

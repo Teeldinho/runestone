@@ -8,7 +8,6 @@ export function GamePageDesktopLayout() {
 		<main
 			id="main-content"
 			className="flex h-svh w-dvw flex-col overflow-hidden md:h-dvh"
-			style={{ background: "transparent" }}
 		>
 			<GamePageDesktopHeader />
 
