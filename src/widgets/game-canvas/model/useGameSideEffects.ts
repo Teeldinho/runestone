@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 import type { RoomId } from "@/entities/dungeon";
-import { createFloorOneMachine, FLOOR_IDS } from "@/entities/dungeon";
+import { createFloorOneMachine } from "@/entities/dungeon";
 import {
 	PLAYER_ENTITY_CONFIG,
 	PLAYER_STATES,
@@ -19,14 +19,11 @@ import {
 	useGameMachineSelector,
 } from "@/features/dungeon-navigation";
 import { useHaptics } from "@/features/haptics-feedback";
-import { SCORE_VALUES } from "@/shared/config";
-import { setPlayerTeleportTarget } from "@/shared/lib";
-
-import {
-	getDoorwayArrivalPosition,
-	getRoomWorldPosition,
-	shouldSubmitFloorScore,
-} from "../lib";
+import { useDoorwayGuardFeedback } from "./useDoorwayGuardFeedback";
+import { useFloorCompletionScoreSubmission } from "./useFloorCompletionScoreSubmission";
+import { usePlayerDeathHaptic } from "./usePlayerDeathHaptic";
+import { useRoomArrivalTeleport } from "./useRoomArrivalTeleport";
+import { useRoomTransitionHaptics } from "./useRoomTransitionHaptics";
 
 export const useGameSideEffects = (): void => {
 	const activeStateLabel = useGameMachineSelector(selectActiveStateLabel);
@@ -50,111 +47,40 @@ export const useGameSideEffects = (): void => {
 		[],
 	);
 
-	const startTimeMsRef = useRef(Date.now());
-	const prevRoomRef = useRef<RoomId | null>(null);
-	const hasAppliedInitialTeleportRef = useRef(false);
-	const lastArrivalKeyRef = useRef<string | null>(null);
-	const previousDoorwayFeedbackRef = useRef<typeof lastDoorwayFeedback>(null);
-	const hasSubmittedRef = useRef(false);
-	const hasTriggeredDeathRef = useRef(false);
+	const healthState =
+		playerSnapshot.value[
+			PLAYER_STATES.REGIONS.HEALTH as keyof typeof playerSnapshot.value
+		];
 
-	useEffect(() => {
-		if (currentRoomId !== prevRoomRef.current) {
-			onTransition();
-			onRoomEnter();
+	useRoomTransitionHaptics({
+		currentRoomId: currentRoomId as RoomId,
+		onRoomEnter,
+		onTransition,
+	});
 
-			prevRoomRef.current = currentRoomId;
-		}
-	}, [currentRoomId, onTransition, onRoomEnter]);
+	useRoomArrivalTeleport({
+		currentRoomId: currentRoomId as RoomId,
+		lastTransition,
+		floorRooms,
+		spawnHeightOffset: PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+	});
 
-	useEffect(() => {
-		const roomPosition = getRoomWorldPosition(
-			floorRooms,
-			currentRoomId,
-			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
-		);
+	useDoorwayGuardFeedback({
+		lastDoorwayFeedback,
+		onGuardFail,
+	});
 
-		if (!roomPosition) {
-			return;
-		}
-
-		const hasTransitionForCurrentRoom =
-			lastTransition?.toRoom === currentRoomId;
-		const arrivalKey = hasTransitionForCurrentRoom
-			? `${currentRoomId}:${lastTransition.fromRoom}:${lastTransition.toRoom}:${lastTransition.doorSide}`
-			: hasAppliedInitialTeleportRef.current
-				? null
-				: `${currentRoomId}:initial`;
-
-		if (!arrivalKey || lastArrivalKeyRef.current === arrivalKey) {
-			return;
-		}
-
-		setPlayerTeleportTarget(
-			...getDoorwayArrivalPosition({
-				currentRoomPosition: roomPosition,
-				lastTransition: hasTransitionForCurrentRoom ? lastTransition : null,
-				spawnHeightOffset: PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
-			}),
-		);
-
-		hasAppliedInitialTeleportRef.current = true;
-		lastArrivalKeyRef.current = arrivalKey;
-	}, [currentRoomId, lastTransition, floorRooms]);
-
-	useEffect(() => {
-		if (
-			lastDoorwayFeedback &&
-			lastDoorwayFeedback !== previousDoorwayFeedbackRef.current
-		) {
-			onGuardFail();
-		}
-
-		previousDoorwayFeedbackRef.current = lastDoorwayFeedback;
-	}, [lastDoorwayFeedback, onGuardFail]);
-
-	useEffect(() => {
-		if (!shouldSubmitFloorScore(activeStateLabel, hasSubmittedRef.current)) {
-			return;
-		}
-
-		if (!authenticatedProfile) {
-			return;
-		}
-
-		hasSubmittedRef.current = true;
-		onFloorComplete();
-		submitScore.mutate({
-			userId: authenticatedProfile.id,
-			dungeonId: FLOOR_IDS.FLOOR_ONE,
-			score: discoveredRooms.length * SCORE_VALUES.ROOM_DISCOVERY,
-			timeMs: Date.now() - startTimeMsRef.current,
-			roomsDiscovered: discoveredRooms.length,
-		});
-	}, [
+	useFloorCompletionScoreSubmission({
 		activeStateLabel,
 		discoveredRooms,
 		authenticatedProfile,
 		onFloorComplete,
 		submitScore,
-	]);
+	});
 
-	useEffect(() => {
-		const healthState =
-			playerSnapshot.value[
-				PLAYER_STATES.REGIONS.HEALTH as keyof typeof playerSnapshot.value
-			];
-
-		if (healthState !== PLAYER_STATES.HEALTH.DEAD) {
-			hasTriggeredDeathRef.current = false;
-			return;
-		}
-
-		if (hasTriggeredDeathRef.current) {
-			return;
-		}
-
-		hasTriggeredDeathRef.current = true;
-		onPlayerDeath();
-	}, [playerSnapshot, onPlayerDeath]);
+	usePlayerDeathHaptic({
+		healthState: String(healthState),
+		deadState: PLAYER_STATES.HEALTH.DEAD,
+		onPlayerDeath,
+	});
 };

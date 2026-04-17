@@ -1,9 +1,25 @@
 export {
+	createGuardMarkerEdgeLayoutViewModel,
+	type GuardMarkerArrow,
+	type GuardMarkerDirectionIndicatorMode,
+	type GuardMarkerEdgeLayoutEnvironment,
+	type GuardMarkerEdgeLayoutInput,
+	type GuardMarkerEdgeLayoutViewModel,
+} from "./guardMarkerEdgeLayoutViewModel";
+export {
 	type GuardMarkerCenterPoint,
 	type GuardMarkerNodeClearanceInput,
 	resolveGuardMarkerNodeClearance,
 } from "./guardMarkerNodeClearance";
 export { createGuardColorByKey } from "./guardMarkerPalette";
+export {
+	createInspectorMachineSectionViewModel,
+	type InspectorGuardDetail,
+	type InspectorGuardIndicator,
+	type InspectorMachineSectionViewModel,
+	type InspectorStateDetail,
+	type InspectorTransitionDetail,
+} from "./inspectorSectionViewModel";
 export {
 	type InspectorFlowEdge,
 	type InspectorFlowEdgeData,
