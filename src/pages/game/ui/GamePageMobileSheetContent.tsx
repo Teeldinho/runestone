@@ -18,7 +18,7 @@ export function GamePageMobileSheetContent() {
 
 	return (
 		<DrawerContent
-			className={`max-w-full overflow-hidden border-panel-border/60 bg-panel/95 ${GAME_PAGE_MOBILE_SHEET.HEIGHT_CLASS_NAME}`}
+			className="h-[90dvh] max-w-full overflow-hidden border-panel-border/60 bg-panel/95"
 			aria-label="Game bottom sheet panels"
 		>
 			<DrawerHeader>

@@ -1,5 +1,6 @@
 import type { Position } from "@xyflow/react";
 import type { CSSProperties } from "react";
+import { cn } from "@/shared/lib";
 
 import {
 	INSPECTOR_FLOW_EDGE_LAYOUT,
@@ -311,8 +312,12 @@ export const createGuardMarkerEdgeLayoutViewModel = ({
 			boxShadow: `0 0 0 1px ${INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_RING_COLOR}`,
 		},
 		markerArrows,
-		bubbleClassName: `rounded-full border border-panel-border shadow-sm ${INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_ANIMATE_PULSE_CLASS}`,
-		arrowClassName: `pointer-events-none absolute font-semibold leading-none text-panel-title ${isMobileTabletLandscape ? "text-[7px]" : "text-[9px]"}`,
+		bubbleClassName:
+			"rounded-full border border-panel-border shadow-sm animate-pulse",
+		arrowClassName: cn(
+			"pointer-events-none absolute font-semibold leading-none text-panel-title",
+			isMobileTabletLandscape ? "text-[7px]" : "text-[9px]",
+		),
 		hasDirectionIndicators: markerArrows.length > 0,
 	};
 };
