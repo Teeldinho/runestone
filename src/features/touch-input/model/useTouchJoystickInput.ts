@@ -9,7 +9,12 @@ import {
 import type { Vector3Tuple } from "@/shared/lib";
 
 import { TOUCH_JOYSTICK_CONFIG } from "../config";
-import { resolveJoystickVector } from "../lib";
+import {
+	resolveJoystickVector,
+	resolveTouchJoystickPointerAction,
+	TOUCH_JOYSTICK_POINTER_ACTIONS,
+	TOUCH_JOYSTICK_POINTER_PHASES,
+} from "../lib";
 
 type UseTouchJoystickInputOptions = {
 	onMove: (velocity: Vector3Tuple) => void;
@@ -76,8 +81,13 @@ export const useTouchJoystickInput = ({
 	const handlePointerDown = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
 			event.preventDefault();
-
-			if (activePointerIdRef.current !== null) {
+			if (
+				resolveTouchJoystickPointerAction({
+					activePointerId: activePointerIdRef.current,
+					eventPointerId: event.pointerId,
+					phase: TOUCH_JOYSTICK_POINTER_PHASES.DOWN,
+				}) !== TOUCH_JOYSTICK_POINTER_ACTIONS.ACTIVATE
+			) {
 				return;
 			}
 
@@ -92,8 +102,13 @@ export const useTouchJoystickInput = ({
 	const handlePointerMove = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
 			event.preventDefault();
-
-			if (event.pointerId !== activePointerIdRef.current) {
+			if (
+				resolveTouchJoystickPointerAction({
+					activePointerId: activePointerIdRef.current,
+					eventPointerId: event.pointerId,
+					phase: TOUCH_JOYSTICK_POINTER_PHASES.MOVE,
+				}) !== TOUCH_JOYSTICK_POINTER_ACTIONS.UPDATE
+			) {
 				return;
 			}
 
@@ -102,11 +117,19 @@ export const useTouchJoystickInput = ({
 		[updateJoystickFromPointer],
 	);
 
-	const handlePointerUp = useCallback(
-		(event: ReactPointerEvent<HTMLDivElement>) => {
+	const handlePointerRelease = useCallback(
+		(
+			event: ReactPointerEvent<HTMLDivElement>,
+			phase: (typeof TOUCH_JOYSTICK_POINTER_PHASES)["UP" | "CANCEL"],
+		) => {
 			event.preventDefault();
-
-			if (event.pointerId !== activePointerIdRef.current) {
+			if (
+				resolveTouchJoystickPointerAction({
+					activePointerId: activePointerIdRef.current,
+					eventPointerId: event.pointerId,
+					phase,
+				}) !== TOUCH_JOYSTICK_POINTER_ACTIONS.RELEASE
+			) {
 				return;
 			}
 
@@ -116,18 +139,18 @@ export const useTouchJoystickInput = ({
 		[resetJoystick],
 	);
 
+	const handlePointerUp = useCallback(
+		(event: ReactPointerEvent<HTMLDivElement>) => {
+			handlePointerRelease(event, TOUCH_JOYSTICK_POINTER_PHASES.UP);
+		},
+		[handlePointerRelease],
+	);
+
 	const handlePointerCancel = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
-			event.preventDefault();
-
-			if (event.pointerId !== activePointerIdRef.current) {
-				return;
-			}
-
-			activePointerIdRef.current = null;
-			resetJoystick();
+			handlePointerRelease(event, TOUCH_JOYSTICK_POINTER_PHASES.CANCEL);
 		},
-		[resetJoystick],
+		[handlePointerRelease],
 	);
 
 	return {
