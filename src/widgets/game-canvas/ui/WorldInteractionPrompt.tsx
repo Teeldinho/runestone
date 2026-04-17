@@ -1,11 +1,7 @@
 import { Html } from "@react-three/drei";
 import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import { Badge } from "@/shared/ui";
-import {
-	WORLD_INTERACTION_KEY_STYLE,
-	WORLD_INTERACTION_PROMPT_CONFIG,
-	WORLD_INTERACTION_PROMPT_STYLE,
-} from "../config";
+import { WORLD_INTERACTION_PROMPT_CONFIG } from "../config";
 import { useWorldInteractionPrompt } from "../model";
 import type { WorldInteractionPromptProps } from "../model/useWorldInteractionPrompt";
 
@@ -29,19 +25,10 @@ export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
 					]}
 					center
 					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
-					style={{ pointerEvents: "none" }}
 				>
 					{isDesktopLayout ? (
-						<div style={WORLD_INTERACTION_PROMPT_STYLE}>
-							<span
-								style={{
-									...WORLD_INTERACTION_KEY_STYLE,
-									color: "var(--dungeon-gold)",
-									borderColor: "var(--dungeon-gold)",
-									background:
-										"color-mix(in srgb, var(--dungeon-gold) 10%, transparent)",
-								}}
-							>
+						<div className="mt-1 flex items-center gap-2 rounded-[4px] border border-panel-border bg-panel px-4 py-2 text-[0.95rem] font-medium [font-family:Space_Grotesk,sans-serif] whitespace-nowrap pointer-events-none">
+							<span className="inline-flex h-8 min-w-8 items-center justify-center rounded-[3px] border border-dungeon-gold bg-[color-mix(in_srgb,var(--dungeon-gold)_10%,transparent)] px-2 text-[0.9rem] font-bold text-dungeon-gold">
 								{interact.label}
 							</span>
 							<span>{interact.text}</span>
@@ -62,19 +49,10 @@ export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
 					]}
 					center
 					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
-					style={{ pointerEvents: "none" }}
 				>
 					{isDesktopLayout ? (
-						<div style={WORLD_INTERACTION_PROMPT_STYLE}>
-							<span
-								style={{
-									...WORLD_INTERACTION_KEY_STYLE,
-									color: "var(--success)",
-									borderColor: "var(--success)",
-									background:
-										"color-mix(in srgb, var(--success) 10%, transparent)",
-								}}
-							>
+						<div className="mt-1 flex items-center gap-2 rounded-[4px] border border-panel-border bg-panel px-4 py-2 text-[0.95rem] font-medium [font-family:Space_Grotesk,sans-serif] whitespace-nowrap pointer-events-none">
+							<span className="inline-flex h-8 min-w-8 items-center justify-center rounded-[3px] border border-success bg-[color-mix(in_srgb,var(--success)_10%,transparent)] px-2 text-[0.9rem] font-bold text-success">
 								{attack.label}
 							</span>
 							<span>{attack.text}</span>
