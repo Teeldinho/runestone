@@ -1,7 +1,7 @@
 import { useContext } from "react";
 
 import { gamePageViewModelContext } from "./gamePageViewModelContext";
-import type { GamePageViewModel } from "./useGamePage";
+import type { GamePageViewModel } from "./types";
 
 const GAME_PAGE_VIEW_MODEL_CONTEXT_ERROR =
 	"useGamePageViewModelContext must be used within GamePageViewModelProvider";

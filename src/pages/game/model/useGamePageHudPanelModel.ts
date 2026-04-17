@@ -1,4 +1,4 @@
-import type { GamePageViewModel } from "./useGamePage";
+import type { GamePageViewModel } from "./types";
 import { useGamePageViewModelContext } from "./useGamePageViewModelContext";
 
 type GamePageHudPanelModel = Pick<

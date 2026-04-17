@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-
-import { CAMERA_MODES } from "@/features/camera-system";
 import { ROOM_IDS } from "@/entities/dungeon";
+import { CAMERA_MODES } from "@/features/camera-system";
 
 import { createGamePageViewModel } from "./createGamePageViewModel";
 

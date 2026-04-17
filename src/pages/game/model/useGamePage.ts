@@ -1,56 +1,14 @@
 import type { RoomId } from "@/entities/dungeon";
-import type {
-	CameraMachineEvent,
-	CameraStateSnapshot,
-} from "@/features/camera-system";
-import type { Vector3Tuple } from "@/shared/lib";
-import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 
+import { createGamePageViewModel } from "../lib/createGamePageViewModel";
 import { deriveTreasureKeyStatusLabel } from "../lib/deriveTreasureKeyStatusLabel";
 import { useGamePageAudio } from "./useGamePageAudio";
 import { useGamePageMachineState } from "./useGamePageMachineState";
-import {
-	type GamePageMobileSheetTabId,
-	useGamePageMobileSheet,
-} from "./useGamePageMobileSheet";
+import { useGamePageMobileSheet } from "./useGamePageMobileSheet";
 import { useGamePageReset } from "./useGamePageReset";
 import { useGamePageTouch } from "./useGamePageTouch";
 import { useGamePageVisualizer } from "./useGamePageVisualizer";
-
-type GamePageViewModel = {
-	actionButtons: ReturnType<
-		typeof useGamePageMachineState
-	>["gameMachine"]["actionButtons"];
-	activeStateLabel: string;
-	cameraStateSnapshot: CameraStateSnapshot;
-	canvasMachineRuntime: CanvasMachineRuntime;
-	currentRoomLabel: string;
-	discoveredRoomLabels: string[];
-	enemiesRemaining: number;
-	graphSections: ReturnType<typeof useGamePageVisualizer>["graphSections"];
-	handleAudioMuteToggle: () => void;
-	handleCameraModeSwitch: (event: CameraMachineEvent) => void;
-	hasTreasureKeyLabel: string;
-	handleDungeonRunReset: () => void;
-	handleMobileSheetOpenChange: (isOpen: boolean) => void;
-	handleMobileSheetTabChange: (tabId: string) => void;
-	handleTouchJoystickMove: (velocity: Vector3Tuple) => void;
-	handleTouchJoystickStop: () => void;
-	handleTouchAttack: () => void;
-	handleTouchInteract: () => void;
-	hasTouchAttack: boolean;
-	hasTouchInteract: boolean;
-	isAudioMuted: boolean;
-	isDesktopLayout: boolean;
-	isMobileSheetOpen: boolean;
-	isMobileTabletLandscape: boolean;
-	isTabletLayout: boolean;
-	mobileSheetTabId: GamePageMobileSheetTabId;
-	playerHp: number;
-	playerMaxHp: number;
-	touchAttackPrompt: string | null;
-	touchInteractPrompt: string | null;
-};
+import type { GamePageViewModel } from "./types";
 
 export const useGamePage = (): GamePageViewModel => {
 	const { cameraMachine, gameMachine, layout, playerMachine } =
@@ -106,22 +64,17 @@ export const useGamePage = (): GamePageViewModel => {
 		playerStateValue: playerSnapshot.value,
 	});
 
-	return {
+	return createGamePageViewModel({
 		actionButtons,
 		activeStateLabel,
 		cameraStateSnapshot,
-		canvasMachineRuntime: {
-			currentRoomId,
-			enemiesRemaining,
-			hasTreasureKey,
-		},
+		currentRoomId: currentRoomId as RoomId,
 		currentRoomLabel,
 		discoveredRoomLabels,
 		enemiesRemaining,
 		graphSections,
 		handleAudioMuteToggle,
 		handleCameraModeSwitch,
-		hasTreasureKeyLabel: deriveTreasureKeyStatusLabel(hasTreasureKey),
 		handleDungeonRunReset,
 		handleMobileSheetOpenChange,
 		handleMobileSheetTabChange,
@@ -131,6 +84,8 @@ export const useGamePage = (): GamePageViewModel => {
 		handleTouchInteract,
 		hasTouchAttack,
 		hasTouchInteract,
+		hasTreasureKey,
+		hasTreasureKeyLabel: deriveTreasureKeyStatusLabel(hasTreasureKey),
 		isAudioMuted,
 		isDesktopLayout: layout.isDesktopLayout,
 		isMobileSheetOpen,
@@ -141,7 +96,5 @@ export const useGamePage = (): GamePageViewModel => {
 		playerMaxHp: playerSnapshot.context.stats.maxHp,
 		touchAttackPrompt,
 		touchInteractPrompt,
-	};
+	});
 };
-
-export type { GamePageViewModel };

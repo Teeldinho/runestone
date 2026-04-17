@@ -1,5 +1,5 @@
 export { GamePageViewModelProvider } from "./GamePageViewModelProvider";
-export type { GamePageViewModel } from "./useGamePage";
+export type { GamePageViewModel } from "./types";
 export { useGamePage } from "./useGamePage";
 export { useGamePageCameraElements } from "./useGamePageCameraElements";
 export { useGamePageDesktopHeaderModel } from "./useGamePageDesktopHeaderModel";
