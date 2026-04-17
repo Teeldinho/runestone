@@ -2,9 +2,9 @@ import { useCallback, useState } from "react";
 
 import { useSettingsForm } from "@/features/settings";
 import { useGamePage } from "@/pages/game/model";
-import { GameHud } from "@/widgets/hud";
 
 import { GamePageDesktopLayout } from "./GamePageDesktopLayout";
+import { GamePageHudPanel } from "./GamePageHudPanel";
 import { GamePageMobileLayout } from "./GamePageMobileLayout";
 import { GamePagePortraitGate } from "./GamePagePortraitGate";
 
@@ -24,27 +24,7 @@ export function GamePage() {
 		setCameraControlElement(node);
 	}, []);
 
-	const gameHudContent = (
-		<div className="p-3">
-			<GameHud
-				actions={{
-					actionButtons: gamePageViewModel.actionButtons,
-					handleDungeonRunReset: gamePageViewModel.handleDungeonRunReset,
-				}}
-				playerStats={{
-					playerHp: gamePageViewModel.playerHp,
-					playerMaxHp: gamePageViewModel.playerMaxHp,
-				}}
-				snapshot={{
-					activeStateLabel: gamePageViewModel.activeStateLabel,
-					currentRoomLabel: gamePageViewModel.currentRoomLabel,
-					discoveredRoomLabels: gamePageViewModel.discoveredRoomLabels,
-					enemiesRemaining: gamePageViewModel.enemiesRemaining,
-					hasTreasureKeyLabel: gamePageViewModel.hasTreasureKeyLabel,
-				}}
-			/>
-		</div>
-	);
+	const gameHudContent = <GamePageHudPanel viewModel={gamePageViewModel} />;
 
 	if (
 		!gamePageViewModel.isDesktopLayout &&
