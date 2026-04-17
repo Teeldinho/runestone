@@ -144,7 +144,7 @@ describe("GameCanvas", () => {
 		expect(mockWorldInteractionRuntime).toHaveBeenCalledTimes(1);
 		expect(mockCanvas).toHaveBeenCalledWith(
 			expect.objectContaining({
-				style: expect.objectContaining({ touchAction: "none" }),
+				className: expect.stringContaining("touch-none"),
 			}),
 		);
 	});

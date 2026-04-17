@@ -29,11 +29,7 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 			<div className="hidden flex-wrap items-center justify-between gap-2 border-b border-panel-border/50 px-3 py-1.5 lg:flex lg:px-4 lg:py-3">
 				<h2
 					id="xstate-inspector-heading"
-					className="text-xs font-semibold uppercase tracking-widest"
-					style={{
-						color: "var(--dungeon-gold)",
-						fontFamily: "Space Grotesk, sans-serif",
-					}}
+					className="rune-text text-xs font-semibold tracking-widest text-dungeon-gold"
 				>
 					{INSPECTOR_COPY.PANEL_TITLE}
 				</h2>
@@ -100,6 +96,7 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 			<div className="min-h-0 min-w-0 flex-1 overflow-hidden p-2 max-xl:p-0">
 				{inspectorPanel.hasSelectedSection && inspectorPanel.selectedSection ? (
 					<ReactFlow
+						className="h-full w-full bg-background"
 						key={inspectorPanel.selectedSectionId}
 						colorMode="dark"
 						edgeTypes={inspectorEdgeTypes}
@@ -116,11 +113,6 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 						nodesConnectable={false}
 						nodesDraggable={false}
 						proOptions={{ hideAttribution: true }}
-						style={{
-							background: "var(--background)",
-							width: "100%",
-							height: "100%",
-						}}
 					>
 						<Background
 							gap={INSPECTOR_FLOW_BACKGROUND.GAP_PX}
@@ -130,12 +122,7 @@ export function XStateInspectorPanel({ sections }: XStateInspectorPanelProps) {
 						<Controls position="bottom-right" showInteractive={false} />
 					</ReactFlow>
 				) : (
-					<div
-						className="flex h-full items-center justify-center rounded-md text-xs"
-						style={{
-							color: "var(--muted-foreground)",
-						}}
-					>
+					<div className="flex h-full items-center justify-center rounded-md text-xs text-muted-foreground">
 						{INSPECTOR_COPY.EMPTY_GRAPH_MESSAGE}
 					</div>
 				)}
