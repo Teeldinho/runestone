@@ -29,7 +29,7 @@ export const HUD_EVENT_FILTERS = {
 	SIDEBAR_EXCLUDED_EVENT_TYPES: [
 		DUNGEON_EVENTS.PICK_UP_KEY,
 		DUNGEON_EVENTS.ENEMY_DIED,
-	],
+	] as readonly string[],
 } as const;
 
 export const HUD_HEALTH = {
@@ -43,5 +43,7 @@ export const HUD_LABELS = {
 } as const;
 
 export const HUD_MACHINE_SNAPSHOT = {
-	SIDEBAR_EXCLUDED_LABELS: [HUD_COPY.SNAPSHOT_LABELS.PLAYER_HP],
+	SIDEBAR_EXCLUDED_LABELS: [
+		HUD_COPY.SNAPSHOT_LABELS.PLAYER_HP,
+	] as readonly string[],
 } as const;
