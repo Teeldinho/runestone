@@ -3,6 +3,7 @@ export {
 	ACHIEVEMENT_DISPLAY_DURATION_MS,
 	ACHIEVEMENT_IDS,
 	ACHIEVEMENT_NOTIFICATION_BADGE_LABEL,
+	ACHIEVEMENT_NOTIFICATION_MACHINE_EVENTS,
 } from "./config";
 export {
 	hasCollectedKey,
@@ -10,5 +11,11 @@ export {
 	hasEscapedFloor,
 	hasReachedLibrary,
 } from "./lib";
-export type { Achievement, AchievementId } from "./model";
+export type {
+	Achievement,
+	AchievementId,
+	AchievementNotificationMachineContext,
+	AchievementNotificationMachineEvent,
+} from "./model";
+export { achievementNotificationMachine } from "./model";
 export { AchievementNotification } from "./ui";
