@@ -1,9 +1,15 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useMachine } from "@xstate/react";
+import { useCallback, useEffect } from "react";
 
 import type { DungeonEvent } from "@/entities/dungeon";
 import { DUNGEON_EVENTS } from "@/entities/dungeon";
 
-import { INTERACTION_COOLDOWN_MS, INTERACTION_KEYS } from "../config";
+import {
+	INTERACTION_COOLDOWN_MACHINE_EVENTS,
+	INTERACTION_COOLDOWN_MACHINE_STATES,
+	INTERACTION_KEYS,
+} from "../config";
+import { interactionCooldownMachine } from "./interactionCooldownMachine";
 import type { InteractionCandidatesViewModel } from "./useInteractionCandidates";
 
 type UseInteractionInputOptions = {
@@ -22,37 +28,57 @@ export const useInteractionInput = ({
 	sendDungeonMachineEvent,
 	enableKeyboardBindings = true,
 }: UseInteractionInputOptions): InteractionInputHandlers => {
-	const cooldownRef = useRef(false);
+	const [, sendCooldownEvent, cooldownActorRef] = useMachine(
+		interactionCooldownMachine,
+	);
 
 	const handleInteract = useCallback(() => {
-		if (cooldownRef.current || !candidates.hasInteract) {
+		if (
+			cooldownActorRef
+				.getSnapshot()
+				.matches(INTERACTION_COOLDOWN_MACHINE_STATES.COOLDOWN) ||
+			!candidates.hasInteract
+		) {
 			return;
 		}
 
-		cooldownRef.current = true;
-		setTimeout(() => {
-			cooldownRef.current = false;
-		}, INTERACTION_COOLDOWN_MS.INTERACT);
+		sendCooldownEvent({
+			type: INTERACTION_COOLDOWN_MACHINE_EVENTS.START_INTERACT,
+		});
 
 		if (candidates.interactEvent) {
 			sendDungeonMachineEvent({
 				type: candidates.interactEvent as DungeonEvent,
 			});
 		}
-	}, [candidates, sendDungeonMachineEvent]);
+	}, [
+		candidates,
+		cooldownActorRef,
+		sendCooldownEvent,
+		sendDungeonMachineEvent,
+	]);
 
 	const handleAttack = useCallback(() => {
-		if (cooldownRef.current || !candidates.hasAttack) {
+		if (
+			cooldownActorRef
+				.getSnapshot()
+				.matches(INTERACTION_COOLDOWN_MACHINE_STATES.COOLDOWN) ||
+			!candidates.hasAttack
+		) {
 			return;
 		}
 
-		cooldownRef.current = true;
-		setTimeout(() => {
-			cooldownRef.current = false;
-		}, INTERACTION_COOLDOWN_MS.ATTACK);
+		sendCooldownEvent({
+			type: INTERACTION_COOLDOWN_MACHINE_EVENTS.START_ATTACK,
+		});
 
 		sendDungeonMachineEvent({ type: DUNGEON_EVENTS.ENEMY_DIED });
-	}, [candidates, sendDungeonMachineEvent]);
+	}, [
+		candidates,
+		cooldownActorRef,
+		sendCooldownEvent,
+		sendDungeonMachineEvent,
+	]);
 
 	useEffect(() => {
 		if (!enableKeyboardBindings) {

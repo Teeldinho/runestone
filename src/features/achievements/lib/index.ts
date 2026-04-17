@@ -4,3 +4,7 @@ export {
 	hasEscapedFloor,
 	hasReachedLibrary,
 } from "./achievementConditions";
+export {
+	createIdleAchievementNotificationContext,
+	createShowingAchievementNotificationContext,
+} from "./achievementNotificationMachineContext";

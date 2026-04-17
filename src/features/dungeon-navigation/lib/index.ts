@@ -11,6 +11,11 @@ export {
 	updateDungeonContextRoom,
 } from "./dungeonContext";
 export { getDoorKeyForNavigationEvent } from "./getDoorKeyForNavigationEvent";
+export {
+	createAttackInteractionCooldownContext,
+	createInteractInteractionCooldownContext,
+	createReadyInteractionCooldownContext,
+} from "./interactionCooldownMachineContext";
 export { resolveInteractionCandidates } from "./interactionResolver";
 export { getNavigationActionDisabled } from "./navigationActionAvailability";
 export {

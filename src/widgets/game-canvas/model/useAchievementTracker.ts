@@ -1,12 +1,13 @@
-import { shallowEqual } from "@xstate/react";
-import { useEffect, useRef, useState } from "react";
+import { shallowEqual, useMachine } from "@xstate/react";
+import { useEffect, useRef } from "react";
 
 import {
 	ACHIEVEMENT_COPY,
-	ACHIEVEMENT_DISPLAY_DURATION_MS,
 	ACHIEVEMENT_IDS,
+	ACHIEVEMENT_NOTIFICATION_MACHINE_EVENTS,
 	type Achievement,
 	type AchievementId,
+	achievementNotificationMachine,
 	hasCollectedKey,
 	hasDefeatedAllEnemies,
 	hasEscapedFloor,
@@ -29,10 +30,9 @@ export const useAchievementTracker = (): UseAchievementTrackerResult => {
 	);
 	const { onAchievement } = useHaptics();
 
-	const [activeAchievement, setActiveAchievement] =
-		useState<Achievement | null>(null);
+	const [achievementNotificationSnapshot, sendAchievementNotificationEvent] =
+		useMachine(achievementNotificationMachine);
 	const triggeredRef = useRef<Set<AchievementId>>(new Set());
-	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const prevDiscoveredCountRef = useRef<number>(
 		achievementTrackingContext.discoveredRooms.length,
 	);
@@ -45,26 +45,26 @@ export const useAchievementTracker = (): UseAchievementTrackerResult => {
 			prevDiscoveredCountRef.current > 1
 		) {
 			triggeredRef.current.clear();
-			setActiveAchievement(null);
+			sendAchievementNotificationEvent({
+				type: ACHIEVEMENT_NOTIFICATION_MACHINE_EVENTS.RESET,
+			});
 		}
 		prevDiscoveredCountRef.current = count;
-	}, [achievementTrackingContext]);
+	}, [achievementTrackingContext, sendAchievementNotificationEvent]);
 
 	useEffect(() => {
 		const trigger = (condition: boolean, id: AchievementId) => {
 			if (!condition || triggeredRef.current.has(id)) return;
 			triggeredRef.current.add(id);
 			onAchievement();
-			setActiveAchievement({
-				id,
-				label: ACHIEVEMENT_COPY[id].label,
-				description: ACHIEVEMENT_COPY[id].description,
+			sendAchievementNotificationEvent({
+				type: ACHIEVEMENT_NOTIFICATION_MACHINE_EVENTS.SHOW,
+				achievement: {
+					id,
+					label: ACHIEVEMENT_COPY[id].label,
+					description: ACHIEVEMENT_COPY[id].description,
+				},
 			});
-			if (timerRef.current) clearTimeout(timerRef.current);
-			timerRef.current = setTimeout(
-				() => setActiveAchievement(null),
-				ACHIEVEMENT_DISPLAY_DURATION_MS,
-			);
 		};
 
 		trigger(
@@ -83,13 +83,14 @@ export const useAchievementTracker = (): UseAchievementTrackerResult => {
 			hasEscapedFloor(achievementTrackingContext),
 			ACHIEVEMENT_IDS.ESCAPE_ARTIST,
 		);
-	}, [achievementTrackingContext, onAchievement]);
+	}, [
+		achievementTrackingContext,
+		onAchievement,
+		sendAchievementNotificationEvent,
+	]);
 
-	useEffect(() => {
-		return () => {
-			if (timerRef.current) clearTimeout(timerRef.current);
-		};
-	}, []);
-
-	return { activeAchievement };
+	return {
+		activeAchievement: achievementNotificationSnapshot.context
+			.activeAchievement as Achievement | null,
+	};
 };
