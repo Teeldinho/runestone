@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { DUNGEON_THEME } from "@/entities/dungeon";
 
-import type { CanvasLightingSettings } from "./useCanvasSettings";
+import type { CanvasLightingSettings } from "./canvasSettingsTypes";
 
 import { useSceneLighting } from "./useSceneLighting";
 

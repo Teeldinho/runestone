@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { DUNGEON_THEME } from "@/entities/dungeon";
 
-import type { CanvasLightingSettings } from "../model/useCanvasSettings";
+import type { CanvasLightingSettings } from "../model/canvasSettingsTypes";
 
 import { createTorchSettings } from "./createTorchSettings";
 
