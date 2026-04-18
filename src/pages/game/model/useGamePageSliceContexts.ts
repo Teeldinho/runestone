@@ -1,20 +1,20 @@
-import { type Context, useContext } from "react";
+import { useContext } from "react";
+import { useStore } from "zustand";
 
-import {
-	gamePageAudioContext,
-	gamePageCanvasContext,
-	gamePageHudContext,
-	gamePageLayoutContext,
-	gamePageMobileSheetContext,
-	gamePageTouchContext,
-	gamePageVisualizerContext,
-} from "./gamePageSliceContexts";
+import { gamePageViewModelContext } from "./gamePageSliceContexts";
+import type {
+	GamePageAudioSlice,
+	GamePageCanvasSlice,
+	GamePageHudSlice,
+	GamePageLayoutSlice,
+	GamePageMobileSheetSlice,
+	GamePageTouchSlice,
+	GamePageViewModel,
+	GamePageVisualizerSlice,
+} from "./types";
 
-const useRequiredGamePageContext = <T>(
-	context: Context<T | null>,
-	hookName: string,
-): T => {
-	const contextValue = useContext(context);
+const useRequiredGamePageStore = (hookName: string) => {
+	const contextValue = useContext(gamePageViewModelContext);
 
 	if (contextValue === null) {
 		throw new Error(
@@ -25,29 +25,65 @@ const useRequiredGamePageContext = <T>(
 	return contextValue;
 };
 
+const useGamePageSlice = <Slice>(
+	selector: (state: GamePageViewModel) => Slice,
+	hookName: string,
+): Slice => {
+	const gamePageStore = useRequiredGamePageStore(hookName);
+
+	return useStore(gamePageStore, selector);
+};
+
+const selectGamePageAudioSlice = (
+	state: GamePageViewModel,
+): GamePageAudioSlice => state.audio;
+
+const selectGamePageCanvasSlice = (
+	state: GamePageViewModel,
+): GamePageCanvasSlice => state.canvas;
+
+const selectGamePageHudSlice = (state: GamePageViewModel): GamePageHudSlice =>
+	state.hud;
+
+const selectGamePageLayoutSlice = (
+	state: GamePageViewModel,
+): GamePageLayoutSlice => state.layout;
+
+const selectGamePageMobileSheetSlice = (
+	state: GamePageViewModel,
+): GamePageMobileSheetSlice => state.mobileSheet;
+
+const selectGamePageTouchSlice = (
+	state: GamePageViewModel,
+): GamePageTouchSlice => state.touch;
+
+const selectGamePageVisualizerSlice = (
+	state: GamePageViewModel,
+): GamePageVisualizerSlice => state.visualizer;
+
 export const useGamePageAudioContext = () =>
-	useRequiredGamePageContext(gamePageAudioContext, "useGamePageAudioContext");
+	useGamePageSlice(selectGamePageAudioSlice, "useGamePageAudioContext");
 
 export const useGamePageCanvasContext = () =>
-	useRequiredGamePageContext(gamePageCanvasContext, "useGamePageCanvasContext");
+	useGamePageSlice(selectGamePageCanvasSlice, "useGamePageCanvasContext");
 
 export const useGamePageHudContext = () =>
-	useRequiredGamePageContext(gamePageHudContext, "useGamePageHudContext");
+	useGamePageSlice(selectGamePageHudSlice, "useGamePageHudContext");
 
 export const useGamePageLayoutContext = () =>
-	useRequiredGamePageContext(gamePageLayoutContext, "useGamePageLayoutContext");
+	useGamePageSlice(selectGamePageLayoutSlice, "useGamePageLayoutContext");
 
 export const useGamePageMobileSheetContext = () =>
-	useRequiredGamePageContext(
-		gamePageMobileSheetContext,
+	useGamePageSlice(
+		selectGamePageMobileSheetSlice,
 		"useGamePageMobileSheetContext",
 	);
 
 export const useGamePageTouchContext = () =>
-	useRequiredGamePageContext(gamePageTouchContext, "useGamePageTouchContext");
+	useGamePageSlice(selectGamePageTouchSlice, "useGamePageTouchContext");
 
 export const useGamePageVisualizerContext = () =>
-	useRequiredGamePageContext(
-		gamePageVisualizerContext,
+	useGamePageSlice(
+		selectGamePageVisualizerSlice,
 		"useGamePageVisualizerContext",
 	);
