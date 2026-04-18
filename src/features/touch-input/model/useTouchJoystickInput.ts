@@ -14,8 +14,8 @@ import {
 	TOUCH_JOYSTICK_POINTER_PHASES,
 } from "../config";
 import {
-	resolveJoystickVector,
-	resolveTouchJoystickPointerAction,
+	resolveTouchJoystickVectorFromPointer,
+	shouldHandleTouchJoystickPointerAction,
 } from "../lib";
 
 type UseTouchJoystickInputOptions = {
@@ -59,11 +59,10 @@ export const useTouchJoystickInput = ({
 				return;
 			}
 
-			const centerX = joystickBounds.left + joystickBounds.width / 2;
-			const centerY = joystickBounds.top + joystickBounds.height / 2;
-			const joystickVector = resolveJoystickVector({
-				deltaX: clientX - centerX,
-				deltaY: clientY - centerY,
+			const joystickVector = resolveTouchJoystickVectorFromPointer({
+				clientX,
+				clientY,
+				joystickBounds,
 				maxRadiusPx: TOUCH_JOYSTICK_CONFIG.MAX_RADIUS_PX,
 				deadZoneRatio: TOUCH_JOYSTICK_CONFIG.DEAD_ZONE_RATIO,
 			});
@@ -84,11 +83,12 @@ export const useTouchJoystickInput = ({
 		(event: ReactPointerEvent<HTMLDivElement>) => {
 			event.preventDefault();
 			if (
-				resolveTouchJoystickPointerAction({
+				!shouldHandleTouchJoystickPointerAction({
 					activePointerId: activePointerIdRef.current,
 					eventPointerId: event.pointerId,
 					phase: TOUCH_JOYSTICK_POINTER_PHASES.DOWN,
-				}) !== TOUCH_JOYSTICK_POINTER_ACTIONS.ACTIVATE
+					expectedAction: TOUCH_JOYSTICK_POINTER_ACTIONS.ACTIVATE,
+				})
 			) {
 				return;
 			}
@@ -105,11 +105,12 @@ export const useTouchJoystickInput = ({
 		(event: ReactPointerEvent<HTMLDivElement>) => {
 			event.preventDefault();
 			if (
-				resolveTouchJoystickPointerAction({
+				!shouldHandleTouchJoystickPointerAction({
 					activePointerId: activePointerIdRef.current,
 					eventPointerId: event.pointerId,
 					phase: TOUCH_JOYSTICK_POINTER_PHASES.MOVE,
-				}) !== TOUCH_JOYSTICK_POINTER_ACTIONS.UPDATE
+					expectedAction: TOUCH_JOYSTICK_POINTER_ACTIONS.UPDATE,
+				})
 			) {
 				return;
 			}
@@ -126,11 +127,12 @@ export const useTouchJoystickInput = ({
 		) => {
 			event.preventDefault();
 			if (
-				resolveTouchJoystickPointerAction({
+				!shouldHandleTouchJoystickPointerAction({
 					activePointerId: activePointerIdRef.current,
 					eventPointerId: event.pointerId,
 					phase,
-				}) !== TOUCH_JOYSTICK_POINTER_ACTIONS.RELEASE
+					expectedAction: TOUCH_JOYSTICK_POINTER_ACTIONS.RELEASE,
+				})
 			) {
 				return;
 			}
