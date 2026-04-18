@@ -1,5 +1,5 @@
 import { shallowEqual } from "@xstate/react";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import type {
 	DungeonEvent,
 	DungeonInteractableId,
@@ -7,13 +7,11 @@ import type {
 } from "@/entities/dungeon";
 import type { Vector3Tuple } from "@/shared/lib";
 import {
-	getEnemyPositions,
-	getPlayerPosition,
-	subscribeToEnemyPositions,
-	subscribeToPlayerPosition,
-} from "@/shared/lib";
+	useEnemyPositionsValue,
+	usePlayerPositionSnapshotValue,
+} from "@/shared/model";
 
-import { ATTACK_PROMPT, EMPTY_INTERACTION_CANDIDATES } from "../config";
+import { ATTACK_PROMPT } from "../config";
 import { resolveInteractionCandidates } from "../lib";
 import {
 	selectInteractionCandidatesContext,
@@ -35,10 +33,9 @@ const computeCandidates = (
 	hasTreasureKey: boolean,
 	enemiesRemaining: number,
 	nearInteractable: DungeonInteractableId | null,
+	playerPosition: Vector3Tuple,
+	enemyPositions: readonly Vector3Tuple[],
 ): InteractionCandidatesViewModel => {
-	const playerPosition = getPlayerPosition();
-	const enemyPositions = getEnemyPositions();
-
 	const candidates = resolveInteractionCandidates({
 		currentRoomId,
 		hasTreasureKey,
@@ -69,50 +66,28 @@ const computeCandidates = (
 export const useInteractionCandidates = (): InteractionCandidatesViewModel => {
 	const { currentRoomId, enemiesRemaining, hasTreasureKey, nearInteractable } =
 		useGameMachineSelector(selectInteractionCandidatesContext, shallowEqual);
+	const playerPosition = usePlayerPositionSnapshotValue();
+	const enemyPositions = useEnemyPositionsValue();
 
-	const [candidates, setCandidates] = useState<InteractionCandidatesViewModel>(
-		EMPTY_INTERACTION_CANDIDATES,
-	);
-
-	useEffect(() => {
-		const compute = () =>
+	return useMemo(
+		() =>
 			computeCandidates(
 				currentRoomId,
 				hasTreasureKey,
 				enemiesRemaining,
 				nearInteractable,
-			);
-
-		const updateIfChanged = () => {
-			setCandidates((prev) => {
-				const next = compute();
-				if (
-					prev.interactPrompt === next.interactPrompt &&
-					prev.interactEvent === next.interactEvent &&
-					prev.interactTargetId === next.interactTargetId &&
-					prev.attackPrompt === next.attackPrompt &&
-					prev.attackPosition?.[0] === next.attackPosition?.[0] &&
-					prev.attackPosition?.[1] === next.attackPosition?.[1] &&
-					prev.attackPosition?.[2] === next.attackPosition?.[2]
-				) {
-					return prev;
-				}
-				return next;
-			});
-		};
-
-		updateIfChanged();
-
-		const unsubPosition = subscribeToPlayerPosition(updateIfChanged);
-		const unsubEnemyPositions = subscribeToEnemyPositions(updateIfChanged);
-
-		return () => {
-			unsubPosition?.();
-			unsubEnemyPositions?.();
-		};
-	}, [currentRoomId, hasTreasureKey, enemiesRemaining, nearInteractable]);
-
-	return candidates;
+				playerPosition,
+				enemyPositions,
+			),
+		[
+			currentRoomId,
+			hasTreasureKey,
+			enemiesRemaining,
+			nearInteractable,
+			playerPosition,
+			enemyPositions,
+		],
+	);
 };
 
 export type { InteractionCandidatesViewModel };

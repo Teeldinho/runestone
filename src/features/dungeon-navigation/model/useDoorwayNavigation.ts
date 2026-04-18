@@ -9,7 +9,7 @@ import {
 } from "@/entities/dungeon";
 import { createDungeonFloorLayout } from "@/entities/room";
 import type { Vector3Tuple } from "@/shared/lib";
-import { getPlayerPosition, subscribeToPlayerPosition } from "@/shared/lib";
+import { usePlayerPositionSnapshotValue } from "@/shared/model";
 
 import { resolveNearInteractableTarget } from "../lib";
 import {
@@ -22,6 +22,7 @@ export const useDoorwayNavigation = (): void => {
 	const { currentRoomId, enemiesRemaining, hasTreasureKey } =
 		useGameMachineSelector(selectDoorwayNavigationContext, shallowEqual);
 	const sendDungeonMachineEvent = useSendDungeonMachineEvent();
+	const playerPosition = usePlayerPositionSnapshotValue();
 
 	const roomPositionById = useMemo(() => {
 		const layout = createDungeonFloorLayout(createFloorOneMachine());
@@ -39,65 +40,56 @@ export const useDoorwayNavigation = (): void => {
 		null,
 	);
 
-	const send = sendDungeonMachineEvent;
+	const nearbyInteractable = useMemo(() => {
+		const roomCenterPosition = roomPositionById[currentRoomId as RoomId];
+
+		if (!roomCenterPosition) {
+			return null;
+		}
+
+		return resolveNearInteractableTarget({
+			currentRoomId,
+			roomCenterPosition,
+			playerPosition,
+			hasTreasureKey,
+			enemiesRemaining,
+		});
+	}, [
+		roomPositionById,
+		currentRoomId,
+		enemiesRemaining,
+		hasTreasureKey,
+		playerPosition,
+	]);
 
 	useEffect(() => {
-		const runDoorwayCheck = () => {
-			const roomCenterPosition = roomPositionById[currentRoomId as RoomId];
-			if (!roomCenterPosition) {
-				if (lastSentNearInteractableRef.current) {
-					send({
-						type: DUNGEON_EVENTS.LEFT_INTERACTABLE,
-						interactableId: lastSentNearInteractableRef.current,
-					});
-					lastSentNearInteractableRef.current = null;
-				}
-				return;
-			}
+		const previousInteractableId = lastSentNearInteractableRef.current;
 
-			const nearbyInteractable = resolveNearInteractableTarget({
-				currentRoomId,
-				roomCenterPosition,
-				playerPosition: getPlayerPosition(),
-				hasTreasureKey,
-				enemiesRemaining,
-			});
-
-			if (!nearbyInteractable) {
-				if (lastSentNearInteractableRef.current) {
-					send({
-						type: DUNGEON_EVENTS.LEFT_INTERACTABLE,
-						interactableId: lastSentNearInteractableRef.current,
-					});
-					lastSentNearInteractableRef.current = null;
-				}
-				return;
-			}
-
-			if (
-				lastSentNearInteractableRef.current !==
-				nearbyInteractable.interactableId
-			) {
-				if (lastSentNearInteractableRef.current) {
-					send({
-						type: DUNGEON_EVENTS.LEFT_INTERACTABLE,
-						interactableId: lastSentNearInteractableRef.current,
-					});
-				}
-				send({
-					type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
-					interactableId: nearbyInteractable.interactableId,
-					interactableType: nearbyInteractable.interactableType,
+		if (!nearbyInteractable) {
+			if (previousInteractableId) {
+				sendDungeonMachineEvent({
+					type: DUNGEON_EVENTS.LEFT_INTERACTABLE,
+					interactableId: previousInteractableId,
 				});
-				lastSentNearInteractableRef.current = nearbyInteractable.interactableId;
+				lastSentNearInteractableRef.current = null;
 			}
-		};
+			return;
+		}
 
-		const unsubscribe = subscribeToPlayerPosition(runDoorwayCheck);
-		runDoorwayCheck();
+		if (previousInteractableId !== nearbyInteractable.interactableId) {
+			if (previousInteractableId) {
+				sendDungeonMachineEvent({
+					type: DUNGEON_EVENTS.LEFT_INTERACTABLE,
+					interactableId: previousInteractableId,
+				});
+			}
 
-		return () => {
-			unsubscribe();
-		};
-	}, [roomPositionById, currentRoomId, enemiesRemaining, hasTreasureKey, send]);
+			sendDungeonMachineEvent({
+				type: DUNGEON_EVENTS.NEAR_INTERACTABLE,
+				interactableId: nearbyInteractable.interactableId,
+				interactableType: nearbyInteractable.interactableType,
+			});
+			lastSentNearInteractableRef.current = nearbyInteractable.interactableId;
+		}
+	}, [nearbyInteractable, sendDungeonMachineEvent]);
 };
