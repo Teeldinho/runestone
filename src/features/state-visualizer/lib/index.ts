@@ -9,3 +9,11 @@ export {
 	getMachineGraphNodeLabel,
 	getMachineGraphTransitionEventLabel,
 } from "./machineGraphSelectors";
+export {
+	type CreateStateVisualizerSectionsInput,
+	collectStatePaths,
+	createActiveStateNodeIds,
+	createPositionedMachineGraphNodes,
+	createStateVisualizerSections,
+	formatActiveStateLabel,
+} from "./stateVisualizerSections";

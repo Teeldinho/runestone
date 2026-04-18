@@ -2,22 +2,21 @@ import { type CSSProperties, useCallback, useEffect, useMemo } from "react";
 
 import {
 	type MachineGraphSection,
-	STATE_VISUALIZER_SECTION_IDS,
 	type StateVisualizerSectionId,
 	useStateVisualizerWorkspace,
 } from "@/features/state-visualizer";
 
-import {
-	INSPECTOR_REACT_FLOW_DEFAULTS,
-	INSPECTOR_REACT_FLOW_SECTION_PADDING,
-} from "../config";
+import { INSPECTOR_REACT_FLOW_DEFAULTS } from "../config";
 import {
 	createInspectorMachineSectionViewModel,
+	createInspectorSectionIdSet,
+	createXStateInspectorPanelViewModel,
 	type InspectorGuardDetail,
 	type InspectorGuardIndicator,
 	type InspectorMachineSectionViewModel,
 	type InspectorStateDetail,
 	type InspectorTransitionDetail,
+	resolveFallbackSelectedSectionId,
 } from "../lib";
 
 type UseXStateInspectorPanelInput = {
@@ -52,7 +51,7 @@ export const useXStateInspectorPanel = ({
 	);
 
 	const sectionIdSet = useMemo(
-		() => new Set(sectionViewModels.map((section) => section.id)),
+		() => createInspectorSectionIdSet(sectionViewModels),
 		[sectionViewModels],
 	);
 
@@ -68,40 +67,38 @@ export const useXStateInspectorPanel = ({
 	);
 
 	useEffect(() => {
-		if (sectionViewModels.length === 0) {
+		const fallbackSelectedSectionId = resolveFallbackSelectedSectionId(
+			sectionViewModels,
+			selectedSectionId,
+		);
+
+		if (fallbackSelectedSectionId === null) {
 			return;
 		}
 
-		if (sectionViewModels.some((section) => section.id === selectedSectionId)) {
-			return;
-		}
-
-		handleSelectedSectionIdChange(sectionViewModels[0].id);
+		handleSelectedSectionIdChange(fallbackSelectedSectionId);
 	}, [handleSelectedSectionIdChange, sectionViewModels, selectedSectionId]);
 
-	const selectedSection =
-		sectionViewModels.find((section) => section.id === selectedSectionId) ??
-		null;
+	const panelViewModel = useMemo(
+		() =>
+			createXStateInspectorPanelViewModel({
+				sectionViewModels,
+				selectedSectionId,
+			}),
+		[sectionViewModels, selectedSectionId],
+	);
 
 	return {
-		sectionTabs: sectionViewModels.map((section) => ({
-			id: section.id,
-			label: section.label,
-		})),
+		sectionTabs: panelViewModel.sectionTabs,
 		selectedSectionId,
 		handleSelectedSectionIdChange: handleSelectedSectionChange,
-		selectedSection,
+		selectedSection: panelViewModel.selectedSection,
 		sections: sectionViewModels,
 		reactFlowDefaults: INSPECTOR_REACT_FLOW_DEFAULTS,
-		selectedFlowFitViewPadding:
-			selectedSectionId === STATE_VISUALIZER_SECTION_IDS.CAMERA
-				? INSPECTOR_REACT_FLOW_SECTION_PADDING.CAMERA
-				: INSPECTOR_REACT_FLOW_DEFAULTS.FIT_VIEW_PADDING,
-		tabsListStyles: {
-			gridTemplateColumns: `repeat(${sectionViewModels.length}, minmax(0, 1fr))`,
-		},
-		hasSelectedSection: selectedSection !== null,
-		hasGuardIndicators: selectedSection?.hasGuardIndicators ?? false,
+		selectedFlowFitViewPadding: panelViewModel.selectedFlowFitViewPadding,
+		tabsListStyles: panelViewModel.tabsListStyles,
+		hasSelectedSection: panelViewModel.hasSelectedSection,
+		hasGuardIndicators: panelViewModel.hasGuardIndicators,
 	};
 };
 
