@@ -1,5 +1,5 @@
 import { shallowEqual } from "@xstate/react";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 
 import {
 	createFloorOneMachine,
@@ -9,7 +9,10 @@ import {
 } from "@/entities/dungeon";
 import { createDungeonFloorLayout } from "@/entities/room";
 import type { Vector3Tuple } from "@/shared/lib";
-import { usePlayerPositionSnapshotValue } from "@/shared/model";
+import {
+	getPlayerPositionSnapshot,
+	subscribeToPlayerPosition,
+} from "@/shared/model";
 
 import { resolveNearInteractableTarget } from "../lib";
 import {
@@ -22,7 +25,10 @@ export const useDoorwayNavigation = (): void => {
 	const { currentRoomId, enemiesRemaining, hasTreasureKey } =
 		useGameMachineSelector(selectDoorwayNavigationContext, shallowEqual);
 	const sendDungeonMachineEvent = useSendDungeonMachineEvent();
-	const playerPosition = usePlayerPositionSnapshotValue();
+	const playerPosition = useSyncExternalStore(
+		subscribeToPlayerPosition,
+		getPlayerPositionSnapshot,
+	);
 
 	const roomPositionById = useMemo(() => {
 		const layout = createDungeonFloorLayout(createFloorOneMachine());
