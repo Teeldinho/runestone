@@ -1,5 +1,5 @@
 import { shallowEqual } from "@xstate/react";
-import { useMemo, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import type {
 	DungeonEvent,
 	DungeonInteractableId,
@@ -68,34 +68,50 @@ const computeCandidates = (
 export const useInteractionCandidates = (): InteractionCandidatesViewModel => {
 	const { currentRoomId, enemiesRemaining, hasTreasureKey, nearInteractable } =
 		useGameMachineSelector(selectInteractionCandidatesContext, shallowEqual);
-	const playerPosition = useSyncExternalStore(
-		subscribeToPlayerPosition,
-		getPlayerPositionSnapshot,
-	);
-	const enemyPositions = useSyncExternalStore(
-		subscribeToEnemyPositions,
-		getEnemyPositions,
-	);
 
-	return useMemo(
+	const [candidates, setCandidates] = useState<InteractionCandidatesViewModel>(
 		() =>
 			computeCandidates(
 				currentRoomId,
 				hasTreasureKey,
 				enemiesRemaining,
 				nearInteractable,
-				playerPosition,
-				enemyPositions,
+				getPlayerPositionSnapshot(),
+				getEnemyPositions(),
 			),
-		[
-			currentRoomId,
-			hasTreasureKey,
-			enemiesRemaining,
-			nearInteractable,
-			playerPosition,
-			enemyPositions,
-		],
 	);
+
+	useEffect(() => {
+		const checkCandidates = () => {
+			const nextCandidates = computeCandidates(
+				currentRoomId,
+				hasTreasureKey,
+				enemiesRemaining,
+				nearInteractable,
+				getPlayerPositionSnapshot(),
+				getEnemyPositions(),
+			);
+
+			setCandidates((prev) => {
+				if (shallowEqual(prev, nextCandidates)) {
+					return prev;
+				}
+				return nextCandidates;
+			});
+		};
+
+		checkCandidates();
+
+		const unsubPlayer = subscribeToPlayerPosition(checkCandidates);
+		const unsubEnemy = subscribeToEnemyPositions(checkCandidates);
+
+		return () => {
+			unsubPlayer();
+			unsubEnemy();
+		};
+	}, [currentRoomId, enemiesRemaining, hasTreasureKey, nearInteractable]);
+
+	return candidates;
 };
 
 export type { InteractionCandidatesViewModel };
