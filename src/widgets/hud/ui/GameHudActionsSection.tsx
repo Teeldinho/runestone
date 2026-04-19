@@ -25,7 +25,7 @@ export function GameHudActionsSection({
 						onClick={actionButton.handleDungeonActionTrigger}
 						disabled={actionButton.isDisabled}
 						variant="dungeon-outline"
-						className="w-full justify-start"
+						className="w-full"
 					>
 						{actionButton.label}
 					</Button>

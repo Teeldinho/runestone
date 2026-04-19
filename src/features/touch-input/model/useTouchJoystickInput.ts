@@ -43,6 +43,7 @@ export const useTouchJoystickInput = ({
 	const [knobOffsetX, setKnobOffsetX] = useState(0);
 	const [knobOffsetY, setKnobOffsetY] = useState(0);
 	const [isActive, setIsActive] = useState(false);
+	const prevVelocityRef = useRef<Vector3Tuple | null>(null);
 
 	const resetJoystick = useCallback(() => {
 		setKnobOffsetX(0);
@@ -71,8 +72,20 @@ export const useTouchJoystickInput = ({
 			setKnobOffsetY(joystickVector.knobOffsetY);
 
 			if (joystickVector.hasMovement) {
-				onMove(joystickVector.velocity);
-			} else {
+				const [vx, vy, vz] = joystickVector.velocity;
+				const [pvx, pvy, pvz] = prevVelocityRef.current ?? [0, 0, 0];
+
+				const hasSignificantChange =
+					Math.abs(vx - pvx) > 0.01 ||
+					Math.abs(vy - pvy) > 0.01 ||
+					Math.abs(vz - pvz) > 0.01;
+
+				if (hasSignificantChange) {
+					prevVelocityRef.current = joystickVector.velocity;
+					onMove(joystickVector.velocity);
+				}
+			} else if (prevVelocityRef.current !== null) {
+				prevVelocityRef.current = null;
 				onStop();
 			}
 		},

@@ -5,7 +5,7 @@
 :root {
 	color-scheme: dark;
 	font-family: "Space Grotesk", "JetBrains Mono", sans-serif;
-	--radius: 0.5rem;
+	--radius: 0.25rem;
 	--background: #06080f;
 	--foreground: #f5f1e6;
 	--card: #0b0f17;
