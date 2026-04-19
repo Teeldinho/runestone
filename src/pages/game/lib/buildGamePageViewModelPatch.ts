@@ -16,4 +16,3 @@ export const buildGamePageViewModelPatch = (
 
 	return hasChange ? patch : null;
 };
-

@@ -1,5 +1,5 @@
 import { shallowEqual } from "@xstate/react";
-import { useMemo } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import type {
 	DungeonEvent,
 	DungeonInteractableId,
@@ -7,8 +7,10 @@ import type {
 } from "@/entities/dungeon";
 import type { Vector3Tuple } from "@/shared/lib";
 import {
-	useEnemyPositionsValue,
-	usePlayerPositionSnapshotValue,
+	getEnemyPositions,
+	getPlayerPositionSnapshot,
+	subscribeToEnemyPositions,
+	subscribeToPlayerPosition,
 } from "@/shared/model";
 
 import { ATTACK_PROMPT } from "../config";
@@ -66,8 +68,14 @@ const computeCandidates = (
 export const useInteractionCandidates = (): InteractionCandidatesViewModel => {
 	const { currentRoomId, enemiesRemaining, hasTreasureKey, nearInteractable } =
 		useGameMachineSelector(selectInteractionCandidatesContext, shallowEqual);
-	const playerPosition = usePlayerPositionSnapshotValue();
-	const enemyPositions = useEnemyPositionsValue();
+	const playerPosition = useSyncExternalStore(
+		subscribeToPlayerPosition,
+		getPlayerPositionSnapshot,
+	);
+	const enemyPositions = useSyncExternalStore(
+		subscribeToEnemyPositions,
+		getEnemyPositions,
+	);
 
 	return useMemo(
 		() =>

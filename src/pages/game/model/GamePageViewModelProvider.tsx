@@ -1,5 +1,6 @@
 import { type ReactNode, useLayoutEffect, useState } from "react";
 
+import { buildGamePageViewModelPatch } from "../lib/buildGamePageViewModelPatch";
 import {
 	createGamePageViewModelStore,
 	gamePageViewModelContext,
@@ -19,7 +20,11 @@ export function GamePageViewModelProvider({
 	);
 
 	useLayoutEffect(() => {
-		gamePageViewModelStore.setState(gamePageViewModel, true);
+		const prev = gamePageViewModelStore.getState();
+		const patch = buildGamePageViewModelPatch(prev, gamePageViewModel);
+		if (patch !== null) {
+			gamePageViewModelStore.setState(patch);
+		}
 	}, [gamePageViewModel, gamePageViewModelStore]);
 
 	return (

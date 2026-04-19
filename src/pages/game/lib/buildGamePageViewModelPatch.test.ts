@@ -6,7 +6,8 @@ import { buildGamePageViewModelPatch } from "./buildGamePageViewModelPatch";
 const STABLE_AUDIO = { handleAudioMuteToggle: () => {}, isAudioMuted: false };
 const STABLE_CANVAS = {
 	cameraStateSnapshot: {} as GamePageViewModel["canvas"]["cameraStateSnapshot"],
-	canvasMachineRuntime: {} as GamePageViewModel["canvas"]["canvasMachineRuntime"],
+	canvasMachineRuntime:
+		{} as GamePageViewModel["canvas"]["canvasMachineRuntime"],
 	handleCameraModeSwitch: () => {},
 };
 const STABLE_HUD = {
@@ -29,7 +30,8 @@ const STABLE_MOBILE_SHEET = {
 	handleMobileSheetOpenChange: () => {},
 	handleMobileSheetTabChange: () => {},
 	isMobileSheetOpen: false,
-	mobileSheetTabId: "map" as GamePageViewModel["mobileSheet"]["mobileSheetTabId"],
+	mobileSheetTabId:
+		"map" as GamePageViewModel["mobileSheet"]["mobileSheetTabId"],
 };
 const STABLE_TOUCH = {
 	handleTouchJoystickMove: () => {},
@@ -57,7 +59,10 @@ const BASE_VIEW_MODEL: GamePageViewModel = {
 
 describe("buildGamePageViewModelPatch", () => {
 	it("returns null when prev and next are the same object", () => {
-		const result = buildGamePageViewModelPatch(BASE_VIEW_MODEL, BASE_VIEW_MODEL);
+		const result = buildGamePageViewModelPatch(
+			BASE_VIEW_MODEL,
+			BASE_VIEW_MODEL,
+		);
 		expect(result).toBeNull();
 	});
 
@@ -93,7 +98,11 @@ describe("buildGamePageViewModelPatch", () => {
 			isTabletLayout: false,
 		};
 		const prev: GamePageViewModel = { ...BASE_VIEW_MODEL };
-		const next: GamePageViewModel = { ...BASE_VIEW_MODEL, hud: newHud, layout: newLayout };
+		const next: GamePageViewModel = {
+			...BASE_VIEW_MODEL,
+			hud: newHud,
+			layout: newLayout,
+		};
 
 		const result = buildGamePageViewModelPatch(prev, next);
 
@@ -107,7 +116,10 @@ describe("buildGamePageViewModelPatch", () => {
 	it("uses reference equality rather than deep equality for comparison", () => {
 		const structurallyIdenticalHud = { ...STABLE_HUD };
 		const prev: GamePageViewModel = { ...BASE_VIEW_MODEL };
-		const next: GamePageViewModel = { ...BASE_VIEW_MODEL, hud: structurallyIdenticalHud };
+		const next: GamePageViewModel = {
+			...BASE_VIEW_MODEL,
+			hud: structurallyIdenticalHud,
+		};
 
 		const result = buildGamePageViewModelPatch(prev, next);
 
