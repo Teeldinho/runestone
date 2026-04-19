@@ -7,9 +7,10 @@ type CameraOrientationStoreState = {
 };
 
 const createCameraOrientationStore = () =>
-	createStore<CameraOrientationStoreState>()((set) => ({
+	createStore<CameraOrientationStoreState>()((set, get) => ({
 		azimuth: 0,
 		setAzimuth: (azimuth) => {
+			if (get().azimuth === azimuth) return;
 			set({ azimuth });
 		},
 	}));
