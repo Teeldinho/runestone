@@ -37,14 +37,29 @@ export const useGamePageVisualizer = ({
 		[],
 	);
 
-	const { sections } = useStateVisualizer({
-		machinesBySectionId: visualizerMachinesBySectionId,
-		stateValuesBySectionId: {
+	const serializedPlayerStateValue = JSON.stringify(playerStateValue);
+	const serializedAudioState = JSON.stringify(audioState);
+
+	const stateValuesBySectionId = useMemo(
+		() => ({
 			[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: currentRoomId,
 			[STATE_VISUALIZER_SECTION_IDS.CAMERA]: cameraMode,
-			[STATE_VISUALIZER_SECTION_IDS.AUDIO]: audioState,
-			[STATE_VISUALIZER_SECTION_IDS.PLAYER]: playerStateValue,
-		},
+			[STATE_VISUALIZER_SECTION_IDS.AUDIO]: JSON.parse(serializedAudioState),
+			[STATE_VISUALIZER_SECTION_IDS.PLAYER]: JSON.parse(
+				serializedPlayerStateValue,
+			),
+		}),
+		[
+			currentRoomId,
+			cameraMode,
+			serializedAudioState,
+			serializedPlayerStateValue,
+		],
+	);
+
+	const { sections } = useStateVisualizer({
+		machinesBySectionId: visualizerMachinesBySectionId,
+		stateValuesBySectionId,
 	});
 
 	return {
