@@ -1,8 +1,8 @@
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
-import { useRef, useSyncExternalStore } from "react";
+import { useRef } from "react";
 import type { Vector3Tuple } from "@/shared/lib";
-import { getCameraMode, subscribeToCameraMode } from "@/shared/lib";
+import { useCameraModeValue } from "@/shared/model";
 import { PLAYER_STATES } from "../config";
 import { resolvePlayerAvatarVisibility, selectPlayerAnimation } from "../lib";
 import { usePlayerMachineRuntime } from "./playerMachineRuntime";
@@ -42,11 +42,7 @@ export const usePlayerMeshViewModel = ({
 		velocity: snapshot.context.velocity,
 		isSprinting: snapshot.context.isSprinting,
 	});
-	const cameraMode = useSyncExternalStore(
-		subscribeToCameraMode,
-		getCameraMode,
-		getCameraMode,
-	);
+	const cameraMode = useCameraModeValue();
 	const { isAuraVisible, isAvatarVisible } = resolvePlayerAvatarVisibility({
 		cameraMode,
 	});

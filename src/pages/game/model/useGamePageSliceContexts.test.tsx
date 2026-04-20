@@ -9,13 +9,8 @@ import { CAMERA_MODES } from "@/features/camera-system";
 import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 
 import {
-	gamePageAudioContext,
-	gamePageCanvasContext,
-	gamePageHudContext,
-	gamePageLayoutContext,
-	gamePageMobileSheetContext,
-	gamePageTouchContext,
-	gamePageVisualizerContext,
+	createGamePageViewModelStore,
+	gamePageViewModelContext,
 } from "./gamePageSliceContexts";
 import {
 	useGamePageAudioContext,
@@ -84,27 +79,15 @@ const contextSlices = {
 	},
 };
 
-const wrapper = ({ children }: { children: ReactNode }) => (
-	<gamePageAudioContext.Provider value={contextSlices.audio}>
-		<gamePageCanvasContext.Provider value={contextSlices.canvas}>
-			<gamePageHudContext.Provider value={contextSlices.hud}>
-				<gamePageLayoutContext.Provider value={contextSlices.layout}>
-					<gamePageMobileSheetContext.Provider
-						value={contextSlices.mobileSheet}
-					>
-						<gamePageTouchContext.Provider value={contextSlices.touch}>
-							<gamePageVisualizerContext.Provider
-								value={contextSlices.visualizer}
-							>
-								{children}
-							</gamePageVisualizerContext.Provider>
-						</gamePageTouchContext.Provider>
-					</gamePageMobileSheetContext.Provider>
-				</gamePageLayoutContext.Provider>
-			</gamePageHudContext.Provider>
-		</gamePageCanvasContext.Provider>
-	</gamePageAudioContext.Provider>
-);
+const createWrapper = () => {
+	const gamePageViewModelStore = createGamePageViewModelStore(contextSlices);
+
+	return ({ children }: { children: ReactNode }) => (
+		<gamePageViewModelContext.Provider value={gamePageViewModelStore}>
+			{children}
+		</gamePageViewModelContext.Provider>
+	);
+};
 
 describe("useGamePageSliceContexts", () => {
 	it("throws when a slice hook is used outside provider tree", () => {
@@ -114,6 +97,8 @@ describe("useGamePageSliceContexts", () => {
 	});
 
 	it("returns each focused context slice", () => {
+		const wrapper = createWrapper();
+
 		const { result: audioResult } = renderHook(
 			() => useGamePageAudioContext(),
 			{

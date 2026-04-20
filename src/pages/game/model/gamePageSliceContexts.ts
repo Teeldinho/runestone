@@ -1,35 +1,15 @@
 import { createContext } from "react";
+import { createStore, type StoreApi } from "zustand/vanilla";
 
-import type {
-	GamePageAudioSlice,
-	GamePageCanvasSlice,
-	GamePageHudSlice,
-	GamePageLayoutSlice,
-	GamePageMobileSheetSlice,
-	GamePageTouchSlice,
-	GamePageVisualizerSlice,
-} from "./types";
+import type { GamePageViewModel } from "./types";
 
-export const gamePageAudioContext = createContext<GamePageAudioSlice | null>(
-	null,
-);
+type GamePageViewModelStore = StoreApi<GamePageViewModel>;
 
-export const gamePageCanvasContext = createContext<GamePageCanvasSlice | null>(
-	null,
-);
+export const gamePageViewModelContext =
+	createContext<GamePageViewModelStore | null>(null);
 
-export const gamePageHudContext = createContext<GamePageHudSlice | null>(null);
+export const createGamePageViewModelStore = (
+	viewModel: GamePageViewModel,
+): GamePageViewModelStore => createStore<GamePageViewModel>()(() => viewModel);
 
-export const gamePageLayoutContext = createContext<GamePageLayoutSlice | null>(
-	null,
-);
-
-export const gamePageMobileSheetContext =
-	createContext<GamePageMobileSheetSlice | null>(null);
-
-export const gamePageTouchContext = createContext<GamePageTouchSlice | null>(
-	null,
-);
-
-export const gamePageVisualizerContext =
-	createContext<GamePageVisualizerSlice | null>(null);
+export type { GamePageViewModelStore };

@@ -30,3 +30,11 @@ export {
 	mapGraphEdgesToFlowEdges,
 	mapGraphNodesToFlowNodes,
 } from "./reactFlowGraphMappers";
+export {
+	type CreateXStateInspectorPanelViewModelInput,
+	createInspectorSectionIdSet,
+	createXStateInspectorPanelViewModel,
+	resolveFallbackSelectedSectionId,
+	type XStateInspectorPanelDerivedViewModel,
+	type XStateInspectorPanelSectionTab,
+} from "./xStateInspectorPanelViewModel";

@@ -10,7 +10,7 @@ export function GamePageDesktopHeader() {
 	return (
 		<header className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-panel-border px-4 py-2">
 			<div className="flex items-center gap-3">
-				<span className="rune-text text-lg font-bold tracking-[0.2em] text-dungeon-gold">
+				<span className="text-lg font-bold uppercase tracking-[0.2em] text-dungeon-gold">
 					RUNESTONE
 				</span>
 				<span className="rune-text">·</span>

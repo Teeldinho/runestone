@@ -14,8 +14,8 @@ import {
 	TOUCH_JOYSTICK_POINTER_PHASES,
 } from "../config";
 import {
-	resolveJoystickVector,
-	resolveTouchJoystickPointerAction,
+	resolveTouchJoystickVectorFromPointer,
+	shouldHandleTouchJoystickPointerAction,
 } from "../lib";
 
 type UseTouchJoystickInputOptions = {
@@ -43,6 +43,7 @@ export const useTouchJoystickInput = ({
 	const [knobOffsetX, setKnobOffsetX] = useState(0);
 	const [knobOffsetY, setKnobOffsetY] = useState(0);
 	const [isActive, setIsActive] = useState(false);
+	const prevVelocityRef = useRef<Vector3Tuple | null>(null);
 
 	const resetJoystick = useCallback(() => {
 		setKnobOffsetX(0);
@@ -59,11 +60,10 @@ export const useTouchJoystickInput = ({
 				return;
 			}
 
-			const centerX = joystickBounds.left + joystickBounds.width / 2;
-			const centerY = joystickBounds.top + joystickBounds.height / 2;
-			const joystickVector = resolveJoystickVector({
-				deltaX: clientX - centerX,
-				deltaY: clientY - centerY,
+			const joystickVector = resolveTouchJoystickVectorFromPointer({
+				clientX,
+				clientY,
+				joystickBounds,
 				maxRadiusPx: TOUCH_JOYSTICK_CONFIG.MAX_RADIUS_PX,
 				deadZoneRatio: TOUCH_JOYSTICK_CONFIG.DEAD_ZONE_RATIO,
 			});
@@ -72,8 +72,20 @@ export const useTouchJoystickInput = ({
 			setKnobOffsetY(joystickVector.knobOffsetY);
 
 			if (joystickVector.hasMovement) {
-				onMove(joystickVector.velocity);
-			} else {
+				const [vx, vy, vz] = joystickVector.velocity;
+				const [pvx, pvy, pvz] = prevVelocityRef.current ?? [0, 0, 0];
+
+				const hasSignificantChange =
+					Math.abs(vx - pvx) > 0.01 ||
+					Math.abs(vy - pvy) > 0.01 ||
+					Math.abs(vz - pvz) > 0.01;
+
+				if (hasSignificantChange) {
+					prevVelocityRef.current = joystickVector.velocity;
+					onMove(joystickVector.velocity);
+				}
+			} else if (prevVelocityRef.current !== null) {
+				prevVelocityRef.current = null;
 				onStop();
 			}
 		},
@@ -84,11 +96,12 @@ export const useTouchJoystickInput = ({
 		(event: ReactPointerEvent<HTMLDivElement>) => {
 			event.preventDefault();
 			if (
-				resolveTouchJoystickPointerAction({
+				!shouldHandleTouchJoystickPointerAction({
 					activePointerId: activePointerIdRef.current,
 					eventPointerId: event.pointerId,
 					phase: TOUCH_JOYSTICK_POINTER_PHASES.DOWN,
-				}) !== TOUCH_JOYSTICK_POINTER_ACTIONS.ACTIVATE
+					expectedAction: TOUCH_JOYSTICK_POINTER_ACTIONS.ACTIVATE,
+				})
 			) {
 				return;
 			}
@@ -105,11 +118,12 @@ export const useTouchJoystickInput = ({
 		(event: ReactPointerEvent<HTMLDivElement>) => {
 			event.preventDefault();
 			if (
-				resolveTouchJoystickPointerAction({
+				!shouldHandleTouchJoystickPointerAction({
 					activePointerId: activePointerIdRef.current,
 					eventPointerId: event.pointerId,
 					phase: TOUCH_JOYSTICK_POINTER_PHASES.MOVE,
-				}) !== TOUCH_JOYSTICK_POINTER_ACTIONS.UPDATE
+					expectedAction: TOUCH_JOYSTICK_POINTER_ACTIONS.UPDATE,
+				})
 			) {
 				return;
 			}
@@ -126,11 +140,12 @@ export const useTouchJoystickInput = ({
 		) => {
 			event.preventDefault();
 			if (
-				resolveTouchJoystickPointerAction({
+				!shouldHandleTouchJoystickPointerAction({
 					activePointerId: activePointerIdRef.current,
 					eventPointerId: event.pointerId,
 					phase,
-				}) !== TOUCH_JOYSTICK_POINTER_ACTIONS.RELEASE
+					expectedAction: TOUCH_JOYSTICK_POINTER_ACTIONS.RELEASE,
+				})
 			) {
 				return;
 			}
