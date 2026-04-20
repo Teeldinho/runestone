@@ -2,7 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DUNGEON_EVENTS, ROOM_IDS } from "@/entities/dungeon";
 import * as sharedModel from "@/shared/model";
-import * as doorwayNavigationModule from "./doorwayNavigation";
+import {
+	type NearbyInteractable,
+	resolveNearInteractableTarget,
+} from "./doorwayNavigation";
 
 import {
 	createDoorwayNavigationRuntime,
@@ -33,9 +36,7 @@ describe("doorwayNavigationRuntime", () => {
 		vi.resetAllMocks();
 		vi.mocked(sharedModel.getPlayerPositionSnapshot).mockReturnValue([0, 0, 0]);
 		vi.mocked(sharedModel.subscribeToPlayerPosition).mockReturnValue(vi.fn());
-		vi.mocked(
-			doorwayNavigationModule.resolveNearInteractableTarget,
-		).mockReturnValue(null);
+		vi.mocked(resolveNearInteractableTarget).mockReturnValue(null);
 	});
 
 	it("runs initial check and subscribes to player position on mount", () => {
@@ -63,12 +64,10 @@ describe("doorwayNavigationRuntime", () => {
 		const handleUpdate = vi.mocked(sharedModel.subscribeToPlayerPosition).mock
 			.calls[0][0];
 
-		vi.mocked(
-			doorwayNavigationModule.resolveNearInteractableTarget,
-		).mockReturnValue({
+		vi.mocked(resolveNearInteractableTarget).mockReturnValue({
 			interactableId: "entrance:north",
 			interactableType: "door",
-		} as any);
+		} as NearbyInteractable);
 
 		handleUpdate();
 
@@ -82,9 +81,7 @@ describe("doorwayNavigationRuntime", () => {
 		sendEvent.mockClear();
 
 		// Move away
-		vi.mocked(
-			doorwayNavigationModule.resolveNearInteractableTarget,
-		).mockReturnValue(null);
+		vi.mocked(resolveNearInteractableTarget).mockReturnValue(null);
 		handleUpdate();
 
 		expect(sendEvent).toHaveBeenCalledWith(

@@ -15,7 +15,6 @@ export type DoorwayNavigationContext = {
 	hasTreasureKey: boolean;
 };
 
-// Assuming the type accepted by sendDungeonMachineEvent matches standard dungeon transitions
 export type SendDungeonMachineEventFn = (event: GameMachineEvent) => void;
 
 // Precompute room positions statically to avoid doing it per-instance or per-frame
