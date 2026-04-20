@@ -11,6 +11,7 @@ export {
 	getTreasuryChestCollider,
 	getTreasuryChestPosition,
 } from "./roomColliderLayout";
+export type { CuboidColliderSettings } from "./roomColliderLayout";
 export type {
 	RoomBounds,
 	RoomBoundsInput,
