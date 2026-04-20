@@ -27,8 +27,8 @@ export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
 					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
 				>
 					{isDesktopLayout ? (
-						<div className="mt-1 flex items-center gap-3 rounded-[6px] border border-panel-border bg-panel px-5 py-2.5 text-[1.1rem] font-medium [font-family:Space_Grotesk,sans-serif] whitespace-nowrap pointer-events-none shadow-lg">
-							<span className="inline-flex h-10 min-w-10 items-center justify-center rounded-[4px] border border-dungeon-gold bg-[color-mix(in_srgb,var(--dungeon-gold)_10%,transparent)] px-3 text-[1rem] font-bold text-dungeon-gold">
+						<div className="mt-1 flex items-center gap-2 rounded-[4px] border border-panel-border bg-panel px-3 py-1.5 text-[0.85rem] font-medium [font-family:Space_Grotesk,sans-serif] whitespace-nowrap pointer-events-none">
+							<span className="inline-flex h-7 min-w-7 items-center justify-center rounded-[3px] border border-dungeon-gold bg-[color-mix(in_srgb,var(--dungeon-gold)_10%,transparent)] px-1.5 text-[0.8rem] font-bold text-dungeon-gold">
 								{interact.label}
 							</span>
 							<span>{interact.text}</span>
@@ -51,8 +51,8 @@ export function WorldInteractionPrompt(props: WorldInteractionPromptProps) {
 					distanceFactor={WORLD_INTERACTION_PROMPT_CONFIG.DISTANCE_FACTOR}
 				>
 					{isDesktopLayout ? (
-						<div className="mt-1 flex items-center gap-3 rounded-[6px] border border-panel-border bg-panel px-5 py-2.5 text-[1.1rem] font-medium [font-family:Space_Grotesk,sans-serif] whitespace-nowrap pointer-events-none shadow-lg">
-							<span className="inline-flex h-10 min-w-10 items-center justify-center rounded-[4px] border border-success bg-[color-mix(in_srgb,var(--success)_10%,transparent)] px-3 text-[1rem] font-bold text-success">
+						<div className="mt-1 flex items-center gap-2 rounded-[4px] border border-panel-border bg-panel px-3 py-1.5 text-[0.85rem] font-medium [font-family:Space_Grotesk,sans-serif] whitespace-nowrap pointer-events-none">
+							<span className="inline-flex h-7 min-w-7 items-center justify-center rounded-[3px] border border-success bg-[color-mix(in_srgb,var(--success)_10%,transparent)] px-1.5 text-[0.8rem] font-bold text-success">
 								{attack.label}
 							</span>
 							<span>{attack.text}</span>
