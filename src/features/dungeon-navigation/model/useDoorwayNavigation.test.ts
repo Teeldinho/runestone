@@ -20,8 +20,9 @@ const mockRuntimeContext = vi.hoisted(() => ({
 const mockSendDungeonMachineEvent = vi.hoisted(() => vi.fn());
 const mockResolveNearInteractableTarget = vi.hoisted(() => vi.fn());
 
-vi.mock("../lib", async (importOriginal) => {
-	const original = await importOriginal<typeof import("../lib")>();
+vi.mock("../lib/doorwayNavigation", async (importOriginal) => {
+	const original =
+		await importOriginal<typeof import("../lib/doorwayNavigation")>();
 
 	return {
 		...original,
