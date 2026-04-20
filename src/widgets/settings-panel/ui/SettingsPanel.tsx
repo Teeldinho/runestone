@@ -64,9 +64,7 @@ export function SettingsPanel() {
 									min={SETTINGS_VOLUME_RANGE.MIN}
 									max={SETTINGS_VOLUME_RANGE.MAX}
 									step={SETTINGS_VOLUME_RANGE.STEP}
-									onValueChange={([value]) =>
-										settings.handleMasterVolumeChange(value ?? 0)
-									}
+									onValueChange={settings.handleMasterVolumeSliderChange}
 								/>
 							</Field>
 
@@ -83,9 +81,7 @@ export function SettingsPanel() {
 									min={SETTINGS_VOLUME_RANGE.MIN}
 									max={SETTINGS_VOLUME_RANGE.MAX}
 									step={SETTINGS_VOLUME_RANGE.STEP}
-									onValueChange={([value]) =>
-										settings.handleMusicVolumeChange(value ?? 0)
-									}
+									onValueChange={settings.handleMusicVolumeSliderChange}
 								/>
 							</Field>
 						</FieldGroup>
@@ -111,11 +107,7 @@ export function SettingsPanel() {
 						<Button
 							variant={settings.postprocessingEnabled ? "default" : "outline"}
 							aria-pressed={settings.postprocessingEnabled}
-							onClick={() =>
-								settings.handlePostprocessingToggle(
-									!settings.postprocessingEnabled,
-								)
-							}
+							onClick={settings.handlePostprocessingToggleClick}
 						>
 							{resolveToggleLabel(
 								settings.postprocessingEnabled,
@@ -143,9 +135,7 @@ export function SettingsPanel() {
 						<Button
 							variant={settings.hapticsEnabled ? "default" : "outline"}
 							aria-pressed={settings.hapticsEnabled}
-							onClick={() =>
-								settings.handleHapticsToggle(!settings.hapticsEnabled)
-							}
+							onClick={settings.handleHapticsToggleClick}
 						>
 							{resolveToggleLabel(
 								settings.hapticsEnabled,

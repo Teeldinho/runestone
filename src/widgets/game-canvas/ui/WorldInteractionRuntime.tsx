@@ -1,32 +1,18 @@
-import { useMemo } from "react";
-
-import { createFloorOneMachine, type RoomId } from "@/entities/dungeon";
-import { createDungeonFloorLayout } from "@/entities/room";
 import {
 	type InteractionCandidatesViewModel,
 	useInteractionCandidates,
 	useInteractionInput,
 	useSendDungeonMachineEvent,
 } from "@/features/dungeon-navigation";
-import type { Vector3Tuple } from "@/shared/lib";
 
-import type { RoomPositionsById } from "../lib/getWorldInteractionPromptPosition";
+import { useRoomPositionsById } from "../model/useRoomPositionsById";
 
 import { WorldInteractionPrompt } from "./WorldInteractionPrompt";
 
 export function WorldInteractionRuntime() {
 	const sendDungeonMachineEvent = useSendDungeonMachineEvent();
 	const interactionCandidates = useInteractionCandidates();
-	const roomPositionsById = useMemo<RoomPositionsById>(
-		() =>
-			createDungeonFloorLayout(createFloorOneMachine()).rooms.reduce<
-				Partial<Record<RoomId, Vector3Tuple>>
-			>((positionsById, room) => {
-				positionsById[room.roomId as RoomId] = room.position;
-				return positionsById;
-			}, {}),
-		[],
-	);
+	const roomPositionsById = useRoomPositionsById();
 
 	useInteractionInput({
 		candidates: interactionCandidates,
