@@ -1,4 +1,5 @@
 export { computeEnemyMovement } from "./computeEnemyMovement";
+export { computeSquaredDistance } from "./computeSquaredDistance";
 export {
 	computeEnemyGlowOffsetY,
 	computeEnemySpawnHeightOffset,

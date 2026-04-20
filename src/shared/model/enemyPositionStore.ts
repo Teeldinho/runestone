@@ -5,7 +5,7 @@ import {
 	checkVector3TupleEqual,
 	createVector3Tuple,
 	type Vector3Tuple,
-} from "@/shared/lib";
+} from "@/shared/lib/vec3";
 
 type EnemyPositionStoreState = {
 	enemyPositionsById: ReadonlyMap<string, Vector3Tuple>;

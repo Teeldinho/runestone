@@ -5,7 +5,7 @@ import {
 	checkVector3TupleEqual,
 	createVector3Tuple,
 	type Vector3Tuple,
-} from "@/shared/lib";
+} from "@/shared/lib/vec3";
 
 type PlayerPositionStoreState = {
 	initialized: boolean;
