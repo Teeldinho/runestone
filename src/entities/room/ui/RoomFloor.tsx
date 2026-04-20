@@ -1,6 +1,7 @@
+import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import type { Object3D } from "three";
 
-import { CuboidCollider, RigidBody } from "@react-three/rapier";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import {
 	ROOM_FLOOR_COLLIDER,
@@ -13,8 +14,8 @@ import type { RoomSurfaceSettings } from "../model";
 type RoomFloorProps = {
 	floorScene: Object3D;
 	columnScene: Object3D;
-	floorTilePositions: [number, number, number][];
-	columnPositions: [number, number, number][];
+	floorTilePositions: Vector3Tuple[];
+	columnPositions: Vector3Tuple[];
 	columnColliders: CuboidColliderSettings[];
 	surface: RoomSurfaceSettings;
 	showGrid: boolean;

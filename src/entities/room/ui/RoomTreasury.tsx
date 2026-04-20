@@ -1,13 +1,14 @@
-import type { Object3D } from "three";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
+import type { Object3D } from "three";
 
 import { ROOM_GLTF_CONFIG } from "../config";
 import type { CuboidColliderSettings } from "../lib";
+import type { Vector3Tuple } from "@/shared/lib";
 
 type RoomTreasuryProps = {
 	isTreasury: boolean;
 	chestScene: Object3D;
-	treasuryChestPosition: [number, number, number];
+	treasuryChestPosition: Vector3Tuple;
 	treasuryChestCollider: CuboidColliderSettings;
 };
 
