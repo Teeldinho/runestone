@@ -18,7 +18,7 @@ export function GameHudDiscoveredRoomsSection({
 					<li key={roomLabel}>
 						<Badge
 							variant="outline"
-							className="h-auto rounded border-panel-border bg-black/40 px-2 py-1 text-xs text-muted-foreground shadow-inner"
+							className="h-auto border-panel-border bg-black/40 px-2 py-1 text-xs text-muted-foreground shadow-inner"
 						>
 							{roomLabel}
 						</Badge>

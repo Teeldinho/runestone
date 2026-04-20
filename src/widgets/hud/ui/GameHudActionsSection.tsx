@@ -36,8 +36,8 @@ export function GameHudActionsSection({
 				<Button
 					type="button"
 					onClick={handleDungeonRunReset}
-					variant="destructive"
-					className="w-full uppercase tracking-widest text-[10px]"
+					variant="dungeon-destructive"
+					size="dungeon-sm"
 				>
 					{HUD_COPY.ACTIONS.RESET_BUTTON}
 				</Button>

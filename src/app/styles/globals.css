@@ -5,7 +5,7 @@
 :root {
 	color-scheme: dark;
 	font-family: "Space Grotesk", "JetBrains Mono", sans-serif;
-	--radius: 0.25rem;
+	--radius: 0.5rem;
 	--background: #06080f;
 	--foreground: #f5f1e6;
 	--card: #0b0f17;
@@ -52,13 +52,13 @@
 }
 
 @theme inline {
-	--radius-sm: max(2px, calc(var(--radius) - 2px));
-	--radius-md: var(--radius);
+	--radius-sm: max(2px, calc(var(--radius) - 4px));
+	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
-	--radius-xl: var(--radius);
-	--radius-2xl: var(--radius);
-	--radius-3xl: var(--radius);
-	--radius-4xl: var(--radius);
+	--radius-xl: calc(var(--radius) + 2px);
+	--radius-2xl: calc(var(--radius) + 2px);
+	--radius-3xl: calc(var(--radius) - 2px);
+	--radius-4xl: calc(var(--radius) - 2px);
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
 	--color-card: var(--card);
