@@ -1,6 +1,6 @@
+import { useId } from "react";
 import {
 	formatVolumePercent,
-	resolveToggleLabel,
 	SETTINGS_COPY,
 	SETTINGS_VOLUME_RANGE,
 	useSettingsForm,
@@ -21,10 +21,13 @@ import {
 	FieldTitle,
 	Separator,
 	Slider,
+	Switch,
 } from "@/shared/ui";
 
 export function SettingsPanel() {
 	const settings = useSettingsForm();
+	const masterVolumeDescId = useId();
+	const musicVolumeDescId = useId();
 
 	return (
 		<Card className="w-full border-panel-border bg-panel shadow-xl backdrop-blur">
@@ -55,11 +58,12 @@ export function SettingsPanel() {
 								<FieldLabel htmlFor="master-volume">
 									{SETTINGS_COPY.MASTER_VOLUME_LABEL}
 								</FieldLabel>
-								<FieldDescription>
+								<FieldDescription id={masterVolumeDescId}>
 									{formatVolumePercent(settings.masterVolume)}
 								</FieldDescription>
 								<Slider
 									id="master-volume"
+									aria-describedby={masterVolumeDescId}
 									value={[settings.masterVolume]}
 									min={SETTINGS_VOLUME_RANGE.MIN}
 									max={SETTINGS_VOLUME_RANGE.MAX}
@@ -72,11 +76,12 @@ export function SettingsPanel() {
 								<FieldLabel htmlFor="music-volume">
 									{SETTINGS_COPY.MUSIC_VOLUME_LABEL}
 								</FieldLabel>
-								<FieldDescription>
+								<FieldDescription id={musicVolumeDescId}>
 									{formatVolumePercent(settings.musicVolume)}
 								</FieldDescription>
 								<Slider
 									id="music-volume"
+									aria-describedby={musicVolumeDescId}
 									value={[settings.musicVolume]}
 									min={SETTINGS_VOLUME_RANGE.MIN}
 									max={SETTINGS_VOLUME_RANGE.MAX}
@@ -104,17 +109,11 @@ export function SettingsPanel() {
 								{SETTINGS_COPY.POSTPROCESSING_TOGGLE_LABEL}
 							</FieldTitle>
 						</FieldContent>
-						<Button
-							variant={settings.postprocessingEnabled ? "default" : "outline"}
-							aria-pressed={settings.postprocessingEnabled}
-							onClick={settings.handlePostprocessingToggleClick}
-						>
-							{resolveToggleLabel(
-								settings.postprocessingEnabled,
-								SETTINGS_COPY.POSTPROCESSING_ON_LABEL,
-								SETTINGS_COPY.POSTPROCESSING_OFF_LABEL,
-							)}
-						</Button>
+						<Switch
+							checked={settings.postprocessingEnabled}
+							onCheckedChange={settings.handlePostprocessingToggle}
+							aria-label={SETTINGS_COPY.POSTPROCESSING_TOGGLE_LABEL}
+						/>
 					</Field>
 				</section>
 
@@ -132,17 +131,11 @@ export function SettingsPanel() {
 						<FieldContent>
 							<FieldTitle>{SETTINGS_COPY.HAPTICS_TOGGLE_LABEL}</FieldTitle>
 						</FieldContent>
-						<Button
-							variant={settings.hapticsEnabled ? "default" : "outline"}
-							aria-pressed={settings.hapticsEnabled}
-							onClick={settings.handleHapticsToggleClick}
-						>
-							{resolveToggleLabel(
-								settings.hapticsEnabled,
-								SETTINGS_COPY.HAPTICS_ON_LABEL,
-								SETTINGS_COPY.HAPTICS_OFF_LABEL,
-							)}
-						</Button>
+						<Switch
+							checked={settings.hapticsEnabled}
+							onCheckedChange={settings.handleHapticsToggle}
+							aria-label={SETTINGS_COPY.HAPTICS_TOGGLE_LABEL}
+						/>
 					</Field>
 				</section>
 
