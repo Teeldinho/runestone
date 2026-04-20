@@ -36,6 +36,8 @@ export { useResponsiveLayout } from "./useResponsiveLayout";
 export type { Vec3, Vector3Tuple } from "./vec3";
 export {
 	addVec3,
+	checkVector3TupleEqual,
+	createVector3Tuple,
 	distanceVec3,
 	getQuaternionFromXZ,
 	lengthVec3,
