@@ -58,6 +58,7 @@ export const ROOM_GLTF_CONFIG = {
 export const ROOM_FLOOR_COLLIDER = {
 	HALF_HEIGHT: 0.3,
 	POSITION_Y: -0.3,
+	GRID_OFFSET_Y: 0.04,
 } as const;
 
 export const ROOM_GEOMETRY = {
@@ -65,6 +66,7 @@ export const ROOM_GEOMETRY = {
 	HALF_DEPTH: 6,
 	WALL_Y: 0,
 	WALL_TILE_POSITIONS: [-4, 0, 4] as const,
+	WALL_TILE_WIDTH: 4,
 	TORCH_INSET: 0.2,
 } as const;
 
@@ -125,9 +127,11 @@ export const ROOM_ENTITY_CONFIG = {
 		RING_TUBE_RADIUS: 0.03,
 		RING_RADIAL_SEGMENTS: 16,
 		RING_TUBULAR_SEGMENTS: 24,
+		RING_ROTATION: [Math.PI / 2, 0, 0] as const,
 		SHAFT_LENGTH: 0.34,
 		SHAFT_RADIUS: 0.03,
 		SHAFT_RADIAL_SEGMENTS: 12,
+		SHAFT_ROTATION: [0, 0, Math.PI / 2] as const,
 		TOOTH_WIDTH: 0.08,
 		TOOTH_HEIGHT: 0.11,
 		TOOTH_DEPTH: 0.05,

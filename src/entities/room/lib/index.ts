@@ -26,6 +26,19 @@ export {
 } from "./roomGeometry";
 export { getColumnPlacements, getFloorTilePositions } from "./roomGltfLayout";
 export {
+	getDoorColliderHalfArgs,
+	getDoorColliderPosition,
+	getDoorMeshArgs,
+	getDoorwayPosition,
+	getKeyRingPosition,
+	getKeyToothPosition,
+	getTorchPosition,
+	getWallBoxArgs,
+	getWallMeshPosition,
+	getWallOffsetValue,
+	getWallTilePosition,
+} from "./roomWallGeometry";
+export {
 	hasOpening,
 	isDoorLocked,
 	isDoorOpened,
