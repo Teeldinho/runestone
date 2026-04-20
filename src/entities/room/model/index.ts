@@ -9,3 +9,8 @@ export type {
 	RoomTreasuryConfig,
 	RoomWallOpening,
 } from "./types";
+export { useRoomWallSegment } from "./useRoomWallSegment";
+export type {
+	UseRoomWallSegmentInput,
+	UseRoomWallSegmentResult,
+} from "./useRoomWallSegment";

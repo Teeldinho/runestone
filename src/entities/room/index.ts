@@ -18,11 +18,22 @@ export type {
 export {
 	createDungeonFloorLayout,
 	getColumnPlacements,
+	getDoorColliderHalfArgs,
+	getDoorColliderPosition,
+	getDoorMeshArgs,
+	getDoorwayPosition,
 	getFloorTilePositions,
+	getKeyRingPosition,
+	getKeyToothPosition,
 	getRoomBounds,
 	getRoomCorridorAnchors,
 	getRoomLabelPosition,
 	getRoomTorchPositions,
+	getTorchPosition,
+	getWallBoxArgs,
+	getWallMeshPosition,
+	getWallOffsetValue,
+	getWallTilePosition,
 	hasOpening,
 	isDoorLocked,
 	isDoorOpened,
@@ -38,5 +49,10 @@ export type {
 	RoomTorchSettings,
 	RoomTreasuryConfig,
 	RoomWallOpening,
+} from "./model";
+export { useRoomWallSegment } from "./model";
+export type {
+	UseRoomWallSegmentInput,
+	UseRoomWallSegmentResult,
 } from "./model";
 export { RoomLabel, RoomMesh, TorchLight } from "./ui";
