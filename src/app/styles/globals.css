@@ -152,57 +152,6 @@ body {
 	color: var(--foreground);
 }
 
-.dungeon-btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.375rem;
-	padding: 0.375rem 0.75rem;
-	font-size: 0.8rem;
-	font-family: "Space Grotesk", sans-serif;
-	font-weight: 500;
-	border-radius: var(--radius-sm);
-	border: 1px solid var(--panel-border);
-	background: transparent;
-	color: var(--foreground);
-	cursor: pointer;
-	transition:
-		border-color 0.15s,
-		color 0.15s,
-		background 0.15s;
-	width: 100%;
-}
-
-.dungeon-btn:hover:not(:disabled) {
-	border-color: var(--dungeon-gold);
-	color: var(--accent);
-}
-
-.dungeon-btn:disabled {
-	opacity: 0.35;
-	cursor: not-allowed;
-}
-
-.dungeon-btn-active {
-	border-color: var(--dungeon-rune);
-	color: var(--primary);
-	background: rgba(0, 215, 255, 0.08);
-}
-
-.dungeon-btn-active:hover:not(:disabled) {
-	border-color: var(--dungeon-rune);
-	color: var(--primary);
-}
-
-.dungeon-btn-danger {
-	border-color: var(--destructive);
-	color: var(--destructive);
-}
-
-.dungeon-btn-danger:hover:not(:disabled) {
-	background: rgba(255, 46, 207, 0.1);
-}
-
 .interaction-prompt {
 	display: flex;
 	align-items: center;

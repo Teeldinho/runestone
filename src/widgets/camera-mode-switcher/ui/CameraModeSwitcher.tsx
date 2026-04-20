@@ -1,5 +1,5 @@
 import type { CameraMachineEvent, CameraMode } from "@/features/camera-system";
-import { cn } from "@/shared/lib";
+import { Button } from "@/shared/ui";
 import { CAMERA_MODE_SWITCHER_COPY } from "../config";
 import { useCameraModeSwitcher } from "../model";
 
@@ -25,20 +25,17 @@ export function CameraModeSwitcher({
 			<ul className="flex flex-1 items-center gap-2 sm:flex-initial">
 				{cameraModeButtons.map((cameraModeButton) => (
 					<li key={cameraModeButton.mode} className="flex-1 sm:flex-initial">
-						<button
+						<Button
 							type="button"
+							variant="dungeon-toggle"
 							aria-pressed={cameraModeButton.isActive}
 							onClick={cameraModeButton.handleCameraModeSwitch}
-							className={cn(
-								"dungeon-btn",
-								cameraModeButton.isActive && "dungeon-btn-active",
-							)}
 						>
 							<span>{cameraModeButton.label}</span>
 							<span className="ml-2 rounded bg-black/40 px-1.5 py-0.5 font-mono text-[10px] text-(--dungeon-rune)">
 								{cameraModeButton.hotkey}
 							</span>
-						</button>
+						</Button>
 					</li>
 				))}
 			</ul>
