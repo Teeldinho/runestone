@@ -1,6 +1,6 @@
 import { useGLTF } from "@react-three/drei";
-import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RapierRigidBody } from "@react-three/rapier";
+import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
 

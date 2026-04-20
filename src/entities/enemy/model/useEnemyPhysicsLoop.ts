@@ -12,10 +12,7 @@ import {
 	setEnemyPosition,
 } from "@/shared/lib";
 
-import {
-	ENEMY_ENTITY_CONFIG,
-	ENEMY_EVENTS,
-} from "../config";
+import { ENEMY_ENTITY_CONFIG, ENEMY_EVENTS } from "../config";
 import { shouldSyncEnemyPlayerPosition } from "../lib";
 import type { EnemyUpdatePlayerPositionEvent } from "./types";
 
@@ -24,7 +21,10 @@ type UseEnemyPhysicsLoopInput = {
 	id: string;
 	position: Vector3Tuple;
 	send: (event: EnemyUpdatePlayerPositionEvent) => void;
-	getNextPosition: (delta: number, currentPosition: Vector3Tuple) => Vector3Tuple;
+	getNextPosition: (
+		delta: number,
+		currentPosition: Vector3Tuple,
+	) => Vector3Tuple;
 };
 
 export const useEnemyPhysicsLoop = ({

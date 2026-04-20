@@ -4,9 +4,7 @@ import { useMemo } from "react";
 import { ROOM_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
 
-import {
-	ROOM_GLTF_CONFIG,
-} from "../config";
+import { ROOM_GLTF_CONFIG } from "../config";
 import {
 	getColumnPlacements,
 	getFloorTilePositions,

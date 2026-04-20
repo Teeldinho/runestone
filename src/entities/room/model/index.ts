@@ -5,7 +5,7 @@ export type {
 	RoomLabelSettings,
 	RoomNode,
 	RoomSurfaceSettings,
-	RoomTreasuryConfig,
 	RoomTorchSettings,
+	RoomTreasuryConfig,
 	RoomWallOpening,
 } from "./types";

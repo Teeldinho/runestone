@@ -1,3 +1,4 @@
+export type { RoomWallSide } from "./config";
 export {
 	ROOM_DOOR_GUARDS,
 	ROOM_ENTITY_CONFIG,
@@ -7,7 +8,6 @@ export {
 	ROOM_LIGHT_CONFIG,
 	ROOM_WALL_LAYOUT,
 } from "./config";
-export type { RoomWallSide } from "./config";
 export type {
 	DungeonCorridorLayout,
 	DungeonFloorLayout,
@@ -35,8 +35,8 @@ export type {
 	RoomLabelSettings,
 	RoomNode,
 	RoomSurfaceSettings,
-	RoomTreasuryConfig,
 	RoomTorchSettings,
+	RoomTreasuryConfig,
 	RoomWallOpening,
 } from "./model";
 export { RoomLabel, RoomMesh, TorchLight } from "./ui";

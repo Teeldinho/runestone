@@ -48,19 +48,9 @@ export function RoomTreasureKey({ visible }: RoomTreasureKeyProps) {
 					roughness={KEY.SHAFT_ROUGHNESS}
 				/>
 			</mesh>
-			<mesh
-				position={[
-					KEY.SHAFT_LENGTH / 2,
-					-KEY.TOOTH_HEIGHT / 2,
-					0,
-				]}
-			>
+			<mesh position={[KEY.SHAFT_LENGTH / 2, -KEY.TOOTH_HEIGHT / 2, 0]}>
 				<boxGeometry
-					args={[
-						KEY.TOOTH_WIDTH,
-						KEY.TOOTH_HEIGHT,
-						KEY.TOOTH_DEPTH,
-					]}
+					args={[KEY.TOOTH_WIDTH, KEY.TOOTH_HEIGHT, KEY.TOOTH_DEPTH]}
 				/>
 				<meshStandardMaterial
 					color={KEY.COLOR}

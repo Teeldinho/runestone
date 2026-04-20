@@ -1,9 +1,8 @@
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import type { Object3D } from "three";
-
+import type { Vector3Tuple } from "@/shared/lib";
 import { ROOM_GLTF_CONFIG } from "../config";
 import type { CuboidColliderSettings } from "../lib";
-import type { Vector3Tuple } from "@/shared/lib";
 
 type RoomTreasuryProps = {
 	isTreasury: boolean;

@@ -1,8 +1,8 @@
-import type { Object3D } from "three";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
+import type { Object3D } from "three";
 
 import { ROOM_CONFIG } from "@/shared/config";
-
+import type { RoomWallSide } from "../config";
 import {
 	ROOM_ENTITY_CONFIG,
 	ROOM_GEOMETRY,
@@ -10,7 +10,6 @@ import {
 	ROOM_LIGHT_CONFIG,
 	ROOM_WALL_LAYOUT,
 } from "../config";
-import type { RoomWallSide } from "../config";
 import {
 	hasOpening,
 	isDoorLocked,
@@ -54,12 +53,28 @@ export function RoomWallSegment({
 	const locked = isDoorLocked(wallOpening, doorConfig.lockedDoorSides);
 
 	const colliderArgs = isNorthSouth
-		? ([DOOR_GATE.WIDTH / 2, DOOR_GATE.HEIGHT / 2, DOOR_GATE.THICKNESS / 2] as [number, number, number])
-		: ([DOOR_GATE.THICKNESS / 2, DOOR_GATE.HEIGHT / 2, DOOR_GATE.WIDTH / 2] as [number, number, number]);
+		? ([DOOR_GATE.WIDTH / 2, DOOR_GATE.HEIGHT / 2, DOOR_GATE.THICKNESS / 2] as [
+				number,
+				number,
+				number,
+			])
+		: ([DOOR_GATE.THICKNESS / 2, DOOR_GATE.HEIGHT / 2, DOOR_GATE.WIDTH / 2] as [
+				number,
+				number,
+				number,
+			]);
 
 	const doorMeshArgs = isNorthSouth
-		? ([DOOR_GATE.WIDTH, DOOR_GATE.HEIGHT, DOOR_GATE.THICKNESS] as [number, number, number])
-		: ([DOOR_GATE.THICKNESS, DOOR_GATE.HEIGHT, DOOR_GATE.WIDTH] as [number, number, number]);
+		? ([DOOR_GATE.WIDTH, DOOR_GATE.HEIGHT, DOOR_GATE.THICKNESS] as [
+				number,
+				number,
+				number,
+			])
+		: ([DOOR_GATE.THICKNESS, DOOR_GATE.HEIGHT, DOOR_GATE.WIDTH] as [
+				number,
+				number,
+				number,
+			]);
 
 	const wallBoxArgs = isNorthSouth
 		? ([4, ROOM_HEIGHT, WALL_THICKNESS] as [number, number, number])
@@ -92,11 +107,7 @@ export function RoomWallSegment({
 										position={colliderPosition}
 									/>
 									{locked && (
-										<mesh
-											castShadow
-											receiveShadow
-											position={colliderPosition}
-										>
+										<mesh castShadow receiveShadow position={colliderPosition}>
 											<boxGeometry args={doorMeshArgs} />
 											<meshStandardMaterial
 												color={DOOR_GATE.COLOR}
@@ -114,19 +125,23 @@ export function RoomWallSegment({
 				}
 
 				const wallPosition = isNorthSouth
-					? ([tilePos, ROOM_GEOMETRY.WALL_Y, wallOffsetValue] as [number, number, number])
-					: ([wallOffsetValue, ROOM_GEOMETRY.WALL_Y, tilePos] as [number, number, number]);
+					? ([tilePos, ROOM_GEOMETRY.WALL_Y, wallOffsetValue] as [
+							number,
+							number,
+							number,
+						])
+					: ([wallOffsetValue, ROOM_GEOMETRY.WALL_Y, tilePos] as [
+							number,
+							number,
+							number,
+						]);
 
 				const meshPosition = isNorthSouth
 					? ([tilePos, 0, wallOffsetValue] as [number, number, number])
 					: ([wallOffsetValue, 0, tilePos] as [number, number, number]);
 
 				return (
-					<RigidBody
-						key={`${side}-${tilePos}`}
-						type="fixed"
-						colliders="cuboid"
-					>
+					<RigidBody key={`${side}-${tilePos}`} type="fixed" colliders="cuboid">
 						<primitive
 							object={wallScene.clone()}
 							position={wallPosition}
@@ -145,8 +160,16 @@ export function RoomWallSegment({
 
 				const insetDir = -offsetSign;
 				const torchPosition = isNorthSouth
-					? ([tilePos, ROOM_LIGHT_CONFIG.HEIGHT, wallOffsetValue + insetDir * ROOM_GEOMETRY.TORCH_INSET] as [number, number, number])
-					: ([wallOffsetValue + insetDir * ROOM_GEOMETRY.TORCH_INSET, ROOM_LIGHT_CONFIG.HEIGHT, tilePos] as [number, number, number]);
+					? ([
+							tilePos,
+							ROOM_LIGHT_CONFIG.HEIGHT,
+							wallOffsetValue + insetDir * ROOM_GEOMETRY.TORCH_INSET,
+						] as [number, number, number])
+					: ([
+							wallOffsetValue + insetDir * ROOM_GEOMETRY.TORCH_INSET,
+							ROOM_LIGHT_CONFIG.HEIGHT,
+							tilePos,
+						] as [number, number, number]);
 
 				return (
 					<primitive

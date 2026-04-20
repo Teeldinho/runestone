@@ -19,4 +19,5 @@ export const shouldRenderCollider = (
 	side: RoomWallOpening,
 	wallOpenings: RoomWallOpening[],
 	openedDoorSides: RoomWallOpening[],
-): boolean => hasOpening(side, wallOpenings) && !isDoorOpened(side, openedDoorSides);
+): boolean =>
+	hasOpening(side, wallOpenings) && !isDoorOpened(side, openedDoorSides);

@@ -1,4 +1,5 @@
 export { DUNGEON_GENERATOR_CONFIG } from "./dungeonGeneratorConfig";
+export type { RoomWallSide } from "./roomConfig";
 export {
 	ROOM_DOOR_GUARDS,
 	ROOM_ENTITY_CONFIG,
@@ -9,4 +10,3 @@ export {
 	ROOM_LIGHT_CONFIG,
 	ROOM_WALL_LAYOUT,
 } from "./roomConfig";
-export type { RoomWallSide } from "./roomConfig";

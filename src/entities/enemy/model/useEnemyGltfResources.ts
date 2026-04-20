@@ -1,13 +1,10 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
-import * as THREE from "three";
+import type * as THREE from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
-import {
-	ENEMY_ANIMATION_PATHS,
-	ENEMY_GLTF_CONFIG,
-} from "../config";
+import { ENEMY_ANIMATION_PATHS, ENEMY_GLTF_CONFIG } from "../config";
 
 type UseEnemyGltfResourcesResult = {
 	clonedScene: THREE.Object3D;
@@ -23,9 +20,7 @@ export const useEnemyGltfResources = (
 	const { animations: moveAnims } = useGLTF(
 		ENEMY_ANIMATION_PATHS.MOVEMENT_BASIC,
 	);
-	const { animations: generalAnims } = useGLTF(
-		ENEMY_ANIMATION_PATHS.GENERAL,
-	);
+	const { animations: generalAnims } = useGLTF(ENEMY_ANIMATION_PATHS.GENERAL);
 	const { animations: meleeAnims } = useGLTF(
 		ENEMY_ANIMATION_PATHS.COMBAT_MELEE,
 	);
