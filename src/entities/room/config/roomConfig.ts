@@ -60,6 +60,23 @@ export const ROOM_FLOOR_COLLIDER = {
 	POSITION_Y: -0.3,
 } as const;
 
+export const ROOM_GEOMETRY = {
+	HALF_WIDTH: 6,
+	HALF_DEPTH: 6,
+	WALL_Y: 0,
+	WALL_TILE_POSITIONS: [-4, 0, 4] as const,
+	TORCH_INSET: 0.2,
+} as const;
+
+export const ROOM_WALL_LAYOUT = {
+	north: { rotationY: 0, isNorthSouth: true, offsetSign: -1 },
+	south: { rotationY: Math.PI, isNorthSouth: true, offsetSign: 1 },
+	east: { rotationY: -Math.PI / 2, isNorthSouth: false, offsetSign: 1 },
+	west: { rotationY: Math.PI / 2, isNorthSouth: false, offsetSign: -1 },
+} as const;
+
+export type RoomWallSide = keyof typeof ROOM_WALL_LAYOUT;
+
 export const ROOM_ENTITY_CONFIG = {
 	DIMENSIONS: {
 		width: ROOM_CONFIG.WIDTH,

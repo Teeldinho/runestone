@@ -24,3 +24,9 @@ export {
 	getRoomTorchPositions,
 } from "./roomGeometry";
 export { getColumnPlacements, getFloorTilePositions } from "./roomGltfLayout";
+export {
+	hasOpening,
+	isDoorLocked,
+	isDoorOpened,
+	shouldRenderCollider,
+} from "./roomWallPredicates";
