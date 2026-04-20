@@ -81,14 +81,18 @@ export function RoomMesh({
 		[],
 	);
 
-	return (
+		return (
 		<group position={position}>
 			<RoomFloor
-				columnColliders={columnColliders}
-				columnPositions={columnPositions}
-				columnScene={columnScene}
-				floorScene={floorScene}
-				floorTilePositions={floorTilePositions}
+				layout={{
+					columnColliders,
+					columnPositions,
+					floorTilePositions,
+				}}
+				scenes={{
+					column: columnScene,
+					floor: floorScene,
+				}}
 				showGrid={showGrid}
 				surface={surface}
 			/>

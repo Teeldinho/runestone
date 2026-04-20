@@ -1,4 +1,5 @@
 import { ROOM_ENTITY_CONFIG } from "../config";
+import { getKeyRingPosition, getKeyToothPosition } from "../lib";
 
 type RoomTreasureKeyProps = {
 	visible: boolean;
@@ -9,12 +10,12 @@ const KEY = ROOM_ENTITY_CONFIG.TREASURE_KEY;
 export function RoomTreasureKey({ visible }: RoomTreasureKeyProps) {
 	if (!visible) return null;
 
+	const ringPosition = getKeyRingPosition(KEY.SHAFT_LENGTH);
+	const toothPosition = getKeyToothPosition(KEY.SHAFT_LENGTH, KEY.TOOTH_HEIGHT);
+
 	return (
 		<group position={[0, KEY.HEIGHT, 0]}>
-			<mesh
-				rotation={[Math.PI / 2, 0, 0]}
-				position={[-KEY.SHAFT_LENGTH / 2, 0, 0]}
-			>
+			<mesh rotation={KEY.RING_ROTATION} position={ringPosition}>
 				<torusGeometry
 					args={[
 						KEY.RING_RADIUS,
@@ -31,7 +32,7 @@ export function RoomTreasureKey({ visible }: RoomTreasureKeyProps) {
 					roughness={KEY.RING_ROUGHNESS}
 				/>
 			</mesh>
-			<mesh rotation={[0, 0, Math.PI / 2]}>
+			<mesh rotation={KEY.SHAFT_ROTATION}>
 				<cylinderGeometry
 					args={[
 						KEY.SHAFT_RADIUS,
@@ -48,7 +49,7 @@ export function RoomTreasureKey({ visible }: RoomTreasureKeyProps) {
 					roughness={KEY.SHAFT_ROUGHNESS}
 				/>
 			</mesh>
-			<mesh position={[KEY.SHAFT_LENGTH / 2, -KEY.TOOTH_HEIGHT / 2, 0]}>
+			<mesh position={toothPosition}>
 				<boxGeometry
 					args={[KEY.TOOTH_WIDTH, KEY.TOOTH_HEIGHT, KEY.TOOTH_DEPTH]}
 				/>

@@ -3,41 +3,43 @@ import type { Object3D } from "three";
 
 import type { Vector3Tuple } from "@/shared/lib";
 
-import {
-	ROOM_FLOOR_COLLIDER,
-	ROOM_GEOMETRY,
-	ROOM_GLTF_CONFIG,
-} from "../config";
+import { ROOM_FLOOR_COLLIDER, ROOM_GEOMETRY, ROOM_GLTF_CONFIG } from "../config";
 import type { CuboidColliderSettings } from "../lib";
 import type { RoomSurfaceSettings } from "../model";
 
-type RoomFloorProps = {
-	floorScene: Object3D;
-	columnScene: Object3D;
+type RoomFloorScenes = {
+	floor: Object3D;
+	column: Object3D;
+};
+
+type RoomFloorLayout = {
 	floorTilePositions: Vector3Tuple[];
 	columnPositions: Vector3Tuple[];
 	columnColliders: CuboidColliderSettings[];
+};
+
+type RoomFloorProps = {
+	scenes: RoomFloorScenes;
+	layout: RoomFloorLayout;
 	surface: RoomSurfaceSettings;
 	showGrid: boolean;
 };
 
 export function RoomFloor({
-	floorScene,
-	columnScene,
-	floorTilePositions,
-	columnPositions,
-	columnColliders,
+	scenes,
+	layout,
 	surface,
 	showGrid,
 }: RoomFloorProps) {
 	const { rune, grid, pillar } = surface;
+	const { floorTilePositions, columnPositions, columnColliders } = layout;
 
 	return (
 		<>
 			{floorTilePositions.map(([x, , z]) => (
 				<primitive
 					key={`floor-${x}-${z}`}
-					object={floorScene.clone()}
+					object={scenes.floor.clone()}
 					position={[x, 0, z]}
 					receiveShadow
 					scale={ROOM_GLTF_CONFIG.FLOOR_TILE.SCALE}
@@ -59,7 +61,7 @@ export function RoomFloor({
 				<primitive
 					key={`col-${cx}-${cz}`}
 					castShadow
-					object={columnScene.clone()}
+					object={scenes.column.clone()}
 					position={[cx, 0, cz]}
 					scale={ROOM_GLTF_CONFIG.COLUMN.SCALE}
 				/>
@@ -80,7 +82,7 @@ export function RoomFloor({
 			{showGrid && (
 				<gridHelper
 					args={[grid.size, grid.divisions, rune.sealedColor, pillar.color]}
-					position={[0, 0.04, 0]}
+					position={[0, ROOM_FLOOR_COLLIDER.GRID_OFFSET_Y, 0]}
 				/>
 			)}
 		</>
