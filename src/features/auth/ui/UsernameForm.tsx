@@ -1,4 +1,3 @@
-import { useId } from "react";
 import {
 	Button,
 	Field,
@@ -22,9 +21,6 @@ export function UsernameForm({
 	isSubmitting,
 	onSubmit,
 }: UsernameFormProps) {
-	const usernameInputId = useId();
-	const usernameHelpId = useId();
-	const usernameErrorId = useId();
 	const {
 		getUsernameFieldViewModel,
 		handleUsernameFormSubmit,
@@ -45,14 +41,11 @@ export function UsernameForm({
 					validators={usernameFieldValidators}
 				>
 					{(field) => {
-						const { activeErrorMessage } = getUsernameFieldViewModel({
+						const { activeErrorMessage, describedBy, usernameInputId, usernameErrorId, usernameHelpId } = getUsernameFieldViewModel({
 							errors: field.state.meta.errors,
 							isTouched: field.state.meta.isTouched,
 							isValid: field.state.meta.isValid,
 						});
-						const describedBy = activeErrorMessage
-							? `${usernameHelpId} ${usernameErrorId}`
-							: usernameHelpId;
 
 						return (
 							<Field data-invalid={Boolean(activeErrorMessage)}>

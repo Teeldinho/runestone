@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import { type FormEvent, useCallback, useMemo } from "react";
+import { type FormEvent, useCallback, useMemo, useId } from "react";
 
 import { AUTH_COPY } from "../config";
 import { getUsernameValidationError } from "../lib";
@@ -20,6 +20,10 @@ type UsernameFieldMeta = {
 
 type UsernameFieldViewModel = {
 	activeErrorMessage: string | null;
+	describedBy: string;
+	usernameInputId: string;
+	usernameErrorId: string;
+	usernameHelpId: string;
 };
 
 const getUsernameFieldErrorMessage = (errors: unknown[]): string | null => {
@@ -37,6 +41,10 @@ export const useUsernameForm = ({
 	isSubmitting,
 	onSubmit,
 }: UseUsernameFormParams) => {
+	const usernameInputId = useId();
+	const usernameHelpId = useId();
+	const usernameErrorId = useId();
+
 	const usernameForm = useForm({
 		defaultValues: {
 			username: "",
@@ -72,14 +80,22 @@ export const useUsernameForm = ({
 			);
 			const shouldShowValidationError =
 				fieldMeta.isTouched && !fieldMeta.isValid;
+			const activeErrorMessage = shouldShowValidationError
+				? validationErrorMessage
+				: errorMessage;
+			const describedBy = activeErrorMessage
+				? `${usernameHelpId} ${usernameErrorId}`
+				: usernameHelpId;
 
 			return {
-				activeErrorMessage: shouldShowValidationError
-					? validationErrorMessage
-					: errorMessage,
+				activeErrorMessage,
+				describedBy,
+				usernameInputId,
+				usernameErrorId,
+				usernameHelpId,
 			};
 		},
-		[errorMessage],
+		[errorMessage, usernameHelpId, usernameErrorId, usernameInputId],
 	);
 
 	const submitButtonLabel = isSubmitting
