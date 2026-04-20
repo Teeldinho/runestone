@@ -26,7 +26,7 @@ const buttonVariants = cva(
 				"dungeon-destructive":
 					"border-destructive text-destructive font-bold hover:bg-destructive/10",
 				"dungeon-toggle":
-					"border-panel-border bg-transparent text-foreground hover:border-dungeon-gold hover:text-accent aria-pressed:border-dungeon-rune aria-pressed:text-primary aria-pressed:bg-[rgba(0,215,255,0.08)] aria-pressed:hover:border-dungeon-rune aria-pressed:hover:text-primary",
+					"border-panel-border bg-transparent text-foreground hover:border-dungeon-gold hover:text-accent aria-pressed:border-dungeon-rune aria-pressed:text-primary aria-pressed:bg-dungeon-rune/8 aria-pressed:hover:border-dungeon-rune aria-pressed:hover:text-primary",
 			},
 			size: {
 				default:

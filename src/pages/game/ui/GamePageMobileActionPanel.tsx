@@ -2,7 +2,14 @@ import { Layers, Trophy, Volume2, VolumeX } from "lucide-react";
 
 import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import { useGamePageMobileActionPanelModel } from "@/pages/game/model";
-import { Badge, Button, DrawerTrigger } from "@/shared/ui";
+import {
+	Badge,
+	Button,
+	DrawerTrigger,
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/shared/ui";
 import { LeaderboardSheet } from "@/widgets/leaderboard-panel";
 
 export function GamePageMobileActionPanel() {
@@ -34,53 +41,77 @@ export function GamePageMobileActionPanel() {
 				</Button>
 			) : null}
 
-			<Button
-				variant={viewModel.isAudioMuted ? "dungeon-outline" : "dungeon-gold"}
-				size={viewModel.isTabletLayout ? "default" : "icon"}
-				onClick={viewModel.handleAudioMuteToggle}
-				className={`pointer-events-auto ${viewModel.isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
-				aria-label={viewModel.isAudioMuted ? "Unmute audio" : "Mute audio"}
-			>
-				{viewModel.isAudioMuted ? (
-					<VolumeX className="h-4 w-4" />
-				) : (
-					<Volume2 className="h-4 w-4" />
-				)}
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<Button
+						variant={
+							viewModel.isAudioMuted ? "dungeon-outline" : "dungeon-gold"
+						}
+						size={viewModel.isTabletLayout ? "default" : "icon"}
+						onClick={viewModel.handleAudioMuteToggle}
+						className={`pointer-events-auto ${viewModel.isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
+						aria-label={viewModel.isAudioMuted ? "Unmute audio" : "Mute audio"}
+					>
+						{viewModel.isAudioMuted ? (
+							<VolumeX className="h-4 w-4" />
+						) : (
+							<Volume2 className="h-4 w-4" />
+						)}
 
-				{viewModel.isTabletLayout ? (
-					<span className="text-xs tracking-wide uppercase">Audio</span>
-				) : null}
-			</Button>
+						{viewModel.isTabletLayout ? (
+							<span className="text-xs tracking-wide uppercase">Audio</span>
+						) : null}
+					</Button>
+				</TooltipTrigger>
+				<TooltipContent>
+					{viewModel.isAudioMuted ? "Unmute audio" : "Mute audio"}
+				</TooltipContent>
+			</Tooltip>
 
 			<LeaderboardSheet>
-				<Button
-					variant="dungeon-outline"
-					size={viewModel.isTabletLayout ? "default" : "icon"}
-					className={`pointer-events-auto flex items-center justify-center gap-2 ${viewModel.isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
-					aria-label="Open Leaderboard"
-				>
-					<Trophy className="h-4 w-4" />
-					{viewModel.isTabletLayout ? (
-						<span className="text-xs tracking-wide uppercase">Rankings</span>
-					) : null}
-				</Button>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button
+							variant="dungeon-outline"
+							size={viewModel.isTabletLayout ? "default" : "icon"}
+							className={`pointer-events-auto flex items-center justify-center gap-2 ${viewModel.isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
+							aria-label="Open Leaderboard"
+						>
+							<Trophy className="h-4 w-4" />
+							{viewModel.isTabletLayout ? (
+								<span className="text-xs tracking-wide uppercase">
+									Rankings
+								</span>
+							) : null}
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent>Leaderboard</TooltipContent>
+				</Tooltip>
 			</LeaderboardSheet>
 
 			<DrawerTrigger asChild>
-				<Button
-					variant={
-						viewModel.isMobileSheetOpen ? "dungeon-gold" : "dungeon-outline"
-					}
-					size={viewModel.isTabletLayout ? "default" : "icon"}
-					className={`pointer-events-auto ${viewModel.isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
-				>
-					<Layers className="h-4 w-4" />
-					{viewModel.isTabletLayout ? (
-						<span className="text-xs tracking-wide uppercase">
-							{GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}
-						</span>
-					) : null}
-				</Button>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button
+							variant={
+								viewModel.isMobileSheetOpen ? "dungeon-gold" : "dungeon-outline"
+							}
+							size={viewModel.isTabletLayout ? "default" : "icon"}
+							className={`pointer-events-auto ${viewModel.isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
+							aria-label={`Open ${GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}`}
+						>
+							<Layers className="h-4 w-4" />
+							{viewModel.isTabletLayout ? (
+								<span className="text-xs tracking-wide uppercase">
+									{GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}
+								</span>
+							) : null}
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent>
+						{GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}
+					</TooltipContent>
+				</Tooltip>
 			</DrawerTrigger>
 		</div>
 	);

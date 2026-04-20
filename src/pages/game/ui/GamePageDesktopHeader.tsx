@@ -1,7 +1,7 @@
 import { Trophy, Volume2, VolumeX } from "lucide-react";
 
 import { useGamePageDesktopHeaderModel } from "@/pages/game/model";
-import { Button } from "@/shared/ui";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui";
 import { LeaderboardSheet } from "@/widgets/leaderboard-panel";
 
 export function GamePageDesktopHeader() {
@@ -26,29 +26,41 @@ export function GamePageDesktopHeader() {
 					</span>
 				</span>
 
-				<Button
-					type="button"
-					variant="dungeon-outline"
-					size="icon-sm"
-					onClick={handleAudioMuteToggle}
-					aria-label={isAudioMuted ? "Unmute audio" : "Mute audio"}
-				>
-					{isAudioMuted ? (
-						<VolumeX className="h-4 w-4" />
-					) : (
-						<Volume2 className="h-4 w-4 text-[var(--dungeon-gold)]" />
-					)}
-				</Button>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button
+							type="button"
+							variant="dungeon-outline"
+							size="icon-sm"
+							onClick={handleAudioMuteToggle}
+							aria-label={isAudioMuted ? "Unmute audio" : "Mute audio"}
+						>
+							{isAudioMuted ? (
+								<VolumeX className="h-4 w-4" />
+							) : (
+								<Volume2 className="h-4 w-4 text-[var(--dungeon-gold)]" />
+							)}
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent>
+						{isAudioMuted ? "Unmute audio" : "Mute audio"}
+					</TooltipContent>
+				</Tooltip>
 
 				<LeaderboardSheet>
-					<Button
-						type="button"
-						variant="dungeon-outline"
-						size="icon-sm"
-						aria-label="Open Leaderboard"
-					>
-						<Trophy className="h-4 w-4 text-[var(--dungeon-gold)]" />
-					</Button>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button
+								type="button"
+								variant="dungeon-outline"
+								size="icon-sm"
+								aria-label="Open Leaderboard"
+							>
+								<Trophy className="h-4 w-4 text-[var(--dungeon-gold)]" />
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent>Leaderboard</TooltipContent>
+					</Tooltip>
 				</LeaderboardSheet>
 			</div>
 		</header>
