@@ -29,7 +29,11 @@ const config = defineConfig({
 				routesDirectory: "app/routes",
 			},
 		}),
-		viteReact(),
+		viteReact({
+			babel: {
+				plugins: [["babel-plugin-react-compiler", { target: "19" }]],
+			},
+		}),
 	],
 });
 
