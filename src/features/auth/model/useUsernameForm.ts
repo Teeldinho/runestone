@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import { type FormEvent, useCallback, useMemo, useId } from "react";
+import { type FormEvent, useCallback, useId, useMemo } from "react";
 
 import { AUTH_COPY } from "../config";
 import { getUsernameValidationError } from "../lib";

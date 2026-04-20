@@ -65,7 +65,10 @@ export const useSettingsForm = (): UseSettingsFormResult => {
 	);
 
 	const handlePostprocessingToggleClick = useCallback(() => {
-		persist({ ...settings, postprocessingEnabled: !settings.postprocessingEnabled });
+		persist({
+			...settings,
+			postprocessingEnabled: !settings.postprocessingEnabled,
+		});
 	}, [settings, persist]);
 
 	const handleHapticsToggle = useCallback(

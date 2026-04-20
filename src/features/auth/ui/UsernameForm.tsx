@@ -41,7 +41,13 @@ export function UsernameForm({
 					validators={usernameFieldValidators}
 				>
 					{(field) => {
-						const { activeErrorMessage, describedBy, usernameInputId, usernameErrorId, usernameHelpId } = getUsernameFieldViewModel({
+						const {
+							activeErrorMessage,
+							describedBy,
+							usernameInputId,
+							usernameErrorId,
+							usernameHelpId,
+						} = getUsernameFieldViewModel({
 							errors: field.state.meta.errors,
 							isTouched: field.state.meta.isTouched,
 							isValid: field.state.meta.isValid,
