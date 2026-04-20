@@ -203,24 +203,6 @@ body {
 	background: rgba(255, 46, 207, 0.1);
 }
 
-.hp-bar-track {
-	height: 4px;
-	border-radius: 2px;
-	background: var(--panel-border);
-	overflow: hidden;
-}
-
-.hp-bar-fill {
-	height: 100%;
-	border-radius: 2px;
-	background: linear-gradient(90deg, #16a34a, #22c55e);
-	transition: width 0.4s ease;
-}
-
-.hp-bar-fill-low {
-	background: linear-gradient(90deg, #dc2626, #f87171);
-}
-
 .interaction-prompt {
 	display: flex;
 	align-items: center;

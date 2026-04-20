@@ -54,7 +54,7 @@ export {
 export { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card";
 export { Input } from "./input";
 export { Label } from "./label";
-export { Progress } from "./progress";
+export { HealthProgress, Progress } from "./progress";
 export { ScrollArea, ScrollBar } from "./scroll-area";
 export { Separator } from "./separator";
 export {
