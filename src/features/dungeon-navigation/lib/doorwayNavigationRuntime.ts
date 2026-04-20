@@ -1,6 +1,7 @@
 import type { DungeonInteractableId, RoomId } from "@/entities/dungeon";
 import { createFloorOneMachine, DUNGEON_EVENTS } from "@/entities/dungeon";
 import { createDungeonFloorLayout } from "@/entities/room";
+import type { GameMachineEvent } from "@/features/dungeon-navigation/config";
 import type { Vector3Tuple } from "@/shared/lib";
 import {
 	getPlayerPositionSnapshot,
@@ -15,11 +16,7 @@ export type DoorwayNavigationContext = {
 };
 
 // Assuming the type accepted by sendDungeonMachineEvent matches standard dungeon transitions
-export type SendDungeonMachineEventFn = (event: {
-	type: string;
-	interactableId?: DungeonInteractableId;
-	interactableType?: string;
-}) => void;
+export type SendDungeonMachineEventFn = (event: GameMachineEvent) => void;
 
 // Precompute room positions statically to avoid doing it per-instance or per-frame
 const layout = createDungeonFloorLayout(createFloorOneMachine());

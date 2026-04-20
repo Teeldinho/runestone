@@ -20,7 +20,7 @@ export const useDoorwayNavigation = (): void => {
 
 	useEffect(() => {
 		const runtime = createDoorwayNavigationRuntime(context, (event) => {
-			sendEventRef.current(event as any);
+			sendEventRef.current(event);
 		});
 		return runtime.subscribe();
 	}, [context]);
