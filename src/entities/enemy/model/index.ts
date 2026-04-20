@@ -15,4 +15,6 @@ export type {
 	UseEnemyMeshViewModelResult,
 } from "./useEnemyMeshViewModel";
 export { useEnemyMeshViewModel } from "./useEnemyMeshViewModel";
+export { useEnemyGltfResources } from "./useEnemyGltfResources";
 export { useEnemyMovement } from "./useEnemyMovement";
+export { useEnemyPhysicsLoop } from "./useEnemyPhysicsLoop";
