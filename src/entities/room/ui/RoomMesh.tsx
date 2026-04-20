@@ -81,7 +81,7 @@ export function RoomMesh({
 		[],
 	);
 
-		return (
+	return (
 		<group position={position}>
 			<RoomFloor
 				layout={{

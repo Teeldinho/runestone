@@ -30,8 +30,16 @@ export const getDoorMeshArgs = (isNorthSouth: boolean): AxisTuple =>
 
 export const getWallBoxArgs = (isNorthSouth: boolean): AxisTuple =>
 	isNorthSouth
-		? [ROOM_GEOMETRY.WALL_TILE_WIDTH, ROOM_CONFIG.HEIGHT, ROOM_CONFIG.WALL_THICKNESS]
-		: [ROOM_CONFIG.WALL_THICKNESS, ROOM_CONFIG.HEIGHT, ROOM_GEOMETRY.WALL_TILE_WIDTH];
+		? [
+				ROOM_GEOMETRY.WALL_TILE_WIDTH,
+				ROOM_CONFIG.HEIGHT,
+				ROOM_CONFIG.WALL_THICKNESS,
+			]
+		: [
+				ROOM_CONFIG.WALL_THICKNESS,
+				ROOM_CONFIG.HEIGHT,
+				ROOM_GEOMETRY.WALL_TILE_WIDTH,
+			];
 
 export const getDoorColliderPosition = (
 	isNorthSouth: boolean,
@@ -63,9 +71,7 @@ export const getWallMeshPosition = (
 	tilePos: number,
 	wallOffsetValue: number,
 ): AxisTuple =>
-	isNorthSouth
-		? [tilePos, 0, wallOffsetValue]
-		: [wallOffsetValue, 0, tilePos];
+	isNorthSouth ? [tilePos, 0, wallOffsetValue] : [wallOffsetValue, 0, tilePos];
 
 export const getTorchPosition = (
 	isNorthSouth: boolean,
