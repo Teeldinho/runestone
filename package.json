@@ -85,7 +85,7 @@
 		"zustand": "^5.0.8"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.0",
+		"@biomejs/biome": "^2.4.12",
 		"@feature-sliced/steiger-plugin": "latest",
 		"@tanstack/router-cli": "~1.166.0",
 		"@testing-library/jest-dom": "latest",

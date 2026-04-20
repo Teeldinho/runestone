@@ -30,13 +30,17 @@ export function SceneEnvironment({
 			{roomMeshSettings.map((room) => (
 				<RoomMesh
 					key={room.roomId}
-					isTreasury={room.isTreasury}
-					lockedDoorSides={room.lockedDoorSides}
-					openedDoorSides={room.openedDoorSides}
+					doorConfig={{
+						wallOpenings: room.wallOpenings,
+						lockedDoorSides: room.lockedDoorSides,
+						openedDoorSides: room.openedDoorSides,
+					}}
 					position={room.position}
-					showTreasureKey={room.showTreasureKey}
 					surface={environment}
-					wallOpenings={room.wallOpenings}
+					treasuryConfig={{
+						isTreasury: room.isTreasury,
+						showTreasureKey: room.showTreasureKey,
+					}}
 				/>
 			))}
 			{enemyMeshSettings.map((enemy) => (

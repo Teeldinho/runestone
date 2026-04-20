@@ -3,6 +3,7 @@ export const ENEMY_GLTF_CONFIG = {
 		PATH: "/models/enemies/Barbarian.glb",
 		SCALE: [0.76, 0.76, 0.76] as const,
 		POSITION_Y: -0.91,
+		ANIMATION_FADE_DURATION_SEC: 0.2,
 	},
 } as const;
 
