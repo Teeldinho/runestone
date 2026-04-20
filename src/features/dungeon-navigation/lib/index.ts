@@ -10,6 +10,7 @@ export {
 	createInitialDungeonContext,
 	updateDungeonContextRoom,
 } from "./dungeonContext";
+export { formatNearInteractableLabel } from "./formatNearInteractableLabel";
 export { getDoorKeyForNavigationEvent } from "./getDoorKeyForNavigationEvent";
 export {
 	createAttackInteractionCooldownContext,

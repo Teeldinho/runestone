@@ -7,6 +7,13 @@ export const DOOR_SIDES = {
 
 export type DoorSide = (typeof DOOR_SIDES)[keyof typeof DOOR_SIDES];
 
+export const DOOR_SIDE_LABELS: Record<DoorSide, string> = {
+	[DOOR_SIDES.NORTH]: "North",
+	[DOOR_SIDES.SOUTH]: "South",
+	[DOOR_SIDES.EAST]: "East",
+	[DOOR_SIDES.WEST]: "West",
+};
+
 export type DoorStateKey = `${string}:${DoorSide}`;
 
 export const INTERACTION_TYPES = {
@@ -25,6 +32,13 @@ export const DUNGEON_INTERACTABLE_IDS = {
 export type DungeonInteractableId =
 	| DoorStateKey
 	| (typeof DUNGEON_INTERACTABLE_IDS)[keyof typeof DUNGEON_INTERACTABLE_IDS];
+
+export const INTERACTABLE_ID_LABELS: Record<
+	(typeof DUNGEON_INTERACTABLE_IDS)[keyof typeof DUNGEON_INTERACTABLE_IDS],
+	string
+> = {
+	[DUNGEON_INTERACTABLE_IDS.TREASURE_KEY]: "Treasure Key",
+};
 
 export const DUNGEON_EVENTS = {
 	ENTER_LIBRARY: "ENTER_LIBRARY",
