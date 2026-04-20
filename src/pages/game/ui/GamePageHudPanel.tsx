@@ -16,11 +16,11 @@ export function GamePageHudPanel() {
 					playerMaxHp: viewModel.playerMaxHp,
 				}}
 				snapshot={{
-					activeStateLabel: viewModel.activeStateLabel,
 					currentRoomLabel: viewModel.currentRoomLabel,
 					discoveredRoomLabels: viewModel.discoveredRoomLabels,
 					enemiesRemaining: viewModel.enemiesRemaining,
 					hasTreasureKeyLabel: viewModel.hasTreasureKeyLabel,
+					nearInteractableLabel: viewModel.nearInteractableLabel,
 				}}
 			/>
 		</div>

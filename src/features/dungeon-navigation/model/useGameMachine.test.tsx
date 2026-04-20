@@ -29,6 +29,7 @@ describe("useGameMachine", () => {
 
 		expect(result.current.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
 		expect(result.current.currentRoomId).toBe(ROOM_IDS.ENTRANCE);
+		expect(result.current.nearInteractableLabel).toBe("—");
 	});
 
 	it("moves machine state through handleDungeonEventSend", () => {

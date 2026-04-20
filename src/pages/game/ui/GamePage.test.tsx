@@ -44,12 +44,12 @@ const createGamePageViewModel = (overrides = {}) => {
 					handleDungeonActionTrigger: vi.fn(),
 				},
 			],
-			activeStateLabel: ROOM_IDS.ENTRANCE,
 			currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
 			discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
 			enemiesRemaining: 1,
 			hasTreasureKeyLabel: GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 			handleDungeonRunReset: vi.fn(),
+			nearInteractableLabel: "—",
 			playerHp: 100,
 			playerMaxHp: 100,
 		},
@@ -167,12 +167,12 @@ vi.mock("@/pages/game/model", () => {
 
 			return {
 				actionButtons: viewModel.hud.actionButtons,
-				activeStateLabel: viewModel.hud.activeStateLabel,
 				currentRoomLabel: viewModel.hud.currentRoomLabel,
 				discoveredRoomLabels: viewModel.hud.discoveredRoomLabels,
 				enemiesRemaining: viewModel.hud.enemiesRemaining,
 				handleDungeonRunReset: viewModel.hud.handleDungeonRunReset,
 				hasTreasureKeyLabel: viewModel.hud.hasTreasureKeyLabel,
+				nearInteractableLabel: viewModel.hud.nearInteractableLabel,
 				playerHp: viewModel.hud.playerHp,
 				playerMaxHp: viewModel.hud.playerMaxHp,
 			};

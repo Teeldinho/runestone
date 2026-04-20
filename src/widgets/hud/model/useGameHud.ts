@@ -17,19 +17,19 @@ export const useGameHud = ({
 	const { actionButtons, handleDungeonRunReset } = actions;
 	const { playerHp, playerMaxHp } = playerStats;
 	const {
-		activeStateLabel,
 		currentRoomLabel,
 		discoveredRoomLabels,
 		enemiesRemaining,
 		hasTreasureKeyLabel,
+		nearInteractableLabel,
 	} = snapshot;
 
 	return useMemo(() => {
 		const machineSnapshotEntries = buildHudMachineSnapshotEntries({
-			activeStateLabel,
 			currentRoomLabel,
 			enemiesRemaining,
 			hasTreasureKeyLabel,
+			nearInteractableLabel,
 			playerHp,
 			playerMaxHp,
 		});
@@ -44,12 +44,12 @@ export const useGameHud = ({
 		};
 	}, [
 		actionButtons,
-		activeStateLabel,
 		currentRoomLabel,
 		discoveredRoomLabels,
 		enemiesRemaining,
 		handleDungeonRunReset,
 		hasTreasureKeyLabel,
+		nearInteractableLabel,
 		playerHp,
 		playerMaxHp,
 	]);

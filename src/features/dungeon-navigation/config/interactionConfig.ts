@@ -7,6 +7,10 @@ export const INTERACTION_CONFIG = {
 	ATTACK_RADIUS: 1.5,
 } as const;
 
+export const INTERACTION_LABEL_PARTS = {
+	NONE: "—",
+} as const;
+
 export const INTERACTION_KEYS = {
 	INTERACT: "f",
 	ATTACK: "e",

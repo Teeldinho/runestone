@@ -10,6 +10,7 @@ import {
 	NAVIGATION_ACTION_LABELS,
 	type NavigationActionEvent,
 } from "../config";
+import { formatNearInteractableLabel } from "../lib/formatNearInteractableLabel";
 import { getNavigationActionDisabled } from "../lib/navigationActionAvailability";
 import {
 	selectActiveStateLabel,
@@ -18,6 +19,7 @@ import {
 	selectEnemiesRemaining,
 	selectHasTreasureKey,
 	selectNavigationActionContext,
+	selectNearInteractable,
 	useGameMachineSelector,
 	useSendDungeonMachineEvent,
 } from "./gameMachineRuntime";
@@ -36,6 +38,7 @@ export const useGameMachine = () => {
 	const discoveredRooms = useGameMachineSelector(selectDiscoveredRooms);
 	const enemiesRemaining = useGameMachineSelector(selectEnemiesRemaining);
 	const hasTreasureKey = useGameMachineSelector(selectHasTreasureKey);
+	const nearInteractable = useGameMachineSelector(selectNearInteractable);
 	const navigationActionContext = useGameMachineSelector(
 		selectNavigationActionContext,
 		shallowEqual,
@@ -79,6 +82,7 @@ export const useGameMachine = () => {
 	const discoveredRoomLabels = discoveredRooms.map(
 		(roomId) => ROOM_LABELS[roomId],
 	);
+	const nearInteractableLabel = formatNearInteractableLabel(nearInteractable);
 
 	return {
 		activeStateLabel,
@@ -91,5 +95,6 @@ export const useGameMachine = () => {
 		handleDungeonEventSend,
 		handleDungeonRunReset,
 		hasTreasureKey,
+		nearInteractableLabel,
 	};
 };

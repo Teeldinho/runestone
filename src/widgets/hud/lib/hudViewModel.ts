@@ -15,10 +15,10 @@ export type HudActionButtonInput = {
 };
 
 export type HudSnapshotInput = {
-	activeStateLabel: string;
 	currentRoomLabel: string;
 	enemiesRemaining: number;
 	hasTreasureKeyLabel: string;
+	nearInteractableLabel: string;
 	playerHp: number;
 	playerMaxHp: number;
 };
@@ -63,10 +63,10 @@ export const filterHudActionButtons = (actionButtons: HudActionButtonInput[]) =>
 	);
 
 export const buildHudMachineSnapshotEntries = ({
-	activeStateLabel,
 	currentRoomLabel,
 	enemiesRemaining,
 	hasTreasureKeyLabel,
+	nearInteractableLabel,
 	playerHp,
 	playerMaxHp,
 }: HudSnapshotInput): HudMachineSnapshotEntry[] => [
@@ -77,8 +77,8 @@ export const buildHudMachineSnapshotEntries = ({
 	},
 	{
 		displayVariant: HUD_DISPLAY_VARIANTS.TEXT,
-		label: HUD_COPY.SNAPSHOT_LABELS.ROOM_STATE,
-		value: activeStateLabel,
+		label: HUD_COPY.SNAPSHOT_LABELS.NEAR_INTERACTABLE,
+		value: nearInteractableLabel,
 	},
 	{
 		displayVariant: HUD_DISPLAY_VARIANTS.BADGE,

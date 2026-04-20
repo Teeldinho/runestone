@@ -8,12 +8,12 @@ type UseGamePageHudSliceInput = {
 	gameMachine: Pick<
 		GamePageMachineState["gameMachine"],
 		| "actionButtons"
-		| "activeStateLabel"
 		| "currentRoomLabel"
 		| "discoveredRoomLabels"
 		| "enemiesRemaining"
 		| "handleDungeonRunReset"
 		| "hasTreasureKey"
+		| "nearInteractableLabel"
 	>;
 	playerMachine: GamePageMachineState["playerMachine"];
 };
@@ -24,12 +24,12 @@ export const useGamePageHudSlice = ({
 }: UseGamePageHudSliceInput) => {
 	const {
 		actionButtons,
-		activeStateLabel,
 		currentRoomLabel,
 		discoveredRoomLabels,
 		enemiesRemaining,
 		handleDungeonRunReset: resetDungeonMachine,
 		hasTreasureKey,
+		nearInteractableLabel,
 	} = gameMachine;
 
 	const { sendPlayerMachineEvent, snapshot: playerSnapshot } = playerMachine;
@@ -42,23 +42,23 @@ export const useGamePageHudSlice = ({
 	return useMemo(
 		() => ({
 			actionButtons,
-			activeStateLabel,
 			currentRoomLabel,
 			discoveredRoomLabels,
 			enemiesRemaining,
 			handleDungeonRunReset,
 			hasTreasureKeyLabel: deriveTreasureKeyStatusLabel(hasTreasureKey),
+			nearInteractableLabel,
 			playerHp: playerSnapshot.context.stats.hp,
 			playerMaxHp: playerSnapshot.context.stats.maxHp,
 		}),
 		[
 			actionButtons,
-			activeStateLabel,
 			currentRoomLabel,
 			discoveredRoomLabels,
 			enemiesRemaining,
 			handleDungeonRunReset,
 			hasTreasureKey,
+			nearInteractableLabel,
 			playerSnapshot.context.stats.hp,
 			playerSnapshot.context.stats.maxHp,
 		],

@@ -21,9 +21,11 @@ export type {
 	InteractionType,
 } from "./dungeonEvents";
 export {
+	DOOR_SIDE_LABELS,
 	DOOR_SIDES,
 	DUNGEON_EVENTS,
 	DUNGEON_INTERACTABLE_IDS,
+	INTERACTABLE_ID_LABELS,
 	INTERACTION_TYPES,
 } from "./dungeonEvents";
 export {

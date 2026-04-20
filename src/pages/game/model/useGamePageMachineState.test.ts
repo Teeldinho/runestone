@@ -55,6 +55,7 @@ describe("useGamePageMachineState", () => {
 			handleDungeonEventSend,
 			handleDungeonRunReset,
 			hasTreasureKey: false,
+			nearInteractableLabel: "—",
 		} as unknown as ReturnType<typeof useGameMachine>);
 
 		vi.mocked(usePlayerMachineRuntime).mockReturnValue({
