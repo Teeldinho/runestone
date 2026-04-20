@@ -44,12 +44,12 @@ const contextSlices = {
 	},
 	hud: {
 		actionButtons: [],
-		activeStateLabel: ROOM_IDS.ENTRANCE,
 		currentRoomLabel: "Entrance",
 		discoveredRoomLabels: ["Entrance"],
 		enemiesRemaining: 1,
 		handleDungeonRunReset: vi.fn(),
 		hasTreasureKeyLabel: "Missing",
+		nearInteractableLabel: "—",
 		playerHp: 100,
 		playerMaxHp: 100,
 	},

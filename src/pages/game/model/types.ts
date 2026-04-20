@@ -13,12 +13,12 @@ type GamePageHudSlice = {
 	actionButtons: ReturnType<
 		typeof useGamePageMachineState
 	>["gameMachine"]["actionButtons"];
-	activeStateLabel: string;
 	currentRoomLabel: string;
 	discoveredRoomLabels: string[];
 	enemiesRemaining: number;
 	handleDungeonRunReset: () => void;
 	hasTreasureKeyLabel: string;
+	nearInteractableLabel: string;
 	playerHp: number;
 	playerMaxHp: number;
 };

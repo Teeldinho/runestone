@@ -44,10 +44,10 @@ describe("hudViewModel", () => {
 
 	it("builds snapshot entries and excludes player hp from sidebar entries", () => {
 		const entries = buildHudMachineSnapshotEntries({
-			activeStateLabel: "entrance",
 			currentRoomLabel: "Entrance",
 			enemiesRemaining: 1,
 			hasTreasureKeyLabel: "Missing",
+			nearInteractableLabel: "library north",
 			playerHp: 80,
 			playerMaxHp: 100,
 		});
@@ -60,8 +60,8 @@ describe("hudViewModel", () => {
 			},
 			{
 				displayVariant: HUD_DISPLAY_VARIANTS.TEXT,
-				label: HUD_COPY.SNAPSHOT_LABELS.ROOM_STATE,
-				value: "entrance",
+				label: HUD_COPY.SNAPSHOT_LABELS.NEAR_INTERACTABLE,
+				value: "library north",
 			},
 			{
 				displayVariant: HUD_DISPLAY_VARIANTS.BADGE,

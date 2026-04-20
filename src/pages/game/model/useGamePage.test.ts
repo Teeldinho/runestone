@@ -181,6 +181,7 @@ const createGameMachineResult = (overrides = {}) =>
 		handleDungeonRunReset: vi.fn(),
 		handleDungeonEventSend: vi.fn(),
 		hasTreasureKey: false,
+		nearInteractableLabel: "—",
 		...overrides,
 	}) as unknown as ReturnType<typeof useGameMachine>;
 
@@ -237,7 +238,7 @@ describe("useGamePage", () => {
 		expect(result.current.hud.hasTreasureKeyLabel).toBe(
 			GAME_PAGE_COPY.TREASURE_KEY_STATUS.MISSING,
 		);
-		expect(result.current.hud.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
+		expect(result.current.hud.nearInteractableLabel).toBe("—");
 		expect(result.current.hud.currentRoomLabel).toBe(
 			ROOM_LABELS[ROOM_IDS.ENTRANCE],
 		);

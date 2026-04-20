@@ -25,11 +25,11 @@ const BASE_PARAMS = {
 		playerMaxHp: 100,
 	},
 	snapshot: {
-		activeStateLabel: "entrance",
 		currentRoomLabel: "Entrance",
 		discoveredRoomLabels: ["Entrance", "Library"],
 		enemiesRemaining: 1,
 		hasTreasureKeyLabel: "Missing",
+		nearInteractableLabel: "—",
 	},
 };
 
@@ -63,8 +63,8 @@ describe("useGameHud", () => {
 			},
 			{
 				displayVariant: "text",
-				label: HUD_COPY.SNAPSHOT_LABELS.ROOM_STATE,
-				value: "entrance",
+				label: HUD_COPY.SNAPSHOT_LABELS.NEAR_INTERACTABLE,
+				value: "—",
 			},
 			{
 				displayVariant: "badge",

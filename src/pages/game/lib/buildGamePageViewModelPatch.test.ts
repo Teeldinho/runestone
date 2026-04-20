@@ -12,12 +12,12 @@ const STABLE_CANVAS = {
 };
 const STABLE_HUD = {
 	actionButtons: [] as GamePageViewModel["hud"]["actionButtons"],
-	activeStateLabel: "idle",
 	currentRoomLabel: "Room A",
 	discoveredRoomLabels: [] as string[],
 	enemiesRemaining: 0,
 	handleDungeonRunReset: () => {},
 	hasTreasureKeyLabel: "No",
+	nearInteractableLabel: "—",
 	playerHp: 100,
 	playerMaxHp: 100,
 };

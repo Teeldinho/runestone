@@ -19,8 +19,8 @@ export const HUD_COPY = {
 	SNAPSHOT_LABELS: {
 		CURRENT_ROOM: "Current Room",
 		ENEMIES_REMAINING: "Enemies Remaining",
+		NEAR_INTERACTABLE: "Near Interactable",
 		PLAYER_HP: "Player HP",
-		ROOM_STATE: "Room State",
 		TREASURE_KEY: "Treasure Key",
 	},
 } as const;

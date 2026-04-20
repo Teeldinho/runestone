@@ -56,12 +56,12 @@ const createGamePageContextSlices = () => ({
 	},
 	hud: {
 		actionButtons: [],
-		activeStateLabel: ROOM_IDS.ENTRANCE,
 		currentRoomLabel: "Entrance",
 		discoveredRoomLabels: ["Entrance"],
 		enemiesRemaining: 2,
 		hasTreasureKeyLabel: "Missing",
 		handleDungeonRunReset: vi.fn(),
+		nearInteractableLabel: "—",
 		playerHp: 90,
 		playerMaxHp: 100,
 	},
