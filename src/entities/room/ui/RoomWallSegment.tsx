@@ -28,28 +28,28 @@ export function RoomWallSegment({
 	return (
 		<>
 			{ROOM_GEOMETRY.WALL_TILE_POSITIONS.map((tilePos) => {
-				if (vm.hasDoor && tilePos === 0) {
+				if (vm.door.hasDoor && tilePos === 0) {
 					return (
 						<group key={`doorway-${side}`}>
 							<primitive
 								object={doorwayScene.clone()}
-								position={vm.doorwayPosition}
-								rotation={[0, vm.rotationY, 0]}
-								scale={vm.doorwayScale}
+								position={vm.doorGeometry.doorwayPosition}
+								rotation={[0, vm.layout.rotationY, 0]}
+								scale={vm.doorGeometry.doorwayScale}
 							/>
-							{vm.renderCollider && (
+							{vm.door.renderCollider && (
 								<RigidBody type="fixed" colliders={false}>
 									<CuboidCollider
-										args={vm.colliderHalfArgs}
-										position={vm.colliderPosition}
+										args={vm.doorGeometry.colliderHalfArgs}
+										position={vm.doorGeometry.colliderPosition}
 									/>
-									{vm.locked && (
+									{vm.door.locked && (
 										<mesh
 											castShadow
 											receiveShadow
-											position={vm.colliderPosition}
+											position={vm.doorGeometry.colliderPosition}
 										>
-											<boxGeometry args={vm.doorMeshArgs} />
+											<boxGeometry args={vm.doorGeometry.doorMeshArgs} />
 											<meshStandardMaterial
 												color={DOOR_GATE.COLOR}
 												emissive={DOOR_GATE.EMISSIVE}
@@ -69,27 +69,30 @@ export function RoomWallSegment({
 					<RigidBody key={`${side}-${tilePos}`} type="fixed" colliders="cuboid">
 						<primitive
 							object={wallScene.clone()}
-							position={vm.getWallPosition(tilePos)}
-							rotation={[0, vm.rotationY, 0]}
-							scale={vm.wallScale}
+							position={vm.wallGeometry.getWallPosition(tilePos)}
+							rotation={[0, vm.layout.rotationY, 0]}
+							scale={vm.wallGeometry.wallScale}
 						/>
-						<mesh visible={false} position={vm.getWallMeshPos(tilePos)}>
-							<boxGeometry args={vm.wallBoxArgs} />
+						<mesh
+							visible={false}
+							position={vm.wallGeometry.getWallMeshPos(tilePos)}
+						>
+							<boxGeometry args={vm.wallGeometry.wallBoxArgs} />
 						</mesh>
 					</RigidBody>
 				);
 			})}
 
 			{ROOM_GEOMETRY.WALL_TILE_POSITIONS.map((tilePos) => {
-				if (vm.hasDoor && tilePos === 0) return null;
+				if (vm.door.hasDoor && tilePos === 0) return null;
 
 				return (
 					<primitive
 						key={`torch-${side}-${tilePos}`}
 						object={torchScene.clone()}
-						position={vm.getTorchPos(tilePos)}
-						rotation={[0, vm.rotationY, 0]}
-						scale={vm.torchScale}
+						position={vm.torchGeometry.getTorchPos(tilePos)}
+						rotation={[0, vm.layout.rotationY, 0]}
+						scale={vm.torchGeometry.torchScale}
 					/>
 				);
 			})}

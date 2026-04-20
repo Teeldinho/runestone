@@ -40,6 +40,8 @@ export {
 	shouldRenderCollider,
 } from "./lib";
 export type {
+	DoorGeometry,
+	DoorState,
 	RoomDoorConfig,
 	RoomDoorGuard,
 	RoomKind,
@@ -49,10 +51,11 @@ export type {
 	RoomTorchSettings,
 	RoomTreasuryConfig,
 	RoomWallOpening,
-} from "./model";
-export { useRoomWallSegment } from "./model";
-export type {
+	TorchGeometry,
 	UseRoomWallSegmentInput,
 	UseRoomWallSegmentResult,
+	WallGeometry,
+	WallLayout,
 } from "./model";
+export { useRoomWallSegment } from "./model";
 export { RoomLabel, RoomMesh, TorchLight } from "./ui";

@@ -9,8 +9,13 @@ export type {
 	RoomTreasuryConfig,
 	RoomWallOpening,
 } from "./types";
-export { useRoomWallSegment } from "./useRoomWallSegment";
 export type {
+	DoorGeometry,
+	DoorState,
+	TorchGeometry,
 	UseRoomWallSegmentInput,
 	UseRoomWallSegmentResult,
+	WallGeometry,
+	WallLayout,
 } from "./useRoomWallSegment";
+export { useRoomWallSegment } from "./useRoomWallSegment";
