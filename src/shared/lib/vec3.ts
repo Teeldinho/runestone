@@ -41,3 +41,15 @@ export function getQuaternionFromXZ(x: number, z: number): THREE.Quaternion {
 		angle,
 	);
 }
+
+export const createVector3Tuple = (
+	x: number,
+	y: number,
+	z: number,
+): Vector3Tuple => [x, y, z];
+
+export const checkVector3TupleEqual = (
+	current: Vector3Tuple,
+	next: Vector3Tuple,
+): boolean =>
+	current[0] === next[0] && current[1] === next[1] && current[2] === next[2];

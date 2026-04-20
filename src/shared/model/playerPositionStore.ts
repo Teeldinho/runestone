@@ -1,7 +1,11 @@
 import { useStore } from "zustand";
 import { createStore } from "zustand/vanilla";
 
-import type { Vector3Tuple } from "../lib/vec3";
+import {
+	checkVector3TupleEqual,
+	createVector3Tuple,
+	type Vector3Tuple,
+} from "@/shared/lib";
 
 type PlayerPositionStoreState = {
 	initialized: boolean;
@@ -13,19 +17,7 @@ type PlayerPositionStoreState = {
 	setTeleportTarget: (x: number, y: number, z: number) => void;
 };
 
-const createPlayerPositionTuple = (
-	x: number,
-	y: number,
-	z: number,
-): Vector3Tuple => [x, y, z];
-
-const checkVector3TupleEqual = (
-	current: Vector3Tuple,
-	next: Vector3Tuple,
-): boolean =>
-	current[0] === next[0] && current[1] === next[1] && current[2] === next[2];
-
-const DEFAULT_PLAYER_POSITION = createPlayerPositionTuple(0, 0, 0);
+const DEFAULT_PLAYER_POSITION = createVector3Tuple(0, 0, 0);
 
 const createPlayerPositionStore = () =>
 	createStore<PlayerPositionStoreState>()((set, get) => ({
@@ -44,7 +36,7 @@ const createPlayerPositionStore = () =>
 			return target;
 		},
 		setPosition: (x, y, z) => {
-			const nextPosition = createPlayerPositionTuple(x, y, z);
+			const nextPosition = createVector3Tuple(x, y, z);
 
 			set((state) => {
 				if (checkVector3TupleEqual(state.position, nextPosition)) {
@@ -60,7 +52,7 @@ const createPlayerPositionStore = () =>
 		},
 		setTeleportTarget: (x, y, z) => {
 			set({
-				teleportTarget: createPlayerPositionTuple(x, y, z),
+				teleportTarget: createVector3Tuple(x, y, z),
 			});
 		},
 	}));
