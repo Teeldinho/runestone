@@ -7,6 +7,8 @@ export type {
 	EnemyMachineContext,
 	EnemyMachineEvent,
 	EnemyMachineInput,
+	EnemyMeshActions,
+	EnemyMeshSettings,
 	EnemyTakeDamageEvent,
 	EnemyUpdatePlayerPositionEvent,
 } from "./types";

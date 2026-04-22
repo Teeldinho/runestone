@@ -46,3 +46,15 @@ export type EnemyGlowSettings = {
 	color: string;
 	emissiveIntensity: number;
 };
+
+export type EnemyMeshSettings = {
+	id: string;
+	roomId: string;
+	position: Vector3Tuple;
+	patrolCenter: Vector3Tuple;
+};
+
+export type EnemyMeshActions = {
+	onDead: () => void;
+	onAttack: () => void;
+};

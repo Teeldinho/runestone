@@ -2,15 +2,7 @@ import { AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { GAME_CANVAS_COPY } from "../config";
-import {
-	type CanvasMachineRuntime,
-	useAchievementTracker,
-	useCanvasMachineSettings,
-	useFirstPersonLockHint,
-	useGameOverState,
-	useGameSideEffects,
-	usePlayerSceneController,
-} from "../model";
+import { type CanvasMachineRuntime, useGameCanvasViewModel } from "../model";
 
 import { CameraRig } from "./CameraRig";
 import { GameCanvasOverlays } from "./GameCanvasOverlays";
@@ -31,11 +23,17 @@ export function GameCanvas({
 	machineRuntime,
 	postprocessingEnabled,
 }: GameCanvasProps) {
-	const canvasSettings = useCanvasMachineSettings(
-		machineRuntime,
+	const {
+		canvasSettings,
+		activeAchievement,
+		handleGameRestart,
+		isGameOver,
+		showFirstPersonLockHint,
+	} = useGameCanvasViewModel({
 		cameraStateSnapshot,
+		machineRuntime,
 		postprocessingEnabled,
-	);
+	});
 	const {
 		camera,
 		environment,
@@ -46,14 +44,6 @@ export function GameCanvas({
 		renderer,
 		isPostprocessingEnabled,
 	} = canvasSettings;
-
-	usePlayerSceneController();
-	useGameSideEffects();
-	const { isGameOver, handleGameRestart } = useGameOverState();
-	const { activeAchievement } = useAchievementTracker();
-	const showFirstPersonLockHint = useFirstPersonLockHint({
-		mode: cameraStateSnapshot?.mode,
-	});
 
 	return (
 		<div className="relative h-full w-full overflow-hidden">

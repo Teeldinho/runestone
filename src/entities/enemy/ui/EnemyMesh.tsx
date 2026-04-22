@@ -4,7 +4,6 @@ import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
 
-import type { Vector3Tuple } from "@/shared/lib";
 import { getPlayerPosition } from "@/shared/lib";
 
 import {
@@ -12,6 +11,7 @@ import {
 	ENEMY_ENTITY_CONFIG,
 	ENEMY_GLTF_CONFIG,
 } from "../config";
+import type { EnemyMeshActions, EnemyMeshSettings } from "../model";
 import {
 	useEnemyGltfResources,
 	useEnemyMeshViewModel,
@@ -25,22 +25,13 @@ useGLTF.preload(ENEMY_ANIMATION_PATHS.GENERAL);
 useGLTF.preload(ENEMY_ANIMATION_PATHS.COMBAT_MELEE);
 
 type EnemyMeshProps = {
-	id: string;
-	roomId: string;
-	position: Vector3Tuple;
-	patrolCenter: Vector3Tuple;
-	onDead: () => void;
-	onAttack: () => void;
+	settings: EnemyMeshSettings;
+	actions: EnemyMeshActions;
 };
 
-export function EnemyMesh({
-	id,
-	roomId,
-	position,
-	patrolCenter,
-	onDead,
-	onAttack,
-}: EnemyMeshProps) {
+export function EnemyMesh({ settings, actions }: EnemyMeshProps) {
+	const { id, patrolCenter, position, roomId } = settings;
+	const { onAttack, onDead } = actions;
 	const rigidBodyRef = useRef<RapierRigidBody>(null);
 
 	const { glowSettings, animationName, behaviorState, send } =
