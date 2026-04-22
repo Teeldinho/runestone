@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import type * as THREE from "three";
 
 import type { Vector3Tuple } from "@/shared/lib";
@@ -6,6 +7,17 @@ type OrbitControlsHandle = {
 	target: THREE.Vector3;
 	update: () => void;
 	enableRotate: boolean;
+};
+
+export const setOrbitRotationEnabled = (
+	orbitRefs: ReadonlyArray<RefObject<OrbitControlsHandle | null>>,
+	enableRotate: boolean,
+): void => {
+	for (const orbitRef of orbitRefs) {
+		if (orbitRef.current) {
+			orbitRef.current.enableRotate = enableRotate;
+		}
+	}
 };
 
 export const setCameraUp = (

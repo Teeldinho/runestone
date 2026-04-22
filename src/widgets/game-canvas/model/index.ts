@@ -1,4 +1,10 @@
 export type {
+	CameraRigFirstPersonBindings,
+	CameraRigOrbitBindings,
+	CameraRigRefs,
+	UseCameraRigViewModelResult,
+} from "./cameraRigViewModelTypes";
+export type {
 	CanvasCameraSettings,
 	CanvasEnvironmentSettings,
 	CanvasFogSettings,
@@ -9,6 +15,7 @@ export type {
 	CanvasSettingsViewModel,
 } from "./canvasSettingsTypes";
 export { useAchievementTracker } from "./useAchievementTracker";
+export { useCameraRigViewModel } from "./useCameraRigViewModel";
 export type { CanvasMachineRuntime } from "./useCanvasMachineSettings";
 export { useCanvasMachineSettings } from "./useCanvasMachineSettings";
 export { useCanvasSettings } from "./useCanvasSettings";
