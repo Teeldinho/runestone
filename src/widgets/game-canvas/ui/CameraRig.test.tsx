@@ -23,21 +23,44 @@ vi.mock("@react-three/drei", () => ({
 	}),
 }));
 
-vi.mock("../model/useCameraRigViewModel", () => ({
+vi.mock("../model", () => ({
 	useCameraRigViewModel: (input: unknown) => mockUseCameraRigViewModel(input),
 }));
 
 const createCameraRigViewModel = (mode: string | undefined) => ({
-	controlKey: mode,
-	freeOrbitalOrbitRef: { current: null },
-	handleFirstPersonLock: vi.fn(),
-	handleFirstPersonUnlock: vi.fn(),
-	handleOrbitEnd: vi.fn(),
-	handleOrbitStart: vi.fn(),
+	firstPersonBindings: {
+		firstPersonLookElement: null,
+		handleFirstPersonLock: vi.fn(),
+		handleFirstPersonUnlock: vi.fn(),
+		handleOrbitEnd: vi.fn(),
+		handleOrbitStart: vi.fn(),
+	},
+	orbitBindings: {
+		freeOrbital: {
+			cameraControlElement: null,
+			handleOrbitEnd: vi.fn(),
+			handleOrbitStart: vi.fn(),
+		},
+		thirdPerson: {
+			cameraControlElement: null,
+			handleOrbitEnd: vi.fn(),
+			handleOrbitStart: vi.fn(),
+		},
+		topDown: {
+			cameraControlElement: null,
+			handleOrbitEnd: vi.fn(),
+			handleOrbitStart: vi.fn(),
+		},
+	},
 	mode,
-	pointerLockRef: { current: null },
-	thirdPersonOrbitRef: { current: null },
-	topDownOrbitRef: { current: null },
+	refs: {
+		firstPersonOrbitRef: { current: null },
+		freeOrbitalOrbitRef: { current: null },
+		pointerLockRef: { current: null },
+		thirdPersonOrbitRef: { current: null },
+		topDownOrbitRef: { current: null },
+	},
+	isDesktopLayout: true,
 });
 
 const TEST_CAMERA_STATE_SNAPSHOT = {
