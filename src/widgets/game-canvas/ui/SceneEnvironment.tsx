@@ -46,12 +46,11 @@ export function SceneEnvironment({
 			{enemyMeshSettings.map((enemy) => (
 				<EnemyMesh
 					key={enemy.id}
-					id={enemy.id}
-					roomId={enemy.roomId}
-					position={enemy.position}
-					patrolCenter={enemy.patrolCenter}
-					onDead={handleEnemyDead}
-					onAttack={handleEnemyAttack}
+					actions={{
+						onAttack: handleEnemyAttack,
+						onDead: handleEnemyDead,
+					}}
+					settings={enemy}
 				/>
 			))}
 			<PlayerMesh initialPosition={playerSpawnPosition} />
