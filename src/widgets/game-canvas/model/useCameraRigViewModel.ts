@@ -1,78 +1,52 @@
 import { useThree } from "@react-three/fiber";
-import type { RefObject } from "react";
-import { useRef } from "react";
-import * as THREE from "three";
+
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import {
 	selectLastTransition,
 	useGameMachineSelector,
 } from "@/features/dungeon-navigation";
-import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import type { Vector3Tuple } from "@/shared/lib";
-import type { OrbitControlsHandle } from "../lib";
-
+import type {
+	CameraRigOrbitBindings,
+	UseCameraRigViewModelResult,
+} from "./cameraRigViewModelTypes";
 import { useCameraRigFrameUpdate } from "./useCameraRigFrameUpdate";
 import { useCameraRigInteractionHandlers } from "./useCameraRigInteractionHandlers";
 import { useCameraRigModeSync } from "./useCameraRigModeSync";
-
-type PointerLockControlsHandle = {
-	isLocked: boolean;
-};
+import { useCameraRigRuntimeState } from "./useCameraRigRuntimeState";
 
 type UseCameraRigViewModelInput = {
 	cameraControlElement?: HTMLElement | null;
 	cameraStateSnapshot?: CameraStateSnapshot;
+	firstPersonLookElement?: HTMLElement | null;
 	playerSpawnPosition: Vector3Tuple;
-};
-
-type UseCameraRigViewModelResult = {
-	controlKey: string | undefined;
-	freeOrbitalOrbitRef: RefObject<OrbitControlsHandle | null>;
-	handleFirstPersonLock: () => void;
-	handleFirstPersonUnlock: () => void;
-	handleOrbitStart: () => void;
-	handleOrbitEnd: () => void;
-	mode: CameraStateSnapshot["mode"] | undefined;
-	pointerLockRef: RefObject<PointerLockControlsHandle | null>;
-	thirdPersonOrbitRef: RefObject<OrbitControlsHandle | null>;
-	topDownOrbitRef: RefObject<OrbitControlsHandle | null>;
-	firstPersonOrbitRef: RefObject<OrbitControlsHandle | null>;
-	isDesktopLayout: boolean;
 };
 
 export const useCameraRigViewModel = ({
 	cameraControlElement,
 	cameraStateSnapshot,
+	firstPersonLookElement,
 	playerSpawnPosition,
 }: UseCameraRigViewModelInput): UseCameraRigViewModelResult => {
 	const { camera } = useThree();
 	const lastTransition = useGameMachineSelector(selectLastTransition);
 	const mode = cameraStateSnapshot?.mode;
-	const previousModeRef = useRef<string | undefined>(undefined);
-	const pointerLockRef = useRef<PointerLockControlsHandle>(null);
-	const thirdPersonOrbitRef = useRef<OrbitControlsHandle>(null);
-	const topDownOrbitRef = useRef<OrbitControlsHandle>(null);
-	const freeOrbitalOrbitRef = useRef<OrbitControlsHandle>(null);
-	const firstPersonOrbitRef = useRef<OrbitControlsHandle>(null);
-	const { isDesktopLayout } = useResponsiveGameLayout();
-	const needsFreeOrbitalSyncRef = useRef(false);
-	const needsThirdPersonSyncRef = useRef(false);
-	const needsTopDownSyncRef = useRef(false);
-	const needsFirstPersonSyncRef = useRef(false);
-	const isUserInteractingRef = useRef(false);
-	const previousTrackedPlayerPositionRef = useRef<Vector3Tuple | null>(null);
-	const directionRef = useRef(new THREE.Vector3());
-	const lookAtVectorRef = useRef(new THREE.Vector3());
-	const positionVectorRef = useRef(new THREE.Vector3());
-	const firstPersonTargetVectorRef = useRef(new THREE.Vector3());
-	const isTouchInitiallyOnLeftRef = useRef(false);
+	const {
+		interaction,
+		isDesktopLayout,
+		previousModeRef,
+		previousTrackedPlayerPositionRef,
+		refs,
+		syncFlags,
+		vectors,
+	} = useCameraRigRuntimeState();
 
 	useCameraRigModeSync({
 		mode,
-		needsFirstPersonSyncRef,
-		needsFreeOrbitalSyncRef,
-		needsThirdPersonSyncRef,
-		needsTopDownSyncRef,
+		needsFirstPersonSyncRef: syncFlags.needsFirstPersonSyncRef,
+		needsFreeOrbitalSyncRef: syncFlags.needsFreeOrbitalSyncRef,
+		needsThirdPersonSyncRef: syncFlags.needsThirdPersonSyncRef,
+		needsTopDownSyncRef: syncFlags.needsTopDownSyncRef,
 	});
 
 	const {
@@ -82,57 +56,61 @@ export const useCameraRigViewModel = ({
 		handleOrbitStart,
 	} = useCameraRigInteractionHandlers({
 		cameraControlElement,
-		firstPersonOrbitRef,
-		freeOrbitalOrbitRef,
-		isTouchInitiallyOnLeftRef,
-		isUserInteractingRef,
-		thirdPersonOrbitRef,
-		topDownOrbitRef,
+		firstPersonOrbitRef: refs.firstPersonOrbitRef,
+		freeOrbitalOrbitRef: refs.freeOrbitalOrbitRef,
+		isTouchInitiallyOnLeftRef: interaction.isTouchInitiallyOnLeftRef,
+		isUserInteractingRef: interaction.isUserInteractingRef,
+		thirdPersonOrbitRef: refs.thirdPersonOrbitRef,
+		topDownOrbitRef: refs.topDownOrbitRef,
 	});
 
 	useCameraRigFrameUpdate({
 		camera,
 		cameraStateSnapshot,
-		directionRef,
-		firstPersonOrbitRef,
-		firstPersonTargetVectorRef,
-		freeOrbitalOrbitRef,
+		directionRef: vectors.directionRef,
+		firstPersonOrbitRef: refs.firstPersonOrbitRef,
+		firstPersonTargetVectorRef: vectors.firstPersonTargetVectorRef,
+		freeOrbitalOrbitRef: refs.freeOrbitalOrbitRef,
 		isDesktopLayout,
-		isUserInteractingRef,
+		isUserInteractingRef: interaction.isUserInteractingRef,
 		lastTransition,
-		lookAtVectorRef,
-		needsFirstPersonSyncRef,
-		needsFreeOrbitalSyncRef,
-		needsThirdPersonSyncRef,
-		needsTopDownSyncRef,
-		pointerLockRef,
+		lookAtVectorRef: vectors.lookAtVectorRef,
+		needsFirstPersonSyncRef: syncFlags.needsFirstPersonSyncRef,
+		needsFreeOrbitalSyncRef: syncFlags.needsFreeOrbitalSyncRef,
+		needsThirdPersonSyncRef: syncFlags.needsThirdPersonSyncRef,
+		needsTopDownSyncRef: syncFlags.needsTopDownSyncRef,
+		pointerLockRef: refs.pointerLockRef,
 		playerSpawnPosition,
-		positionVectorRef,
+		positionVectorRef: vectors.positionVectorRef,
 		previousModeRef,
 		previousTrackedPlayerPositionRef,
-		thirdPersonOrbitRef,
-		topDownOrbitRef,
+		thirdPersonOrbitRef: refs.thirdPersonOrbitRef,
+		topDownOrbitRef: refs.topDownOrbitRef,
 	});
 
-	return {
-		controlKey: cameraStateSnapshot?.mode,
-		freeOrbitalOrbitRef,
-		handleFirstPersonLock,
-		handleFirstPersonUnlock,
+	const sharedOrbitBindings: CameraRigOrbitBindings = {
+		cameraControlElement,
 		handleOrbitEnd,
 		handleOrbitStart,
-		mode,
-		pointerLockRef,
-		thirdPersonOrbitRef,
-		topDownOrbitRef,
-		firstPersonOrbitRef,
+	};
+
+	return {
+		firstPersonBindings: {
+			firstPersonLookElement,
+			handleFirstPersonLock,
+			handleFirstPersonUnlock,
+			handleOrbitEnd,
+			handleOrbitStart,
+		},
 		isDesktopLayout,
+		mode,
+		orbitBindings: {
+			freeOrbital: sharedOrbitBindings,
+			thirdPerson: sharedOrbitBindings,
+			topDown: sharedOrbitBindings,
+		},
+		refs,
 	};
 };
 
-export type {
-	OrbitControlsHandle,
-	PointerLockControlsHandle,
-	UseCameraRigViewModelInput,
-	UseCameraRigViewModelResult,
-};
+export type { UseCameraRigViewModelInput };

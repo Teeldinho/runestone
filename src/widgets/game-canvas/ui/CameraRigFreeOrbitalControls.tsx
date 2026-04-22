@@ -5,29 +5,22 @@ import * as THREE from "three";
 import { CAMERA_CONFIG } from "@/shared/config";
 
 import { CAMERA_RIG_TOUCH_GESTURES } from "../config";
-import type { OrbitControlsHandle } from "../lib";
+import type { CameraRigOrbitBindings, CameraRigRefs } from "../model";
 
 type CameraRigFreeOrbitalControlsProps = {
-	cameraControlElement?: HTMLElement | null;
-	controlKey: string | undefined;
-	freeOrbitalOrbitRef: React.RefObject<OrbitControlsHandle | null>;
-	handleOrbitEnd: () => void;
-	handleOrbitStart: () => void;
+	orbitBindings: CameraRigOrbitBindings;
+	refs: CameraRigRefs;
 	isDesktopLayout: boolean;
 };
 
 export function CameraRigFreeOrbitalControls({
-	cameraControlElement,
-	controlKey,
-	freeOrbitalOrbitRef,
-	handleOrbitEnd,
-	handleOrbitStart,
+	orbitBindings,
+	refs,
 	isDesktopLayout,
 }: CameraRigFreeOrbitalControlsProps) {
 	return (
 		<OrbitControls
-			key={controlKey}
-			ref={freeOrbitalOrbitRef as React.RefObject<never>}
+			ref={refs.freeOrbitalOrbitRef as React.RefObject<never>}
 			makeDefault
 			enablePan
 			enableRotate
@@ -40,8 +33,8 @@ export function CameraRigFreeOrbitalControls({
 			rotateSpeed={CAMERA_CONFIG.FREE_ORBITAL.ROTATE_SPEED}
 			screenSpacePanning
 			zoomSpeed={CAMERA_CONFIG.FREE_ORBITAL.ZOOM_SPEED}
-			onStart={handleOrbitStart}
-			onEnd={handleOrbitEnd}
+			onStart={orbitBindings.handleOrbitStart}
+			onEnd={orbitBindings.handleOrbitEnd}
 			mouseButtons={{
 				LEFT: THREE.MOUSE.PAN,
 				MIDDLE: THREE.MOUSE.DOLLY,
@@ -49,7 +42,9 @@ export function CameraRigFreeOrbitalControls({
 			}}
 			touches={CAMERA_RIG_TOUCH_GESTURES.ORBIT}
 			domElement={
-				isDesktopLayout ? undefined : (cameraControlElement ?? undefined)
+				isDesktopLayout
+					? undefined
+					: (orbitBindings.cameraControlElement ?? undefined)
 			}
 		/>
 	);

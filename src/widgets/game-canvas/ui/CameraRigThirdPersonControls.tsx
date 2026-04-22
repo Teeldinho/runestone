@@ -4,29 +4,22 @@ import type React from "react";
 import { CAMERA_CONFIG } from "@/shared/config";
 
 import { CAMERA_RIG_TOUCH_GESTURES } from "../config";
-import type { OrbitControlsHandle } from "../lib";
+import type { CameraRigOrbitBindings, CameraRigRefs } from "../model";
 
 type CameraRigThirdPersonControlsProps = {
-	cameraControlElement?: HTMLElement | null;
-	controlKey: string | undefined;
-	handleOrbitEnd: () => void;
-	handleOrbitStart: () => void;
+	orbitBindings: CameraRigOrbitBindings;
+	refs: CameraRigRefs;
 	isDesktopLayout: boolean;
-	thirdPersonOrbitRef: React.RefObject<OrbitControlsHandle | null>;
 };
 
 export function CameraRigThirdPersonControls({
-	cameraControlElement,
-	controlKey,
-	handleOrbitEnd,
-	handleOrbitStart,
+	orbitBindings,
+	refs,
 	isDesktopLayout,
-	thirdPersonOrbitRef,
 }: CameraRigThirdPersonControlsProps) {
 	return (
 		<OrbitControls
-			key={controlKey}
-			ref={thirdPersonOrbitRef as React.RefObject<never>}
+			ref={refs.thirdPersonOrbitRef as React.RefObject<never>}
 			makeDefault
 			enablePan
 			enableZoom
@@ -36,10 +29,12 @@ export function CameraRigThirdPersonControls({
 			maxPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MAX_POLAR_ANGLE}
 			minPolarAngle={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MIN_POLAR_ANGLE}
 			touches={CAMERA_RIG_TOUCH_GESTURES.ORBIT}
-			onStart={handleOrbitStart}
-			onEnd={handleOrbitEnd}
+			onStart={orbitBindings.handleOrbitStart}
+			onEnd={orbitBindings.handleOrbitEnd}
 			domElement={
-				isDesktopLayout ? undefined : (cameraControlElement ?? undefined)
+				isDesktopLayout
+					? undefined
+					: (orbitBindings.cameraControlElement ?? undefined)
 			}
 		/>
 	);
