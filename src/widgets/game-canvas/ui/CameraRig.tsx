@@ -1,7 +1,7 @@
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { CAMERA_MODES } from "@/features/camera-system";
 import type { Vector3Tuple } from "@/shared/lib";
-import { useCameraRigViewModel } from "../model/useCameraRigViewModel";
+import { useCameraRigViewModel } from "../model";
 
 import { CameraRigFirstPersonControls } from "./CameraRigFirstPersonControls";
 import { CameraRigFreeOrbitalControls } from "./CameraRigFreeOrbitalControls";
@@ -21,33 +21,20 @@ export function CameraRig({
 	firstPersonLookElement,
 	playerSpawnPosition,
 }: CameraRigProps) {
-	const {
-		controlKey,
-		freeOrbitalOrbitRef,
-		handleFirstPersonLock,
-		handleFirstPersonUnlock,
-		handleOrbitEnd,
-		handleOrbitStart,
-		mode,
-		pointerLockRef,
-		thirdPersonOrbitRef,
-		topDownOrbitRef,
-		firstPersonOrbitRef,
-		isDesktopLayout,
-	} = useCameraRigViewModel({
-		cameraControlElement,
-		cameraStateSnapshot,
-		playerSpawnPosition,
-	});
+	const { firstPersonBindings, orbitBindings, refs, mode, isDesktopLayout } =
+		useCameraRigViewModel({
+			cameraControlElement,
+			cameraStateSnapshot,
+			firstPersonLookElement,
+			playerSpawnPosition,
+		});
 
 	if (mode === CAMERA_MODES.FREE_ORBITAL) {
 		return (
 			<CameraRigFreeOrbitalControls
-				cameraControlElement={cameraControlElement}
-				controlKey={controlKey}
-				freeOrbitalOrbitRef={freeOrbitalOrbitRef}
-				handleOrbitEnd={handleOrbitEnd}
-				handleOrbitStart={handleOrbitStart}
+				key={mode}
+				orbitBindings={orbitBindings.freeOrbital}
+				refs={refs}
 				isDesktopLayout={isDesktopLayout}
 			/>
 		);
@@ -56,12 +43,10 @@ export function CameraRig({
 	if (mode === CAMERA_MODES.THIRD_PERSON) {
 		return (
 			<CameraRigThirdPersonControls
-				cameraControlElement={cameraControlElement}
-				controlKey={controlKey}
-				handleOrbitEnd={handleOrbitEnd}
-				handleOrbitStart={handleOrbitStart}
+				key={mode}
+				orbitBindings={orbitBindings.thirdPerson}
+				refs={refs}
 				isDesktopLayout={isDesktopLayout}
-				thirdPersonOrbitRef={thirdPersonOrbitRef}
 			/>
 		);
 	}
@@ -69,15 +54,10 @@ export function CameraRig({
 	if (mode === CAMERA_MODES.FIRST_PERSON) {
 		return (
 			<CameraRigFirstPersonControls
-				controlKey={controlKey}
-				firstPersonLookElement={firstPersonLookElement}
-				firstPersonOrbitRef={firstPersonOrbitRef}
-				handleFirstPersonLock={handleFirstPersonLock}
-				handleFirstPersonUnlock={handleFirstPersonUnlock}
-				handleOrbitEnd={handleOrbitEnd}
-				handleOrbitStart={handleOrbitStart}
+				key={mode}
+				firstPersonBindings={firstPersonBindings}
+				refs={refs}
 				isDesktopLayout={isDesktopLayout}
-				pointerLockRef={pointerLockRef}
 			/>
 		);
 	}
@@ -85,12 +65,10 @@ export function CameraRig({
 	if (mode === CAMERA_MODES.TOP_DOWN) {
 		return (
 			<CameraRigTopDownControls
-				cameraControlElement={cameraControlElement}
-				controlKey={controlKey}
-				handleOrbitEnd={handleOrbitEnd}
-				handleOrbitStart={handleOrbitStart}
+				key={mode}
+				orbitBindings={orbitBindings.topDown}
+				refs={refs}
 				isDesktopLayout={isDesktopLayout}
-				topDownOrbitRef={topDownOrbitRef}
 			/>
 		);
 	}

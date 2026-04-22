@@ -1,7 +1,7 @@
 import type { MutableRefObject, RefObject } from "react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 
-import type { OrbitControlsHandle } from "../lib";
+import { type OrbitControlsHandle, setOrbitRotationEnabled } from "../lib";
 
 type UseCameraRigInteractionHandlersInput = {
 	cameraControlElement?: HTMLElement | null;
@@ -20,17 +20,6 @@ type CameraRigInteractionHandlers = {
 	handleOrbitStart: () => void;
 };
 
-const setOrbitRotationEnabled = (
-	orbitRefs: Array<RefObject<OrbitControlsHandle | null>>,
-	enableRotate: boolean,
-): void => {
-	orbitRefs.forEach((orbitRef) => {
-		if (orbitRef.current) {
-			orbitRef.current.enableRotate = enableRotate;
-		}
-	});
-};
-
 export const useCameraRigInteractionHandlers = ({
 	cameraControlElement,
 	firstPersonOrbitRef,
@@ -40,21 +29,6 @@ export const useCameraRigInteractionHandlers = ({
 	thirdPersonOrbitRef,
 	topDownOrbitRef,
 }: UseCameraRigInteractionHandlersInput): CameraRigInteractionHandlers => {
-	const orbitRefs = useMemo(
-		() => [
-			thirdPersonOrbitRef,
-			topDownOrbitRef,
-			freeOrbitalOrbitRef,
-			firstPersonOrbitRef,
-		],
-		[
-			firstPersonOrbitRef,
-			freeOrbitalOrbitRef,
-			thirdPersonOrbitRef,
-			topDownOrbitRef,
-		],
-	);
-
 	const handlePointerDown = useCallback(
 		(event: PointerEvent) => {
 			isTouchInitiallyOnLeftRef.current =
@@ -81,13 +55,42 @@ export const useCameraRigInteractionHandlers = ({
 
 	const handleOrbitStart = useCallback(() => {
 		isUserInteractingRef.current = true;
-		setOrbitRotationEnabled(orbitRefs, !isTouchInitiallyOnLeftRef.current);
-	}, [isTouchInitiallyOnLeftRef, isUserInteractingRef, orbitRefs]);
+		setOrbitRotationEnabled(
+			[
+				thirdPersonOrbitRef,
+				topDownOrbitRef,
+				freeOrbitalOrbitRef,
+				firstPersonOrbitRef,
+			],
+			!isTouchInitiallyOnLeftRef.current,
+		);
+	}, [
+		firstPersonOrbitRef,
+		freeOrbitalOrbitRef,
+		isTouchInitiallyOnLeftRef,
+		isUserInteractingRef,
+		thirdPersonOrbitRef,
+		topDownOrbitRef,
+	]);
 
 	const handleOrbitEnd = useCallback(() => {
 		isUserInteractingRef.current = false;
-		setOrbitRotationEnabled(orbitRefs, true);
-	}, [isUserInteractingRef, orbitRefs]);
+		setOrbitRotationEnabled(
+			[
+				thirdPersonOrbitRef,
+				topDownOrbitRef,
+				freeOrbitalOrbitRef,
+				firstPersonOrbitRef,
+			],
+			true,
+		);
+	}, [
+		firstPersonOrbitRef,
+		freeOrbitalOrbitRef,
+		isUserInteractingRef,
+		thirdPersonOrbitRef,
+		topDownOrbitRef,
+	]);
 
 	return {
 		handleFirstPersonLock,

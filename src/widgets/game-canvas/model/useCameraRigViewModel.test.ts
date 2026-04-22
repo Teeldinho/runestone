@@ -101,7 +101,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -134,7 +135,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -190,7 +192,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.thirdPersonOrbitRef.current = thirdPersonControls as never;
+		result.current.refs.thirdPersonOrbitRef.current =
+			thirdPersonControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -232,7 +235,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.thirdPersonOrbitRef.current = thirdPersonControls as never;
+		result.current.refs.thirdPersonOrbitRef.current =
+			thirdPersonControls as never;
 		mockCamera.position.set(6, 5, 6);
 
 		act(() => {
@@ -326,7 +330,7 @@ describe("useCameraRigViewModel", () => {
 			target: new THREE.Vector3(),
 			update: vi.fn(),
 		};
-		result.current.firstPersonOrbitRef.current =
+		result.current.refs.firstPersonOrbitRef.current =
 			firstPersonOrbitControls as never;
 
 		// Frame 1: Sync \u2014 camera is at [5,2.6,5], forward is +Z so target = [5,2.6,5.01]
@@ -384,7 +388,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -421,7 +426,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -430,7 +436,7 @@ describe("useCameraRigViewModel", () => {
 		expect(mockSetCameraAzimuth).toHaveBeenCalledTimes(1);
 
 		act(() => {
-			result.current.handleOrbitStart();
+			result.current.orbitBindings.freeOrbital.handleOrbitStart();
 			frameCallbacks.at(-1)?.();
 		});
 
@@ -457,7 +463,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -493,7 +500,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -529,7 +537,8 @@ describe("useCameraRigViewModel", () => {
 			target: new THREE.Vector3(),
 			update: vi.fn(),
 		};
-		result.current.thirdPersonOrbitRef.current = thirdPersonControls as never;
+		result.current.refs.thirdPersonOrbitRef.current =
+			thirdPersonControls as never;
 
 		// Initial frame to clear sync
 		act(() => {
@@ -538,7 +547,7 @@ describe("useCameraRigViewModel", () => {
 
 		// User starts orbiting
 		act(() => {
-			result.current.handleOrbitStart();
+			result.current.orbitBindings.freeOrbital.handleOrbitStart();
 		});
 
 		const initialCameraPosition = mockCamera.position.clone();

@@ -3,7 +3,11 @@ export {
 	computeCameraRigTransitionJumpDistance,
 } from "./cameraMath";
 export type { OrbitControlsHandle } from "./cameraRigControls";
-export { setCameraUp, setOrbitTarget } from "./cameraRigControls";
+export {
+	setCameraUp,
+	setOrbitRotationEnabled,
+	setOrbitTarget,
+} from "./cameraRigControls";
 export {
 	checkOrbitFollowJump,
 	getPreservedOrbitCameraPosition,
