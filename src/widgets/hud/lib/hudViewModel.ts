@@ -3,7 +3,6 @@ import {
 	HUD_DISPLAY_VARIANTS,
 	HUD_EVENT_FILTERS,
 	HUD_HEALTH,
-	HUD_HEALTH_FILL_CLASSES,
 	HUD_MACHINE_SNAPSHOT,
 } from "../config";
 
@@ -35,7 +34,6 @@ export type HudHealthInput = {
 };
 
 export type HudHealthViewModel = {
-	fillClassName: string;
 	hpPercentage: number;
 	isLowHp: boolean;
 	label: string;
@@ -115,9 +113,6 @@ export const buildHudHealthViewModel = ({
 	const isLowHp = hpPercentage < HUD_HEALTH.LOW_HP_THRESHOLD_PERCENT;
 
 	return {
-		fillClassName: isLowHp
-			? HUD_HEALTH_FILL_CLASSES.LOW
-			: HUD_HEALTH_FILL_CLASSES.DEFAULT,
 		hpPercentage,
 		isLowHp,
 		label: `${playerHp} / ${playerMaxHp}`,

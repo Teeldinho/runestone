@@ -6,4 +6,3 @@ export {
 	HUD_LABELS,
 	HUD_MACHINE_SNAPSHOT,
 } from "./hudConfig";
-export { HUD_HEALTH_FILL_CLASSES } from "./hudViewModelConfig";

@@ -7,6 +7,7 @@ import { DUNGEON_EVENTS, ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
 import { GAME_PAGE_COPY, GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import { useGamePage } from "@/pages/game/model";
+import { TooltipProvider } from "@/shared/ui";
 
 import { GamePage } from "./GamePage";
 
@@ -322,7 +323,11 @@ describe("GamePage", () => {
 	});
 
 	it("renders the HUD widget composition", () => {
-		render(<GamePage />);
+		render(
+			<TooltipProvider>
+				<GamePage />
+			</TooltipProvider>,
+		);
 
 		expect(screen.getByTestId("game-canvas-widget")).not.toBeNull();
 		expect(screen.getByTestId("camera-switcher-widget")).not.toBeNull();
@@ -350,7 +355,11 @@ describe("GamePage", () => {
 			}),
 		);
 
-		render(<GamePage />);
+		render(
+			<TooltipProvider>
+				<GamePage />
+			</TooltipProvider>,
+		);
 
 		expect(screen.getByTestId("touch-joystick-widget")).not.toBeNull();
 		expect(
@@ -365,7 +374,7 @@ describe("GamePage", () => {
 		).not.toBeNull();
 		expect(
 			screen.getByRole("button", {
-				name: GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL,
+				name: `Open ${GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}`,
 			}),
 		).not.toBeNull();
 	});
@@ -380,12 +389,16 @@ describe("GamePage", () => {
 			}),
 		);
 
-		render(<GamePage />);
+		render(
+			<TooltipProvider>
+				<GamePage />
+			</TooltipProvider>,
+		);
 
 		expect(screen.getByText("Rotate Device")).not.toBeNull();
 		expect(
 			screen.queryByRole("button", {
-				name: GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL,
+				name: `Open ${GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}`,
 			}),
 		).toBeNull();
 	});

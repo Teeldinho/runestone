@@ -1,4 +1,6 @@
 import {
+	Alert,
+	AlertDescription,
 	Card,
 	CardContent,
 	CardDescription,
@@ -34,9 +36,11 @@ export function LeaderboardPanel() {
 				) : null}
 
 				{isError ? (
-					<p role="alert" className="text-sm text-destructive">
-						{errorMessage ?? LEADERBOARD_PANEL_COPY.STATE.ERROR_FALLBACK}
-					</p>
+					<Alert variant="destructive">
+						<AlertDescription>
+							{errorMessage ?? LEADERBOARD_PANEL_COPY.STATE.ERROR_FALLBACK}
+						</AlertDescription>
+					</Alert>
 				) : null}
 
 				{isEmpty ? (

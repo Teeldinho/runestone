@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import {
+	Alert,
+	AlertDescription,
 	Sheet,
 	SheetContent,
 	SheetDescription,
@@ -50,9 +52,11 @@ export function LeaderboardSheet({ children }: LeaderboardSheetProps) {
 						) : null}
 
 						{isError ? (
-							<p role="alert" className="text-sm text-destructive">
-								{errorMessage ?? LEADERBOARD_PANEL_COPY.STATE.ERROR_FALLBACK}
-							</p>
+							<Alert variant="destructive">
+								<AlertDescription>
+									{errorMessage ?? LEADERBOARD_PANEL_COPY.STATE.ERROR_FALLBACK}
+								</AlertDescription>
+							</Alert>
 						) : null}
 
 						{isEmpty ? (
