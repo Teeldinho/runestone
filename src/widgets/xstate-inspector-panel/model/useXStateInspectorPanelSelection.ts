@@ -7,8 +7,8 @@ import {
 
 import {
 	createInspectorSectionIdSet,
-	resolveFallbackSelectedSectionId,
 	type InspectorMachineSectionViewModel,
+	resolveFallbackSelectedSectionId,
 } from "../lib";
 
 type UseXStateInspectorPanelSelectionResult = {
@@ -54,6 +54,4 @@ export const useXStateInspectorPanelSelection = (
 	};
 };
 
-export type {
-	UseXStateInspectorPanelSelectionResult,
-};
+export type { UseXStateInspectorPanelSelectionResult };

@@ -1,8 +1,8 @@
 import type { CSSProperties } from "react";
 
-import {
-	type MachineGraphSection,
-	type StateVisualizerSectionId,
+import type {
+	MachineGraphSection,
+	StateVisualizerSectionId,
 } from "@/features/state-visualizer";
 
 import { INSPECTOR_REACT_FLOW_DEFAULTS } from "../config";
