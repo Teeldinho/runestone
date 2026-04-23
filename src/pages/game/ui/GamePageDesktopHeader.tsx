@@ -5,6 +5,8 @@ import { useGamePageDesktopHeaderModel } from "@/pages/game/model";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui";
 import { LeaderboardSheet } from "@/widgets/leaderboard-panel";
 
+import { GamePageDesktopSettingsAction } from "./GamePageDesktopSettingsAction";
+
 export function GamePageDesktopHeader() {
 	const { currentRoomLabel, handleAudioMuteToggle, isAudioMuted } =
 		useGamePageDesktopHeaderModel();
@@ -53,6 +55,8 @@ export function GamePageDesktopHeader() {
 							: GAME_PAGE_CONTROLS.AUDIO.TOOLTIP_LABEL}
 					</TooltipContent>
 				</Tooltip>
+
+				<GamePageDesktopSettingsAction />
 
 				<LeaderboardSheet>
 					<Tooltip>
