@@ -3,20 +3,16 @@ import {
 	type RefObject,
 	useCallback,
 	useRef,
-	useState,
 } from "react";
 
 import type { Vector3Tuple } from "@/shared/lib";
 
 import {
-	TOUCH_JOYSTICK_CONFIG,
 	TOUCH_JOYSTICK_POINTER_ACTIONS,
 	TOUCH_JOYSTICK_POINTER_PHASES,
 } from "../config";
-import {
-	resolveTouchJoystickVectorFromPointer,
-	shouldHandleTouchJoystickPointerAction,
-} from "../lib";
+import { shouldHandleTouchJoystickPointerAction } from "../lib";
+import { useTouchJoystickMotion } from "./useTouchJoystickMotion";
 
 type UseTouchJoystickInputOptions = {
 	onMove: (velocity: Vector3Tuple) => void;
@@ -38,59 +34,16 @@ export const useTouchJoystickInput = ({
 	onMove,
 	onStop,
 }: UseTouchJoystickInputOptions): UseTouchJoystickInputResult => {
-	const joystickRef = useRef<HTMLDivElement>(null);
 	const activePointerIdRef = useRef<number | null>(null);
-	const [knobOffsetX, setKnobOffsetX] = useState(0);
-	const [knobOffsetY, setKnobOffsetY] = useState(0);
-	const [isActive, setIsActive] = useState(false);
-	const prevVelocityRef = useRef<Vector3Tuple | null>(null);
-
-	const resetJoystick = useCallback(() => {
-		setKnobOffsetX(0);
-		setKnobOffsetY(0);
-		setIsActive(false);
-		onStop();
-	}, [onStop]);
-
-	const updateJoystickFromPointer = useCallback(
-		(clientX: number, clientY: number) => {
-			const joystickBounds = joystickRef.current?.getBoundingClientRect();
-
-			if (!joystickBounds) {
-				return;
-			}
-
-			const joystickVector = resolveTouchJoystickVectorFromPointer({
-				clientX,
-				clientY,
-				joystickBounds,
-				maxRadiusPx: TOUCH_JOYSTICK_CONFIG.MAX_RADIUS_PX,
-				deadZoneRatio: TOUCH_JOYSTICK_CONFIG.DEAD_ZONE_RATIO,
-			});
-
-			setKnobOffsetX(joystickVector.knobOffsetX);
-			setKnobOffsetY(joystickVector.knobOffsetY);
-
-			if (joystickVector.hasMovement) {
-				const [vx, vy, vz] = joystickVector.velocity;
-				const [pvx, pvy, pvz] = prevVelocityRef.current ?? [0, 0, 0];
-
-				const hasSignificantChange =
-					Math.abs(vx - pvx) > 0.01 ||
-					Math.abs(vy - pvy) > 0.01 ||
-					Math.abs(vz - pvz) > 0.01;
-
-				if (hasSignificantChange) {
-					prevVelocityRef.current = joystickVector.velocity;
-					onMove(joystickVector.velocity);
-				}
-			} else if (prevVelocityRef.current !== null) {
-				prevVelocityRef.current = null;
-				onStop();
-			}
-		},
-		[onMove, onStop],
-	);
+	const {
+		joystickRef,
+		knobOffsetX,
+		knobOffsetY,
+		isActive,
+		beginJoystickMotion,
+		updateJoystickMotion,
+		resetJoystickMotion,
+	} = useTouchJoystickMotion({ onMove, onStop });
 
 	const handlePointerDown = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
@@ -108,10 +61,9 @@ export const useTouchJoystickInput = ({
 
 			activePointerIdRef.current = event.pointerId;
 			event.currentTarget.setPointerCapture(event.pointerId);
-			setIsActive(true);
-			updateJoystickFromPointer(event.clientX, event.clientY);
+			beginJoystickMotion(event.clientX, event.clientY);
 		},
-		[updateJoystickFromPointer],
+		[beginJoystickMotion],
 	);
 
 	const handlePointerMove = useCallback(
@@ -128,9 +80,9 @@ export const useTouchJoystickInput = ({
 				return;
 			}
 
-			updateJoystickFromPointer(event.clientX, event.clientY);
+			updateJoystickMotion(event.clientX, event.clientY);
 		},
-		[updateJoystickFromPointer],
+		[updateJoystickMotion],
 	);
 
 	const handlePointerRelease = useCallback(
@@ -151,9 +103,9 @@ export const useTouchJoystickInput = ({
 			}
 
 			activePointerIdRef.current = null;
-			resetJoystick();
+			resetJoystickMotion();
 		},
-		[resetJoystick],
+		[resetJoystickMotion],
 	);
 
 	const handlePointerUp = useCallback(
