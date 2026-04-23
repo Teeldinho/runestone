@@ -1,41 +1,29 @@
 import { useId } from "react";
+import { SETTINGS_COPY } from "@/features/settings";
 import {
-	formatVolumePercent,
-	SETTINGS_COPY,
-	SETTINGS_VOLUME_RANGE,
-	useSettingsForm,
-} from "@/features/settings";
-import {
-	Button,
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-	Field,
-	FieldContent,
-	FieldDescription,
-	FieldGroup,
-	FieldLabel,
-	FieldSet,
-	FieldTitle,
 	Separator,
-	Slider,
-	Switch,
 } from "@/shared/ui";
 
+import { useSettingsPanelViewModel } from "../model";
+import { SettingsPanelAudioSection } from "./SettingsPanelAudioSection";
+import { SettingsPanelGraphicsSection } from "./SettingsPanelGraphicsSection";
+import { SettingsPanelHapticsSection } from "./SettingsPanelHapticsSection";
+import { SettingsPanelResetAction } from "./SettingsPanelResetAction";
+
 export function SettingsPanel() {
-	const settings = useSettingsForm();
+	const settings = useSettingsPanelViewModel();
 	const masterVolumeDescId = useId();
 	const musicVolumeDescId = useId();
 
 	return (
 		<Card className="w-full border-panel-border bg-panel shadow-xl backdrop-blur">
 			<CardHeader className="space-y-2">
-				<CardTitle
-					id="settings-heading"
-					className="text-3xl font-semibold text-panel-title"
-				>
+				<CardTitle className="text-3xl font-semibold text-panel-title">
 					{SETTINGS_COPY.PAGE_TITLE}
 				</CardTitle>
 				<CardDescription className="text-base text-panel-body">
@@ -44,106 +32,21 @@ export function SettingsPanel() {
 			</CardHeader>
 
 			<CardContent className="space-y-8">
-				<section aria-labelledby="audio-settings-heading">
-					<h3
-						id="audio-settings-heading"
-						className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground"
-					>
-						{SETTINGS_COPY.AUDIO_SECTION}
-					</h3>
-
-					<FieldSet>
-						<FieldGroup className="space-y-6">
-							<Field>
-								<FieldLabel htmlFor="master-volume">
-									{SETTINGS_COPY.MASTER_VOLUME_LABEL}
-								</FieldLabel>
-								<FieldDescription id={masterVolumeDescId}>
-									{formatVolumePercent(settings.masterVolume)}
-								</FieldDescription>
-								<Slider
-									id="master-volume"
-									aria-describedby={masterVolumeDescId}
-									value={[settings.masterVolume]}
-									min={SETTINGS_VOLUME_RANGE.MIN}
-									max={SETTINGS_VOLUME_RANGE.MAX}
-									step={SETTINGS_VOLUME_RANGE.STEP}
-									onValueChange={settings.handleMasterVolumeSliderChange}
-								/>
-							</Field>
-
-							<Field>
-								<FieldLabel htmlFor="music-volume">
-									{SETTINGS_COPY.MUSIC_VOLUME_LABEL}
-								</FieldLabel>
-								<FieldDescription id={musicVolumeDescId}>
-									{formatVolumePercent(settings.musicVolume)}
-								</FieldDescription>
-								<Slider
-									id="music-volume"
-									aria-describedby={musicVolumeDescId}
-									value={[settings.musicVolume]}
-									min={SETTINGS_VOLUME_RANGE.MIN}
-									max={SETTINGS_VOLUME_RANGE.MAX}
-									step={SETTINGS_VOLUME_RANGE.STEP}
-									onValueChange={settings.handleMusicVolumeSliderChange}
-								/>
-							</Field>
-						</FieldGroup>
-					</FieldSet>
-				</section>
-
+				<SettingsPanelAudioSection
+					audio={settings.audio}
+					descriptionIds={{
+						masterVolume: masterVolumeDescId,
+						musicVolume: musicVolumeDescId,
+					}}
+				/>
 				<Separator />
-
-				<section aria-labelledby="graphics-settings-heading">
-					<h3
-						id="graphics-settings-heading"
-						className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground"
-					>
-						{SETTINGS_COPY.GRAPHICS_SECTION}
-					</h3>
-
-					<Field orientation="horizontal">
-						<FieldContent>
-							<FieldTitle>
-								{SETTINGS_COPY.POSTPROCESSING_TOGGLE_LABEL}
-							</FieldTitle>
-						</FieldContent>
-						<Switch
-							checked={settings.postprocessingEnabled}
-							onCheckedChange={settings.handlePostprocessingToggle}
-							aria-label={SETTINGS_COPY.POSTPROCESSING_TOGGLE_LABEL}
-						/>
-					</Field>
-				</section>
-
+				<SettingsPanelGraphicsSection graphics={settings.graphics} />
 				<Separator />
-
-				<section aria-labelledby="haptics-settings-heading">
-					<h3
-						id="haptics-settings-heading"
-						className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground"
-					>
-						{SETTINGS_COPY.HAPTICS_SECTION}
-					</h3>
-
-					<Field orientation="horizontal">
-						<FieldContent>
-							<FieldTitle>{SETTINGS_COPY.HAPTICS_TOGGLE_LABEL}</FieldTitle>
-						</FieldContent>
-						<Switch
-							checked={settings.hapticsEnabled}
-							onCheckedChange={settings.handleHapticsToggle}
-							aria-label={SETTINGS_COPY.HAPTICS_TOGGLE_LABEL}
-						/>
-					</Field>
-				</section>
-
+				<SettingsPanelHapticsSection haptics={settings.haptics} />
 				<Separator />
-
-				<Button variant="secondary" onClick={settings.handleSettingsReset}>
-					{SETTINGS_COPY.RESET_BUTTON}
-				</Button>
+				<SettingsPanelResetAction
+					onReset={settings.actions.handleSettingsReset}
+				/>
 			</CardContent>
 		</Card>
 	);
