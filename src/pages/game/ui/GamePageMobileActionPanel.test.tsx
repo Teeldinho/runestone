@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 
@@ -15,6 +15,7 @@ vi.mock("@/pages/game/model", () => ({
 		audioToggle: {
 			handleAudioMuteToggle,
 			isAudioMuted: false,
+			isTabletLayout: true,
 		},
 		leaderboardTrigger: {
 			isTabletLayout: true,
@@ -43,10 +44,7 @@ vi.mock("@/shared/ui", () => ({
 	Badge: ({ className }: { className?: string }) => (
 		<span data-testid="badge" className={className} />
 	),
-	Button: ({
-		children,
-		...props
-	}: ButtonHTMLAttributes<HTMLButtonElement>) => (
+	Button: ({ children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) => (
 		<button type="button" {...props}>
 			{children}
 		</button>
@@ -65,7 +63,9 @@ describe("GamePageMobileActionPanel", () => {
 	it("renders grouped mobile action controls", () => {
 		render(<GamePageMobileActionPanel />);
 
-		expect(screen.getByRole("button", { name: "Open Leaderboard" })).toBeTruthy();
+		expect(
+			screen.getByRole("button", { name: "Open Leaderboard" }),
+		).toBeTruthy();
 		expect(screen.getByRole("button", { name: "Open Panels" })).toBeTruthy();
 		expect(screen.getByRole("button", { name: "Mute audio" })).toBeTruthy();
 		expect(screen.getByRole("button", { name: "Attack" })).toBeTruthy();
@@ -76,11 +76,12 @@ describe("GamePageMobileActionPanel", () => {
 	});
 
 	it("wires the touch action handlers from the model", () => {
-		render(<GamePageMobileActionPanel />);
+		const { container } = render(<GamePageMobileActionPanel />);
+		const view = within(container);
 
-		screen.getByRole("button", { name: "Attack" }).click();
-		screen.getByRole("button", { name: "Open Door" }).click();
-		screen.getByRole("button", { name: "Mute audio" }).click();
+		view.getByRole("button", { name: "Attack" }).click();
+		view.getByRole("button", { name: "Open Door" }).click();
+		view.getByRole("button", { name: "Mute audio" }).click();
 
 		expect(handleTouchAttack).toHaveBeenCalledTimes(1);
 		expect(handleTouchInteract).toHaveBeenCalledTimes(1);
