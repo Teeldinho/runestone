@@ -138,9 +138,7 @@ describe("useWorldInteractionPrompt", () => {
 			attackPosition: [10, 0, 10],
 		};
 
-		vi.mocked(lib.getWorldInteractionPromptPosition).mockReturnValue([
-			1, 2, 3,
-		]);
+		vi.mocked(lib.getWorldInteractionPromptPosition).mockReturnValue([1, 2, 3]);
 		vi.mocked(lib.getWorldAttackPromptPosition).mockReturnValue([4, 5, 6]);
 
 		const { result, rerender } = renderHook(() =>
@@ -154,7 +152,9 @@ describe("useWorldInteractionPrompt", () => {
 		rerender();
 
 		expect(result.current).not.toBe(firstResult);
-		expect(result.current.interact.position).toEqual(firstResult.interact.position);
+		expect(result.current.interact.position).toEqual(
+			firstResult.interact.position,
+		);
 		expect(result.current.attack.position).toEqual(firstResult.attack.position);
 	});
 });
