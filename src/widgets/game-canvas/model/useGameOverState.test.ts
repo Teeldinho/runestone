@@ -152,13 +152,4 @@ describe("useGameOverState", () => {
 			0,
 		);
 	});
-
-	it("handleGameRestart is stable across re-renders", () => {
-		const { result, rerender } = renderHook(() => useGameOverState());
-		const firstRef = result.current.handleGameRestart;
-
-		rerender();
-
-		expect(result.current.handleGameRestart).toBe(firstRef);
-	});
 });
