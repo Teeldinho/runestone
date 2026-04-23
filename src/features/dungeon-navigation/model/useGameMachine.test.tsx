@@ -44,9 +44,11 @@ describe("useGameMachine", () => {
 				wrapper: gameMachineRuntimeWrapper,
 			},
 		);
-		const libraryAction = result.current.gameMachine.navigation.actionButtons.find(
-			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
-		);
+		const libraryAction =
+			result.current.gameMachine.navigation.actionButtons.find(
+				(actionButton) =>
+					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+			);
 
 		act(() => {
 			result.current.runtime.sendDungeonMachineEvent({
@@ -57,7 +59,9 @@ describe("useGameMachine", () => {
 			libraryAction?.handleDungeonActionTrigger();
 		});
 
-		expect(result.current.gameMachine.room.currentRoomId).toBe(ROOM_IDS.LIBRARY);
+		expect(result.current.gameMachine.room.currentRoomId).toBe(
+			ROOM_IDS.LIBRARY,
+		);
 		expect(result.current.gameMachine.machine.activeStateLabel).toBe(
 			ROOM_IDS.LIBRARY,
 		);
@@ -73,9 +77,11 @@ describe("useGameMachine", () => {
 				wrapper: gameMachineRuntimeWrapper,
 			},
 		);
-		const libraryAction = result.current.gameMachine.navigation.actionButtons.find(
-			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
-		);
+		const libraryAction =
+			result.current.gameMachine.navigation.actionButtons.find(
+				(actionButton) =>
+					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+			);
 
 		act(() => {
 			result.current.runtime.sendDungeonMachineEvent({
@@ -108,8 +114,9 @@ describe("useGameMachine", () => {
 
 		const defaultLibraryAction =
 			result.current.gameMachine.navigation.actionButtons.find(
-			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
-		);
+				(actionButton) =>
+					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+			);
 		const defaultGuardRoomAction =
 			result.current.gameMachine.navigation.actionButtons.find(
 				(actionButton) =>
@@ -129,8 +136,9 @@ describe("useGameMachine", () => {
 
 		const enabledLibraryAction =
 			result.current.gameMachine.navigation.actionButtons.find(
-			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
-		);
+				(actionButton) =>
+					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+			);
 
 		expect(enabledLibraryAction?.isDisabled).toBe(false);
 

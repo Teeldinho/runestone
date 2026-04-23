@@ -4,10 +4,7 @@ import type { GamePageMachineState } from "./useGamePageMachineState";
 
 type UseGamePageCanvasSliceInput = {
 	cameraMachine: GamePageMachineState["cameraMachine"];
-	gameMachine: Pick<
-		GamePageMachineState["gameMachine"],
-		"currentRoomId" | "enemiesRemaining" | "hasTreasureKey"
-	>;
+	gameMachine: Pick<GamePageMachineState["gameMachine"], "room" | "status">;
 };
 
 export const useGamePageCanvasSlice = ({
@@ -15,7 +12,9 @@ export const useGamePageCanvasSlice = ({
 	gameMachine,
 }: UseGamePageCanvasSliceInput) => {
 	const { cameraStateSnapshot, handleCameraModeSwitch } = cameraMachine;
-	const { currentRoomId, enemiesRemaining, hasTreasureKey } = gameMachine;
+	const { room, status } = gameMachine;
+	const { currentRoomId } = room;
+	const { enemiesRemaining, hasTreasureKey } = status;
 
 	return {
 		cameraStateSnapshot,

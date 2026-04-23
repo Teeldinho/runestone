@@ -5,13 +5,7 @@ import { useGamePageReset } from "./useGamePageReset";
 type UseGamePageHudSliceInput = {
 	gameMachine: Pick<
 		GamePageMachineState["gameMachine"],
-		| "actionButtons"
-		| "currentRoomLabel"
-		| "discoveredRoomLabels"
-		| "enemiesRemaining"
-		| "handleDungeonRunReset"
-		| "hasTreasureKey"
-		| "nearInteractableLabel"
+		"navigation" | "room" | "status"
 	>;
 	playerMachine: GamePageMachineState["playerMachine"];
 };
@@ -20,15 +14,11 @@ export const useGamePageHudSlice = ({
 	gameMachine,
 	playerMachine,
 }: UseGamePageHudSliceInput) => {
-	const {
-		actionButtons,
-		currentRoomLabel,
-		discoveredRoomLabels,
-		enemiesRemaining,
-		handleDungeonRunReset: resetDungeonMachine,
-		hasTreasureKey,
-		nearInteractableLabel,
-	} = gameMachine;
+	const { navigation, room, status } = gameMachine;
+	const { actionButtons, handleDungeonRunReset: resetDungeonMachine } =
+		navigation;
+	const { currentRoomLabel, discoveredRoomLabels } = room;
+	const { enemiesRemaining, hasTreasureKey, nearInteractableLabel } = status;
 
 	const { sendPlayerMachineEvent, snapshot: playerSnapshot } = playerMachine;
 

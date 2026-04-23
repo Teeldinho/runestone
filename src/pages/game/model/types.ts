@@ -12,7 +12,7 @@ import type { useGamePageVisualizer } from "./useGamePageVisualizer";
 type GamePageHudSlice = {
 	actionButtons: ReturnType<
 		typeof useGamePageMachineState
-	>["gameMachine"]["actionButtons"];
+	>["gameMachine"]["navigation"]["actionButtons"];
 	currentRoomLabel: string;
 	discoveredRoomLabels: string[];
 	enemiesRemaining: number;

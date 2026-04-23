@@ -1,6 +1,11 @@
 export {
 	checkPlayerWithinRoomBounds,
+	createGameMachineViewModel,
 	type DoorwayNavigationEvent,
+	type GameMachineActionButton,
+	type GameMachineNavigationActionContext,
+	type GameMachineViewModel,
+	type GameMachineViewModelInput,
 	type NearbyInteractable,
 	type ResolveDoorwayNavigationInput,
 	resolveDoorwayNavigationEvent,

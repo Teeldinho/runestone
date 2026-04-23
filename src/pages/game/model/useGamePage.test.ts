@@ -176,9 +176,7 @@ type GameMachineResultOverrides = {
 	status?: Partial<ReturnType<typeof useGameMachine>["status"]>;
 };
 
-const createGameMachineResult = (
-	overrides: GameMachineResultOverrides = {},
-) =>
+const createGameMachineResult = (overrides: GameMachineResultOverrides = {}) =>
 	({
 		machine: {
 			activeStateLabel: ROOM_IDS.ENTRANCE,

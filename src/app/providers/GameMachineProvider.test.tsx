@@ -56,9 +56,9 @@ describe("GameMachineProvider", () => {
 			});
 			const libraryAction =
 				result.current.primaryRuntime.navigation.actionButtons.find(
-				(actionButton) =>
-					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
-			);
+					(actionButton) =>
+						actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+				);
 			libraryAction?.handleDungeonActionTrigger();
 		});
 
