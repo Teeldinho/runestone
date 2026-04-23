@@ -15,8 +15,8 @@ export function GamePageMobileSettingsAction({
 	const { isTabletLayout } = settingsTrigger;
 
 	return (
-		<SettingsSheet>
-			<Tooltip>
+		<Tooltip>
+			<SettingsSheet>
 				<TooltipTrigger asChild>
 					<Button
 						type="button"
@@ -25,7 +25,7 @@ export function GamePageMobileSettingsAction({
 						className={`pointer-events-auto flex items-center justify-center gap-2 ${isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
 						aria-label={GAME_PAGE_CONTROLS.SETTINGS.ARIA_LABEL}
 					>
-						<Settings2 className="h-4 w-4 text-[var(--dungeon-gold)]" />
+						<Settings2 className="h-4 w-4" />
 						{isTabletLayout ? (
 							<span className="text-xs tracking-wide uppercase">
 								{GAME_PAGE_CONTROLS.SETTINGS.BUTTON_LABEL}
@@ -33,10 +33,10 @@ export function GamePageMobileSettingsAction({
 						) : null}
 					</Button>
 				</TooltipTrigger>
-				<TooltipContent>
-					{GAME_PAGE_CONTROLS.SETTINGS.TOOLTIP_LABEL}
-				</TooltipContent>
-			</Tooltip>
-		</SettingsSheet>
+			</SettingsSheet>
+			<TooltipContent>
+				{GAME_PAGE_CONTROLS.SETTINGS.TOOLTIP_LABEL}
+			</TooltipContent>
+		</Tooltip>
 	);
 }

@@ -56,10 +56,8 @@ export function GamePageDesktopHeader() {
 					</TooltipContent>
 				</Tooltip>
 
-				<GamePageDesktopSettingsAction />
-
-				<LeaderboardSheet>
-					<Tooltip>
+				<Tooltip>
+					<LeaderboardSheet>
 						<TooltipTrigger asChild>
 							<Button
 								type="button"
@@ -70,11 +68,13 @@ export function GamePageDesktopHeader() {
 								<Trophy className="h-4 w-4 text-[var(--dungeon-gold)]" />
 							</Button>
 						</TooltipTrigger>
-						<TooltipContent>
-							{GAME_PAGE_CONTROLS.LEADERBOARD.TOOLTIP_LABEL}
-						</TooltipContent>
-					</Tooltip>
-				</LeaderboardSheet>
+					</LeaderboardSheet>
+					<TooltipContent>
+						{GAME_PAGE_CONTROLS.LEADERBOARD.TOOLTIP_LABEL}
+					</TooltipContent>
+				</Tooltip>
+
+				<GamePageDesktopSettingsAction />
 			</div>
 		</header>
 	);

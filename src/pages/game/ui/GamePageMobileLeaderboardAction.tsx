@@ -15,8 +15,8 @@ export function GamePageMobileLeaderboardAction({
 	const { isTabletLayout } = leaderboardTrigger;
 
 	return (
-		<LeaderboardSheet>
-			<Tooltip>
+		<Tooltip>
+			<LeaderboardSheet>
 				<TooltipTrigger asChild>
 					<Button
 						variant="dungeon-outline"
@@ -32,10 +32,10 @@ export function GamePageMobileLeaderboardAction({
 						) : null}
 					</Button>
 				</TooltipTrigger>
-				<TooltipContent>
-					{GAME_PAGE_CONTROLS.LEADERBOARD.TOOLTIP_LABEL}
-				</TooltipContent>
-			</Tooltip>
-		</LeaderboardSheet>
+			</LeaderboardSheet>
+			<TooltipContent>
+				{GAME_PAGE_CONTROLS.LEADERBOARD.TOOLTIP_LABEL}
+			</TooltipContent>
+		</Tooltip>
 	);
 }

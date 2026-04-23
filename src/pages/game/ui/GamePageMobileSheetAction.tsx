@@ -20,8 +20,8 @@ export function GamePageMobileSheetAction({
 	const { isMobileSheetOpen, isTabletLayout } = sheetTrigger;
 
 	return (
-		<DrawerTrigger asChild>
-			<Tooltip>
+		<Tooltip>
+			<DrawerTrigger asChild>
 				<TooltipTrigger asChild>
 					<Button
 						variant={isMobileSheetOpen ? "dungeon-gold" : "dungeon-outline"}
@@ -37,10 +37,10 @@ export function GamePageMobileSheetAction({
 						) : null}
 					</Button>
 				</TooltipTrigger>
-				<TooltipContent>
-					{GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}
-				</TooltipContent>
-			</Tooltip>
-		</DrawerTrigger>
+			</DrawerTrigger>
+			<TooltipContent>
+				{GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}
+			</TooltipContent>
+		</Tooltip>
 	);
 }

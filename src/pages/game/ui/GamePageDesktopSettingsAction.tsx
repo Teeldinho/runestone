@@ -6,8 +6,8 @@ import { SettingsSheet } from "@/widgets/settings-panel";
 
 export function GamePageDesktopSettingsAction() {
 	return (
-		<SettingsSheet>
-			<Tooltip>
+		<Tooltip>
+			<SettingsSheet>
 				<TooltipTrigger asChild>
 					<Button
 						type="button"
@@ -18,10 +18,10 @@ export function GamePageDesktopSettingsAction() {
 						<Settings2 className="h-4 w-4 text-[var(--dungeon-gold)]" />
 					</Button>
 				</TooltipTrigger>
-				<TooltipContent>
-					{GAME_PAGE_CONTROLS.SETTINGS.TOOLTIP_LABEL}
-				</TooltipContent>
-			</Tooltip>
-		</SettingsSheet>
+			</SettingsSheet>
+			<TooltipContent>
+				{GAME_PAGE_CONTROLS.SETTINGS.TOOLTIP_LABEL}
+			</TooltipContent>
+		</Tooltip>
 	);
 }

@@ -13,13 +13,13 @@ export function GamePageMobileActionPanel() {
 		<div className="pointer-events-none absolute right-4 bottom-4 z-30 flex w-[11rem] flex-col items-end gap-2 empty:hidden">
 			<GamePageMobileTouchActions touchActions={viewModel.touchActions} />
 			<GamePageMobileAudioAction audioToggle={viewModel.audioToggle} />
-			<GamePageMobileSettingsAction
-				settingsTrigger={viewModel.settingsTrigger}
-			/>
 			<GamePageMobileLeaderboardAction
 				leaderboardTrigger={viewModel.leaderboardTrigger}
 			/>
 			<GamePageMobileSheetAction sheetTrigger={viewModel.sheetTrigger} />
+			<GamePageMobileSettingsAction
+				settingsTrigger={viewModel.settingsTrigger}
+			/>
 		</div>
 	);
 }
