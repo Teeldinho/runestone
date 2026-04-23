@@ -1,5 +1,6 @@
 import { Trophy, Volume2, VolumeX } from "lucide-react";
 
+import { GAME_PAGE_CONTROLS } from "@/pages/game/config";
 import { useGamePageDesktopHeaderModel } from "@/pages/game/model";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui";
 import { LeaderboardSheet } from "@/widgets/leaderboard-panel";
@@ -33,7 +34,11 @@ export function GamePageDesktopHeader() {
 							variant="dungeon-outline"
 							size="icon-sm"
 							onClick={handleAudioMuteToggle}
-							aria-label={isAudioMuted ? "Unmute audio" : "Mute audio"}
+							aria-label={
+								isAudioMuted
+									? GAME_PAGE_CONTROLS.AUDIO.UNMUTE_ARIA_LABEL
+									: GAME_PAGE_CONTROLS.AUDIO.MUTE_ARIA_LABEL
+							}
 						>
 							{isAudioMuted ? (
 								<VolumeX className="h-4 w-4" />
@@ -43,7 +48,9 @@ export function GamePageDesktopHeader() {
 						</Button>
 					</TooltipTrigger>
 					<TooltipContent>
-						{isAudioMuted ? "Unmute audio" : "Mute audio"}
+						{isAudioMuted
+							? GAME_PAGE_CONTROLS.AUDIO.UNMUTE_TOOLTIP_LABEL
+							: GAME_PAGE_CONTROLS.AUDIO.TOOLTIP_LABEL}
 					</TooltipContent>
 				</Tooltip>
 
@@ -54,12 +61,14 @@ export function GamePageDesktopHeader() {
 								type="button"
 								variant="dungeon-outline"
 								size="icon-sm"
-								aria-label="Open Leaderboard"
+								aria-label={GAME_PAGE_CONTROLS.LEADERBOARD.ARIA_LABEL}
 							>
 								<Trophy className="h-4 w-4 text-[var(--dungeon-gold)]" />
 							</Button>
 						</TooltipTrigger>
-						<TooltipContent>Leaderboard</TooltipContent>
+						<TooltipContent>
+							{GAME_PAGE_CONTROLS.LEADERBOARD.TOOLTIP_LABEL}
+						</TooltipContent>
 					</Tooltip>
 				</LeaderboardSheet>
 			</div>

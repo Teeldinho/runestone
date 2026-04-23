@@ -227,16 +227,30 @@ vi.mock("@/pages/game/model", () => {
 			const viewModel = useGamePage();
 
 			return {
-				handleAudioMuteToggle: viewModel.audio.handleAudioMuteToggle,
-				handleTouchAttack: viewModel.touch.handleTouchAttack,
-				handleTouchInteract: viewModel.touch.handleTouchInteract,
-				hasTouchAttack: viewModel.touch.hasTouchAttack,
-				hasTouchInteract: viewModel.touch.hasTouchInteract,
-				isAudioMuted: viewModel.audio.isAudioMuted,
-				isMobileSheetOpen: viewModel.mobileSheet.isMobileSheetOpen,
-				isTabletLayout: viewModel.layout.isTabletLayout,
-				touchAttackPrompt: viewModel.touch.touchAttackPrompt,
-				touchInteractPrompt: viewModel.touch.touchInteractPrompt,
+				audioToggle: {
+					handleAudioMuteToggle: viewModel.audio.handleAudioMuteToggle,
+					isAudioMuted: viewModel.audio.isAudioMuted,
+					isTabletLayout: viewModel.layout.isTabletLayout,
+				},
+				leaderboardTrigger: {
+					isTabletLayout: viewModel.layout.isTabletLayout,
+				},
+				sheetTrigger: {
+					isMobileSheetOpen: viewModel.mobileSheet.isMobileSheetOpen,
+					isTabletLayout: viewModel.layout.isTabletLayout,
+				},
+				touchActions: {
+					attack: {
+						handleTouchAttack: viewModel.touch.handleTouchAttack,
+						hasTouchAttack: viewModel.touch.hasTouchAttack,
+						touchAttackPrompt: viewModel.touch.touchAttackPrompt,
+					},
+					interact: {
+						handleTouchInteract: viewModel.touch.handleTouchInteract,
+						hasTouchInteract: viewModel.touch.hasTouchInteract,
+						touchInteractPrompt: viewModel.touch.touchInteractPrompt,
+					},
+				},
 			};
 		},
 		useGamePageMobileSheetContentModel: () => {
