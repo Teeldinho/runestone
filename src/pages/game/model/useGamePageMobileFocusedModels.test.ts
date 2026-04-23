@@ -140,12 +140,26 @@ describe("game page mobile focused models", () => {
 		mockGamePageContextSlices(contextSlices);
 
 		const { result } = renderHook(() => useGamePageMobileActionPanelModel());
+		const actionPanel = result.current as any;
 
-		expect(result.current.handleTouchAttack).toBe(
+		expect(actionPanel.touchActions.attack.handleTouchAttack).toBe(
 			contextSlices.touch.handleTouchAttack,
 		);
-		expect(result.current.hasTouchInteract).toBe(true);
-		expect(result.current.touchInteractPrompt).toBe("Open Door");
+		expect(actionPanel.touchActions.attack.hasTouchAttack).toBe(true);
+		expect(actionPanel.touchActions.attack.touchAttackPrompt).toBe("Attack");
+		expect(actionPanel.touchActions.interact.handleTouchInteract).toBe(
+			contextSlices.touch.handleTouchInteract,
+		);
+		expect(actionPanel.touchActions.interact.hasTouchInteract).toBe(true);
+		expect(actionPanel.touchActions.interact.touchInteractPrompt).toBe(
+			"Open Door",
+		);
+		expect(actionPanel.audioToggle.handleAudioMuteToggle).toBe(
+			contextSlices.audio.handleAudioMuteToggle,
+		);
+		expect(actionPanel.audioToggle.isAudioMuted).toBe(false);
+		expect(actionPanel.utilityActions.leaderboard.isTabletLayout).toBe(true);
+		expect(actionPanel.utilityActions.sheet.isMobileSheetOpen).toBe(true);
 	});
 
 	it("builds sheet content model", () => {
