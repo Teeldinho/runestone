@@ -46,7 +46,8 @@ describe("createGameMachineViewModel", () => {
 		expect(actionButtons).toHaveLength(NAVIGATION_ACTION_EVENTS.length);
 		expect(
 			actionButtons.find(
-				(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+				(actionButton) =>
+					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
 			)?.label,
 		).toBe("Enter Library");
 	});

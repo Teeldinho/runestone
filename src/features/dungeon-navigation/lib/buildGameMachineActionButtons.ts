@@ -1,7 +1,4 @@
-import type {
-	DungeonContext,
-	DungeonEvent,
-} from "@/entities/dungeon";
+import type { DungeonContext, DungeonEvent } from "@/entities/dungeon";
 
 import {
 	NAVIGATION_ACTION_EVENTS,
@@ -34,10 +31,7 @@ export const buildGameMachineActionButtons = ({
 	NAVIGATION_ACTION_EVENTS.map((eventType) => ({
 		eventType,
 		label: NAVIGATION_ACTION_LABELS[eventType],
-		isDisabled: getNavigationActionDisabled(
-			eventType,
-			navigationActionContext,
-		),
+		isDisabled: getNavigationActionDisabled(eventType, navigationActionContext),
 		handleDungeonActionTrigger: () => handleDungeonEventSend(eventType),
 	}));
 

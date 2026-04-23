@@ -4,13 +4,12 @@ import type {
 	RoomId,
 } from "@/entities/dungeon";
 import { ROOM_LABELS } from "@/entities/dungeon";
-
-import { formatNearInteractableLabel } from "./formatNearInteractableLabel";
 import {
 	buildGameMachineActionButtons,
 	type GameMachineActionButton,
 	type GameMachineNavigationActionContext,
 } from "./buildGameMachineActionButtons";
+import { formatNearInteractableLabel } from "./formatNearInteractableLabel";
 
 type GameMachineViewModelInput = {
 	activeStateLabel: string;
