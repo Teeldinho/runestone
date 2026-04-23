@@ -140,26 +140,25 @@ describe("game page mobile focused models", () => {
 		mockGamePageContextSlices(contextSlices);
 
 		const { result } = renderHook(() => useGamePageMobileActionPanelModel());
-		const actionPanel = result.current as any;
 
-		expect(actionPanel.touchActions.attack.handleTouchAttack).toBe(
+		expect(result.current.touchActions.attack.handleTouchAttack).toBe(
 			contextSlices.touch.handleTouchAttack,
 		);
-		expect(actionPanel.touchActions.attack.hasTouchAttack).toBe(true);
-		expect(actionPanel.touchActions.attack.touchAttackPrompt).toBe("Attack");
-		expect(actionPanel.touchActions.interact.handleTouchInteract).toBe(
+		expect(result.current.touchActions.attack.hasTouchAttack).toBe(true);
+		expect(result.current.touchActions.attack.touchAttackPrompt).toBe("Attack");
+		expect(result.current.touchActions.interact.handleTouchInteract).toBe(
 			contextSlices.touch.handleTouchInteract,
 		);
-		expect(actionPanel.touchActions.interact.hasTouchInteract).toBe(true);
-		expect(actionPanel.touchActions.interact.touchInteractPrompt).toBe(
+		expect(result.current.touchActions.interact.hasTouchInteract).toBe(true);
+		expect(result.current.touchActions.interact.touchInteractPrompt).toBe(
 			"Open Door",
 		);
-		expect(actionPanel.audioToggle.handleAudioMuteToggle).toBe(
+		expect(result.current.audioToggle.handleAudioMuteToggle).toBe(
 			contextSlices.audio.handleAudioMuteToggle,
 		);
-		expect(actionPanel.audioToggle.isAudioMuted).toBe(false);
-		expect(actionPanel.utilityActions.leaderboard.isTabletLayout).toBe(true);
-		expect(actionPanel.utilityActions.sheet.isMobileSheetOpen).toBe(true);
+		expect(result.current.audioToggle.isAudioMuted).toBe(false);
+		expect(result.current.leaderboardTrigger.isTabletLayout).toBe(true);
+		expect(result.current.sheetTrigger.isMobileSheetOpen).toBe(true);
 	});
 
 	it("builds sheet content model", () => {

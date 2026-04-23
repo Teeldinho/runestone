@@ -5,6 +5,8 @@ export const GAME_PAGE_COPY = {
 	},
 } as const;
 
+export { GAME_PAGE_CONTROLS } from "./gamePageControls";
+
 export const GAME_PAGE_MOBILE_SHEET = {
 	HEIGHT_DVH: 90,
 	OPEN_BUTTON_LABEL: "Panels",
