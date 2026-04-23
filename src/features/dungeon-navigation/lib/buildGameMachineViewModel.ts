@@ -1,30 +1,16 @@
 import type {
-	DungeonContext,
 	DungeonEvent,
 	DungeonInteractableId,
 	RoomId,
 } from "@/entities/dungeon";
 import { ROOM_LABELS } from "@/entities/dungeon";
 
-import {
-	NAVIGATION_ACTION_EVENTS,
-	NAVIGATION_ACTION_LABELS,
-	type NavigationActionEvent,
-} from "../config";
 import { formatNearInteractableLabel } from "./formatNearInteractableLabel";
-import { getNavigationActionDisabled } from "./navigationActionAvailability";
-
-type GameMachineNavigationActionContext = Pick<
-	DungeonContext,
-	"currentRoomId" | "enemiesRemaining" | "hasTreasureKey" | "nearInteractable"
->;
-
-type GameMachineActionButton = {
-	eventType: NavigationActionEvent;
-	label: string;
-	isDisabled: boolean;
-	handleDungeonActionTrigger: () => void;
-};
+import {
+	buildGameMachineActionButtons,
+	type GameMachineActionButton,
+	type GameMachineNavigationActionContext,
+} from "./buildGameMachineActionButtons";
 
 type GameMachineViewModelInput = {
 	activeStateLabel: string;
@@ -63,24 +49,15 @@ type GameMachineViewModel = {
 export const createGameMachineViewModel = (
 	input: GameMachineViewModelInput,
 ): GameMachineViewModel => {
-	const actionButtons: GameMachineActionButton[] = NAVIGATION_ACTION_EVENTS.map(
-		(eventType) => ({
-			eventType,
-			label: NAVIGATION_ACTION_LABELS[eventType],
-			isDisabled: getNavigationActionDisabled(
-				eventType,
-				input.navigationActionContext,
-			),
-			handleDungeonActionTrigger: () => input.handleDungeonEventSend(eventType),
-		}),
-	);
-
 	return {
 		machine: {
 			activeStateLabel: input.activeStateLabel,
 		},
 		navigation: {
-			actionButtons,
+			actionButtons: buildGameMachineActionButtons({
+				handleDungeonEventSend: input.handleDungeonEventSend,
+				navigationActionContext: input.navigationActionContext,
+			}),
 			handleDungeonEventSend: input.handleDungeonEventSend,
 			handleDungeonRunReset: input.handleDungeonRunReset,
 		},

@@ -7,6 +7,8 @@ import {
 	ROOM_IDS,
 } from "@/entities/dungeon";
 
+import { NAVIGATION_ACTION_EVENTS } from "../config";
+import { buildGameMachineActionButtons } from "./buildGameMachineActionButtons";
 import { createGameMachineViewModel } from "./buildGameMachineViewModel";
 
 const createViewModelInput = (overrides = {}) => ({
@@ -28,6 +30,27 @@ const createViewModelInput = (overrides = {}) => ({
 });
 
 describe("createGameMachineViewModel", () => {
+	it("builds action buttons from the navigation context", () => {
+		const handleDungeonEventSend = vi.fn();
+
+		const actionButtons = buildGameMachineActionButtons({
+			handleDungeonEventSend,
+			navigationActionContext: {
+				currentRoomId: ROOM_IDS.ENTRANCE,
+				enemiesRemaining: 1,
+				hasTreasureKey: false,
+				nearInteractable: buildDoorKey(ROOM_IDS.ENTRANCE, DOOR_SIDES.SOUTH),
+			},
+		});
+
+		expect(actionButtons).toHaveLength(NAVIGATION_ACTION_EVENTS.length);
+		expect(
+			actionButtons.find(
+				(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+			)?.label,
+		).toBe("Enter Library");
+	});
+
 	it("groups room, status, and navigation values from the machine context", () => {
 		const result = createGameMachineViewModel(createViewModelInput());
 
