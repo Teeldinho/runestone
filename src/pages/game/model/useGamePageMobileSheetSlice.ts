@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import { useGamePageMobileSheet } from "./useGamePageMobileSheet";
 
 type UseGamePageMobileSheetSliceInput = {
@@ -18,20 +16,12 @@ export const useGamePageMobileSheetSlice = ({
 		isMobileTabletLandscape,
 	});
 
-	return useMemo(
-		() => ({
-			handleMobileSheetOpenChange,
-			handleMobileSheetTabChange,
-			isMobileSheetOpen,
-			mobileSheetTabId,
-		}),
-		[
-			handleMobileSheetOpenChange,
-			handleMobileSheetTabChange,
-			isMobileSheetOpen,
-			mobileSheetTabId,
-		],
-	);
+	return {
+		handleMobileSheetOpenChange,
+		handleMobileSheetTabChange,
+		isMobileSheetOpen,
+		mobileSheetTabId,
+	};
 };
 
 export type { UseGamePageMobileSheetSliceInput };

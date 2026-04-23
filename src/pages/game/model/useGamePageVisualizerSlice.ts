@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import type { RoomId } from "@/entities/dungeon";
 
 import { useGamePageVisualizer } from "./useGamePageVisualizer";
@@ -24,12 +22,9 @@ export const useGamePageVisualizerSlice = ({
 		playerStateValue,
 	});
 
-	return useMemo(
-		() => ({
-			graphSections,
-		}),
-		[graphSections],
-	);
+	return {
+		graphSections,
+	};
 };
 
 export type { UseGamePageVisualizerSliceInput };

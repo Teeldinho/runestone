@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import type { RoomId } from "@/entities/dungeon";
 
 import type { GamePageMachineState } from "./useGamePageMachineState";
@@ -19,24 +17,15 @@ export const useGamePageCanvasSlice = ({
 	const { cameraStateSnapshot, handleCameraModeSwitch } = cameraMachine;
 	const { currentRoomId, enemiesRemaining, hasTreasureKey } = gameMachine;
 
-	return useMemo(
-		() => ({
-			cameraStateSnapshot,
-			canvasMachineRuntime: {
-				currentRoomId: currentRoomId as RoomId,
-				enemiesRemaining,
-				hasTreasureKey,
-			},
-			handleCameraModeSwitch,
-		}),
-		[
-			cameraStateSnapshot,
-			currentRoomId,
+	return {
+		cameraStateSnapshot,
+		canvasMachineRuntime: {
+			currentRoomId: currentRoomId as RoomId,
 			enemiesRemaining,
-			handleCameraModeSwitch,
 			hasTreasureKey,
-		],
-	);
+		},
+		handleCameraModeSwitch,
+	};
 };
 
 export type { UseGamePageCanvasSliceInput };

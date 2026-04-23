@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import type { GamePageMachineState } from "./useGamePageMachineState";
 
 type UseGamePageLayoutSliceInput = {
@@ -11,14 +9,11 @@ export const useGamePageLayoutSlice = ({
 }: UseGamePageLayoutSliceInput) => {
 	const { isDesktopLayout, isMobileTabletLandscape, isTabletLayout } = layout;
 
-	return useMemo(
-		() => ({
-			isDesktopLayout,
-			isMobileTabletLandscape,
-			isTabletLayout,
-		}),
-		[isDesktopLayout, isMobileTabletLandscape, isTabletLayout],
-	);
+	return {
+		isDesktopLayout,
+		isMobileTabletLandscape,
+		isTabletLayout,
+	};
 };
 
 export type { UseGamePageLayoutSliceInput };

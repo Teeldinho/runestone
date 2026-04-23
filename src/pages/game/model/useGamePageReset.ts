@@ -1,5 +1,3 @@
-import { useCallback, useMemo } from "react";
-
 import { createFloorOneMachine, ROOM_IDS } from "@/entities/dungeon";
 import {
 	PLAYER_ENTITY_CONFIG,
@@ -22,32 +20,25 @@ export const useGamePageReset = ({
 	resetDungeonMachine,
 	sendPlayerMachineEvent,
 }: UseGamePageResetInput): GamePageResetViewModel => {
-	const entrancePosition = useMemo(() => {
-		const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
-		const entrance = floorLayout.rooms.find(
-			(room) => room.roomId === ROOM_IDS.ENTRANCE,
-		);
-
-		if (entrance) {
-			const [entranceX, , entranceZ] = entrance.position;
-
-			return [
-				entranceX,
+	const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
+	const entrance = floorLayout.rooms.find(
+		(room) => room.roomId === ROOM_IDS.ENTRANCE,
+	);
+	const entrancePosition = entrance
+		? [
+				entrance.position[0],
 				PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
-				entranceZ,
-			] as const;
-		}
+				entrance.position[2],
+			]
+		: [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0];
 
-		return [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0] as const;
-	}, []);
-
-	const handleDungeonRunReset = useCallback(() => {
+	const handleDungeonRunReset = () => {
 		const [teleportX, teleportY, teleportZ] = entrancePosition;
 
 		sendPlayerMachineEvent({ type: PLAYER_EVENTS.RESTART });
 		setPlayerTeleportTarget(teleportX, teleportY, teleportZ);
 		resetDungeonMachine();
-	}, [entrancePosition, resetDungeonMachine, sendPlayerMachineEvent]);
+	};
 
 	return {
 		handleDungeonRunReset,
