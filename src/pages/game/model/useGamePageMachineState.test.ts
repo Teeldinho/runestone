@@ -46,16 +46,25 @@ describe("useGamePageMachineState", () => {
 		const handleCameraModeSwitch = vi.fn();
 
 		vi.mocked(useGameMachine).mockReturnValue({
-			activeStateLabel: ROOM_IDS.ENTRANCE,
-			actionButtons: [],
-			currentRoomId: ROOM_IDS.ENTRANCE,
-			currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
-			discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
-			enemiesRemaining: 2,
-			handleDungeonEventSend,
-			handleDungeonRunReset,
-			hasTreasureKey: false,
-			nearInteractableLabel: "—",
+			machine: {
+				activeStateLabel: ROOM_IDS.ENTRANCE,
+			},
+			navigation: {
+				actionButtons: [],
+				handleDungeonEventSend,
+				handleDungeonRunReset,
+			},
+			room: {
+				currentRoomId: ROOM_IDS.ENTRANCE,
+				currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+				discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
+				discoveredRooms: [ROOM_IDS.ENTRANCE],
+			},
+			status: {
+				enemiesRemaining: 2,
+				hasTreasureKey: false,
+				nearInteractableLabel: "—",
+			},
 		} as unknown as ReturnType<typeof useGameMachine>);
 
 		vi.mocked(usePlayerMachineRuntime).mockReturnValue({
@@ -96,7 +105,9 @@ describe("useGamePageMachineState", () => {
 
 		const { result } = renderHook(() => useGamePageMachineState());
 
-		expect(result.current.gameMachine.currentRoomId).toBe(ROOM_IDS.ENTRANCE);
+		expect(result.current.gameMachine.room.currentRoomId).toBe(
+			ROOM_IDS.ENTRANCE,
+		);
 		expect(result.current.playerMachine.sendPlayerMachineEvent).toBe(
 			sendPlayerMachineEvent,
 		);

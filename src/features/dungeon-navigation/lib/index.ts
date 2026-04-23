@@ -1,4 +1,15 @@
 export {
+	type BuildGameMachineActionButtonsInput,
+	buildGameMachineActionButtons,
+	type GameMachineActionButton,
+	type GameMachineNavigationActionContext,
+} from "./buildGameMachineActionButtons";
+export {
+	createGameMachineViewModel,
+	type GameMachineViewModel,
+	type GameMachineViewModelInput,
+} from "./buildGameMachineViewModel";
+export {
 	checkPlayerWithinRoomBounds,
 	type DoorwayNavigationEvent,
 	type NearbyInteractable,

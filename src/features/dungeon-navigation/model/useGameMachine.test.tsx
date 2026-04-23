@@ -27,9 +27,11 @@ describe("useGameMachine", () => {
 			wrapper: gameMachineRuntimeWrapper,
 		});
 
-		expect(result.current.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
-		expect(result.current.currentRoomId).toBe(ROOM_IDS.ENTRANCE);
-		expect(result.current.nearInteractableLabel).toBe("—");
+		expect(result.current.machine.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
+		expect(result.current.room.currentRoomId).toBe(ROOM_IDS.ENTRANCE);
+		expect(result.current.room.currentRoomLabel).toBe("Entrance");
+		expect(result.current.room.discoveredRoomLabels).toEqual(["Entrance"]);
+		expect(result.current.status.nearInteractableLabel).toBe("—");
 	});
 
 	it("moves machine state through handleDungeonEventSend", () => {
@@ -42,9 +44,11 @@ describe("useGameMachine", () => {
 				wrapper: gameMachineRuntimeWrapper,
 			},
 		);
-		const libraryAction = result.current.gameMachine.actionButtons.find(
-			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
-		);
+		const libraryAction =
+			result.current.gameMachine.navigation.actionButtons.find(
+				(actionButton) =>
+					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+			);
 
 		act(() => {
 			result.current.runtime.sendDungeonMachineEvent({
@@ -55,8 +59,12 @@ describe("useGameMachine", () => {
 			libraryAction?.handleDungeonActionTrigger();
 		});
 
-		expect(result.current.gameMachine.activeStateLabel).toBe(ROOM_IDS.LIBRARY);
-		expect(result.current.gameMachine.currentRoomId).toBe(ROOM_IDS.LIBRARY);
+		expect(result.current.gameMachine.room.currentRoomId).toBe(
+			ROOM_IDS.LIBRARY,
+		);
+		expect(result.current.gameMachine.machine.activeStateLabel).toBe(
+			ROOM_IDS.LIBRARY,
+		);
 	});
 
 	it("resets machine state to entrance", () => {
@@ -69,9 +77,11 @@ describe("useGameMachine", () => {
 				wrapper: gameMachineRuntimeWrapper,
 			},
 		);
-		const libraryAction = result.current.gameMachine.actionButtons.find(
-			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
-		);
+		const libraryAction =
+			result.current.gameMachine.navigation.actionButtons.find(
+				(actionButton) =>
+					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+			);
 
 		act(() => {
 			result.current.runtime.sendDungeonMachineEvent({
@@ -80,11 +90,13 @@ describe("useGameMachine", () => {
 				interactableType: INTERACTION_TYPES.DOOR,
 			});
 			libraryAction?.handleDungeonActionTrigger();
-			result.current.gameMachine.handleDungeonRunReset();
+			result.current.gameMachine.navigation.handleDungeonRunReset();
 		});
 
-		expect(result.current.gameMachine.activeStateLabel).toBe(ROOM_IDS.ENTRANCE);
-		expect(result.current.gameMachine.discoveredRooms).toEqual([
+		expect(result.current.gameMachine.machine.activeStateLabel).toBe(
+			ROOM_IDS.ENTRANCE,
+		);
+		expect(result.current.gameMachine.room.discoveredRooms).toEqual([
 			ROOM_IDS.ENTRANCE,
 		]);
 	});
@@ -100,11 +112,13 @@ describe("useGameMachine", () => {
 			},
 		);
 
-		const defaultLibraryAction = result.current.gameMachine.actionButtons.find(
-			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
-		);
+		const defaultLibraryAction =
+			result.current.gameMachine.navigation.actionButtons.find(
+				(actionButton) =>
+					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+			);
 		const defaultGuardRoomAction =
-			result.current.gameMachine.actionButtons.find(
+			result.current.gameMachine.navigation.actionButtons.find(
 				(actionButton) =>
 					actionButton.eventType === DUNGEON_EVENTS.ENTER_GUARD_ROOM,
 			);
@@ -120,9 +134,11 @@ describe("useGameMachine", () => {
 			});
 		});
 
-		const enabledLibraryAction = result.current.gameMachine.actionButtons.find(
-			(actionButton) => actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
-		);
+		const enabledLibraryAction =
+			result.current.gameMachine.navigation.actionButtons.find(
+				(actionButton) =>
+					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
+			);
 
 		expect(enabledLibraryAction?.isDisabled).toBe(false);
 
@@ -131,7 +147,7 @@ describe("useGameMachine", () => {
 		});
 
 		const libraryGuardRoomAction =
-			result.current.gameMachine.actionButtons.find(
+			result.current.gameMachine.navigation.actionButtons.find(
 				(actionButton) =>
 					actionButton.eventType === DUNGEON_EVENTS.ENTER_GUARD_ROOM,
 			);
@@ -147,7 +163,7 @@ describe("useGameMachine", () => {
 		});
 
 		const enabledGuardRoomAction =
-			result.current.gameMachine.actionButtons.find(
+			result.current.gameMachine.navigation.actionButtons.find(
 				(actionButton) =>
 					actionButton.eventType === DUNGEON_EVENTS.ENTER_GUARD_ROOM,
 			);

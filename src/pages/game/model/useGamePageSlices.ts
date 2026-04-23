@@ -17,7 +17,7 @@ export const useGamePageSlices = (): GamePageViewModel => {
 	const { audio, audioState } = useGamePageAudioSlice();
 
 	const touch = useGamePageTouchSlice({
-		handleDungeonEventSend: gameMachine.handleDungeonEventSend,
+		handleDungeonEventSend: gameMachine.navigation.handleDungeonEventSend,
 		sendPlayerMachineEvent: playerMachine.sendPlayerMachineEvent,
 	});
 
@@ -42,7 +42,7 @@ export const useGamePageSlices = (): GamePageViewModel => {
 	const visualizer = useGamePageVisualizerSlice({
 		audioState,
 		cameraMode: cameraMachine.mode,
-		currentRoomId: gameMachine.currentRoomId as RoomId,
+		currentRoomId: gameMachine.room.currentRoomId as RoomId,
 		playerStateValue: playerMachine.snapshot.value,
 	});
 

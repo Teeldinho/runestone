@@ -169,20 +169,38 @@ vi.mock("@/shared/lib/playerPositionStore", () => ({
 	setPlayerTeleportTarget: vi.fn(),
 }));
 
-const createGameMachineResult = (overrides = {}) =>
+type GameMachineResultOverrides = {
+	machine?: Partial<ReturnType<typeof useGameMachine>["machine"]>;
+	navigation?: Partial<ReturnType<typeof useGameMachine>["navigation"]>;
+	room?: Partial<ReturnType<typeof useGameMachine>["room"]>;
+	status?: Partial<ReturnType<typeof useGameMachine>["status"]>;
+};
+
+const createGameMachineResult = (overrides: GameMachineResultOverrides = {}) =>
 	({
-		activeStateLabel: ROOM_IDS.ENTRANCE,
-		actionButtons: [],
-		currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
-		currentRoomId: ROOM_IDS.ENTRANCE,
-		discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
-		discoveredRooms: [ROOM_IDS.ENTRANCE],
-		enemiesRemaining: 1,
-		handleDungeonRunReset: vi.fn(),
-		handleDungeonEventSend: vi.fn(),
-		hasTreasureKey: false,
-		nearInteractableLabel: "—",
-		...overrides,
+		machine: {
+			activeStateLabel: ROOM_IDS.ENTRANCE,
+			...overrides.machine,
+		},
+		navigation: {
+			actionButtons: [],
+			handleDungeonRunReset: vi.fn(),
+			handleDungeonEventSend: vi.fn(),
+			...overrides.navigation,
+		},
+		room: {
+			currentRoomLabel: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+			currentRoomId: ROOM_IDS.ENTRANCE,
+			discoveredRoomLabels: [ROOM_LABELS[ROOM_IDS.ENTRANCE]],
+			discoveredRooms: [ROOM_IDS.ENTRANCE],
+			...overrides.room,
+		},
+		status: {
+			enemiesRemaining: 1,
+			hasTreasureKey: false,
+			nearInteractableLabel: "—",
+			...overrides.status,
+		},
 	}) as unknown as ReturnType<typeof useGameMachine>;
 
 describe("useGamePage", () => {
@@ -323,8 +341,12 @@ describe("dungeon reset teleport", () => {
 
 		vi.mocked(useGameMachine).mockReturnValue(
 			createGameMachineResult({
-				enemiesRemaining: 0,
-				handleDungeonRunReset: resetDungeonMachine,
+				status: {
+					enemiesRemaining: 0,
+				},
+				navigation: {
+					handleDungeonRunReset: resetDungeonMachine,
+				},
 			}),
 		);
 
