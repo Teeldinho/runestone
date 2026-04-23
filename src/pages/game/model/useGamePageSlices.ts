@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import type { RoomId } from "@/entities/dungeon";
 
 import type { GamePageViewModel } from "./types";
@@ -48,16 +46,13 @@ export const useGamePageSlices = (): GamePageViewModel => {
 		playerStateValue: playerMachine.snapshot.value,
 	});
 
-	return useMemo(
-		() => ({
-			audio,
-			canvas,
-			hud,
-			layout: layoutSlice,
-			mobileSheet,
-			touch,
-			visualizer,
-		}),
-		[audio, canvas, hud, layoutSlice, mobileSheet, touch, visualizer],
-	);
+	return {
+		audio,
+		canvas,
+		hud,
+		layout: layoutSlice,
+		mobileSheet,
+		touch,
+		visualizer,
+	};
 };

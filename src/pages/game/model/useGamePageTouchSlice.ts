@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import type { UseGamePageTouchInput } from "./useGamePageTouch";
 import { useGamePageTouch } from "./useGamePageTouch";
 
@@ -21,26 +19,14 @@ export const useGamePageTouchSlice = ({
 		sendPlayerMachineEvent,
 	});
 
-	return useMemo(
-		() => ({
-			handleTouchAttack,
-			handleTouchInteract,
-			handleTouchJoystickMove,
-			handleTouchJoystickStop,
-			hasTouchAttack,
-			hasTouchInteract,
-			touchAttackPrompt,
-			touchInteractPrompt,
-		}),
-		[
-			handleTouchAttack,
-			handleTouchInteract,
-			handleTouchJoystickMove,
-			handleTouchJoystickStop,
-			hasTouchAttack,
-			hasTouchInteract,
-			touchAttackPrompt,
-			touchInteractPrompt,
-		],
-	);
+	return {
+		handleTouchAttack,
+		handleTouchInteract,
+		handleTouchJoystickMove,
+		handleTouchJoystickStop,
+		hasTouchAttack,
+		hasTouchInteract,
+		touchAttackPrompt,
+		touchInteractPrompt,
+	};
 };

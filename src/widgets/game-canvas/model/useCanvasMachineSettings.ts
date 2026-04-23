@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import { createFloorOneMachine, type DungeonContext } from "@/entities/dungeon";
 import { PLAYER_ENTITY_CONFIG } from "@/entities/player";
 import { createDungeonFloorLayout } from "@/entities/room";
@@ -21,30 +19,16 @@ export const useCanvasMachineSettings = (
 	postprocessingEnabled?: boolean,
 ): CanvasMachineSettingsViewModel => {
 	const baseCanvasSettings = useCanvasSettings();
-	const floorRooms = useMemo(
-		() => createDungeonFloorLayout(createFloorOneMachine()).rooms,
-		[],
-	);
+	const floorRooms = createDungeonFloorLayout(createFloorOneMachine()).rooms;
 
-	return useMemo(
-		() =>
-			createCanvasMachineSettingsViewModel({
-				baseCanvasSettings,
-				cameraStateSnapshot,
-				floorRooms,
-				machineRuntime,
-				postprocessingEnabled,
-				playerSpawnHeightOffset:
-					PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
-			}),
-		[
-			baseCanvasSettings,
-			cameraStateSnapshot,
-			floorRooms,
-			machineRuntime,
-			postprocessingEnabled,
-		],
-	);
+	return createCanvasMachineSettingsViewModel({
+		baseCanvasSettings,
+		cameraStateSnapshot,
+		floorRooms,
+		machineRuntime,
+		postprocessingEnabled,
+		playerSpawnHeightOffset: PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+	});
 };
 
 export type { CanvasMachineRuntime };

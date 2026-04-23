@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import {
 	ATTACK_KEY_LABEL,
 	ATTACK_TOUCH_LABEL,
@@ -24,28 +23,16 @@ export function useWorldInteractionPrompt({
 }: WorldInteractionPromptProps) {
 	const { isDesktopLayout } = useResponsiveGameLayout();
 
-	const interactPosition = useMemo(() => {
-		if (!interactionCandidates.hasInteract) {
-			return null;
-		}
+	const interactPosition = interactionCandidates.hasInteract
+		? getWorldInteractionPromptPosition(
+				interactionCandidates.interactTargetId,
+				roomPositionsById,
+			)
+		: null;
 
-		return getWorldInteractionPromptPosition(
-			interactionCandidates.interactTargetId,
-			roomPositionsById,
-		);
-	}, [
-		interactionCandidates.hasInteract,
-		interactionCandidates.interactTargetId,
-		roomPositionsById,
-	]);
-
-	const attackPosition = useMemo(() => {
-		if (!interactionCandidates.hasAttack) {
-			return null;
-		}
-
-		return getWorldAttackPromptPosition(interactionCandidates.attackPosition);
-	}, [interactionCandidates.attackPosition, interactionCandidates.hasAttack]);
+	const attackPosition = interactionCandidates.hasAttack
+		? getWorldAttackPromptPosition(interactionCandidates.attackPosition)
+		: null;
 
 	const interact = {
 		isVisible: !!(interactPosition && interactionCandidates.interactPrompt),

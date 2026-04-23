@@ -47,4 +47,16 @@ describe("useSceneLighting", () => {
 			},
 		]);
 	});
+
+	it("returns a fresh lighting view model on rerender", () => {
+		const { result, rerender } = renderHook(() =>
+			useSceneLighting(LIGHTING_FIXTURE),
+		);
+		const firstResult = result.current;
+
+		rerender();
+
+		expect(result.current).not.toBe(firstResult);
+		expect(result.current.torchSettings).toEqual(firstResult.torchSettings);
+	});
 });
