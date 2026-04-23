@@ -5,7 +5,11 @@ import type React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DUNGEON_EVENTS, ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
-import { GAME_PAGE_COPY, GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
+import {
+	GAME_PAGE_CONTROLS,
+	GAME_PAGE_COPY,
+	GAME_PAGE_MOBILE_SHEET,
+} from "@/pages/game/config";
 import { useGamePage } from "@/pages/game/model";
 import { TooltipProvider } from "@/shared/ui";
 
@@ -235,6 +239,9 @@ vi.mock("@/pages/game/model", () => {
 				leaderboardTrigger: {
 					isTabletLayout: viewModel.layout.isTabletLayout,
 				},
+				settingsTrigger: {
+					isTabletLayout: viewModel.layout.isTabletLayout,
+				},
 				sheetTrigger: {
 					isMobileSheetOpen: viewModel.mobileSheet.isMobileSheetOpen,
 					isTabletLayout: viewModel.layout.isTabletLayout,
@@ -315,6 +322,12 @@ vi.mock("@/widgets/leaderboard-panel", () => ({
 	),
 }));
 
+vi.mock("@/widgets/settings-panel", () => ({
+	SettingsSheet: ({ children }: { children: React.ReactNode }) => (
+		<div data-testid="settings-sheet-widget">{children}</div>
+	),
+}));
+
 vi.mock("@/features/dungeon-navigation", () => ({
 	useInteractionCandidates: vi.fn(() => ({
 		interactPrompt: null,
@@ -349,6 +362,11 @@ describe("GamePage", () => {
 		expect(screen.getByTestId("xstate-inspector-widget")).not.toBeNull();
 		expect(
 			screen.getByTestId("xstate-inspector-details-widget"),
+		).not.toBeNull();
+		expect(
+			screen.getByRole("button", {
+				name: GAME_PAGE_CONTROLS.SETTINGS.ARIA_LABEL,
+			}),
 		).not.toBeNull();
 	});
 
@@ -390,6 +408,14 @@ describe("GamePage", () => {
 			screen.getByRole("button", {
 				name: `Open ${GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}`,
 			}),
+		).not.toBeNull();
+		expect(
+			screen.getByRole("button", {
+				name: GAME_PAGE_CONTROLS.SETTINGS.ARIA_LABEL,
+			}),
+		).not.toBeNull();
+		expect(
+			screen.getByText(GAME_PAGE_CONTROLS.SETTINGS.BUTTON_LABEL),
 		).not.toBeNull();
 	});
 

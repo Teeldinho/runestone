@@ -20,6 +20,9 @@ vi.mock("@/pages/game/model", () => ({
 		leaderboardTrigger: {
 			isTabletLayout: true,
 		},
+		settingsTrigger: {
+			isTabletLayout: true,
+		},
 		sheetTrigger: {
 			handleMobileSheetOpen: vi.fn(),
 			isMobileSheetOpen: true,
@@ -59,6 +62,10 @@ vi.mock("@/widgets/leaderboard-panel", () => ({
 	LeaderboardSheet: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 
+vi.mock("@/widgets/settings-panel", () => ({
+	SettingsSheet: ({ children }: { children: ReactNode }) => <>{children}</>,
+}));
+
 describe("GamePageMobileActionPanel", () => {
 	it("renders grouped mobile action controls", () => {
 		render(<GamePageMobileActionPanel />);
@@ -66,11 +73,13 @@ describe("GamePageMobileActionPanel", () => {
 		expect(
 			screen.getByRole("button", { name: "Open Leaderboard" }),
 		).toBeTruthy();
+		expect(screen.getByRole("button", { name: "Open Settings" })).toBeTruthy();
 		expect(screen.getByRole("button", { name: "Open Panels" })).toBeTruthy();
 		expect(screen.getByRole("button", { name: "Mute audio" })).toBeTruthy();
 		expect(screen.getByRole("button", { name: "Attack" })).toBeTruthy();
 		expect(screen.getByRole("button", { name: "Open Door" })).toBeTruthy();
 		expect(screen.getByText("Audio")).toBeTruthy();
+		expect(screen.getByText("Settings")).toBeTruthy();
 		expect(screen.getByText("Rankings")).toBeTruthy();
 		expect(screen.getByText("Panels")).toBeTruthy();
 	});

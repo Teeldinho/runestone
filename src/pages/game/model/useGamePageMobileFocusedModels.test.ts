@@ -158,6 +158,7 @@ describe("game page mobile focused models", () => {
 		);
 		expect(result.current.audioToggle.isAudioMuted).toBe(false);
 		expect(result.current.leaderboardTrigger.isTabletLayout).toBe(true);
+		expect(result.current.settingsTrigger.isTabletLayout).toBe(true);
 		expect(result.current.sheetTrigger.isMobileSheetOpen).toBe(true);
 	});
 
