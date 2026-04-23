@@ -1,23 +1,21 @@
-import { type CSSProperties, useCallback, useEffect, useMemo } from "react";
+import type { CSSProperties } from "react";
 
 import {
 	type MachineGraphSection,
 	type StateVisualizerSectionId,
-	useStateVisualizerWorkspace,
 } from "@/features/state-visualizer";
 
 import { INSPECTOR_REACT_FLOW_DEFAULTS } from "../config";
 import {
-	createInspectorMachineSectionViewModel,
-	createInspectorSectionIdSet,
 	createXStateInspectorPanelViewModel,
+	createXStateInspectorSectionViewModels,
 	type InspectorGuardDetail,
 	type InspectorGuardIndicator,
 	type InspectorMachineSectionViewModel,
 	type InspectorStateDetail,
 	type InspectorTransitionDetail,
-	resolveFallbackSelectedSectionId,
 } from "../lib";
+import { useXStateInspectorPanelSelection } from "./useXStateInspectorPanelSelection";
 
 type UseXStateInspectorPanelInput = {
 	sections: MachineGraphSection[];
@@ -42,58 +40,20 @@ type XStateInspectorPanelViewModel = {
 export const useXStateInspectorPanel = ({
 	sections,
 }: UseXStateInspectorPanelInput): XStateInspectorPanelViewModel => {
+	const sectionViewModels = createXStateInspectorSectionViewModels(sections);
 	const { selectedSectionId, handleSelectedSectionIdChange } =
-		useStateVisualizerWorkspace();
-
-	const sectionViewModels = useMemo<InspectorMachineSectionViewModel[]>(
-		() => sections.map(createInspectorMachineSectionViewModel),
-		[sections],
-	);
-
-	const sectionIdSet = useMemo(
-		() => createInspectorSectionIdSet(sectionViewModels),
-		[sectionViewModels],
-	);
-
-	const handleSelectedSectionChange = useCallback(
-		(sectionId: string) => {
-			if (!sectionIdSet.has(sectionId as StateVisualizerSectionId)) {
-				return;
-			}
-
-			handleSelectedSectionIdChange(sectionId as StateVisualizerSectionId);
-		},
-		[handleSelectedSectionIdChange, sectionIdSet],
-	);
-
-	useEffect(() => {
-		const fallbackSelectedSectionId = resolveFallbackSelectedSectionId(
-			sectionViewModels,
-			selectedSectionId,
-		);
-
-		if (fallbackSelectedSectionId === null) {
-			return;
-		}
-
-		handleSelectedSectionIdChange(fallbackSelectedSectionId);
-	}, [handleSelectedSectionIdChange, sectionViewModels, selectedSectionId]);
-
-	const panelViewModel = useMemo(
-		() =>
-			createXStateInspectorPanelViewModel({
-				sectionViewModels,
-				selectedSectionId,
-			}),
-		[sectionViewModels, selectedSectionId],
-	);
+		useXStateInspectorPanelSelection(sectionViewModels);
+	const panelViewModel = createXStateInspectorPanelViewModel({
+		sectionViewModels,
+		selectedSectionId,
+	});
 
 	return {
+		sections: sectionViewModels,
 		sectionTabs: panelViewModel.sectionTabs,
 		selectedSectionId,
-		handleSelectedSectionIdChange: handleSelectedSectionChange,
+		handleSelectedSectionIdChange,
 		selectedSection: panelViewModel.selectedSection,
-		sections: sectionViewModels,
 		reactFlowDefaults: INSPECTOR_REACT_FLOW_DEFAULTS,
 		selectedFlowFitViewPadding: panelViewModel.selectedFlowFitViewPadding,
 		tabsListStyles: panelViewModel.tabsListStyles,

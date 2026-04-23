@@ -6,8 +6,8 @@ import { describe, expect, it } from "vitest";
 
 import {
 	STATE_VISUALIZER_SECTION_IDS,
-	StateVisualizerWorkspaceProvider,
 	type StateVisualizerSectionId,
+	StateVisualizerWorkspaceProvider,
 } from "@/features/state-visualizer";
 
 import type { InspectorMachineSectionViewModel } from "../lib";
@@ -71,8 +71,7 @@ describe("useXStateInspectorPanelSelection", () => {
 		);
 
 		const { result } = renderHook(
-			() =>
-				useXStateInspectorPanelSelection([dungeonSection, cameraSection]),
+			() => useXStateInspectorPanelSelection([dungeonSection, cameraSection]),
 			{ wrapper },
 		);
 
@@ -102,10 +101,9 @@ describe("useXStateInspectorPanelSelection", () => {
 			</StateVisualizerWorkspaceProvider>
 		);
 
-		const { result } = renderHook(
-			() => useXStateInspectorPanelSelection([]),
-			{ wrapper },
-		);
+		const { result } = renderHook(() => useXStateInspectorPanelSelection([]), {
+			wrapper,
+		});
 
 		expect(result.current.selectedSectionId).toBe(
 			STATE_VISUALIZER_SECTION_IDS.DUNGEON,

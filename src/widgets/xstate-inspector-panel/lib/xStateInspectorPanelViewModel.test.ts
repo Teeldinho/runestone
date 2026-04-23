@@ -9,8 +9,8 @@ import { INSPECTOR_REACT_FLOW_SECTION_PADDING } from "../config";
 import type { InspectorMachineSectionViewModel } from "./inspectorSectionViewModel";
 import {
 	createInspectorSectionIdSet,
-	createXStateInspectorSectionViewModels,
 	createXStateInspectorPanelViewModel,
+	createXStateInspectorSectionViewModels,
 	resolveFallbackSelectedSectionId,
 } from "./xStateInspectorPanelViewModel";
 
