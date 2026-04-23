@@ -165,4 +165,40 @@ describe("useXStateInspectorPanel", () => {
 			INSPECTOR_REACT_FLOW_SECTION_PADDING.CAMERA,
 		);
 	});
+
+	it("falls back to the first available section when the selected section is missing", () => {
+		const wrapper = ({ children }: { children: ReactNode }) => (
+			<StateVisualizerWorkspaceProvider>
+				{children}
+			</StateVisualizerWorkspaceProvider>
+		);
+
+		const { result } = renderHook(
+			() =>
+				useXStateInspectorPanel({
+					sections: [
+						{
+							id: STATE_VISUALIZER_SECTION_IDS.CAMERA,
+							label: TEST_SECTION_LABELS.CAMERA,
+							activeStateLabel: formatMachineStateLabel(
+								CAMERA_MODES.FREE_ORBITAL,
+							),
+							guardKeys: [],
+							nodes: [],
+							edges: [],
+							positionedNodes: [],
+						},
+					],
+				}),
+			{ wrapper },
+		);
+
+		expect(result.current.selectedSectionId).toBe(
+			STATE_VISUALIZER_SECTION_IDS.CAMERA,
+		);
+		expect(result.current.selectedSection?.id).toBe(
+			STATE_VISUALIZER_SECTION_IDS.CAMERA,
+		);
+		expect(result.current.hasSelectedSection).toBe(true);
+	});
 });

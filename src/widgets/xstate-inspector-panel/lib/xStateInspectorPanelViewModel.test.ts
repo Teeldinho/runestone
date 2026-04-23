@@ -9,6 +9,7 @@ import { INSPECTOR_REACT_FLOW_SECTION_PADDING } from "../config";
 import type { InspectorMachineSectionViewModel } from "./inspectorSectionViewModel";
 import {
 	createInspectorSectionIdSet,
+	createXStateInspectorSectionViewModels,
 	createXStateInspectorPanelViewModel,
 	resolveFallbackSelectedSectionId,
 } from "./xStateInspectorPanelViewModel";
@@ -110,5 +111,46 @@ describe("xStateInspectorPanelViewModel", () => {
 		expect(sectionIdSet.has(STATE_VISUALIZER_SECTION_IDS.DUNGEON)).toBe(true);
 		expect(sectionIdSet.has(STATE_VISUALIZER_SECTION_IDS.CAMERA)).toBe(true);
 		expect(sectionIdSet.has(STATE_VISUALIZER_SECTION_IDS.AUDIO)).toBe(false);
+	});
+
+	it("maps machine graph sections to inspector section view models", () => {
+		const dungeonSection = createInspectorSectionViewModel(
+			STATE_VISUALIZER_SECTION_IDS.DUNGEON,
+			{ hasGuardIndicators: true },
+		);
+		const cameraSection = createInspectorSectionViewModel(
+			STATE_VISUALIZER_SECTION_IDS.CAMERA,
+		);
+
+		const result = createXStateInspectorSectionViewModels([
+			{
+				activeStateLabel: "active",
+				edges: [],
+				guardKeys: [],
+				id: dungeonSection.id,
+				label: dungeonSection.label,
+				nodes: [],
+				positionedNodes: [],
+			},
+			{
+				activeStateLabel: "active",
+				edges: [],
+				guardKeys: [],
+				id: cameraSection.id,
+				label: cameraSection.label,
+				nodes: [],
+				positionedNodes: [],
+			},
+		]);
+
+		expect(result).toHaveLength(2);
+		expect(result[0]).toMatchObject({
+			id: STATE_VISUALIZER_SECTION_IDS.DUNGEON,
+			label: dungeonSection.label,
+		});
+		expect(result[1]).toMatchObject({
+			id: STATE_VISUALIZER_SECTION_IDS.CAMERA,
+			label: cameraSection.label,
+		});
 	});
 });
