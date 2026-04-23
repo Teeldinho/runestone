@@ -41,8 +41,10 @@ describe("GameMachineProvider", () => {
 			},
 		);
 
-		expect(result.current.primaryRuntime.currentRoomId).toBe(ROOM_IDS.ENTRANCE);
-		expect(result.current.secondaryRuntime.currentRoomId).toBe(
+		expect(result.current.primaryRuntime.room.currentRoomId).toBe(
+			ROOM_IDS.ENTRANCE,
+		);
+		expect(result.current.secondaryRuntime.room.currentRoomId).toBe(
 			ROOM_IDS.ENTRANCE,
 		);
 
@@ -52,15 +54,18 @@ describe("GameMachineProvider", () => {
 				interactableId: buildDoorKey(ROOM_IDS.ENTRANCE, DOOR_SIDES.SOUTH),
 				interactableType: INTERACTION_TYPES.DOOR,
 			});
-			const libraryAction = result.current.primaryRuntime.actionButtons.find(
+			const libraryAction =
+				result.current.primaryRuntime.navigation.actionButtons.find(
 				(actionButton) =>
 					actionButton.eventType === DUNGEON_EVENTS.ENTER_LIBRARY,
 			);
 			libraryAction?.handleDungeonActionTrigger();
 		});
 
-		expect(result.current.primaryRuntime.currentRoomId).toBe(ROOM_IDS.LIBRARY);
-		expect(result.current.secondaryRuntime.currentRoomId).toBe(
+		expect(result.current.primaryRuntime.room.currentRoomId).toBe(
+			ROOM_IDS.LIBRARY,
+		);
+		expect(result.current.secondaryRuntime.room.currentRoomId).toBe(
 			ROOM_IDS.LIBRARY,
 		);
 	});
