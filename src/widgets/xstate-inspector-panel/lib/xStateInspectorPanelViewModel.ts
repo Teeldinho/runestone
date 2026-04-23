@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 
 import {
+	type MachineGraphSection,
 	STATE_VISUALIZER_SECTION_IDS,
 	type StateVisualizerSectionId,
 } from "@/features/state-visualizer";
@@ -10,6 +11,12 @@ import {
 	INSPECTOR_REACT_FLOW_SECTION_PADDING,
 } from "../config";
 import type { InspectorMachineSectionViewModel } from "./inspectorSectionViewModel";
+import { createInspectorMachineSectionViewModel } from "./inspectorSectionViewModel";
+
+export const createXStateInspectorSectionViewModels = (
+	sections: MachineGraphSection[],
+): InspectorMachineSectionViewModel[] =>
+	sections.map(createInspectorMachineSectionViewModel);
 
 type XStateInspectorPanelSectionTab = {
 	id: StateVisualizerSectionId;

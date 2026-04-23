@@ -34,6 +34,7 @@ export {
 	type CreateXStateInspectorPanelViewModelInput,
 	createInspectorSectionIdSet,
 	createXStateInspectorPanelViewModel,
+	createXStateInspectorSectionViewModels,
 	resolveFallbackSelectedSectionId,
 	type XStateInspectorPanelDerivedViewModel,
 	type XStateInspectorPanelSectionTab,
