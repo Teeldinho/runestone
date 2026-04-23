@@ -70,18 +70,44 @@ describe("GamePageMobileActionPanel", () => {
 	it("renders grouped mobile action controls", () => {
 		render(<GamePageMobileActionPanel />);
 
+		expect(screen.getByRole("button", { name: "Attack" })).toBeTruthy();
+		expect(screen.getByRole("button", { name: "Open Door" })).toBeTruthy();
+		expect(screen.getByRole("button", { name: "Mute audio" })).toBeTruthy();
 		expect(
 			screen.getByRole("button", { name: "Open Leaderboard" }),
 		).toBeTruthy();
-		expect(screen.getByRole("button", { name: "Open Settings" })).toBeTruthy();
 		expect(screen.getByRole("button", { name: "Open Panels" })).toBeTruthy();
-		expect(screen.getByRole("button", { name: "Mute audio" })).toBeTruthy();
-		expect(screen.getByRole("button", { name: "Attack" })).toBeTruthy();
-		expect(screen.getByRole("button", { name: "Open Door" })).toBeTruthy();
+		expect(screen.getByRole("button", { name: "Open Settings" })).toBeTruthy();
 		expect(screen.getByText("Audio")).toBeTruthy();
-		expect(screen.getByText("Settings")).toBeTruthy();
 		expect(screen.getByText("Rankings")).toBeTruthy();
 		expect(screen.getByText("Panels")).toBeTruthy();
+		expect(screen.getByText("Settings")).toBeTruthy();
+
+		expect(
+			screen
+				.getAllByRole("button")
+				.map(
+					(button) =>
+						button.getAttribute("aria-label") ??
+						button.textContent?.trim() ??
+						"",
+				),
+		).toEqual([
+			"Open Door",
+			"Attack",
+			"Mute audio",
+			"Open Leaderboard",
+			"Open Panels",
+			"Open Settings",
+		]);
+
+		const settingsIconClass =
+			screen
+				.getByRole("button", { name: "Open Settings" })
+				.querySelector("svg")
+				?.getAttribute("class") ?? "";
+
+		expect(settingsIconClass).not.toContain("text-[var(--dungeon-gold)]");
 	});
 
 	it("wires the touch action handlers from the model", () => {

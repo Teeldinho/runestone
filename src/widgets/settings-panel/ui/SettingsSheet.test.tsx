@@ -3,6 +3,13 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SETTINGS_COPY } from "@/features/settings";
+import {
+	Button,
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/shared/ui";
 
 import { SettingsSheet } from "./SettingsSheet";
 
@@ -17,9 +24,16 @@ afterEach(() => {
 describe("SettingsSheet", () => {
 	it("opens the settings panel from the trigger and keeps it accessible", () => {
 		render(
-			<SettingsSheet>
-				<button type="button">Open Settings</button>
-			</SettingsSheet>,
+			<TooltipProvider>
+				<Tooltip>
+					<SettingsSheet>
+						<TooltipTrigger asChild>
+							<Button type="button">Open Settings</Button>
+						</TooltipTrigger>
+					</SettingsSheet>
+					<TooltipContent>{SETTINGS_COPY.PAGE_TITLE}</TooltipContent>
+				</Tooltip>
+			</TooltipProvider>,
 		);
 
 		expect(screen.queryByRole("dialog")).toBeNull();

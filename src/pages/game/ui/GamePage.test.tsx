@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import type React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DUNGEON_EVENTS, ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
@@ -363,6 +363,17 @@ describe("GamePage", () => {
 		expect(
 			screen.getByTestId("xstate-inspector-details-widget"),
 		).not.toBeNull();
+
+		expect(
+			within(screen.getByRole("banner"))
+				.getAllByRole("button")
+				.map((button) => button.getAttribute("aria-label")),
+		).toEqual([
+			GAME_PAGE_CONTROLS.AUDIO.MUTE_ARIA_LABEL,
+			GAME_PAGE_CONTROLS.LEADERBOARD.ARIA_LABEL,
+			GAME_PAGE_CONTROLS.SETTINGS.ARIA_LABEL,
+		]);
+
 		expect(
 			screen.getByRole("button", {
 				name: GAME_PAGE_CONTROLS.SETTINGS.ARIA_LABEL,
