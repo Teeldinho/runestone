@@ -1,19 +1,22 @@
 // @vitest-environment happy-dom
 
 import { act, renderHook } from "@testing-library/react";
+import * as THREE from "three";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CAMERA_MODES } from "@/shared/config";
-import { PLAYER_ENTITY_CONFIG } from "../config";
 
-const frameCallbacks: Array<() => void> = [];
+const frameCallbacks: Array<(...args: unknown[]) => void> = [];
 const mockGetCameraMode = vi.fn();
 const mockGetCameraAzimuth = vi.fn();
 const mockConsumePlayerTeleportTarget = vi.fn();
 const mockSetPlayerPosition = vi.fn();
+const mockResolvePlayerPhysicsTeleportTranslation = vi.fn();
+const mockResolvePlayerPhysicsLinearVelocity = vi.fn();
+const mockCreateSmoothedPlayerPhysicsRotation = vi.fn();
 
 vi.mock("@react-three/fiber", () => ({
-	useFrame: (callback: () => void) => {
+	useFrame: (callback: (...args: unknown[]) => void) => {
 		frameCallbacks.push(callback);
 	},
 }));
@@ -31,12 +34,23 @@ vi.mock("@/shared/lib/playerPositionStore", () => ({
 	setPlayerPosition: (...args: unknown[]) => mockSetPlayerPosition(...args),
 }));
 
+vi.mock("../lib/playerPhysics", () => ({
+	createSmoothedPlayerPhysicsRotation: (...args: unknown[]) =>
+		mockCreateSmoothedPlayerPhysicsRotation(...args),
+	resolvePlayerPhysicsLinearVelocity: (...args: unknown[]) =>
+		mockResolvePlayerPhysicsLinearVelocity(...args),
+	resolvePlayerPhysicsTeleportTranslation: (...args: unknown[]) =>
+		mockResolvePlayerPhysicsTeleportTranslation(...args),
+}));
+
+import { PLAYER_ENTITY_CONFIG } from "../config";
+
 import { usePlayerPhysics } from "./usePlayerPhysics";
 
 type FakeBody = {
 	translation: () => { x: number; y: number; z: number };
 	linvel: () => { x: number; y: number; z: number };
-	rotation: () => { x: number; y: number; z: number; w: number };
+	rotation: () => THREE.Quaternion;
 	setLinvel: ReturnType<typeof vi.fn>;
 	setRotation: ReturnType<typeof vi.fn>;
 	setTranslation: ReturnType<typeof vi.fn>;
@@ -44,11 +58,12 @@ type FakeBody = {
 
 const createFakeBody = (): FakeBody => {
 	let currentLinvel = { x: 0, y: 0, z: 0 };
+	const currentRotation = new THREE.Quaternion();
 
 	return {
 		translation: () => ({ x: 2, y: 1, z: -3 }),
 		linvel: () => currentLinvel,
-		rotation: () => ({ x: 0, y: 0, z: 0, w: 1 }),
+		rotation: () => currentRotation,
 		setLinvel: vi.fn((next: { x: number; y: number; z: number }) => {
 			currentLinvel = next;
 		}),
@@ -61,35 +76,42 @@ describe("usePlayerPhysics", () => {
 	beforeEach(() => {
 		frameCallbacks.length = 0;
 		vi.clearAllMocks();
+		mockGetCameraMode.mockReturnValue(CAMERA_MODES.FREE_ORBITAL);
 		mockGetCameraAzimuth.mockReturnValue(Math.PI / 2);
 		mockConsumePlayerTeleportTarget.mockReturnValue(null);
-	});
-
-	it("applies camera-relative movement in free-orbital mode", () => {
-		mockGetCameraMode.mockReturnValue(CAMERA_MODES.FREE_ORBITAL);
-		const { result } = renderHook(() =>
-			usePlayerPhysics({ velocity: [0, 0, -1], isSprinting: false }),
+		mockResolvePlayerPhysicsTeleportTranslation.mockImplementation(
+			(teleportTarget: [number, number, number]) => ({
+				x: teleportTarget[0],
+				y: teleportTarget[1],
+				z: teleportTarget[2],
+			}),
 		);
-		const body = createFakeBody();
-
-		result.current.rigidBodyRef.current = body as never;
-
-		act(() => {
-			frameCallbacks.at(-1)?.();
+		mockResolvePlayerPhysicsLinearVelocity.mockReturnValue({
+			horizontalVelocity: [PLAYER_ENTITY_CONFIG.MOVEMENT.SPEED, 0, 0],
+			isMoving: true,
+			rotationTarget: new THREE.Quaternion(),
 		});
-
-		expect(body.setLinvel).toHaveBeenCalledWith(
-			{
-				x: PLAYER_ENTITY_CONFIG.MOVEMENT.SPEED,
-				y: 0,
-				z: expect.closeTo(0, 6),
-			},
-			true,
+		mockCreateSmoothedPlayerPhysicsRotation.mockImplementation(
+			({ currentRotation, rotationTarget }) =>
+				currentRotation.clone().slerp(rotationTarget, 1),
 		);
 	});
 
-	it("applies camera-relative movement in top-down mode", () => {
-		mockGetCameraMode.mockReturnValue(CAMERA_MODES.TOP_DOWN);
+	it("consumes teleport targets and forwards camera-relative movement through helpers", () => {
+		mockResolvePlayerPhysicsLinearVelocity.mockReturnValue({
+			horizontalVelocity: [PLAYER_ENTITY_CONFIG.MOVEMENT.SPRINT_SPEED, 0, 0],
+			isMoving: true,
+			rotationTarget: new THREE.Quaternion().setFromAxisAngle(
+				new THREE.Vector3(0, 1, 0),
+				Math.PI / 4,
+			),
+		});
+		const smoothedRotation = new THREE.Quaternion().setFromAxisAngle(
+			new THREE.Vector3(0, 1, 0),
+			Math.PI / 2,
+		);
+		mockCreateSmoothedPlayerPhysicsRotation.mockReturnValue(smoothedRotation);
+
 		const { result } = renderHook(() =>
 			usePlayerPhysics({ velocity: [0, 0, -1], isSprinting: true }),
 		);
@@ -98,21 +120,51 @@ describe("usePlayerPhysics", () => {
 		result.current.rigidBodyRef.current = body as never;
 
 		act(() => {
-			frameCallbacks.at(-1)?.();
+			mockConsumePlayerTeleportTarget.mockReturnValue([2, 1, -3]);
+			frameCallbacks.at(-1)?.({}, 0.016);
 		});
 
+		expect(mockResolvePlayerPhysicsTeleportTranslation).toHaveBeenCalledWith([
+			2, 1, -3,
+		]);
+		expect(body.setTranslation).toHaveBeenCalledWith(
+			{ x: 2, y: 1, z: -3 },
+			true,
+		);
+		expect(mockResolvePlayerPhysicsLinearVelocity).toHaveBeenCalledWith({
+			cameraAzimuth: Math.PI / 2,
+			cameraMode: CAMERA_MODES.FREE_ORBITAL,
+			isSprinting: true,
+			velocity: [0, 0, -1],
+		});
+		expect(mockCreateSmoothedPlayerPhysicsRotation).toHaveBeenCalledWith({
+			currentRotation: expect.any(THREE.Quaternion),
+			delta: 0.016,
+			rotationTarget: expect.any(THREE.Quaternion),
+		});
 		expect(body.setLinvel).toHaveBeenCalledWith(
 			{
 				x: PLAYER_ENTITY_CONFIG.MOVEMENT.SPRINT_SPEED,
 				y: 0,
-				z: expect.closeTo(0, 6),
+				z: 0,
 			},
 			true,
 		);
+		expect(body.setRotation).toHaveBeenCalledWith(smoothedRotation, true);
+		expect(mockSetPlayerPosition).toHaveBeenCalledWith(2, 1, -3);
 	});
 
-	it("falls back to world-relative movement for unknown modes", () => {
+	it("forwards world-relative fallback movement through the helper", () => {
 		mockGetCameraMode.mockReturnValue("spectator");
+		mockResolvePlayerPhysicsLinearVelocity.mockReturnValue({
+			horizontalVelocity: [0, 0, -PLAYER_ENTITY_CONFIG.MOVEMENT.SPEED],
+			isMoving: true,
+			rotationTarget: new THREE.Quaternion().setFromAxisAngle(
+				new THREE.Vector3(0, 1, 0),
+				Math.PI,
+			),
+		});
+
 		const { result } = renderHook(() =>
 			usePlayerPhysics({ velocity: [0, 0, -1], isSprinting: false }),
 		);
@@ -121,9 +173,15 @@ describe("usePlayerPhysics", () => {
 		result.current.rigidBodyRef.current = body as never;
 
 		act(() => {
-			frameCallbacks.at(-1)?.();
+			frameCallbacks.at(-1)?.({}, 0.016);
 		});
 
+		expect(mockResolvePlayerPhysicsLinearVelocity).toHaveBeenCalledWith({
+			cameraAzimuth: Math.PI / 2,
+			cameraMode: "spectator",
+			isSprinting: false,
+			velocity: [0, 0, -1],
+		});
 		expect(body.setLinvel).toHaveBeenCalledWith(
 			{
 				x: 0,
@@ -132,5 +190,35 @@ describe("usePlayerPhysics", () => {
 			},
 			true,
 		);
+		expect(mockCreateSmoothedPlayerPhysicsRotation).toHaveBeenCalled();
+	});
+
+	it("stops horizontal motion when the helper reports an idle frame", () => {
+		mockResolvePlayerPhysicsLinearVelocity.mockReturnValue({
+			horizontalVelocity: [0, 0, 0],
+			isMoving: false,
+			rotationTarget: null,
+		});
+
+		const { result } = renderHook(() =>
+			usePlayerPhysics({ velocity: [0, 0, 0], isSprinting: false }),
+		);
+		const body = createFakeBody();
+
+		result.current.rigidBodyRef.current = body as never;
+
+		act(() => {
+			frameCallbacks.at(-1)?.({}, 0.016);
+		});
+
+		expect(mockResolvePlayerPhysicsLinearVelocity).toHaveBeenCalledWith({
+			cameraAzimuth: Math.PI / 2,
+			cameraMode: CAMERA_MODES.FREE_ORBITAL,
+			isSprinting: false,
+			velocity: [0, 0, 0],
+		});
+		expect(body.setLinvel).toHaveBeenCalledWith({ x: 0, y: 0, z: 0 }, true);
+		expect(body.setRotation).not.toHaveBeenCalled();
+		expect(mockCreateSmoothedPlayerPhysicsRotation).not.toHaveBeenCalled();
 	});
 });
