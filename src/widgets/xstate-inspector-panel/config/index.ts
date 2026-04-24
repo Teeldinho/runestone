@@ -1,3 +1,4 @@
+export { INSPECTOR_DETAILS_PANEL_IDS } from "./inspectorDetailsPanelConfig";
 export {
 	INSPECTOR_COPY,
 	INSPECTOR_EDGE_LABELS,
