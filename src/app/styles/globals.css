@@ -2,6 +2,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@custom-variant data-horizontal (&[data-orientation="horizontal"]);
+@custom-variant data-vertical (&[data-orientation="vertical"]);
+@custom-variant data-checked (&[data-state="checked"]);
+@custom-variant data-unchecked (&[data-state="unchecked"]);
+
 :root {
 	color-scheme: dark;
 	font-family: "Space Grotesk", "JetBrains Mono", sans-serif;

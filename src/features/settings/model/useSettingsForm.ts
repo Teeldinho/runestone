@@ -1,5 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+import { SETTINGS_DEFAULTS } from "../config";
 import {
 	readSettings,
 	resetSettings,
@@ -20,13 +21,28 @@ type UseSettingsFormResult = SettingsValues & {
 };
 
 export const useSettingsForm = (): UseSettingsFormResult => {
-	const [settings, setSettings] = useState<SettingsValues>(() =>
-		readSettings(localStorage),
-	);
+	const [settings, setSettings] = useState<SettingsValues>(() => ({
+		...SETTINGS_DEFAULTS,
+	}));
+
+	useEffect(() => {
+		const storage = globalThis.localStorage;
+
+		if (!storage) {
+			return;
+		}
+
+		setSettings(readSettings(storage));
+	}, []);
 
 	const persist = useCallback((next: SettingsValues) => {
+		const storage = globalThis.localStorage;
+
 		setSettings(next);
-		writeSettings(localStorage, next);
+
+		if (storage) {
+			writeSettings(storage, next);
+		}
 	}, []);
 
 	const handleMasterVolumeSliderChange = useCallback(
@@ -83,8 +99,15 @@ export const useSettingsForm = (): UseSettingsFormResult => {
 	}, [settings, persist]);
 
 	const handleSettingsReset = useCallback(() => {
-		resetSettings(localStorage);
-		const defaults = readSettings(localStorage);
+		const storage = globalThis.localStorage;
+
+		if (!storage) {
+			setSettings({ ...SETTINGS_DEFAULTS });
+			return;
+		}
+
+		resetSettings(storage);
+		const defaults = readSettings(storage);
 		setSettings(defaults);
 	}, []);
 
