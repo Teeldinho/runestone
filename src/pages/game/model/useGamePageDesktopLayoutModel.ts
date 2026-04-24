@@ -1,4 +1,4 @@
-import { useSettingsForm } from "@/features/settings";
+import { useSettingsValues } from "@/features/settings";
 
 import {
 	useGamePageAudioContext,
@@ -14,7 +14,7 @@ export const useGamePageDesktopLayoutModel = () => {
 	const hud = useGamePageHudContext();
 	const layout = useGamePageLayoutContext();
 	const visualizer = useGamePageVisualizerContext();
-	const { postprocessingEnabled } = useSettingsForm();
+	const { postprocessingEnabled } = useSettingsValues();
 
 	return {
 		cameraStateSnapshot: canvas.cameraStateSnapshot,

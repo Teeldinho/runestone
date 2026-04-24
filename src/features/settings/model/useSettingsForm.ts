@@ -1,12 +1,18 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 
-import { SETTINGS_DEFAULTS } from "../config";
+import { SETTINGS_VOLUME_RANGE } from "../config";
+import type { SettingsValues } from "../lib";
+
 import {
-	readSettings,
-	resetSettings,
-	type SettingsValues,
-	writeSettings,
-} from "../lib";
+	resetSettingsStore,
+	setHapticsEnabledSetting,
+	setMasterVolumeSetting,
+	setMusicVolumeSetting,
+	setPostprocessingEnabledSetting,
+	toggleHapticsEnabledSetting,
+	togglePostprocessingEnabledSetting,
+} from "./settingsStore";
+import { useSettingsValues } from "./useSettingsValues";
 
 type UseSettingsFormResult = SettingsValues & {
 	handleMasterVolumeSliderChange: (value: number[]) => void;
@@ -21,94 +27,42 @@ type UseSettingsFormResult = SettingsValues & {
 };
 
 export const useSettingsForm = (): UseSettingsFormResult => {
-	const [settings, setSettings] = useState<SettingsValues>(() => ({
-		...SETTINGS_DEFAULTS,
-	}));
+	const settings = useSettingsValues();
 
-	useEffect(() => {
-		const storage = globalThis.localStorage;
-
-		if (!storage) {
-			return;
-		}
-
-		setSettings(readSettings(storage));
+	const handleMasterVolumeSliderChange = useCallback((value: number[]) => {
+		setMasterVolumeSetting(value[0] ?? SETTINGS_VOLUME_RANGE.MIN);
 	}, []);
 
-	const persist = useCallback((next: SettingsValues) => {
-		const storage = globalThis.localStorage;
-
-		setSettings(next);
-
-		if (storage) {
-			writeSettings(storage, next);
-		}
+	const handleMusicVolumeSliderChange = useCallback((value: number[]) => {
+		setMusicVolumeSetting(value[0] ?? SETTINGS_VOLUME_RANGE.MIN);
 	}, []);
 
-	const handleMasterVolumeSliderChange = useCallback(
-		(value: number[]) => {
-			persist({ ...settings, masterVolume: value[0] ?? 0 });
-		},
-		[settings, persist],
-	);
+	const handleMasterVolumeChange = useCallback((value: number) => {
+		setMasterVolumeSetting(value);
+	}, []);
 
-	const handleMusicVolumeSliderChange = useCallback(
-		(value: number[]) => {
-			persist({ ...settings, musicVolume: value[0] ?? 0 });
-		},
-		[settings, persist],
-	);
+	const handleMusicVolumeChange = useCallback((value: number) => {
+		setMusicVolumeSetting(value);
+	}, []);
 
-	const handleMasterVolumeChange = useCallback(
-		(value: number) => {
-			persist({ ...settings, masterVolume: value });
-		},
-		[settings, persist],
-	);
-
-	const handleMusicVolumeChange = useCallback(
-		(value: number) => {
-			persist({ ...settings, musicVolume: value });
-		},
-		[settings, persist],
-	);
-
-	const handlePostprocessingToggle = useCallback(
-		(enabled: boolean) => {
-			persist({ ...settings, postprocessingEnabled: enabled });
-		},
-		[settings, persist],
-	);
+	const handlePostprocessingToggle = useCallback((enabled: boolean) => {
+		setPostprocessingEnabledSetting(enabled);
+	}, []);
 
 	const handlePostprocessingToggleClick = useCallback(() => {
-		persist({
-			...settings,
-			postprocessingEnabled: !settings.postprocessingEnabled,
-		});
-	}, [settings, persist]);
+		togglePostprocessingEnabledSetting();
+	}, []);
 
-	const handleHapticsToggle = useCallback(
-		(enabled: boolean) => {
-			persist({ ...settings, hapticsEnabled: enabled });
-		},
-		[settings, persist],
-	);
+	const handleHapticsToggle = useCallback((enabled: boolean) => {
+		setHapticsEnabledSetting(enabled);
+	}, []);
 
 	const handleHapticsToggleClick = useCallback(() => {
-		persist({ ...settings, hapticsEnabled: !settings.hapticsEnabled });
-	}, [settings, persist]);
+		toggleHapticsEnabledSetting();
+	}, []);
 
 	const handleSettingsReset = useCallback(() => {
-		const storage = globalThis.localStorage;
-
-		if (!storage) {
-			setSettings({ ...SETTINGS_DEFAULTS });
-			return;
-		}
-
-		resetSettings(storage);
-		const defaults = readSettings(storage);
-		setSettings(defaults);
+		resetSettingsStore();
 	}, []);
 
 	return {
