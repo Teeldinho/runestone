@@ -1,1 +1,4 @@
-export { LEADERBOARD_PANEL_COPY } from "./leaderboardPanelConfig";
+export {
+	LEADERBOARD_PANEL_COPY,
+	LEADERBOARD_PANEL_IDS,
+} from "./leaderboardPanelConfig";
