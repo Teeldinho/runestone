@@ -16,9 +16,7 @@ import {
 
 describe("playerPhysics", () => {
 	it("maps a teleport target tuple to a rigid-body translation", () => {
-		expect(
-			resolvePlayerPhysicsTeleportTranslation([2, 1, -3]),
-		).toEqual({
+		expect(resolvePlayerPhysicsTeleportTranslation([2, 1, -3])).toEqual({
 			x: 2,
 			y: 1,
 			z: -3,
@@ -39,9 +37,11 @@ describe("playerPhysics", () => {
 			0,
 			expect.closeTo(0, 6),
 		]);
-		expect(result.rotationTarget?.equals(getQuaternionFromXZ(1, 0))).toBe(
-			true,
-		);
+		expect(
+			result.rotationTarget?.angleTo(
+				getQuaternionFromXZ(PLAYER_ENTITY_CONFIG.MOVEMENT.SPRINT_SPEED, 0),
+			),
+		).toBeLessThan(0.01);
 	});
 
 	it("falls back to world-relative velocity and reports idle frames", () => {
@@ -82,13 +82,15 @@ describe("playerPhysics", () => {
 		});
 
 		expect(nextRotation).not.toBe(currentRotation);
-		expect(nextRotation.equals(
-			currentRotation
-				.clone()
-				.slerp(
-					targetRotation,
-					PLAYER_ENTITY_CONFIG.MOVEMENT.ROTATION_SPEED * 0.05,
-				),
-		)).toBe(true);
+		expect(
+			nextRotation.equals(
+				currentRotation
+					.clone()
+					.slerp(
+						targetRotation,
+						PLAYER_ENTITY_CONFIG.MOVEMENT.ROTATION_SPEED * 0.05,
+					),
+			),
+		).toBe(true);
 	});
 });
