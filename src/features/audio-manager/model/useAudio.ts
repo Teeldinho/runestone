@@ -1,16 +1,30 @@
 import { useMachine } from "@xstate/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import * as Tone from "tone";
 
-import { AUDIO_EVENTS, AUDIO_MACHINE_STATES } from "../config";
+import {
+	AUDIO_EVENTS,
+	AUDIO_MACHINE_STATES,
+	AUDIO_SETTINGS_DEFAULTS,
+} from "../config";
 import {
 	pauseBackgroundMusicLoop,
+	setBackgroundMusicVolume,
 	startBackgroundMusicLoop,
 	stopBackgroundMusicLoop,
 } from "../lib";
 
 import { audioMachine } from "./audioMachine";
 
-export const useAudio = () => {
+type UseAudioSettings = {
+	masterVolume?: number;
+	musicVolume?: number;
+};
+
+export const useAudio = ({
+	masterVolume = AUDIO_SETTINGS_DEFAULTS.masterVolume,
+	musicVolume = AUDIO_SETTINGS_DEFAULTS.musicVolume,
+}: UseAudioSettings = {}) => {
 	const [audioSnapshot, sendAudioEvent] = useMachine(audioMachine);
 	const previousAudioStateRef = useRef(audioSnapshot.value);
 	const isAudioMutedRef = useRef(
@@ -39,6 +53,11 @@ export const useAudio = () => {
 
 		previousAudioStateRef.current = audioSnapshot.value;
 	}, [audioSnapshot]);
+
+	useEffect(() => {
+		Tone.getDestination().volume.value = Tone.gainToDb(masterVolume);
+		setBackgroundMusicVolume(musicVolume);
+	}, [masterVolume, musicVolume]);
 
 	const handleAudioPlayRequest = useCallback(() => {
 		sendAudioEvent({
