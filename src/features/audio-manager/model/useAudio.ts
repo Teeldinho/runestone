@@ -1,5 +1,5 @@
 import { useMachine } from "@xstate/react";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import * as Tone from "tone";
 
 import {
@@ -8,13 +8,12 @@ import {
 	AUDIO_SETTINGS_DEFAULTS,
 } from "../config";
 import {
-	pauseBackgroundMusicLoop,
 	setBackgroundMusicVolume,
-	startBackgroundMusicLoop,
 	stopBackgroundMusicLoop,
 } from "../lib";
 
 import { audioMachine } from "./audioMachine";
+import { useAudioPlaybackLifecycle } from "./useAudioPlaybackLifecycle";
 
 type UseAudioSettings = {
 	masterVolume?: number;
@@ -26,33 +25,7 @@ export const useAudio = ({
 	musicVolume = AUDIO_SETTINGS_DEFAULTS.musicVolume,
 }: UseAudioSettings = {}) => {
 	const [audioSnapshot, sendAudioEvent] = useMachine(audioMachine);
-	const previousAudioStateRef = useRef(audioSnapshot.value);
-	const isAudioMutedRef = useRef(
-		audioSnapshot.matches(AUDIO_MACHINE_STATES.MUTED),
-	);
-
-	useEffect(() => {
-		isAudioMutedRef.current = audioSnapshot.matches(AUDIO_MACHINE_STATES.MUTED);
-	}, [audioSnapshot]);
-
-	useEffect(() => {
-		const wasPlayingBeforeUpdate =
-			previousAudioStateRef.current === AUDIO_MACHINE_STATES.PLAYING;
-
-		if (
-			audioSnapshot.matches(AUDIO_MACHINE_STATES.PLAYING) &&
-			!wasPlayingBeforeUpdate
-		) {
-			void startBackgroundMusicLoop();
-		} else if (
-			audioSnapshot.matches(AUDIO_MACHINE_STATES.PAUSED) ||
-			audioSnapshot.matches(AUDIO_MACHINE_STATES.MUTED)
-		) {
-			pauseBackgroundMusicLoop();
-		}
-
-		previousAudioStateRef.current = audioSnapshot.value;
-	}, [audioSnapshot]);
+	useAudioPlaybackLifecycle(audioSnapshot.value);
 
 	useEffect(() => {
 		Tone.getDestination().volume.value = Tone.gainToDb(masterVolume);
@@ -79,8 +52,6 @@ export const useAudio = ({
 	}, [sendAudioEvent]);
 
 	const handleAudioMuteToggle = useCallback(() => {
-		isAudioMutedRef.current = !isAudioMutedRef.current;
-
 		sendAudioEvent({
 			type: AUDIO_EVENTS.TOGGLE_MUTE_REQUESTED,
 		});
