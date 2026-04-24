@@ -88,6 +88,35 @@ describe("useHaptics", () => {
 		expect(mockTrigger).toHaveBeenCalledWith(HAPTIC_PATTERNS.ROOM_ENTER);
 	});
 
+	it("suppresses haptic triggers when disabled in settings", () => {
+		let hapticsEnabled = true;
+		const { result, rerender } = renderHook(() =>
+			useHaptics({ hapticsEnabled }),
+		);
+
+		act(() => {
+			hapticsEnabled = false;
+			rerender();
+		});
+
+		act(() => {
+			result.current.onRoomEnter();
+		});
+
+		expect(mockTrigger).not.toHaveBeenCalled();
+
+		act(() => {
+			hapticsEnabled = true;
+			rerender();
+		});
+
+		act(() => {
+			result.current.onRoomEnter();
+		});
+
+		expect(mockTrigger).toHaveBeenCalledWith(HAPTIC_PATTERNS.ROOM_ENTER);
+	});
+
 	it("throttles rapid consecutive triggers", () => {
 		vi.useFakeTimers();
 		vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));

@@ -218,15 +218,13 @@ describe("useCanvasMachineSettings", () => {
 		expect(result.current.isPostprocessingEnabled).toBe(false);
 	});
 
-	it("returns isPostprocessingEnabled as false when postprocessingEnabled prop is true but postprocessing.enabled defaults to false", () => {
+	it("returns isPostprocessingEnabled as true when postprocessingEnabled prop is true even if base canvas defaults to false", () => {
 		const machineRuntime = createMachineRuntime();
 
 		const { result } = renderHook(() =>
 			useCanvasMachineSettings(machineRuntime, undefined, true),
 		);
 
-		expect(result.current.isPostprocessingEnabled).toBe(
-			GAME_CANVAS_CONFIG.POSTPROCESSING.ENABLED_DEFAULT,
-		);
+		expect(result.current.isPostprocessingEnabled).toBe(true);
 	});
 });

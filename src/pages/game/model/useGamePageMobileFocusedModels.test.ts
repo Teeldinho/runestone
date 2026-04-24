@@ -4,7 +4,7 @@ import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ROOM_IDS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
-import { useSettingsForm } from "@/features/settings";
+import { useSettingsValues } from "@/features/settings";
 import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import { useGamePageMobileActionPanelModel } from "./useGamePageMobileActionPanelModel";
 import { useGamePageMobileCanvasStageModel } from "./useGamePageMobileCanvasStageModel";
@@ -31,7 +31,7 @@ vi.mock("./useGamePageSliceContexts", () => ({
 }));
 
 vi.mock("@/features/settings", () => ({
-	useSettingsForm: vi.fn(),
+	useSettingsValues: vi.fn(),
 }));
 
 const createGamePageContextSlices = () => ({
@@ -110,9 +110,9 @@ const mockGamePageContextSlices = (
 describe("game page mobile focused models", () => {
 	it("builds canvas stage model", () => {
 		mockGamePageContextSlices(createGamePageContextSlices());
-		vi.mocked(useSettingsForm).mockReturnValue({
+		vi.mocked(useSettingsValues).mockReturnValue({
 			postprocessingEnabled: true,
-		} as ReturnType<typeof useSettingsForm>);
+		} as ReturnType<typeof useSettingsValues>);
 
 		const { result } = renderHook(() => useGamePageMobileCanvasStageModel());
 
