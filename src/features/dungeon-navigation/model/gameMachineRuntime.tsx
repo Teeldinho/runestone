@@ -4,9 +4,7 @@ import { useCallback, useMemo } from "react";
 
 import type { GameMachineEvent } from "@/features/dungeon-navigation/config";
 
-import {
-	selectGameMachineSnapshot,
-} from "../lib";
+import { selectGameMachineSnapshot } from "../lib";
 import { createGameMachine } from "./gameMachine";
 
 type DungeonMachineSnapshot = ReturnType<
