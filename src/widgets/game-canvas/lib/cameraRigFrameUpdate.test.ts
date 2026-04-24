@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CAMERA_MODES } from "@/features/camera-system";
 
@@ -7,9 +7,50 @@ import { CAMERA_RIG_LERP_ALPHA } from "../config";
 import {
 	checkShouldSyncMovementAzimuth,
 	resolveCameraRigFrameFlags,
-} from "./cameraRigFrameUpdate";
+	resolveTrackedPlayerPosition,
+} from "./cameraRigFrameUpdateState";
+
+const mockGetPlayerPosition = vi.fn();
+const mockHasPlayerPosition = vi.fn();
+
+vi.mock("@/shared/lib", async (importOriginal) => {
+	const original = await importOriginal<typeof import("@/shared/lib")>();
+
+	return {
+		...original,
+		getPlayerPosition: () => mockGetPlayerPosition(),
+		hasPlayerPosition: () => mockHasPlayerPosition(),
+	};
+});
 
 describe("cameraRigFrameUpdate", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		mockHasPlayerPosition.mockReturnValue(false);
+		mockGetPlayerPosition.mockReturnValue([0, 0, 0]);
+	});
+
+	describe("resolveTrackedPlayerPosition", () => {
+		it("falls back to the spawn position when no tracked player position exists", () => {
+			expect(
+				resolveTrackedPlayerPosition({
+					playerSpawnPosition: [10, 0.9, -5],
+				}),
+			).toEqual([10, 0.9, -5]);
+		});
+
+		it("returns the tracked player position when one is available", () => {
+			mockHasPlayerPosition.mockReturnValue(true);
+			mockGetPlayerPosition.mockReturnValue([3, 0.9, -7]);
+
+			expect(
+				resolveTrackedPlayerPosition({
+					playerSpawnPosition: [10, 0.9, -5],
+				}),
+			).toEqual([3, 0.9, -7]);
+		});
+	});
+
 	describe("checkShouldSyncMovementAzimuth", () => {
 		it("always syncs movement azimuth outside free-orbital mode", () => {
 			expect(
