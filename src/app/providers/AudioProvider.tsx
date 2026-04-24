@@ -1,11 +1,11 @@
 import { type ReactNode, useEffect } from "react";
 import * as Tone from "tone";
-
 import {
 	AudioContext,
 	startBackgroundMusicLoop,
 	useAudio,
 } from "@/features/audio-manager";
+import { useSettingsValues } from "@/features/settings";
 
 import { AUDIO_PROVIDER_UNLOCK_EVENT_LIST } from "./audioProviderEvents";
 
@@ -14,7 +14,8 @@ type AudioProviderProps = {
 };
 
 export function AudioProvider({ children }: AudioProviderProps) {
-	const audioController = useAudio();
+	const { masterVolume, musicVolume } = useSettingsValues();
+	const audioController = useAudio({ masterVolume, musicVolume });
 
 	useEffect(() => {
 		const handleFirstInteraction = () => {

@@ -2,6 +2,7 @@ import { useGamePageMobileActionPanelModel } from "@/pages/game/model";
 
 import { GamePageMobileAudioAction } from "./GamePageMobileAudioAction";
 import { GamePageMobileLeaderboardAction } from "./GamePageMobileLeaderboardAction";
+import { GamePageMobileSettingsAction } from "./GamePageMobileSettingsAction";
 import { GamePageMobileSheetAction } from "./GamePageMobileSheetAction";
 import { GamePageMobileTouchActions } from "./GamePageMobileTouchActions";
 
@@ -16,6 +17,9 @@ export function GamePageMobileActionPanel() {
 				leaderboardTrigger={viewModel.leaderboardTrigger}
 			/>
 			<GamePageMobileSheetAction sheetTrigger={viewModel.sheetTrigger} />
+			<GamePageMobileSettingsAction
+				settingsTrigger={viewModel.settingsTrigger}
+			/>
 		</div>
 	);
 }

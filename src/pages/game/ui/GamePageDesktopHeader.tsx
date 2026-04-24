@@ -5,6 +5,8 @@ import { useGamePageDesktopHeaderModel } from "@/pages/game/model";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui";
 import { LeaderboardSheet } from "@/widgets/leaderboard-panel";
 
+import { GamePageDesktopSettingsAction } from "./GamePageDesktopSettingsAction";
+
 export function GamePageDesktopHeader() {
 	const { currentRoomLabel, handleAudioMuteToggle, isAudioMuted } =
 		useGamePageDesktopHeaderModel();
@@ -54,8 +56,8 @@ export function GamePageDesktopHeader() {
 					</TooltipContent>
 				</Tooltip>
 
-				<LeaderboardSheet>
-					<Tooltip>
+				<Tooltip>
+					<LeaderboardSheet>
 						<TooltipTrigger asChild>
 							<Button
 								type="button"
@@ -66,11 +68,13 @@ export function GamePageDesktopHeader() {
 								<Trophy className="h-4 w-4 text-[var(--dungeon-gold)]" />
 							</Button>
 						</TooltipTrigger>
-						<TooltipContent>
-							{GAME_PAGE_CONTROLS.LEADERBOARD.TOOLTIP_LABEL}
-						</TooltipContent>
-					</Tooltip>
-				</LeaderboardSheet>
+					</LeaderboardSheet>
+					<TooltipContent>
+						{GAME_PAGE_CONTROLS.LEADERBOARD.TOOLTIP_LABEL}
+					</TooltipContent>
+				</Tooltip>
+
+				<GamePageDesktopSettingsAction />
 			</div>
 		</header>
 	);

@@ -1,10 +1,10 @@
-import { useSettingsForm } from "@/features/settings";
+import { useSettingsValues } from "@/features/settings";
 
 import { useGamePageCanvasContext } from "./useGamePageSliceContexts";
 
 export const useGamePageMobileCanvasStageModel = () => {
 	const canvas = useGamePageCanvasContext();
-	const { postprocessingEnabled } = useSettingsForm();
+	const { postprocessingEnabled } = useSettingsValues();
 
 	return {
 		cameraStateSnapshot: canvas.cameraStateSnapshot,

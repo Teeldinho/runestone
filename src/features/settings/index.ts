@@ -12,4 +12,4 @@ export {
 	resolveToggleLabel,
 	writeSettings,
 } from "./lib";
-export { useSettingsForm } from "./model";
+export { useSettingsForm, useSettingsValues } from "./model";

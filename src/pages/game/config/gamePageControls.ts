@@ -11,4 +11,9 @@ export const GAME_PAGE_CONTROLS = {
 		ARIA_LABEL: "Open Leaderboard",
 		TOOLTIP_LABEL: "Leaderboard",
 	},
+	SETTINGS: {
+		BUTTON_LABEL: "Settings",
+		ARIA_LABEL: "Open Settings",
+		TOOLTIP_LABEL: "Settings",
+	},
 } as const;

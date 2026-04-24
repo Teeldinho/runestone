@@ -26,6 +26,9 @@ type GamePageMobileActionPanelModel = {
 	leaderboardTrigger: {
 		isTabletLayout: boolean;
 	};
+	settingsTrigger: {
+		isTabletLayout: boolean;
+	};
 	sheetTrigger: {
 		isMobileSheetOpen: boolean;
 		isTabletLayout: boolean;
@@ -50,6 +53,9 @@ export const useGamePageMobileActionPanelModel =
 				isTabletLayout: layout.isTabletLayout,
 			},
 			leaderboardTrigger: {
+				isTabletLayout: layout.isTabletLayout,
+			},
+			settingsTrigger: {
 				isTabletLayout: layout.isTabletLayout,
 			},
 			sheetTrigger: {

@@ -23,12 +23,18 @@ type UseAchievementTrackerResult = {
 	activeAchievement: Achievement | null;
 };
 
-export const useAchievementTracker = (): UseAchievementTrackerResult => {
+type UseAchievementTrackerInput = {
+	hapticsEnabled?: boolean;
+};
+
+export const useAchievementTracker = ({
+	hapticsEnabled = true,
+}: UseAchievementTrackerInput = {}): UseAchievementTrackerResult => {
 	const achievementTrackingContext = useGameMachineSelector(
 		selectAchievementTrackingContext,
 		shallowEqual,
 	);
-	const { onAchievement } = useHaptics();
+	const { onAchievement } = useHaptics({ hapticsEnabled });
 
 	const [achievementNotificationSnapshot, sendAchievementNotificationEvent] =
 		useMachine(achievementNotificationMachine);

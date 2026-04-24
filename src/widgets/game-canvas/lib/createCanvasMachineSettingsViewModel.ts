@@ -166,8 +166,7 @@ export const createCanvasMachineSettingsViewModel = ({
 			},
 		},
 		isPostprocessingEnabled:
-			baseCanvasSettings.postprocessing.enabled &&
-			(postprocessingEnabled ?? true),
+			postprocessingEnabled ?? baseCanvasSettings.postprocessing.enabled,
 		playerSpawnPosition,
 	};
 };
