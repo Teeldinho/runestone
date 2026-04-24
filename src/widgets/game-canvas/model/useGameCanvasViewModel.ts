@@ -1,5 +1,6 @@
 import type { Achievement } from "@/features/achievements";
 import type { CameraStateSnapshot } from "@/features/camera-system";
+import { useSettingsValues } from "@/features/settings";
 
 import type { CanvasMachineSettingsViewModel } from "./canvasSettingsTypes";
 import { useAchievementTracker } from "./useAchievementTracker";
@@ -29,6 +30,7 @@ export const useGameCanvasViewModel = ({
 	machineRuntime,
 	postprocessingEnabled,
 }: UseGameCanvasViewModelInput): UseGameCanvasViewModelResult => {
+	const { hapticsEnabled } = useSettingsValues();
 	const canvasSettings = useCanvasMachineSettings(
 		machineRuntime,
 		cameraStateSnapshot,
@@ -36,10 +38,10 @@ export const useGameCanvasViewModel = ({
 	);
 
 	usePlayerSceneController();
-	useGameSideEffects();
+	useGameSideEffects({ hapticsEnabled });
 
 	const { isGameOver, handleGameRestart } = useGameOverState();
-	const { activeAchievement } = useAchievementTracker();
+	const { activeAchievement } = useAchievementTracker({ hapticsEnabled });
 	const showFirstPersonLockHint = useFirstPersonLockHint({
 		mode: cameraStateSnapshot?.mode,
 	});

@@ -2,6 +2,7 @@ import { CorridorMesh } from "@/entities/corridor";
 import { EnemyMesh } from "@/entities/enemy";
 import { PlayerMesh } from "@/entities/player";
 import { RoomLabel, RoomMesh } from "@/entities/room";
+import { useSettingsValues } from "@/features/settings";
 import type { Vector3Tuple } from "@/shared/lib";
 import {
 	type CanvasEnvironmentSettings,
@@ -20,7 +21,10 @@ export function SceneEnvironment({
 }: SceneEnvironmentProps) {
 	const { corridorMeshSettings, roomMeshSettings, enemyMeshSettings } =
 		useSceneEnvironmentSettings();
-	const { handleEnemyDead, handleEnemyAttack } = useEnemySceneController();
+	const { hapticsEnabled } = useSettingsValues();
+	const { handleEnemyDead, handleEnemyAttack } = useEnemySceneController({
+		hapticsEnabled,
+	});
 
 	return (
 		<>

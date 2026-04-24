@@ -17,7 +17,13 @@ import {
 
 const isHapticsDebugModeEnabled = import.meta.env.DEV;
 
-export const useHaptics = () => {
+type UseHapticsSettings = {
+	hapticsEnabled?: boolean;
+};
+
+export const useHaptics = ({
+	hapticsEnabled = true,
+}: UseHapticsSettings = {}) => {
 	const { trigger, cancel, isSupported } = useWebHaptics({
 		debug: isHapticsDebugModeEnabled,
 	});
@@ -28,6 +34,7 @@ export const useHaptics = () => {
 			const now = Date.now();
 
 			if (
+				!hapticsEnabled ||
 				shouldSkipHapticTrigger({
 					now,
 					lastHapticTriggerAt: lastHapticTriggerAtRef.current,
@@ -41,7 +48,7 @@ export const useHaptics = () => {
 			lastHapticTriggerAtRef.current = now;
 			void trigger(pattern);
 		},
-		[trigger],
+		[trigger, hapticsEnabled],
 	);
 
 	const triggerHapticEvent = useCallback(

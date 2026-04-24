@@ -25,7 +25,13 @@ import { usePlayerDeathHaptic } from "./usePlayerDeathHaptic";
 import { useRoomArrivalTeleport } from "./useRoomArrivalTeleport";
 import { useRoomTransitionHaptics } from "./useRoomTransitionHaptics";
 
-export const useGameSideEffects = (): void => {
+type UseGameSideEffectsInput = {
+	hapticsEnabled?: boolean;
+};
+
+export const useGameSideEffects = ({
+	hapticsEnabled = true,
+}: UseGameSideEffectsInput = {}): void => {
 	const activeStateLabel = useGameMachineSelector(selectActiveStateLabel);
 	const currentRoomId = useGameMachineSelector(selectCurrentRoomId);
 	const discoveredRooms = useGameMachineSelector(selectDiscoveredRooms);
@@ -38,7 +44,7 @@ export const useGameSideEffects = (): void => {
 		onTransition,
 		onFloorComplete,
 		onPlayerDeath,
-	} = useHaptics();
+	} = useHaptics({ hapticsEnabled });
 	const submitScore = useSubmitDungeonScore();
 	const { authenticatedProfile } = useAuthContext();
 
