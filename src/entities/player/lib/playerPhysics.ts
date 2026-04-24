@@ -1,10 +1,7 @@
 import type * as THREE from "three";
 
-import { RELATIVE_CAMERA_MODES, type CameraMode } from "@/shared/config";
-import {
-	getQuaternionFromXZ,
-	type Vector3Tuple,
-} from "@/shared/lib";
+import { type CameraMode, RELATIVE_CAMERA_MODES } from "@/shared/config";
+import { getQuaternionFromXZ, type Vector3Tuple } from "@/shared/lib";
 
 import { PLAYER_ENTITY_CONFIG } from "../config";
 
@@ -55,8 +52,7 @@ export const resolvePlayerPhysicsLinearVelocity = ({
 	velocity,
 }: ResolvePlayerPhysicsLinearVelocityInput): PlayerPhysicsLinearVelocity => {
 	const normalizedVelocity = normalizeMovementVelocity(velocity);
-	const isMoving =
-		normalizedVelocity[0] !== 0 || normalizedVelocity[2] !== 0;
+	const isMoving = normalizedVelocity[0] !== 0 || normalizedVelocity[2] !== 0;
 
 	if (!isMoving) {
 		return {
@@ -84,7 +80,10 @@ export const resolvePlayerPhysicsLinearVelocity = ({
 	return {
 		horizontalVelocity,
 		isMoving: true,
-		rotationTarget: getQuaternionFromXZ(horizontalVelocity[0], horizontalVelocity[2]),
+		rotationTarget: getQuaternionFromXZ(
+			horizontalVelocity[0],
+			horizontalVelocity[2],
+		),
 	};
 };
 
@@ -95,7 +94,10 @@ export const createSmoothedPlayerPhysicsRotation = ({
 }: CreateSmoothedPlayerPhysicsRotationInput): THREE.Quaternion =>
 	currentRotation
 		.clone()
-		.slerp(rotationTarget, PLAYER_ENTITY_CONFIG.MOVEMENT.ROTATION_SPEED * delta);
+		.slerp(
+			rotationTarget,
+			PLAYER_ENTITY_CONFIG.MOVEMENT.ROTATION_SPEED * delta,
+		);
 
 export type {
 	CreateSmoothedPlayerPhysicsRotationInput,
