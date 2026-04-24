@@ -1,31 +1,23 @@
 import type { ReactNode } from "react";
 import {
-	Alert,
-	AlertDescription,
 	Sheet,
 	SheetContent,
 	SheetDescription,
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
-	Table,
-	TableBody,
-	TableCaption,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
 } from "@/shared/ui";
-import { LEADERBOARD_PANEL_COPY } from "@/widgets/leaderboard-panel/config";
-import { useLeaderboardPanel } from "@/widgets/leaderboard-panel/model";
+import { LEADERBOARD_PANEL_COPY } from "../config";
+import { useLeaderboardPanel } from "../model";
+
+import { LeaderboardPanelContent } from "./LeaderboardPanelContent";
 
 type LeaderboardSheetProps = {
 	children: ReactNode;
 };
 
 export function LeaderboardSheet({ children }: LeaderboardSheetProps) {
-	const { entries, errorMessage, hasEntries, isEmpty, isError, isLoading } =
-		useLeaderboardPanel();
+	const leaderboardPanel = useLeaderboardPanel();
 
 	return (
 		<Sheet>
@@ -44,81 +36,7 @@ export function LeaderboardSheet({ children }: LeaderboardSheetProps) {
 				</SheetHeader>
 
 				<div className="flex-1 min-h-0 overflow-y-auto px-4 pb-4">
-					<div className="space-y-4">
-						{isLoading ? (
-							<p role="status" className="text-sm text-muted-foreground">
-								{LEADERBOARD_PANEL_COPY.STATE.LOADING}
-							</p>
-						) : null}
-
-						{isError ? (
-							<Alert variant="destructive">
-								<AlertDescription>
-									{errorMessage ?? LEADERBOARD_PANEL_COPY.STATE.ERROR_FALLBACK}
-								</AlertDescription>
-							</Alert>
-						) : null}
-
-						{isEmpty ? (
-							<p className="text-sm text-muted-foreground">
-								{LEADERBOARD_PANEL_COPY.STATE.EMPTY}
-							</p>
-						) : null}
-
-						{hasEntries ? (
-							<div className="overflow-hidden rounded-xl border border-border/70">
-								<Table>
-									<TableCaption className="sr-only">
-										{LEADERBOARD_PANEL_COPY.TABLE.CAPTION}
-									</TableCaption>
-									<TableHeader className="bg-muted/30">
-										<TableRow>
-											<TableHead className="px-3 py-2 font-medium">
-												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.RANK}
-											</TableHead>
-											<TableHead className="px-3 py-2 font-medium">
-												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.PLAYER}
-											</TableHead>
-											<TableHead className="px-3 py-2 font-medium">
-												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.SCORE}
-											</TableHead>
-											<TableHead className="px-3 py-2 font-medium">
-												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.TIME}
-											</TableHead>
-											<TableHead className="px-3 py-2 font-medium">
-												{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.ROOMS}
-											</TableHead>
-										</TableRow>
-									</TableHeader>
-
-									<TableBody>
-										{entries.map((entry) => (
-											<TableRow
-												key={entry.rowId}
-												className="border-t border-border/60"
-											>
-												<TableCell className="px-3 py-2 font-semibold text-panel-title">
-													{entry.rankLabel}
-												</TableCell>
-												<TableCell className="px-3 py-2 text-foreground">
-													{entry.playerLabel}
-												</TableCell>
-												<TableCell className="px-3 py-2 text-foreground">
-													{entry.scoreLabel}
-												</TableCell>
-												<TableCell className="px-3 py-2 text-foreground">
-													{entry.runTimeLabel}
-												</TableCell>
-												<TableCell className="px-3 py-2 text-foreground">
-													{entry.roomsDiscoveredLabel}
-												</TableCell>
-											</TableRow>
-										))}
-									</TableBody>
-								</Table>
-							</div>
-						) : null}
-					</div>
+					<LeaderboardPanelContent viewModel={leaderboardPanel} />
 				</div>
 			</SheetContent>
 		</Sheet>
