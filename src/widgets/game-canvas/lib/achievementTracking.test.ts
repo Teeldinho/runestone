@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import type { RoomId } from "@/entities/dungeon";
 
 const {
 	mockHasCollectedKey,
@@ -35,7 +36,7 @@ import {
 } from "./achievementTracking";
 
 const makeAchievementTrackingContext = (
-	discoveredRooms = [ROOM_IDS.ENTRANCE],
+	discoveredRooms: RoomId[] = [ROOM_IDS.ENTRANCE],
 	hasTreasureKey = false,
 	enemiesRemaining = 3,
 ) => ({
@@ -114,10 +115,7 @@ describe("achievementTracking", () => {
 					ACHIEVEMENT_IDS.KEY_HUNTER,
 				]),
 			}),
-		).toEqual([
-			ACHIEVEMENT_IDS.COMBAT_MASTER,
-			ACHIEVEMENT_IDS.ESCAPE_ARTIST,
-		]);
+		).toEqual([ACHIEVEMENT_IDS.COMBAT_MASTER, ACHIEVEMENT_IDS.ESCAPE_ARTIST]);
 	});
 
 	it("creates the achievement notification payload from the configured copy", () => {
