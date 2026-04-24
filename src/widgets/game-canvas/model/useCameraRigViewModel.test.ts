@@ -83,6 +83,35 @@ describe("useCameraRigViewModel", () => {
 		expect(mockSetCameraMode).toHaveBeenCalledWith(CAMERA_MODES.THIRD_PERSON);
 	});
 
+	it("reuses shared orbit bindings and threads first-person handlers through the result", () => {
+		const { result } = renderHook(() =>
+			useCameraRigViewModel({
+				cameraStateSnapshot: {
+					fov: 65,
+					mode: CAMERA_MODES.THIRD_PERSON,
+					position: [0, 2, -4],
+					target: [0, 1, 0],
+					zoom: 1,
+				},
+				firstPersonLookElement: document.createElement("button"),
+				playerSpawnPosition: [10, 0.9, -5],
+			}),
+		);
+
+		expect(result.current.orbitBindings.freeOrbital).toBe(
+			result.current.orbitBindings.thirdPerson,
+		);
+		expect(result.current.orbitBindings.thirdPerson).toBe(
+			result.current.orbitBindings.topDown,
+		);
+		expect(result.current.firstPersonBindings.handleOrbitStart).toBe(
+			result.current.orbitBindings.freeOrbital.handleOrbitStart,
+		);
+		expect(result.current.firstPersonBindings.handleOrbitEnd).toBe(
+			result.current.orbitBindings.freeOrbital.handleOrbitEnd,
+		);
+	});
+
 	it("centers free-orbital mode on the player spawn on the first frame", () => {
 		const { result } = renderHook(() =>
 			useCameraRigViewModel({
