@@ -1,19 +1,16 @@
 import { useMachine } from "@xstate/react";
-import { useCallback, useEffect, useMemo } from "react";
-import * as Tone from "tone";
+import { useCallback, useMemo } from "react";
 
 import {
 	AUDIO_EVENTS,
 	AUDIO_MACHINE_STATES,
 	AUDIO_SETTINGS_DEFAULTS,
 } from "../config";
-import {
-	setBackgroundMusicVolume,
-	stopBackgroundMusicLoop,
-} from "../lib";
+import { stopBackgroundMusicLoop } from "../lib";
 
 import { audioMachine } from "./audioMachine";
 import { useAudioPlaybackLifecycle } from "./useAudioPlaybackLifecycle";
+import { useAudioVolumeSync } from "./useAudioVolumeSync";
 
 type UseAudioSettings = {
 	masterVolume?: number;
@@ -26,11 +23,10 @@ export const useAudio = ({
 }: UseAudioSettings = {}) => {
 	const [audioSnapshot, sendAudioEvent] = useMachine(audioMachine);
 	useAudioPlaybackLifecycle(audioSnapshot.value);
-
-	useEffect(() => {
-		Tone.getDestination().volume.value = Tone.gainToDb(masterVolume);
-		setBackgroundMusicVolume(musicVolume);
-	}, [masterVolume, musicVolume]);
+	useAudioVolumeSync({
+		masterVolume,
+		musicVolume,
+	});
 
 	const handleAudioPlayRequest = useCallback(() => {
 		sendAudioEvent({

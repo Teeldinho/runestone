@@ -1,25 +1,25 @@
 // @vitest-environment happy-dom
 
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AUDIO_MACHINE_STATES } from "../config";
 
+import type { AudioMachineState } from "./types";
 import { useAudioPlaybackLifecycle } from "./useAudioPlaybackLifecycle";
 
-const {
-	mockPauseBackgroundMusicLoop,
-	mockStartBackgroundMusicLoop,
-} = vi.hoisted(() => ({
-	mockPauseBackgroundMusicLoop: vi.fn(),
-	mockStartBackgroundMusicLoop: vi.fn(),
-}));
+type UseAudioPlaybackLifecycleTestProps = {
+	audioState: AudioMachineState;
+};
+
+const { mockPauseBackgroundMusicLoop, mockStartBackgroundMusicLoop } =
+	vi.hoisted(() => ({
+		mockPauseBackgroundMusicLoop: vi.fn(),
+		mockStartBackgroundMusicLoop: vi.fn(),
+	}));
 
 vi.mock("../lib", async () => {
-	const actual = await vi.importActual<typeof import("../lib")>("../lib");
-
 	return {
-		...actual,
 		pauseBackgroundMusicLoop: mockPauseBackgroundMusicLoop,
 		startBackgroundMusicLoop: mockStartBackgroundMusicLoop,
 	};
@@ -32,22 +32,22 @@ describe("useAudioPlaybackLifecycle", () => {
 	});
 
 	it("does not auto-start on initial playing mount", () => {
-		renderHook(() =>
-			useAudioPlaybackLifecycle(AUDIO_MACHINE_STATES.PLAYING),
-		);
+		renderHook(() => useAudioPlaybackLifecycle(AUDIO_MACHINE_STATES.PLAYING));
 
 		expect(mockStartBackgroundMusicLoop).not.toHaveBeenCalled();
 		expect(mockPauseBackgroundMusicLoop).not.toHaveBeenCalled();
 	});
 
 	it("pauses while paused or muted and starts when returning to playing", async () => {
+		const initialProps: UseAudioPlaybackLifecycleTestProps = {
+			audioState: AUDIO_MACHINE_STATES.PLAYING,
+		};
+
 		const { rerender } = renderHook(
-			({ audioState }: { audioState: string }) =>
+			({ audioState }: UseAudioPlaybackLifecycleTestProps) =>
 				useAudioPlaybackLifecycle(audioState),
 			{
-				initialProps: {
-					audioState: AUDIO_MACHINE_STATES.PLAYING,
-				},
+				initialProps,
 			},
 		);
 
