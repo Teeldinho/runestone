@@ -19,11 +19,8 @@ import {
 	useGameMachineSelector,
 } from "@/features/dungeon-navigation";
 import { useHaptics } from "@/features/haptics-feedback";
-import { useDoorwayGuardFeedback } from "./useDoorwayGuardFeedback";
-import { useFloorCompletionScoreSubmission } from "./useFloorCompletionScoreSubmission";
-import { usePlayerDeathHaptic } from "./usePlayerDeathHaptic";
-import { useRoomArrivalTeleport } from "./useRoomArrivalTeleport";
-import { useRoomTransitionHaptics } from "./useRoomTransitionHaptics";
+import { useGameNavigationSideEffects } from "./useGameNavigationSideEffects";
+import { useGameProgressionSideEffects } from "./useGameProgressionSideEffects";
 
 type UseGameSideEffectsInput = {
 	hapticsEnabled?: boolean;
@@ -58,35 +55,25 @@ export const useGameSideEffects = ({
 			PLAYER_STATES.REGIONS.HEALTH as keyof typeof playerSnapshot.value
 		];
 
-	useRoomTransitionHaptics({
+	useGameNavigationSideEffects({
 		currentRoomId: currentRoomId as RoomId,
+		floorRooms,
+		lastDoorwayFeedback,
+		lastTransition,
+		onGuardFail,
 		onRoomEnter,
 		onTransition,
-	});
-
-	useRoomArrivalTeleport({
-		currentRoomId: currentRoomId as RoomId,
-		lastTransition,
-		floorRooms,
 		spawnHeightOffset: PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
 	});
 
-	useDoorwayGuardFeedback({
-		lastDoorwayFeedback,
-		onGuardFail,
-	});
-
-	useFloorCompletionScoreSubmission({
+	useGameProgressionSideEffects({
 		activeStateLabel,
-		discoveredRooms,
 		authenticatedProfile,
-		onFloorComplete,
-		submitScore,
-	});
-
-	usePlayerDeathHaptic({
-		healthState: String(healthState),
 		deadState: PLAYER_STATES.HEALTH.DEAD,
+		discoveredRooms,
+		healthState: String(healthState),
+		onFloorComplete,
 		onPlayerDeath,
+		submitScore,
 	});
 };
