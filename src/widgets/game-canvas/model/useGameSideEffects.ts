@@ -20,8 +20,7 @@ import {
 } from "@/features/dungeon-navigation";
 import { useHaptics } from "@/features/haptics-feedback";
 import { useGameNavigationSideEffects } from "./useGameNavigationSideEffects";
-import { useFloorCompletionScoreSubmission } from "./useFloorCompletionScoreSubmission";
-import { usePlayerDeathHaptic } from "./usePlayerDeathHaptic";
+import { useGameProgressionSideEffects } from "./useGameProgressionSideEffects";
 
 type UseGameSideEffectsInput = {
 	hapticsEnabled?: boolean;
@@ -67,17 +66,14 @@ export const useGameSideEffects = ({
 		spawnHeightOffset: PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
 	});
 
-	useFloorCompletionScoreSubmission({
+	useGameProgressionSideEffects({
 		activeStateLabel,
-		discoveredRooms,
 		authenticatedProfile,
-		onFloorComplete,
-		submitScore,
-	});
-
-	usePlayerDeathHaptic({
-		healthState: String(healthState),
 		deadState: PLAYER_STATES.HEALTH.DEAD,
+		discoveredRooms,
+		healthState: String(healthState),
+		onFloorComplete,
 		onPlayerDeath,
+		submitScore,
 	});
 };

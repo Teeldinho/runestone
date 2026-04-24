@@ -2,7 +2,12 @@
 
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { DOOR_SIDES, ROOM_IDS, type LastTransition, type RoomId } from "@/entities/dungeon";
+import {
+	DOOR_SIDES,
+	type LastTransition,
+	ROOM_IDS,
+	type RoomId,
+} from "@/entities/dungeon";
 import type { DungeonRoomLayout } from "@/entities/room";
 
 const mockUseRoomTransitionHaptics = vi.fn();
