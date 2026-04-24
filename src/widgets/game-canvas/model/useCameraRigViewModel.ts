@@ -6,10 +6,8 @@ import {
 	useGameMachineSelector,
 } from "@/features/dungeon-navigation";
 import type { Vector3Tuple } from "@/shared/lib";
-import type {
-	CameraRigOrbitBindings,
-	UseCameraRigViewModelResult,
-} from "./cameraRigViewModelTypes";
+import { createCameraRigOrbitBindings } from "../lib/createCameraRigOrbitBindings";
+import type { UseCameraRigViewModelResult } from "./cameraRigViewModelTypes";
 import { useCameraRigFrameUpdate } from "./useCameraRigFrameUpdate";
 import { useCameraRigInteractionHandlers } from "./useCameraRigInteractionHandlers";
 import { useCameraRigModeSync } from "./useCameraRigModeSync";
@@ -88,11 +86,11 @@ export const useCameraRigViewModel = ({
 		topDownOrbitRef: refs.topDownOrbitRef,
 	});
 
-	const sharedOrbitBindings: CameraRigOrbitBindings = {
+	const sharedOrbitBindings = createCameraRigOrbitBindings({
 		cameraControlElement,
 		handleOrbitEnd,
 		handleOrbitStart,
-	};
+	});
 
 	return {
 		firstPersonBindings: {
