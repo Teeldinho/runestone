@@ -22,6 +22,21 @@ export {
 	updateDungeonContextRoom,
 } from "./dungeonContext";
 export { formatNearInteractableLabel } from "./formatNearInteractableLabel";
+export {
+	selectAchievementTrackingContext,
+	selectActiveStateLabel,
+	selectCurrentRoomId,
+	selectDiscoveredRooms,
+	selectDoorwayNavigationContext,
+	selectEnemiesRemaining,
+	selectGameMachineSnapshot,
+	selectHasTreasureKey,
+	selectInteractionCandidatesContext,
+	selectLastDoorwayFeedback,
+	selectLastTransition,
+	selectNavigationActionContext,
+	selectNearInteractable,
+} from "./gameMachineRuntimeSelectors";
 export { getDoorKeyForNavigationEvent } from "./getDoorKeyForNavigationEvent";
 export {
 	createAttackInteractionCooldownContext,
