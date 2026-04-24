@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import {
 	buildDoorKey,
 	createFloorOneContext,
@@ -5,7 +6,6 @@ import {
 	INTERACTION_TYPES,
 	ROOM_IDS,
 } from "@/entities/dungeon";
-import { describe, expect, it } from "vitest";
 
 import {
 	selectAchievementTrackingContext,

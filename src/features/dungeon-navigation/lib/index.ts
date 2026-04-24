@@ -10,6 +10,21 @@ export {
 	type GameMachineViewModelInput,
 } from "./buildGameMachineViewModel";
 export {
+	selectAchievementTrackingContext,
+	selectActiveStateLabel,
+	selectCurrentRoomId,
+	selectDiscoveredRooms,
+	selectDoorwayNavigationContext,
+	selectEnemiesRemaining,
+	selectGameMachineSnapshot,
+	selectHasTreasureKey,
+	selectInteractionCandidatesContext,
+	selectLastDoorwayFeedback,
+	selectLastTransition,
+	selectNavigationActionContext,
+	selectNearInteractable,
+} from "./gameMachineRuntimeSelectors";
+export {
 	checkPlayerWithinRoomBounds,
 	type DoorwayNavigationEvent,
 	type NearbyInteractable,
