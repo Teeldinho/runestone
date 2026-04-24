@@ -12,5 +12,10 @@ export {
 	normalizeMovementVelocity,
 	rotateVelocityByCameraAzimuth,
 } from "./playerMovement";
+export {
+	createSmoothedPlayerPhysicsRotation,
+	resolvePlayerPhysicsLinearVelocity,
+	resolvePlayerPhysicsTeleportTranslation,
+} from "./playerPhysics";
 export { resolvePlayerAvatarVisibility } from "./playerVisibility";
 export { selectPlayerAnimation } from "./selectPlayerAnimation";
