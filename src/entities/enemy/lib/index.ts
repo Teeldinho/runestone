@@ -13,6 +13,11 @@ export {
 	checkIsPlayerInAttackRange,
 	checkIsPlayerInDetectionRange,
 } from "./enemyMachineGuards";
+export {
+	computeEnemyFrameLinearVelocity,
+	createSmoothedEnemyRotation,
+	shouldRotateEnemy,
+} from "./enemyPhysicsLoop";
 export { resolvePlayerPosition } from "./resolvePlayerPosition";
 export { selectEnemyAnimation } from "./selectEnemyAnimation";
 export { shouldSyncEnemyPlayerPosition } from "./shouldSyncEnemyPlayerPosition";
