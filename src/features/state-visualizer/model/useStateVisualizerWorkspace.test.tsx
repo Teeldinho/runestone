@@ -44,8 +44,6 @@ describe("useStateVisualizerWorkspace", () => {
 	it("throws when used outside the provider", () => {
 		expect(() => {
 			renderHook(() => useStateVisualizerWorkspace());
-		}).toThrow(
-			STATE_VISUALIZER_ERROR_MESSAGES.WORKSPACE_PROVIDER_REQUIRED,
-		);
+		}).toThrow(STATE_VISUALIZER_ERROR_MESSAGES.WORKSPACE_PROVIDER_REQUIRED);
 	});
 });

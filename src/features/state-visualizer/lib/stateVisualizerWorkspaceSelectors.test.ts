@@ -3,9 +3,9 @@ import { describe, expect, it } from "vitest";
 import { STATE_VISUALIZER_SECTION_IDS } from "../config";
 
 import {
+	type StateVisualizerWorkspaceState,
 	selectStateVisualizerWorkspaceHandleSelectedSectionIdChange,
 	selectStateVisualizerWorkspaceSelectedSectionId,
-	type StateVisualizerWorkspaceState,
 } from "./stateVisualizerWorkspaceSelectors";
 
 describe("stateVisualizerWorkspaceSelectors", () => {
