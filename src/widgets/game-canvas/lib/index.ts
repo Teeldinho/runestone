@@ -50,4 +50,9 @@ export {
 	createSceneRoomMeshSettings,
 	createSceneSpawnPosition,
 } from "./sceneEnvironmentMappers";
+export type {
+	CreateSceneEnvironmentSettingsViewModelInput,
+	SceneEnvironmentSettingsViewModel,
+} from "./sceneEnvironmentSettings";
+export { createSceneEnvironmentSettingsViewModel } from "./sceneEnvironmentSettings";
 export { selectNearestRoomPositions } from "./selectNearestRoomPositions";
