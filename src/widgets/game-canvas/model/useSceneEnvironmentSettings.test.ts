@@ -3,10 +3,51 @@
 import { renderHook } from "@testing-library/react";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
-import { PLAYER_ENTITY_CONFIG } from "@/entities/player";
+import { createFloorOneMachine, ROOM_IDS } from "@/entities/dungeon";
+import {
+	createPlayerMeshSettings,
+	PLAYER_ENTITY_CONFIG,
+} from "@/entities/player";
+import { createDungeonFloorLayout } from "@/entities/room";
+
+const mockCreateSceneEnvironmentSettingsViewModel = vi.fn(
+	(input: {
+		defaultPlayerMeshSettings: unknown;
+		enemiesRemaining: number;
+		floorLayout: unknown;
+		hasTreasureKey: boolean;
+	}) => ({
+		corridorMeshSettings: [
+			{
+				id: `corridor-${input.enemiesRemaining}`,
+				position: [0, 0, 0],
+				rotationYRad: 0,
+			},
+		],
+		enemyMeshSettings: [
+			{
+				id: `enemy-${input.enemiesRemaining}`,
+			},
+		],
+		playerMeshSettings: input.defaultPlayerMeshSettings,
+		roomMeshSettings: [
+			{
+				roomId: input.hasTreasureKey ? "unlocked" : "locked",
+			},
+		],
+	}),
+);
 
 import { useSceneEnvironmentSettings } from "./useSceneEnvironmentSettings";
+
+vi.mock("@/widgets/game-canvas/lib", () => ({
+	createSceneEnvironmentSettingsViewModel: (input: {
+		defaultPlayerMeshSettings: unknown;
+		enemiesRemaining: number;
+		floorLayout: unknown;
+		hasTreasureKey: boolean;
+	}) => mockCreateSceneEnvironmentSettingsViewModel(input),
+}));
 
 const mockRuntimeContext = vi.hoisted(() => ({
 	currentRoomId: "entrance",
@@ -29,106 +70,55 @@ afterAll(() => {
 
 describe("useSceneEnvironmentSettings", () => {
 	beforeEach(() => {
+		mockCreateSceneEnvironmentSettingsViewModel.mockClear();
 		mockRuntimeContext.currentRoomId = ROOM_IDS.ENTRANCE;
 		mockRuntimeContext.hasTreasureKey = false;
 		mockRuntimeContext.enemiesRemaining = 1;
 	});
 
-	it("returns machine-derived room mesh settings for all floor-one rooms", () => {
+	it("passes the gathered inputs to the scene-environment builder", () => {
 		const { result } = renderHook(() => useSceneEnvironmentSettings());
-
-		expect(result.current.roomMeshSettings.map((room) => room.roomId)).toEqual([
-			ROOM_IDS.ENTRANCE,
-			ROOM_IDS.LIBRARY,
-			ROOM_IDS.GUARD_ROOM,
-			ROOM_IDS.TREASURY,
-			ROOM_IDS.EXIT,
-		]);
-		expect(result.current.roomMeshSettings).toHaveLength(5);
-		expect(result.current.roomMeshSettings[0].labelSettings.text).toBe(
-			ROOM_LABELS[ROOM_IDS.ENTRANCE],
-		);
-		expect(result.current.roomMeshSettings[4].labelSettings.text).toBe(
-			ROOM_LABELS[ROOM_IDS.EXIT],
-		);
-		expect(
-			new Set(
-				result.current.roomMeshSettings.map((room) => room.position.join(":")),
-			).size,
-		).toBe(5);
-		expect(
-			result.current.roomMeshSettings.find(
-				(room) => room.roomId === ROOM_IDS.GUARD_ROOM,
-			)?.lockedDoorSides,
-		).toEqual(["south"]);
-	});
-
-	it("returns corridor mesh settings for adjacent generated transitions", () => {
-		const { result } = renderHook(() => useSceneEnvironmentSettings());
-
-		expect(
-			result.current.corridorMeshSettings.map((corridor) => corridor.id),
-		).toEqual([
-			`${ROOM_IDS.ENTRANCE}:${ROOM_IDS.LIBRARY}`,
-			`${ROOM_IDS.LIBRARY}:${ROOM_IDS.GUARD_ROOM}`,
-			`${ROOM_IDS.GUARD_ROOM}:${ROOM_IDS.TREASURY}`,
-			`${ROOM_IDS.TREASURY}:${ROOM_IDS.EXIT}`,
-		]);
-		expect(result.current.corridorMeshSettings).toHaveLength(4);
-		expect(result.current.corridorMeshSettings[0].position).toEqual([
-			0, -0.12, -30,
-		]);
-	});
-
-	it("positions the player mesh at the generated entrance room", () => {
-		const { result } = renderHook(() => useSceneEnvironmentSettings());
-
-		expect(result.current.playerMeshSettings).toMatchObject({
-			auraColor: "#00d7ff",
-			auraEmissiveIntensity: 2,
+		const defaultPlayerMeshSettings = createPlayerMeshSettings({
+			healthState: PLAYER_ENTITY_CONFIG.DEFAULTS.HEALTH_STATE,
+			origin: PLAYER_ENTITY_CONFIG.ORIGIN,
 		});
-		expect(result.current.playerMeshSettings.position).toEqual([
-			0,
-			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
-			-40,
-		]);
+		const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
+
+		expect(mockCreateSceneEnvironmentSettingsViewModel).toHaveBeenCalledWith({
+			defaultPlayerMeshSettings,
+			enemiesRemaining: 1,
+			floorLayout,
+			hasTreasureKey: false,
+		});
+		expect(result.current).toMatchObject({
+			corridorMeshSettings: [{ id: "corridor-1" }],
+			enemyMeshSettings: [{ id: "enemy-1" }],
+			playerMeshSettings: defaultPlayerMeshSettings,
+			roomMeshSettings: [{ roomId: "locked" }],
+		});
 	});
 
-	it("renders scene enemy count from machine context", () => {
-		mockRuntimeContext.enemiesRemaining = 1;
+	it("rebuilds the view model when the doorway context changes", () => {
 		const { result, rerender } = renderHook(() =>
 			useSceneEnvironmentSettings(),
 		);
 
-		expect(result.current.enemyMeshSettings).toHaveLength(1);
+		expect(result.current.corridorMeshSettings[0].id).toBe("corridor-1");
+		expect(result.current.roomMeshSettings[0].roomId).toBe("locked");
 
+		mockRuntimeContext.hasTreasureKey = true;
 		mockRuntimeContext.enemiesRemaining = 0;
 		rerender();
 
-		expect(result.current.enemyMeshSettings).toHaveLength(0);
-	});
-
-	it("shows guard-room treasure key only before pickup", () => {
-		const { result, rerender } = renderHook(() =>
-			useSceneEnvironmentSettings(),
+		expect(
+			mockCreateSceneEnvironmentSettingsViewModel,
+		).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				enemiesRemaining: 0,
+				hasTreasureKey: true,
+			}),
 		);
-		const guardRoomBeforePickup = result.current.roomMeshSettings.find(
-			(room) => room.roomId === ROOM_IDS.GUARD_ROOM,
-		);
-		const treasuryRoom = result.current.roomMeshSettings.find(
-			(room) => room.roomId === ROOM_IDS.TREASURY,
-		);
-
-		expect(guardRoomBeforePickup?.showTreasureKey).toBe(true);
-		expect(treasuryRoom?.isTreasury).toBe(true);
-
-		mockRuntimeContext.hasTreasureKey = true;
-		rerender();
-
-		const guardRoomAfterPickup = result.current.roomMeshSettings.find(
-			(room) => room.roomId === ROOM_IDS.GUARD_ROOM,
-		);
-
-		expect(guardRoomAfterPickup?.showTreasureKey).toBe(false);
+		expect(result.current.corridorMeshSettings[0].id).toBe("corridor-0");
+		expect(result.current.roomMeshSettings[0].roomId).toBe("unlocked");
 	});
 });
