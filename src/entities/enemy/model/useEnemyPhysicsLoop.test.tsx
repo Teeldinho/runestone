@@ -86,6 +86,65 @@ describe("useEnemyPhysicsLoop", () => {
 		expect(rigidBody.setRotation).toHaveBeenCalledTimes(1);
 	});
 
+	it("waits for the sync interval before sending the next player position update", () => {
+		const rigidBody = createRigidBodyMock();
+		const send = vi.fn();
+
+		renderHook(() =>
+			useEnemyPhysicsLoop({
+				getNextPosition: () => [13, 0.91, 9],
+				id: "enemy-1",
+				position: [10, 0.91, 5],
+				rigidBodyRef: { current: rigidBody },
+				send,
+			}),
+		);
+
+		vi.clearAllMocks();
+		mockGetPlayerPosition.mockReturnValue([0.1, 0.91, 0]);
+
+		act(() => {
+			frameCallbacks.at(-1)?.(undefined, 0.05);
+		});
+
+		act(() => {
+			frameCallbacks.at(-1)?.(undefined, 0.05);
+		});
+
+		expect(send).not.toHaveBeenCalled();
+
+		mockGetPlayerPosition.mockReturnValue([0.5, 0.91, 0]);
+
+		act(() => {
+			frameCallbacks.at(-1)?.(undefined, 0.07);
+		});
+
+		expect(send).toHaveBeenCalledTimes(1);
+	});
+
+	it("skips the rotation update when movement stays below the threshold", () => {
+		const rigidBody = createRigidBodyMock();
+
+		renderHook(() =>
+			useEnemyPhysicsLoop({
+				getNextPosition: () => [10.001, 0.91, 5.001],
+				id: "enemy-1",
+				position: [10, 0.91, 5],
+				rigidBodyRef: { current: rigidBody },
+				send: vi.fn(),
+			}),
+		);
+
+		vi.clearAllMocks();
+
+		act(() => {
+			frameCallbacks.at(-1)?.(undefined, 0.2);
+		});
+
+		expect(rigidBody.setLinvel).toHaveBeenCalledTimes(1);
+		expect(rigidBody.setRotation).not.toHaveBeenCalled();
+	});
+
 	it("returns immediately when the frame delta is zero", () => {
 		const rigidBody = createRigidBodyMock();
 		const send = vi.fn();

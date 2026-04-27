@@ -16,6 +16,8 @@ export {
 export {
 	computeEnemyFrameLinearVelocity,
 	createSmoothedEnemyRotation,
+	resolveEnemyPhysicsFrameMotion,
+	resolveEnemyPlayerPositionSync,
 	shouldRotateEnemy,
 } from "./enemyPhysicsLoop";
 export { resolvePlayerPosition } from "./resolvePlayerPosition";
