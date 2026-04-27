@@ -50,6 +50,26 @@ describe("guardMarkerNodeClearanceHelpers", () => {
 				nodeHalfHeight,
 			}),
 		).toEqual({ x: 120 - nodeHalfWidth, y: 200 });
+
+		expect(
+			resolveGuardMarkerNodeCenterFromHandle({
+				handleX: 160,
+				handleY: 220,
+				handlePosition: Position.Top,
+				nodeHalfWidth,
+				nodeHalfHeight,
+			}),
+		).toEqual({ x: 160, y: 220 + nodeHalfHeight });
+
+		expect(
+			resolveGuardMarkerNodeCenterFromHandle({
+				handleX: 260,
+				handleY: 180,
+				handlePosition: Position.Left,
+				nodeHalfWidth,
+				nodeHalfHeight,
+			}),
+		).toEqual({ x: 260 + nodeHalfWidth, y: 180 });
 	});
 
 	it("infers node centers from edge geometry when handles are missing", () => {

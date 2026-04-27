@@ -1,4 +1,4 @@
-import type { Position } from "@xyflow/react";
+import { Position } from "@xyflow/react";
 
 import { INSPECTOR_GUARD_MARKER_INTERACTION } from "../config";
 
@@ -7,6 +7,85 @@ type GuardMarkerDirectionIndicatorMode =
 
 type GuardMarkerSelfLoopClearanceAxis =
 	(typeof INSPECTOR_GUARD_MARKER_INTERACTION.SELF_LOOP_CLEARANCE_AXIS)[keyof typeof INSPECTOR_GUARD_MARKER_INTERACTION.SELF_LOOP_CLEARANCE_AXIS];
+
+type GuardMarkerPoint = {
+	x: number;
+	y: number;
+};
+
+type GuardMarkerHandlePointInput = {
+	handleX: number;
+	handleY: number;
+};
+
+type GuardMarkerHandlePositionInput = {
+	handlePosition: Position | undefined;
+};
+
+type GuardMarkerNodeDimensionInput = {
+	nodeHalfWidth: number;
+	nodeHalfHeight: number;
+};
+
+type GuardMarkerEdgeInput = {
+	sourceX: number;
+	sourceY: number;
+	targetX: number;
+	targetY: number;
+	isSourceNode: boolean;
+	isHorizontal: boolean;
+};
+
+type GuardMarkerEndpointInput = {
+	sourceX: number;
+	sourceY: number;
+	targetX: number;
+	targetY: number;
+};
+
+type GuardMarkerClearanceBoundsInput = {
+	expandedHalfWidth: number;
+	expandedHalfHeight: number;
+};
+
+type GuardMarkerNodePairInput = {
+	sourceNodeCenter?: GuardMarkerNodeCenter | null;
+	targetNodeCenter?: GuardMarkerNodeCenter | null;
+};
+
+type GuardMarkerAdditionalNodeInput = {
+	additionalNodeCenters?: GuardMarkerNodeCenter[];
+};
+
+type GuardMarkerClearanceDirectionInput = {
+	isHorizontal: boolean;
+	directionSign: 1 | -1;
+	fallbackDirectionSign: 1 | -1;
+};
+
+type GuardMarkerDirectionalInput = {
+	isHorizontal: boolean;
+	directionSign: 1 | -1;
+};
+
+type GuardMarkerNodeAnchorsInput = {
+	sourceNodeCenter?: GuardMarkerNodeCenter;
+	targetNodeCenter?: GuardMarkerNodeCenter;
+	additionalNodeCenters?: GuardMarkerNodeCenter[];
+	isSelfLoopTransition?: boolean;
+	sourcePosition?: Position;
+	targetPosition?: Position;
+};
+
+type GuardMarkerInteractionInput = {
+	directionIndicatorMode: GuardMarkerDirectionIndicatorMode;
+	selfLoopClearanceAxisPreference?: GuardMarkerSelfLoopClearanceAxis;
+};
+
+type GuardMarkerClearanceSizingInput = {
+	markerSize: number;
+	nodeClearanceOffset: number;
+};
 
 export type GuardMarkerCenterPoint = {
 	x: number;
@@ -18,87 +97,63 @@ export type GuardMarkerNodeCenter = {
 	y: number;
 };
 
-export type ResolveGuardMarkerNodeCenterFromHandleInput = {
-	handleX: number;
-	handleY: number;
-	handlePosition: Position | undefined;
-	nodeHalfWidth: number;
-	nodeHalfHeight: number;
-};
+export type ResolveGuardMarkerNodeCenterFromHandleInput =
+	GuardMarkerHandlePointInput &
+		GuardMarkerHandlePositionInput &
+		GuardMarkerNodeDimensionInput;
 
-export type ResolveGuardMarkerInferredNodeCenterFromHandleInput = {
-	handleX: number;
-	handleY: number;
-	sourceX: number;
-	sourceY: number;
-	targetX: number;
-	targetY: number;
-	isSourceNode: boolean;
-	isHorizontal: boolean;
-	nodeHalfWidth: number;
-	nodeHalfHeight: number;
-};
+export type ResolveGuardMarkerInferredNodeCenterFromHandleInput =
+	GuardMarkerHandlePointInput &
+		GuardMarkerEdgeInput &
+		GuardMarkerNodeDimensionInput;
 
 export type GuardMarkerNodeClearanceInput = {
 	markerCenterX: number;
 	markerCenterY: number;
-	sourceX: number;
-	sourceY: number;
-	targetX: number;
-	targetY: number;
-	sourceNodeCenter?: GuardMarkerNodeCenter;
-	targetNodeCenter?: GuardMarkerNodeCenter;
-	additionalNodeCenters?: GuardMarkerNodeCenter[];
-	isSelfLoopTransition?: boolean;
-	sourcePosition?: Position;
-	targetPosition?: Position;
-	isHorizontal: boolean;
-	directionSign: 1 | -1;
-	fallbackDirectionSign: 1 | -1;
-	directionIndicatorMode: GuardMarkerDirectionIndicatorMode;
-	selfLoopClearanceAxisPreference?: GuardMarkerSelfLoopClearanceAxis;
-	markerSize: number;
-	nodeClearanceOffset: number;
-};
+} & GuardMarkerEndpointInput &
+	GuardMarkerNodeAnchorsInput &
+	GuardMarkerClearanceDirectionInput &
+	GuardMarkerInteractionInput &
+	GuardMarkerClearanceSizingInput;
 
 export type ResolveGuardMarkerNodeOverlapClearanceInput = {
-	markerCenter: GuardMarkerCenterPoint;
+	markerCenter: GuardMarkerPoint;
 	nodeCenter?: GuardMarkerNodeCenter | null;
-	expandedHalfWidth: number;
-	expandedHalfHeight: number;
-	fallbackDirectionSign: 1 | -1;
-};
+} & GuardMarkerClearanceBoundsInput & {
+		fallbackDirectionSign: 1 | -1;
+	};
 
 export type ResolveGuardMarkerDirectionalNodeClearanceInput = {
-	markerCenter: GuardMarkerCenterPoint;
-	sourceNodeCenter?: GuardMarkerNodeCenter | null;
-	targetNodeCenter?: GuardMarkerNodeCenter | null;
-	expandedHalfWidth: number;
-	expandedHalfHeight: number;
-	isHorizontal: boolean;
-	directionSign: 1 | -1;
-};
+	markerCenter: GuardMarkerPoint;
+} & GuardMarkerNodePairInput &
+	GuardMarkerClearanceBoundsInput &
+	GuardMarkerDirectionalInput;
 
 export type ResolveGuardMarkerSelfLoopClearanceInput = {
-	markerCenter: GuardMarkerCenterPoint;
-	sourceNodeCenter?: GuardMarkerNodeCenter | null;
-	targetNodeCenter?: GuardMarkerNodeCenter | null;
-	expandedHalfWidth: number;
-	expandedHalfHeight: number;
-	isHorizontal: boolean;
-	directionSign: 1 | -1;
-	fallbackDirectionSign: 1 | -1;
-	directionIndicatorMode: GuardMarkerDirectionIndicatorMode;
-	selfLoopClearanceAxisPreference?: GuardMarkerSelfLoopClearanceAxis;
-};
+	markerCenter: GuardMarkerPoint;
+} & GuardMarkerNodePairInput &
+	GuardMarkerClearanceBoundsInput &
+	GuardMarkerClearanceDirectionInput &
+	GuardMarkerInteractionInput;
 
 export type ResolveGuardMarkerAdditionalNodeClearanceInput = {
-	markerCenter: GuardMarkerCenterPoint;
-	additionalNodeCenters?: GuardMarkerNodeCenter[];
-	expandedHalfWidth: number;
-	expandedHalfHeight: number;
-	fallbackDirectionSign: 1 | -1;
-};
+	markerCenter: GuardMarkerPoint;
+} & GuardMarkerAdditionalNodeInput &
+	GuardMarkerClearanceBoundsInput & {
+		fallbackDirectionSign: 1 | -1;
+	};
+
+export type ResolveGuardMarkerNodeCenterInput =
+	ResolveGuardMarkerNodeCenterFromHandleInput &
+		Pick<
+			ResolveGuardMarkerInferredNodeCenterFromHandleInput,
+			| "sourceX"
+			| "sourceY"
+			| "targetX"
+			| "targetY"
+			| "isSourceNode"
+			| "isHorizontal"
+		>;
 
 const resolveNodeCenterFromHandle = (
 	handleX: number,
@@ -112,13 +167,13 @@ const resolveNodeCenterFromHandle = (
 	}
 
 	switch (handlePosition) {
-		case "top":
+		case Position.Top:
 			return { x: handleX, y: handleY + nodeHalfHeight };
-		case "bottom":
+		case Position.Bottom:
 			return { x: handleX, y: handleY - nodeHalfHeight };
-		case "left":
+		case Position.Left:
 			return { x: handleX + nodeHalfWidth, y: handleY };
-		case "right":
+		case Position.Right:
 			return { x: handleX - nodeHalfWidth, y: handleY };
 		default:
 			return null;

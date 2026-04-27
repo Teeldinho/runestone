@@ -4,6 +4,7 @@ import {
 	type GuardMarkerCenterPoint,
 	type GuardMarkerNodeCenter,
 	type GuardMarkerNodeClearanceInput,
+	type ResolveGuardMarkerNodeCenterInput,
 	resolveGuardMarkerAdditionalNodeClearance,
 	resolveGuardMarkerDirectionalNodeClearance,
 	resolveGuardMarkerInferredNodeCenterFromHandle,
@@ -23,21 +24,7 @@ const areNodeCentersEqual = (
 
 const resolveGuardMarkerNodeCenter = (
 	nodeCenter: GuardMarkerNodeCenter | undefined,
-	handleInput: {
-		handleX: number;
-		handleY: number;
-		handlePosition: Parameters<
-			typeof resolveGuardMarkerNodeCenterFromHandle
-		>[0]["handlePosition"];
-		isSourceNode: boolean;
-		isHorizontal: boolean;
-		sourceX: number;
-		sourceY: number;
-		targetX: number;
-		targetY: number;
-		nodeHalfWidth: number;
-		nodeHalfHeight: number;
-	},
+	handleInput: ResolveGuardMarkerNodeCenterInput,
 ): GuardMarkerNodeCenter | undefined => {
 	return (
 		nodeCenter ??
