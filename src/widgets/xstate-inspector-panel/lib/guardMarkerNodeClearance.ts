@@ -1,262 +1,15 @@
-import type { Position } from "@xyflow/react";
-
 import { MACHINE_GRAPH_LAYOUT } from "@/features/state-visualizer";
 
-import { INSPECTOR_GUARD_MARKER_INTERACTION } from "../config";
-
-type GuardMarkerDirectionIndicatorMode =
-	(typeof INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE)[keyof typeof INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE];
-
-type GuardMarkerSelfLoopClearanceAxis =
-	(typeof INSPECTOR_GUARD_MARKER_INTERACTION.SELF_LOOP_CLEARANCE_AXIS)[keyof typeof INSPECTOR_GUARD_MARKER_INTERACTION.SELF_LOOP_CLEARANCE_AXIS];
-
-type GuardMarkerNodeClearanceInput = {
-	markerCenterX: number;
-	markerCenterY: number;
-	sourceX: number;
-	sourceY: number;
-	targetX: number;
-	targetY: number;
-	sourceNodeCenter?: GuardMarkerNodeCenter;
-	targetNodeCenter?: GuardMarkerNodeCenter;
-	additionalNodeCenters?: GuardMarkerNodeCenter[];
-	isSelfLoopTransition?: boolean;
-	sourcePosition?: Position;
-	targetPosition?: Position;
-	isHorizontal: boolean;
-	directionSign: 1 | -1;
-	fallbackDirectionSign: 1 | -1;
-	directionIndicatorMode: GuardMarkerDirectionIndicatorMode;
-	selfLoopClearanceAxisPreference?: GuardMarkerSelfLoopClearanceAxis;
-	markerSize: number;
-	nodeClearanceOffset: number;
-};
-
-type GuardMarkerCenterPoint = {
-	x: number;
-	y: number;
-};
-
-type GuardMarkerNodeCenter = {
-	x: number;
-	y: number;
-};
-
-type InferredNodeCenterInput = {
-	handleX: number;
-	handleY: number;
-	sourceX: number;
-	sourceY: number;
-	targetX: number;
-	targetY: number;
-	isSourceNode: boolean;
-	isHorizontal: boolean;
-	nodeHalfWidth: number;
-	nodeHalfHeight: number;
-};
-
-const resolveNodeCenterFromHandle = (
-	handleX: number,
-	handleY: number,
-	handlePosition: Position | undefined,
-	nodeHalfWidth: number,
-	nodeHalfHeight: number,
-): GuardMarkerNodeCenter | null => {
-	if (!handlePosition) {
-		return null;
-	}
-
-	switch (handlePosition) {
-		case "top":
-			return { x: handleX, y: handleY + nodeHalfHeight };
-		case "bottom":
-			return { x: handleX, y: handleY - nodeHalfHeight };
-		case "left":
-			return { x: handleX + nodeHalfWidth, y: handleY };
-		case "right":
-			return { x: handleX - nodeHalfWidth, y: handleY };
-		default:
-			return null;
-	}
-};
-
-const resolveInferredNodeCenterFromHandle = ({
-	handleX,
-	handleY,
-	sourceX,
-	sourceY,
-	targetX,
-	targetY,
-	isSourceNode,
-	isHorizontal,
-	nodeHalfWidth,
-	nodeHalfHeight,
-}: InferredNodeCenterInput): GuardMarkerNodeCenter => {
-	const isDegenerateEdge = sourceX === targetX && sourceY === targetY;
-
-	if (isDegenerateEdge) {
-		return {
-			x: handleX,
-			y: handleY,
-		};
-	}
-
-	if (isHorizontal) {
-		const isPositiveDirection = sourceX <= targetX;
-		const handleToCenterX = isSourceNode
-			? isPositiveDirection
-				? -nodeHalfWidth
-				: nodeHalfWidth
-			: isPositiveDirection
-				? nodeHalfWidth
-				: -nodeHalfWidth;
-
-		return {
-			x: handleX + handleToCenterX,
-			y: handleY,
-		};
-	}
-
-	const isPositiveDirection = sourceY <= targetY;
-	const handleToCenterY = isSourceNode
-		? isPositiveDirection
-			? -nodeHalfHeight
-			: nodeHalfHeight
-		: isPositiveDirection
-			? nodeHalfHeight
-			: -nodeHalfHeight;
-
-	return {
-		x: handleX,
-		y: handleY + handleToCenterY,
-	};
-};
-
-const isMarkerInsideNodeBounds = (
-	markerCenter: GuardMarkerCenterPoint,
-	nodeCenter: GuardMarkerNodeCenter,
-	expandedHalfWidth: number,
-	expandedHalfHeight: number,
-): boolean => {
-	return (
-		Math.abs(markerCenter.x - nodeCenter.x) < expandedHalfWidth &&
-		Math.abs(markerCenter.y - nodeCenter.y) < expandedHalfHeight
-	);
-};
-
-const applyAxisBoundary = (
-	markerValue: number,
-	nodeAxisCenter: number,
-	expandedHalfAxis: number,
-	axisDirection: 1 | -1,
-): number => {
-	const boundaryValue = nodeAxisCenter + axisDirection * expandedHalfAxis;
-
-	if (axisDirection > 0 && markerValue < boundaryValue) {
-		return boundaryValue;
-	}
-
-	if (axisDirection < 0 && markerValue > boundaryValue) {
-		return boundaryValue;
-	}
-
-	return markerValue;
-};
-
-const resolveSignedDirection = (
-	deltaValue: number,
-	fallbackDirection: 1 | -1,
-): 1 | -1 => {
-	if (deltaValue > 0) {
-		return 1;
-	}
-
-	if (deltaValue < 0) {
-		return -1;
-	}
-
-	return fallbackDirection;
-};
-
-const resolveNodeOverlapClearance = ({
-	markerCenter,
-	nodeCenter,
-	expandedHalfWidth,
-	expandedHalfHeight,
-	fallbackDirectionSign,
-}: {
-	markerCenter: GuardMarkerCenterPoint;
-	nodeCenter: GuardMarkerNodeCenter;
-	expandedHalfWidth: number;
-	expandedHalfHeight: number;
-	fallbackDirectionSign: 1 | -1;
-}): GuardMarkerCenterPoint => {
-	if (
-		!isMarkerInsideNodeBounds(
-			markerCenter,
-			nodeCenter,
-			expandedHalfWidth,
-			expandedHalfHeight,
-		)
-	) {
-		return markerCenter;
-	}
-
-	const deltaX = markerCenter.x - nodeCenter.x;
-	const deltaY = markerCenter.y - nodeCenter.y;
-	const overlapX = expandedHalfWidth - Math.abs(deltaX);
-	const overlapY = expandedHalfHeight - Math.abs(deltaY);
-
-	if (overlapX <= overlapY) {
-		return {
-			x: applyAxisBoundary(
-				markerCenter.x,
-				nodeCenter.x,
-				expandedHalfWidth,
-				resolveSignedDirection(deltaX, fallbackDirectionSign),
-			),
-			y: markerCenter.y,
-		};
-	}
-
-	return {
-		x: markerCenter.x,
-		y: applyAxisBoundary(
-			markerCenter.y,
-			nodeCenter.y,
-			expandedHalfHeight,
-			resolveSignedDirection(deltaY, fallbackDirectionSign),
-		),
-	};
-};
-
-const resolveAdditionalNodeClearance = ({
-	markerCenter,
-	additionalNodeCenters,
-	expandedHalfWidth,
-	expandedHalfHeight,
-	fallbackDirectionSign,
-}: {
-	markerCenter: GuardMarkerCenterPoint;
-	additionalNodeCenters: GuardMarkerNodeCenter[];
-	expandedHalfWidth: number;
-	expandedHalfHeight: number;
-	fallbackDirectionSign: 1 | -1;
-}): GuardMarkerCenterPoint => {
-	let nextMarkerCenter = markerCenter;
-
-	for (const additionalNodeCenter of additionalNodeCenters) {
-		nextMarkerCenter = resolveNodeOverlapClearance({
-			markerCenter: nextMarkerCenter,
-			nodeCenter: additionalNodeCenter,
-			expandedHalfWidth,
-			expandedHalfHeight,
-			fallbackDirectionSign,
-		});
-	}
-
-	return nextMarkerCenter;
-};
+import {
+	type GuardMarkerCenterPoint,
+	type GuardMarkerNodeCenter,
+	type GuardMarkerNodeClearanceInput,
+	resolveGuardMarkerAdditionalNodeClearance,
+	resolveGuardMarkerDirectionalNodeClearance,
+	resolveGuardMarkerInferredNodeCenterFromHandle,
+	resolveGuardMarkerNodeCenterFromHandle,
+	resolveGuardMarkerSelfLoopClearance,
+} from "./guardMarkerNodeClearanceHelpers";
 
 const areNodeCentersEqual = (
 	firstNodeCenter: GuardMarkerNodeCenter,
@@ -265,6 +18,48 @@ const areNodeCentersEqual = (
 	return (
 		firstNodeCenter.x === secondNodeCenter.x &&
 		firstNodeCenter.y === secondNodeCenter.y
+	);
+};
+
+const resolveGuardMarkerNodeCenter = (
+	nodeCenter: GuardMarkerNodeCenter | undefined,
+	handleInput: {
+		handleX: number;
+		handleY: number;
+		handlePosition: Parameters<
+			typeof resolveGuardMarkerNodeCenterFromHandle
+		>[0]["handlePosition"];
+		isSourceNode: boolean;
+		isHorizontal: boolean;
+		sourceX: number;
+		sourceY: number;
+		targetX: number;
+		targetY: number;
+		nodeHalfWidth: number;
+		nodeHalfHeight: number;
+	},
+): GuardMarkerNodeCenter | undefined => {
+	return (
+		nodeCenter ??
+		resolveGuardMarkerNodeCenterFromHandle({
+			handleX: handleInput.handleX,
+			handleY: handleInput.handleY,
+			handlePosition: handleInput.handlePosition,
+			nodeHalfWidth: handleInput.nodeHalfWidth,
+			nodeHalfHeight: handleInput.nodeHalfHeight,
+		}) ??
+		resolveGuardMarkerInferredNodeCenterFromHandle({
+			handleX: handleInput.handleX,
+			handleY: handleInput.handleY,
+			sourceX: handleInput.sourceX,
+			sourceY: handleInput.sourceY,
+			targetX: handleInput.targetX,
+			targetY: handleInput.targetY,
+			isSourceNode: handleInput.isSourceNode,
+			isHorizontal: handleInput.isHorizontal,
+			nodeHalfWidth: handleInput.nodeHalfWidth,
+			nodeHalfHeight: handleInput.nodeHalfHeight,
+		})
 	);
 };
 
@@ -296,159 +91,63 @@ export const resolveGuardMarkerNodeClearance = ({
 		nodeHalfWidth + markerHalfSize + nodeClearanceOffset;
 	const expandedHalfHeight =
 		nodeHalfHeight + markerHalfSize + nodeClearanceOffset;
-	const sourceNodeCenter =
-		sourceNodeCenterInput ??
-		resolveNodeCenterFromHandle(
-			sourceX,
-			sourceY,
-			sourcePosition,
-			nodeHalfWidth,
-			nodeHalfHeight,
-		) ??
-		resolveInferredNodeCenterFromHandle({
-			handleX: sourceX,
-			handleY: sourceY,
-			sourceX,
-			sourceY,
-			targetX,
-			targetY,
-			isSourceNode: true,
-			isHorizontal,
-			nodeHalfWidth,
-			nodeHalfHeight,
-		});
-	const targetNodeCenter =
-		targetNodeCenterInput ??
-		resolveNodeCenterFromHandle(
-			targetX,
-			targetY,
-			targetPosition,
-			nodeHalfWidth,
-			nodeHalfHeight,
-		) ??
-		resolveInferredNodeCenterFromHandle({
-			handleX: targetX,
-			handleY: targetY,
-			sourceX,
-			sourceY,
-			targetX,
-			targetY,
-			isSourceNode: false,
-			isHorizontal,
-			nodeHalfWidth,
-			nodeHalfHeight,
-		});
+
+	const sourceNodeCenter = resolveGuardMarkerNodeCenter(sourceNodeCenterInput, {
+		handleX: sourceX,
+		handleY: sourceY,
+		handlePosition: sourcePosition,
+		isSourceNode: true,
+		isHorizontal,
+		sourceX,
+		sourceY,
+		targetX,
+		targetY,
+		nodeHalfWidth,
+		nodeHalfHeight,
+	});
+
+	const targetNodeCenter = resolveGuardMarkerNodeCenter(targetNodeCenterInput, {
+		handleX: targetX,
+		handleY: targetY,
+		handlePosition: targetPosition,
+		isSourceNode: false,
+		isHorizontal,
+		sourceX,
+		sourceY,
+		targetX,
+		targetY,
+		nodeHalfWidth,
+		nodeHalfHeight,
+	});
 
 	const markerCenter = {
 		x: markerCenterX,
 		y: markerCenterY,
 	};
+
 	const isSelfLoopNodeCenter =
 		!!sourceNodeCenter &&
 		!!targetNodeCenter &&
 		areNodeCentersEqual(sourceNodeCenter, targetNodeCenter);
 	const shouldTreatAsSelfLoop =
 		isSelfLoopTransition === true || isSelfLoopNodeCenter;
-	const selfLoopReferenceNodeCenter = sourceNodeCenter ?? targetNodeCenter;
 
-	if (shouldTreatAsSelfLoop && selfLoopReferenceNodeCenter) {
-		const isMarkerInsideSelfLoopNodeBounds = isMarkerInsideNodeBounds(
+	if (shouldTreatAsSelfLoop) {
+		const selfLoopMarkerCenter = resolveGuardMarkerSelfLoopClearance({
 			markerCenter,
-			selfLoopReferenceNodeCenter,
+			sourceNodeCenter,
+			targetNodeCenter,
 			expandedHalfWidth,
 			expandedHalfHeight,
-		);
+			isHorizontal,
+			directionSign,
+			fallbackDirectionSign,
+			directionIndicatorMode,
+			selfLoopClearanceAxisPreference,
+		});
 
-		if (
-			directionIndicatorMode ===
-			INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_INDICATOR_MODE.NONE
-		) {
-			const shouldApplyOutOfBoundsSelfLoopClearance =
-				!!selfLoopClearanceAxisPreference;
-
-			if (
-				!isMarkerInsideSelfLoopNodeBounds &&
-				!shouldApplyOutOfBoundsSelfLoopClearance
-			) {
-				return resolveAdditionalNodeClearance({
-					markerCenter,
-					additionalNodeCenters,
-					expandedHalfWidth,
-					expandedHalfHeight,
-					fallbackDirectionSign,
-				});
-			}
-
-			const perpendicularDirection = fallbackDirectionSign;
-			const selfLoopClearanceAxis =
-				selfLoopClearanceAxisPreference ??
-				(isHorizontal
-					? INSPECTOR_GUARD_MARKER_INTERACTION.SELF_LOOP_CLEARANCE_AXIS.Y
-					: INSPECTOR_GUARD_MARKER_INTERACTION.SELF_LOOP_CLEARANCE_AXIS.X);
-
-			const selfLoopMarkerCenter =
-				selfLoopClearanceAxis ===
-				INSPECTOR_GUARD_MARKER_INTERACTION.SELF_LOOP_CLEARANCE_AXIS.X
-					? {
-							x: applyAxisBoundary(
-								markerCenter.x,
-								selfLoopReferenceNodeCenter.x,
-								expandedHalfWidth,
-								perpendicularDirection,
-							),
-							y: markerCenter.y,
-						}
-					: {
-							x: markerCenter.x,
-							y: applyAxisBoundary(
-								markerCenter.y,
-								selfLoopReferenceNodeCenter.y,
-								expandedHalfHeight,
-								perpendicularDirection,
-							),
-						};
-
-			return resolveAdditionalNodeClearance({
-				markerCenter: selfLoopMarkerCenter,
-				additionalNodeCenters,
-				expandedHalfWidth,
-				expandedHalfHeight,
-				fallbackDirectionSign,
-			});
-		}
-
-		if (!isMarkerInsideSelfLoopNodeBounds) {
-			return resolveAdditionalNodeClearance({
-				markerCenter,
-				additionalNodeCenters,
-				expandedHalfWidth,
-				expandedHalfHeight,
-				fallbackDirectionSign,
-			});
-		}
-
-		const selfLoopDirectionalMarkerCenter = isHorizontal
-			? {
-					x: applyAxisBoundary(
-						markerCenter.x,
-						selfLoopReferenceNodeCenter.x,
-						expandedHalfWidth,
-						directionSign,
-					),
-					y: markerCenter.y,
-				}
-			: {
-					x: markerCenter.x,
-					y: applyAxisBoundary(
-						markerCenter.y,
-						selfLoopReferenceNodeCenter.y,
-						expandedHalfHeight,
-						directionSign,
-					),
-				};
-
-		return resolveAdditionalNodeClearance({
-			markerCenter: selfLoopDirectionalMarkerCenter,
+		return resolveGuardMarkerAdditionalNodeClearance({
+			markerCenter: selfLoopMarkerCenter,
 			additionalNodeCenters,
 			expandedHalfWidth,
 			expandedHalfHeight,
@@ -456,72 +155,18 @@ export const resolveGuardMarkerNodeClearance = ({
 		});
 	}
 
-	let nextMarkerCenter = { ...markerCenter };
+	const directionalMarkerCenter = resolveGuardMarkerDirectionalNodeClearance({
+		markerCenter,
+		sourceNodeCenter,
+		targetNodeCenter,
+		expandedHalfWidth,
+		expandedHalfHeight,
+		isHorizontal,
+		directionSign,
+	});
 
-	if (
-		sourceNodeCenter &&
-		isMarkerInsideNodeBounds(
-			nextMarkerCenter,
-			sourceNodeCenter,
-			expandedHalfWidth,
-			expandedHalfHeight,
-		)
-	) {
-		nextMarkerCenter = isHorizontal
-			? {
-					x: applyAxisBoundary(
-						nextMarkerCenter.x,
-						sourceNodeCenter.x,
-						expandedHalfWidth,
-						directionSign,
-					),
-					y: nextMarkerCenter.y,
-				}
-			: {
-					x: nextMarkerCenter.x,
-					y: applyAxisBoundary(
-						nextMarkerCenter.y,
-						sourceNodeCenter.y,
-						expandedHalfHeight,
-						directionSign,
-					),
-				};
-	}
-
-	if (
-		targetNodeCenter &&
-		isMarkerInsideNodeBounds(
-			nextMarkerCenter,
-			targetNodeCenter,
-			expandedHalfWidth,
-			expandedHalfHeight,
-		)
-	) {
-		const oppositeDirection = (directionSign * -1) as 1 | -1;
-
-		nextMarkerCenter = isHorizontal
-			? {
-					x: applyAxisBoundary(
-						nextMarkerCenter.x,
-						targetNodeCenter.x,
-						expandedHalfWidth,
-						oppositeDirection,
-					),
-					y: nextMarkerCenter.y,
-				}
-			: {
-					x: nextMarkerCenter.x,
-					y: applyAxisBoundary(
-						nextMarkerCenter.y,
-						targetNodeCenter.y,
-						expandedHalfHeight,
-						oppositeDirection,
-					),
-				};
-	}
-
-	return resolveAdditionalNodeClearance({
-		markerCenter: nextMarkerCenter,
+	return resolveGuardMarkerAdditionalNodeClearance({
+		markerCenter: directionalMarkerCenter,
 		additionalNodeCenters,
 		expandedHalfWidth,
 		expandedHalfHeight,
