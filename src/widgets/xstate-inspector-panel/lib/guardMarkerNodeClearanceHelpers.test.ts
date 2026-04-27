@@ -10,6 +10,7 @@ import {
 
 import {
 	resolveGuardMarkerAdditionalNodeClearance,
+	resolveGuardMarkerDirectionalNodeClearance,
 	resolveGuardMarkerInferredNodeCenterFromHandle,
 	resolveGuardMarkerNodeCenterFromHandle,
 	resolveGuardMarkerNodeOverlapClearance,
@@ -92,7 +93,7 @@ describe("guardMarkerNodeClearanceHelpers", () => {
 				expandedHalfHeight,
 				fallbackDirectionSign: 1,
 			}),
-		).toEqual({ x: 200 + expandedHalfWidth, y: 200 });
+		).toEqual({ x: 200, y: 200 + expandedHalfHeight });
 
 		expect(
 			resolveGuardMarkerNodeOverlapClearance({
@@ -106,8 +107,28 @@ describe("guardMarkerNodeClearanceHelpers", () => {
 				fallbackDirectionSign: -1,
 			}),
 		).toEqual({
-			x: 200 + expandedHalfWidth - 1,
-			y: 200 - expandedHalfHeight,
+			x: 200 + expandedHalfWidth,
+			y: 200 + expandedHalfHeight - 1,
+		});
+	});
+
+	it("applies directional source and target clearance on the movement axis", () => {
+		expect(
+			resolveGuardMarkerDirectionalNodeClearance({
+				markerCenter: { x: 200, y: 200 },
+				sourceNodeCenter: { x: 200, y: 200 },
+				targetNodeCenter: {
+					x: 200 + expandedHalfWidth - 1,
+					y: 200,
+				},
+				expandedHalfWidth,
+				expandedHalfHeight,
+				isHorizontal: true,
+				directionSign: 1,
+			}),
+		).toEqual({
+			x: 200 + expandedHalfWidth - 1 - expandedHalfWidth,
+			y: 200,
 		});
 	});
 
