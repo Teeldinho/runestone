@@ -13,10 +13,8 @@ import {
 
 import { ENEMY_ENTITY_CONFIG, ENEMY_EVENTS } from "../config";
 import {
-	computeEnemyFrameLinearVelocity,
-	createSmoothedEnemyRotation,
-	shouldRotateEnemy,
-	shouldSyncEnemyPlayerPosition,
+	resolveEnemyPhysicsFrameMotion,
+	resolveEnemyPlayerPositionSync,
 } from "../lib";
 import type { EnemyUpdatePlayerPositionEvent } from "./types";
 
@@ -38,41 +36,41 @@ export const useEnemyPhysicsLoop = ({
 	send,
 	getNextPosition,
 }: UseEnemyPhysicsLoopInput): void => {
-	const lastPlayerPositionRef = useRef<Vector3Tuple>([
-		getPlayerPosition()[0],
-		getPlayerPosition()[1],
-		getPlayerPosition()[2],
-	]);
-	const elapsedSincePlayerSyncMsRef = useRef(0);
+	const playerPositionSyncRef = useRef({
+		elapsedSincePlayerSyncMs: 0,
+		lastPlayerPosition: [
+			getPlayerPosition()[0],
+			getPlayerPosition()[1],
+			getPlayerPosition()[2],
+		] as Vector3Tuple,
+	});
 
 	useFrame((_, delta) => {
 		if (delta <= Number.EPSILON) {
 			return;
 		}
 
-		elapsedSincePlayerSyncMsRef.current += delta * 1000;
 		const playerPosition = getPlayerPosition();
-		if (
-			shouldSyncEnemyPlayerPosition({
-				elapsedMs: elapsedSincePlayerSyncMsRef.current,
-				lastSentPosition: lastPlayerPositionRef.current,
-				nextPosition: playerPosition,
-				positionThreshold:
-					ENEMY_ENTITY_CONFIG.PLAYER_TRACKING.POSITION_THRESHOLD,
-				updateIntervalMs:
-					ENEMY_ENTITY_CONFIG.PLAYER_TRACKING.UPDATE_INTERVAL_MS,
-			})
-		) {
+		const playerPositionSync = resolveEnemyPlayerPositionSync({
+			currentElapsedSincePlayerSyncMs:
+				playerPositionSyncRef.current.elapsedSincePlayerSyncMs,
+			currentLastPlayerPosition:
+				playerPositionSyncRef.current.lastPlayerPosition,
+			delta,
+			nextPlayerPosition: playerPosition,
+			positionThreshold: ENEMY_ENTITY_CONFIG.PLAYER_TRACKING.POSITION_THRESHOLD,
+			updateIntervalMs: ENEMY_ENTITY_CONFIG.PLAYER_TRACKING.UPDATE_INTERVAL_MS,
+		});
+		playerPositionSyncRef.current = {
+			elapsedSincePlayerSyncMs: playerPositionSync.nextElapsedSincePlayerSyncMs,
+			lastPlayerPosition: playerPositionSync.nextLastPlayerPosition,
+		};
+
+		if (playerPositionSync.shouldSendPlayerPositionUpdate) {
 			send({
 				type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
 				position: playerPosition,
 			});
-			lastPlayerPositionRef.current = [
-				playerPosition[0],
-				playerPosition[1],
-				playerPosition[2],
-			];
-			elapsedSincePlayerSyncMsRef.current = 0;
 		}
 
 		const body = rigidBodyRef.current;
@@ -80,31 +78,19 @@ export const useEnemyPhysicsLoop = ({
 		const current = body.translation();
 		setEnemyPosition(id, current.x, current.y, current.z);
 		const nextPos = getNextPosition(delta, [current.x, current.y, current.z]);
-		const frameLinearVelocity = computeEnemyFrameLinearVelocity({
+		const frameMotion = resolveEnemyPhysicsFrameMotion({
 			currentPosition: [current.x, current.y, current.z],
+			currentRotation: body.rotation() as Quaternion,
 			currentVerticalVelocity: body.linvel().y,
 			delta,
+			movementThreshold: ENEMY_ENTITY_CONFIG.PHYSICS.MOVEMENT_THRESHOLD,
 			nextPosition: nextPos,
+			rotationSpeed: ENEMY_ENTITY_CONFIG.PHYSICS.ROTATION_SPEED,
 		});
-		body.setLinvel(frameLinearVelocity, true);
+		body.setLinvel(frameMotion.frameLinearVelocity, true);
 
-		if (
-			shouldRotateEnemy({
-				movementThreshold: ENEMY_ENTITY_CONFIG.PHYSICS.MOVEMENT_THRESHOLD,
-				velocityX: frameLinearVelocity.x,
-				velocityZ: frameLinearVelocity.z,
-			})
-		) {
-			body.setRotation(
-				createSmoothedEnemyRotation({
-					currentRotation: body.rotation() as Quaternion,
-					delta,
-					rotationSpeed: ENEMY_ENTITY_CONFIG.PHYSICS.ROTATION_SPEED,
-					velocityX: frameLinearVelocity.x,
-					velocityZ: frameLinearVelocity.z,
-				}),
-				true,
-			);
+		if (frameMotion.nextRotation) {
+			body.setRotation(frameMotion.nextRotation, true);
 		}
 	});
 
