@@ -17,3 +17,8 @@ export {
 	createStateVisualizerSections,
 	formatActiveStateLabel,
 } from "./stateVisualizerSections";
+export {
+	type StateVisualizerWorkspaceState,
+	selectStateVisualizerWorkspaceHandleSelectedSectionIdChange,
+	selectStateVisualizerWorkspaceSelectedSectionId,
+} from "./stateVisualizerWorkspaceSelectors";

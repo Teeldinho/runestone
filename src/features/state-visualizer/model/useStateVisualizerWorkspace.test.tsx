@@ -4,7 +4,10 @@ import { act, renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 
-import { STATE_VISUALIZER_SECTION_IDS } from "../config";
+import {
+	STATE_VISUALIZER_ERROR_MESSAGES,
+	STATE_VISUALIZER_SECTION_IDS,
+} from "../config";
 
 import {
 	StateVisualizerWorkspaceProvider,
@@ -36,5 +39,11 @@ describe("useStateVisualizerWorkspace", () => {
 		expect(result.current.selectedSectionId).toBe(
 			STATE_VISUALIZER_SECTION_IDS.CAMERA,
 		);
+	});
+
+	it("throws when used outside the provider", () => {
+		expect(() => {
+			renderHook(() => useStateVisualizerWorkspace());
+		}).toThrow(STATE_VISUALIZER_ERROR_MESSAGES.WORKSPACE_PROVIDER_REQUIRED);
 	});
 });
