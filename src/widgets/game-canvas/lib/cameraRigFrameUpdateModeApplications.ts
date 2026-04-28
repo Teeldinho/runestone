@@ -49,6 +49,7 @@ type ApplyThirdPersonFrameInput = {
 	needsThirdPersonSyncRef: MutableRefObject<boolean>;
 	position: Vector3Tuple;
 	positionVectorRef: MutableRefObject<THREE.Vector3>;
+	previousTrackedPlayerPosition: Vector3Tuple | null;
 	thirdPersonOrbitRef: RefObject<OrbitControlsHandle | null>;
 	trackedPlayerPosition: Vector3Tuple;
 };
@@ -96,6 +97,34 @@ const resolveOrbitFollowTarget = ({
 		currentTarget: toVector3Tuple(currentTarget),
 		nextTarget,
 	});
+
+const translateOrbitByPlayerDelta = ({
+	camera,
+	currentTarget,
+	previousTrackedPlayerPosition,
+	trackedPlayerPosition,
+}: {
+	camera: THREE.Camera;
+	currentTarget: THREE.Vector3;
+	previousTrackedPlayerPosition: Vector3Tuple;
+	trackedPlayerPosition: Vector3Tuple;
+}): Vector3Tuple => {
+	const deltaX = trackedPlayerPosition[0] - previousTrackedPlayerPosition[0];
+	const deltaY = trackedPlayerPosition[1] - previousTrackedPlayerPosition[1];
+	const deltaZ = trackedPlayerPosition[2] - previousTrackedPlayerPosition[2];
+
+	camera.position.set(
+		camera.position.x + deltaX,
+		camera.position.y + deltaY,
+		camera.position.z + deltaZ,
+	);
+
+	return [
+		currentTarget.x + deltaX,
+		currentTarget.y + deltaY,
+		currentTarget.z + deltaZ,
+	];
+};
 
 const applyFirstPersonMobileOrbitFrame = ({
 	camera,
@@ -230,6 +259,7 @@ export const applyThirdPersonFrame = ({
 	needsThirdPersonSyncRef,
 	position,
 	positionVectorRef,
+	previousTrackedPlayerPosition,
 	thirdPersonOrbitRef,
 	trackedPlayerPosition,
 }: ApplyThirdPersonFrameInput): void => {
@@ -264,14 +294,26 @@ export const applyThirdPersonFrame = ({
 	}
 
 	if (isUserInteracting) {
-		const desiredCameraPosition = resolveOrbitFollowTarget({
+		if (previousTrackedPlayerPosition === null) {
+			const desiredCameraPosition = resolveOrbitFollowTarget({
+				camera,
+				currentTarget: thirdPersonOrbitRef.current.target,
+				nextTarget: lookAt,
+			});
+
+			camera.position.set(...desiredCameraPosition);
+			setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
+			return;
+		}
+
+		const nextTarget = translateOrbitByPlayerDelta({
 			camera,
 			currentTarget: thirdPersonOrbitRef.current.target,
-			nextTarget: lookAt,
+			previousTrackedPlayerPosition,
+			trackedPlayerPosition,
 		});
 
-		camera.position.set(...desiredCameraPosition);
-		setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
+		setOrbitTarget(thirdPersonOrbitRef.current, nextTarget);
 		return;
 	}
 

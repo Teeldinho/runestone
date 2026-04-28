@@ -82,6 +82,7 @@ describe("cameraRigFrameUpdateModeApplications", () => {
 			needsThirdPersonSyncRef: { current: true },
 			position: [1, 2, 3],
 			positionVectorRef: { current: new THREE.Vector3() },
+			previousTrackedPlayerPosition: null,
 			thirdPersonOrbitRef,
 			trackedPlayerPosition: [0, 0, 0],
 		});
@@ -115,6 +116,7 @@ describe("cameraRigFrameUpdateModeApplications", () => {
 			needsThirdPersonSyncRef: { current: false },
 			position: [2, 3, -6],
 			positionVectorRef: { current: new THREE.Vector3() },
+			previousTrackedPlayerPosition: [0, 0, 0],
 			thirdPersonOrbitRef,
 			trackedPlayerPosition: [2, 0, 0],
 		});
