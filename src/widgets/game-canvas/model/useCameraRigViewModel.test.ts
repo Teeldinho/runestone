@@ -210,6 +210,7 @@ describe("useCameraRigViewModel", () => {
 
 		expect(mockCamera.position.toArray()).toEqual([3, 20, -7]);
 		expect(mockCamera.up.toArray()).toEqual([0, 0, 1]);
+		expect(mockSetCameraAzimuth).toHaveBeenCalledWith(0);
 	});
 
 	it("preserves the current orbit while following the player in third-person", () => {
