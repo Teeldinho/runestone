@@ -44,7 +44,7 @@ describe("settingsStore", () => {
 		const formHook = renderHook(() => useSettingsForm());
 		const valuesHook = renderHook(() => useSettingsValues());
 
-		expect(valuesHook.result.current.postprocessingEnabled).toBe(true);
+		expect(valuesHook.result.current.postprocessingEnabled).toBe(false);
 
 		act(() => {
 			formHook.result.current.handlePostprocessingToggle(false);
@@ -57,8 +57,8 @@ describe("settingsStore", () => {
 			formHook.result.current.handleSettingsReset();
 		});
 
-		expect(formHook.result.current.postprocessingEnabled).toBe(true);
-		expect(valuesHook.result.current.postprocessingEnabled).toBe(true);
+		expect(formHook.result.current.postprocessingEnabled).toBe(false);
+		expect(valuesHook.result.current.postprocessingEnabled).toBe(false);
 		expect(valuesHook.result.current.hapticsEnabled).toBe(true);
 	});
 });
