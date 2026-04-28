@@ -562,7 +562,7 @@ describe("useCameraRigViewModel", () => {
 		expect(freeOrbitalControls.update).toHaveBeenCalledTimes(1);
 	});
 
-	it("pauses third-person follow lerping when the user is manually orbiting", () => {
+	it("preserves the third-person orbit offset when the user is manually orbiting", () => {
 		mockHasPlayerPosition.mockReturnValue(true);
 		mockGetPlayerPosition.mockReturnValue([0, 0.9, 0]);
 		const { result } = renderHook(() =>
@@ -601,9 +601,11 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		// Camera should NOT have moved linearly via the follow lerp
-		expect(mockCamera.position.toArray()).toEqual(
-			initialCameraPosition.toArray(),
-		);
+		expect(mockCamera.position.toArray()).toEqual([
+			initialCameraPosition.x + 2,
+			initialCameraPosition.y,
+			initialCameraPosition.z,
+		]);
+		expect(thirdPersonControls.target.x).toBeCloseTo(2, 6);
 	});
 });
