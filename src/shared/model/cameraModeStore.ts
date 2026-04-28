@@ -9,9 +9,13 @@ type CameraModeStoreState = {
 };
 
 const createCameraModeStore = () =>
-	createStore<CameraModeStoreState>()((set) => ({
-		mode: CAMERA_MODES.FREE_ORBITAL,
+	createStore<CameraModeStoreState>()((set, get) => ({
+		mode: CAMERA_MODES.THIRD_PERSON,
 		setMode: (mode) => {
+			if (get().mode === mode) {
+				return;
+			}
+
 			set({ mode });
 		},
 	}));

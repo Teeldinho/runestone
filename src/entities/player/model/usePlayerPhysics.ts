@@ -2,7 +2,6 @@ import { useFrame } from "@react-three/fiber";
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
-import type { Quaternion } from "three";
 import type { Vector3Tuple } from "@/shared/lib";
 import {
 	consumePlayerTeleportTarget,
@@ -68,7 +67,7 @@ export const usePlayerPhysics = ({
 			);
 			body.setRotation(
 				createSmoothedPlayerPhysicsRotation({
-					currentRotation: body.rotation() as Quaternion,
+					currentRotation: body.rotation(),
 					delta,
 					rotationTarget,
 				}),

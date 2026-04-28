@@ -50,7 +50,7 @@ import { usePlayerPhysics } from "./usePlayerPhysics";
 type FakeBody = {
 	translation: () => { x: number; y: number; z: number };
 	linvel: () => { x: number; y: number; z: number };
-	rotation: () => THREE.Quaternion;
+	rotation: () => { x: number; y: number; z: number; w: number };
 	setLinvel: ReturnType<typeof vi.fn>;
 	setRotation: ReturnType<typeof vi.fn>;
 	setTranslation: ReturnType<typeof vi.fn>;
@@ -58,7 +58,7 @@ type FakeBody = {
 
 const createFakeBody = (): FakeBody => {
 	let currentLinvel = { x: 0, y: 0, z: 0 };
-	const currentRotation = new THREE.Quaternion();
+	const currentRotation = { x: 0, y: 0, z: 0, w: 1 };
 
 	return {
 		translation: () => ({ x: 2, y: 1, z: -3 }),
@@ -93,7 +93,12 @@ describe("usePlayerPhysics", () => {
 		});
 		mockCreateSmoothedPlayerPhysicsRotation.mockImplementation(
 			({ currentRotation, rotationTarget }) =>
-				currentRotation.clone().slerp(rotationTarget, 1),
+				new THREE.Quaternion(
+					currentRotation.x,
+					currentRotation.y,
+					currentRotation.z,
+					currentRotation.w,
+				).slerp(rotationTarget, 1),
 		);
 	});
 
@@ -138,7 +143,12 @@ describe("usePlayerPhysics", () => {
 			velocity: [0, 0, -1],
 		});
 		expect(mockCreateSmoothedPlayerPhysicsRotation).toHaveBeenCalledWith({
-			currentRotation: expect.any(THREE.Quaternion),
+			currentRotation: {
+				x: expect.any(Number),
+				y: expect.any(Number),
+				z: expect.any(Number),
+				w: expect.any(Number),
+			},
 			delta: 0.016,
 			rotationTarget: expect.any(THREE.Quaternion),
 		});
@@ -191,6 +201,32 @@ describe("usePlayerPhysics", () => {
 			true,
 		);
 		expect(mockCreateSmoothedPlayerPhysicsRotation).toHaveBeenCalled();
+	});
+
+	it("passes a rotation-like object from Rapier to smoothing helpers", () => {
+		const smoothedRotation = new THREE.Quaternion().setFromAxisAngle(
+			new THREE.Vector3(0, 1, 0),
+			Math.PI / 3,
+		);
+		mockCreateSmoothedPlayerPhysicsRotation.mockReturnValue(smoothedRotation);
+
+		const { result } = renderHook(() =>
+			usePlayerPhysics({ velocity: [0, 0, -1], isSprinting: false }),
+		);
+		const body = createFakeBody();
+
+		result.current.rigidBodyRef.current = body as never;
+
+		act(() => {
+			frameCallbacks.at(-1)?.({}, 0.016);
+		});
+
+		expect(mockCreateSmoothedPlayerPhysicsRotation).toHaveBeenCalledWith(
+			expect.objectContaining({
+				currentRotation: { x: 0, y: 0, z: 0, w: 1 },
+			}),
+		);
+		expect(body.setRotation).toHaveBeenCalledWith(smoothedRotation, true);
 	});
 
 	it("stops horizontal motion when the helper reports an idle frame", () => {

@@ -5,7 +5,11 @@ import * as THREE from "three";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DOOR_SIDES, ROOM_IDS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
-import { CAMERA_DEFAULT_ZOOM, PLAYER_EYE_HEIGHT } from "@/shared/config";
+import {
+	CAMERA_CONFIG,
+	CAMERA_DEFAULT_ZOOM,
+	PLAYER_EYE_HEIGHT,
+} from "@/shared/config";
 
 const frameCallbacks: Array<() => void> = [];
 const mockSetCameraMode = vi.fn();
@@ -67,7 +71,7 @@ describe("useCameraRigViewModel", () => {
 	});
 
 	it("syncs the camera mode store immediately from the snapshot mode", () => {
-		renderHook(() =>
+		const { result } = renderHook(() =>
 			useCameraRigViewModel({
 				cameraStateSnapshot: {
 					fov: 65,
@@ -80,6 +84,13 @@ describe("useCameraRigViewModel", () => {
 			}),
 		);
 
+		expect(result.current.mode).toBe(CAMERA_MODES.THIRD_PERSON);
+		expect(
+			typeof result.current.orbitBindings.thirdPerson.handleOrbitStart,
+		).toBe("function");
+		expect(typeof result.current.orbitBindings.thirdPerson.handleOrbitEnd).toBe(
+			"function",
+		);
 		expect(mockSetCameraMode).toHaveBeenCalledWith(CAMERA_MODES.THIRD_PERSON);
 	});
 
@@ -209,7 +220,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 65,
 					mode: CAMERA_MODES.THIRD_PERSON,
-					position: [0, 2.2, -3.8],
+					position: [...CAMERA_CONFIG.THIRD_PERSON.OFFSET],
 					target: [0, 1, 0],
 					zoom: 1,
 				},
@@ -236,7 +247,10 @@ describe("useCameraRigViewModel", () => {
 
 		expect(thirdPersonControls.target.x).toBeGreaterThan(0);
 		expect(mockCamera.position.x).toBeGreaterThan(0);
-		expect(mockCamera.position.z).toBeCloseTo(-3.8, 6);
+		expect(mockCamera.position.z).toBeCloseTo(
+			CAMERA_CONFIG.THIRD_PERSON.OFFSET[2],
+			6,
+		);
 	});
 
 	it("keeps third-person behind north-entry travel while clamped inside the room", () => {
@@ -252,7 +266,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 65,
 					mode: CAMERA_MODES.THIRD_PERSON,
-					position: [0, 2.2, -3.8],
+					position: [...CAMERA_CONFIG.THIRD_PERSON.OFFSET],
 					target: [0, 1, 0],
 					zoom: 1,
 				},

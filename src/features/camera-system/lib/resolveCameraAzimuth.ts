@@ -1,3 +1,4 @@
+import { TOP_DOWN_CAMERA_LOCKED_AZIMUTH_ANGLE } from "@/shared/config";
 import { CAMERA_MODES, type CameraMode } from "../config";
 
 type CameraDirection = {
@@ -16,7 +17,7 @@ export const resolveCameraAzimuth = ({
 	direction,
 }: ResolveCameraAzimuthInput): number | null => {
 	if (mode === CAMERA_MODES.TOP_DOWN) {
-		return 0;
+		return TOP_DOWN_CAMERA_LOCKED_AZIMUTH_ANGLE;
 	}
 
 	const horizontalMagnitude = Math.hypot(direction.x, direction.z);
