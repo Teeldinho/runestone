@@ -1,7 +1,10 @@
 import type { MutableRefObject, RefObject } from "react";
 import { useCallback, useEffect } from "react";
 import { CAMERA_RIG_MULTI_TOUCH_POINTER_COUNT } from "../config";
-import { type OrbitControlsHandle, setOrbitRotationEnabled } from "../lib";
+import {
+	type OrbitControlsHandle,
+	setOrbitRotationEnabled,
+} from "../lib/cameraRigControls";
 
 type UseCameraRigInteractionHandlersInput = {
 	activeTouchPointerIdsRef: MutableRefObject<Set<number>>;

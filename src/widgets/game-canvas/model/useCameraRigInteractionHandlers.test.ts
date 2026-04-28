@@ -1,21 +1,20 @@
 // @vitest-environment happy-dom
 
 import { act, renderHook } from "@testing-library/react";
-import * as THREE from "three";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { useCameraRigInteractionHandlers } from "./useCameraRigInteractionHandlers";
 
 type MockOrbitControl = {
 	enableRotate: boolean;
-	target: THREE.Vector3;
+	target: never;
 	update: () => void;
 };
 
 const createOrbitRef = () => ({
 	current: {
 		enableRotate: true,
-		target: new THREE.Vector3(),
+		target: {} as never,
 		update: () => {},
 	} as MockOrbitControl,
 });
