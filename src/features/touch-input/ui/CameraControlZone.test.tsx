@@ -13,6 +13,6 @@ describe("CameraControlZone", () => {
 		const controlZone = document.querySelector("#camera-control-zone");
 
 		expect(controlZone?.classList.contains("inset-0")).toBe(true);
-		expect(controlZone?.classList.contains("right-0")).toBe(true);
+		expect(controlZone?.classList.contains("left-1/2")).toBe(false);
 	});
 });

@@ -32,6 +32,7 @@ type CameraRigRefs = {
 
 type CameraRigRuntimeState = {
 	interaction: {
+		activeTouchPointerIdsRef: MutableRefObject<Set<number>>;
 		isTouchInitiallyOnLeftRef: MutableRefObject<boolean>;
 		isUserInteractingRef: MutableRefObject<boolean>;
 	};

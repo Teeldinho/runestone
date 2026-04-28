@@ -55,6 +55,7 @@ export const useCameraRigViewModel = ({
 		handleOrbitStart,
 	} = useCameraRigInteractionHandlers({
 		cameraControlElement,
+		activeTouchPointerIdsRef: interaction.activeTouchPointerIdsRef,
 		firstPersonOrbitRef: refs.firstPersonOrbitRef,
 		freeOrbitalOrbitRef: refs.freeOrbitalOrbitRef,
 		isTouchInitiallyOnLeftRef: interaction.isTouchInitiallyOnLeftRef,

@@ -1,9 +1,10 @@
 import type { MutableRefObject, RefObject } from "react";
 import { useCallback, useEffect } from "react";
-
+import { CAMERA_RIG_MULTI_TOUCH_POINTER_COUNT } from "../config";
 import { type OrbitControlsHandle, setOrbitRotationEnabled } from "../lib";
 
 type UseCameraRigInteractionHandlersInput = {
+	activeTouchPointerIdsRef: MutableRefObject<Set<number>>;
 	cameraControlElement?: HTMLElement | null;
 	firstPersonOrbitRef: RefObject<OrbitControlsHandle | null>;
 	freeOrbitalOrbitRef: RefObject<OrbitControlsHandle | null>;
@@ -21,6 +22,7 @@ type CameraRigInteractionHandlers = {
 };
 
 export const useCameraRigInteractionHandlers = ({
+	activeTouchPointerIdsRef,
 	cameraControlElement,
 	firstPersonOrbitRef,
 	freeOrbitalOrbitRef,
@@ -31,10 +33,23 @@ export const useCameraRigInteractionHandlers = ({
 }: UseCameraRigInteractionHandlersInput): CameraRigInteractionHandlers => {
 	const handlePointerDown = useCallback(
 		(event: PointerEvent) => {
+			if (event.pointerType === "touch") {
+				activeTouchPointerIdsRef.current.add(event.pointerId);
+			}
+
 			isTouchInitiallyOnLeftRef.current =
 				event.clientX < window.innerWidth * 0.5;
 		},
-		[isTouchInitiallyOnLeftRef],
+		[activeTouchPointerIdsRef, isTouchInitiallyOnLeftRef],
+	);
+
+	const handlePointerUp = useCallback(
+		(event: PointerEvent) => {
+			if (event.pointerType === "touch") {
+				activeTouchPointerIdsRef.current.delete(event.pointerId);
+			}
+		},
+		[activeTouchPointerIdsRef],
 	);
 
 	useEffect(() => {
@@ -44,10 +59,14 @@ export const useCameraRigInteractionHandlers = ({
 		}
 
 		element.addEventListener("pointerdown", handlePointerDown);
+		element.addEventListener("pointercancel", handlePointerUp);
+		element.addEventListener("pointerup", handlePointerUp);
 		return () => {
 			element.removeEventListener("pointerdown", handlePointerDown);
+			element.removeEventListener("pointercancel", handlePointerUp);
+			element.removeEventListener("pointerup", handlePointerUp);
 		};
-	}, [cameraControlElement, handlePointerDown]);
+	}, [cameraControlElement, handlePointerDown, handlePointerUp]);
 
 	const handleFirstPersonLock = useCallback(() => {}, []);
 
@@ -55,6 +74,9 @@ export const useCameraRigInteractionHandlers = ({
 
 	const handleOrbitStart = useCallback(() => {
 		isUserInteractingRef.current = true;
+		const isMultiTouchGesture =
+			activeTouchPointerIdsRef.current.size >=
+			CAMERA_RIG_MULTI_TOUCH_POINTER_COUNT;
 		setOrbitRotationEnabled(
 			[
 				thirdPersonOrbitRef,
@@ -62,9 +84,10 @@ export const useCameraRigInteractionHandlers = ({
 				freeOrbitalOrbitRef,
 				firstPersonOrbitRef,
 			],
-			!isTouchInitiallyOnLeftRef.current,
+			isMultiTouchGesture || !isTouchInitiallyOnLeftRef.current,
 		);
 	}, [
+		activeTouchPointerIdsRef,
 		firstPersonOrbitRef,
 		freeOrbitalOrbitRef,
 		isTouchInitiallyOnLeftRef,

@@ -30,6 +30,7 @@ describe("useCameraRigInteractionHandlers", () => {
 
 	it("disables rotation when touch starts on joystick side and re-enables it on orbit end", () => {
 		const cameraControlElement = document.createElement("div");
+		const activeTouchPointerIdsRef = { current: new Set<number>() };
 		const isUserInteractingRef = { current: false };
 		const isTouchInitiallyOnLeftRef = { current: false };
 		const thirdPersonOrbitRef = createOrbitRef();
@@ -39,6 +40,7 @@ describe("useCameraRigInteractionHandlers", () => {
 
 		const { result } = renderHook(() =>
 			useCameraRigInteractionHandlers({
+				activeTouchPointerIdsRef,
 				cameraControlElement,
 				firstPersonOrbitRef,
 				freeOrbitalOrbitRef,
@@ -77,6 +79,7 @@ describe("useCameraRigInteractionHandlers", () => {
 
 	it("keeps rotation enabled for multi-touch gestures so pinch zoom can continue", () => {
 		const cameraControlElement = document.createElement("div");
+		const activeTouchPointerIdsRef = { current: new Set<number>() };
 		const isUserInteractingRef = { current: false };
 		const isTouchInitiallyOnLeftRef = { current: false };
 		const thirdPersonOrbitRef = createOrbitRef();
@@ -86,6 +89,7 @@ describe("useCameraRigInteractionHandlers", () => {
 
 		const { result } = renderHook(() =>
 			useCameraRigInteractionHandlers({
+				activeTouchPointerIdsRef,
 				cameraControlElement,
 				firstPersonOrbitRef,
 				freeOrbitalOrbitRef,
