@@ -10,8 +10,9 @@ export const AUTH_STATUS = {
 export const USERNAME_RULES = {
 	MIN_LENGTH: 3,
 	MAX_LENGTH: 20,
-	PATTERN: /^[A-Za-z0-9_]+$/,
 } as const;
+
+export const USERNAME_PATTERN = /^[A-Za-z0-9_]+$/;
 
 export const AUTH_ERROR_MESSAGES = {
 	USERNAME_SUBMIT_FAILED: "We could not create your profile. Please try again.",

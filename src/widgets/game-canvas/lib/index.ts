@@ -1,14 +1,35 @@
+export {
+	computeCameraRigLerpAlpha,
+	computeCameraRigTransitionJumpDistance,
+} from "./cameraMath";
 export type { OrbitControlsHandle } from "./cameraRigControls";
-export { setCameraUp, setOrbitTarget } from "./cameraRigControls";
+export {
+	setCameraUp,
+	setOrbitRotationEnabled,
+	setOrbitTarget,
+} from "./cameraRigControls";
 export {
 	checkOrbitFollowJump,
 	getPreservedOrbitCameraPosition,
 	resolveOrbitFollowUpdate,
 } from "./cameraRigFollow";
+export type {
+	CameraRigFrameFlags,
+	CameraRigFrameUpdateInput,
+	PointerLockControlsHandle,
+	ResolveCameraRigFrameFlagsInput,
+} from "./cameraRigFrameUpdate";
+export {
+	checkShouldSyncMovementAzimuth,
+	resolveCameraRigFrameFlags,
+	runCameraRigFrameUpdate,
+} from "./cameraRigFrameUpdate";
 export {
 	getCameraRigTargets,
 	getThirdPersonTransitionTargets,
 } from "./cameraRigTargets";
+export { createCanvasMachineSettingsViewModel } from "./createCanvasMachineSettingsViewModel";
+export { createCanvasSettingsViewModel } from "./createCanvasSettingsViewModel";
 export { createRoomTorchPositions } from "./createRoomTorchPositions";
 export { createTorchSettings } from "./createTorchSettings";
 export { shouldSubmitFloorScore } from "./floorCompletion";
@@ -29,4 +50,9 @@ export {
 	createSceneRoomMeshSettings,
 	createSceneSpawnPosition,
 } from "./sceneEnvironmentMappers";
+export type {
+	CreateSceneEnvironmentSettingsViewModelInput,
+	SceneEnvironmentSettingsViewModel,
+} from "./sceneEnvironmentSettings";
+export { createSceneEnvironmentSettingsViewModel } from "./sceneEnvironmentSettings";
 export { selectNearestRoomPositions } from "./selectNearestRoomPositions";

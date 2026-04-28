@@ -1,5 +1,5 @@
 import { DOOR_SIDES, type DoorSide } from "@/entities/dungeon";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { DOORWAY_NAVIGATION_CONFIG } from "../config";
 

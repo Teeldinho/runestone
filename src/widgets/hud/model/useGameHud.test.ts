@@ -2,28 +2,35 @@
 
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { DUNGEON_EVENTS } from "@/entities/dungeon";
 
 import { HUD_COPY } from "@/widgets/hud/config";
 
 import { useGameHud } from "./useGameHud";
 
 const BASE_PARAMS = {
-	actionButtons: [
-		{
-			eventType: "ENTER_LIBRARY",
-			label: "Enter Library",
-			isDisabled: false,
-			handleDungeonActionTrigger: vi.fn(),
-		},
-	],
-	activeStateLabel: "entrance",
-	currentRoomLabel: "Entrance",
-	discoveredRoomLabels: ["Entrance", "Library"],
-	enemiesRemaining: 1,
-	hasTreasureKeyLabel: "Missing",
-	handleDungeonRunReset: vi.fn(),
-	playerHp: 80,
-	playerMaxHp: 100,
+	actions: {
+		actionButtons: [
+			{
+				eventType: "ENTER_LIBRARY",
+				label: "Enter Library",
+				isDisabled: false,
+				handleDungeonActionTrigger: vi.fn(),
+			},
+		],
+		handleDungeonRunReset: vi.fn(),
+	},
+	playerStats: {
+		playerHp: 80,
+		playerMaxHp: 100,
+	},
+	snapshot: {
+		currentRoomLabel: "Entrance",
+		discoveredRoomLabels: ["Entrance", "Library"],
+		enemiesRemaining: 1,
+		hasTreasureKeyLabel: "Missing",
+		nearInteractableLabel: "—",
+	},
 };
 
 describe("useGameHud", () => {
@@ -34,15 +41,17 @@ describe("useGameHud", () => {
 		const { result } = renderHook(() =>
 			useGameHud({
 				...BASE_PARAMS,
-				actionButtons: [
-					{
-						eventType: "ENTER_LIBRARY",
-						label: "Enter Library",
-						isDisabled: false,
-						handleDungeonActionTrigger: handleActionTrigger,
-					},
-				],
-				handleDungeonRunReset,
+				actions: {
+					actionButtons: [
+						{
+							eventType: "ENTER_LIBRARY",
+							label: "Enter Library",
+							isDisabled: false,
+							handleDungeonActionTrigger: handleActionTrigger,
+						},
+					],
+					handleDungeonRunReset,
+				},
 			}),
 		);
 
@@ -54,8 +63,8 @@ describe("useGameHud", () => {
 			},
 			{
 				displayVariant: "text",
-				label: HUD_COPY.SNAPSHOT_LABELS.ROOM_STATE,
-				value: "entrance",
+				label: HUD_COPY.SNAPSHOT_LABELS.NEAR_INTERACTABLE,
+				value: "—",
 			},
 			{
 				displayVariant: "badge",
@@ -77,6 +86,7 @@ describe("useGameHud", () => {
 		expect(result.current.actionButtons[0]?.handleDungeonActionTrigger).toBe(
 			handleActionTrigger,
 		);
+		expect(result.current.sidebarSnapshotEntries).toHaveLength(4);
 		expect(result.current.handleDungeonRunReset).toBe(handleDungeonRunReset);
 		expect(result.current.discoveredRoomLabels).toEqual([
 			"Entrance",
@@ -86,12 +96,43 @@ describe("useGameHud", () => {
 
 	it("formats hp display as 'current / max'", () => {
 		const { result } = renderHook(() =>
-			useGameHud({ ...BASE_PARAMS, playerHp: 45, playerMaxHp: 100 }),
+			useGameHud({
+				...BASE_PARAMS,
+				playerStats: { playerHp: 45, playerMaxHp: 100 },
+			}),
 		);
 
 		const hpEntry = result.current.machineSnapshotEntries.find(
 			(e) => e.label === HUD_COPY.SNAPSHOT_LABELS.PLAYER_HP,
 		);
 		expect(hpEntry?.value).toBe("45 / 100");
+		expect(result.current.healthBar).toMatchObject({
+			hpPercentage: 45,
+			label: "45 / 100",
+		});
+	});
+
+	it("removes sidebar-excluded dungeon events from action buttons", () => {
+		const { result } = renderHook(() =>
+			useGameHud({
+				...BASE_PARAMS,
+				actions: {
+					actionButtons: [
+						...BASE_PARAMS.actions.actionButtons,
+						{
+							eventType: DUNGEON_EVENTS.PICK_UP_KEY,
+							label: "Pick up key",
+							isDisabled: false,
+							handleDungeonActionTrigger: vi.fn(),
+						},
+					],
+					handleDungeonRunReset: BASE_PARAMS.actions.handleDungeonRunReset,
+				},
+			}),
+		);
+
+		expect(result.current.actionButtons).toEqual([
+			expect.objectContaining({ eventType: "ENTER_LIBRARY" }),
+		]);
 	});
 });

@@ -1,16 +1,11 @@
-import { shallowEqual } from "@xstate/react";
-import { useEffect, useRef, useState } from "react";
+import { shallowEqual, useMachine } from "@xstate/react";
+import { useEffect, useRef } from "react";
 
 import {
-	ACHIEVEMENT_COPY,
-	ACHIEVEMENT_DISPLAY_DURATION_MS,
-	ACHIEVEMENT_IDS,
+	ACHIEVEMENT_NOTIFICATION_MACHINE_EVENTS,
 	type Achievement,
 	type AchievementId,
-	hasCollectedKey,
-	hasDefeatedAllEnemies,
-	hasEscapedFloor,
-	hasReachedLibrary,
+	achievementNotificationMachine,
 } from "@/features/achievements";
 import {
 	selectAchievementTrackingContext,
@@ -18,78 +13,77 @@ import {
 } from "@/features/dungeon-navigation";
 import { useHaptics } from "@/features/haptics-feedback";
 
+import {
+	createAchievementNotificationPayload,
+	resolveAchievementTrackingNotificationIds,
+	shouldResetAchievementTracker,
+} from "../lib/achievementTracking";
+
 type UseAchievementTrackerResult = {
 	activeAchievement: Achievement | null;
 };
 
-export const useAchievementTracker = (): UseAchievementTrackerResult => {
+type UseAchievementTrackerInput = {
+	hapticsEnabled?: boolean;
+};
+
+export const useAchievementTracker = ({
+	hapticsEnabled = true,
+}: UseAchievementTrackerInput = {}): UseAchievementTrackerResult => {
 	const achievementTrackingContext = useGameMachineSelector(
 		selectAchievementTrackingContext,
 		shallowEqual,
 	);
-	const { onAchievement } = useHaptics();
+	const { onAchievement } = useHaptics({ hapticsEnabled });
 
-	const [activeAchievement, setActiveAchievement] =
-		useState<Achievement | null>(null);
+	const [achievementNotificationSnapshot, sendAchievementNotificationEvent] =
+		useMachine(achievementNotificationMachine);
 	const triggeredRef = useRef<Set<AchievementId>>(new Set());
-	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const prevDiscoveredCountRef = useRef<number>(
 		achievementTrackingContext.discoveredRooms.length,
 	);
 
 	useEffect(() => {
-		const count = achievementTrackingContext.discoveredRooms.length;
+		const currentDiscoveredRoomCount =
+			achievementTrackingContext.discoveredRooms.length;
+
 		if (
-			count === 1 &&
-			!achievementTrackingContext.hasTreasureKey &&
-			prevDiscoveredCountRef.current > 1
+			shouldResetAchievementTracker({
+				currentDiscoveredRoomCount,
+				hasTreasureKey: achievementTrackingContext.hasTreasureKey,
+				previousDiscoveredRoomCount: prevDiscoveredCountRef.current,
+			})
 		) {
 			triggeredRef.current.clear();
-			setActiveAchievement(null);
-		}
-		prevDiscoveredCountRef.current = count;
-	}, [achievementTrackingContext]);
-
-	useEffect(() => {
-		const trigger = (condition: boolean, id: AchievementId) => {
-			if (!condition || triggeredRef.current.has(id)) return;
-			triggeredRef.current.add(id);
-			onAchievement();
-			setActiveAchievement({
-				id,
-				label: ACHIEVEMENT_COPY[id].label,
-				description: ACHIEVEMENT_COPY[id].description,
+			sendAchievementNotificationEvent({
+				type: ACHIEVEMENT_NOTIFICATION_MACHINE_EVENTS.RESET,
 			});
-			if (timerRef.current) clearTimeout(timerRef.current);
-			timerRef.current = setTimeout(
-				() => setActiveAchievement(null),
-				ACHIEVEMENT_DISPLAY_DURATION_MS,
-			);
-		};
-
-		trigger(
-			hasReachedLibrary(achievementTrackingContext),
-			ACHIEVEMENT_IDS.FIRST_STEPS,
-		);
-		trigger(
-			hasCollectedKey(achievementTrackingContext),
-			ACHIEVEMENT_IDS.KEY_HUNTER,
-		);
-		trigger(
-			hasDefeatedAllEnemies(achievementTrackingContext),
-			ACHIEVEMENT_IDS.COMBAT_MASTER,
-		);
-		trigger(
-			hasEscapedFloor(achievementTrackingContext),
-			ACHIEVEMENT_IDS.ESCAPE_ARTIST,
-		);
-	}, [achievementTrackingContext, onAchievement]);
+		}
+		prevDiscoveredCountRef.current = currentDiscoveredRoomCount;
+	}, [achievementTrackingContext, sendAchievementNotificationEvent]);
 
 	useEffect(() => {
-		return () => {
-			if (timerRef.current) clearTimeout(timerRef.current);
-		};
-	}, []);
+		const pendingAchievementIds = resolveAchievementTrackingNotificationIds({
+			achievementTrackingContext,
+			triggeredAchievementIds: triggeredRef.current,
+		});
 
-	return { activeAchievement };
+		pendingAchievementIds.forEach((achievementId) => {
+			triggeredRef.current.add(achievementId);
+			onAchievement();
+			sendAchievementNotificationEvent({
+				type: ACHIEVEMENT_NOTIFICATION_MACHINE_EVENTS.SHOW,
+				achievement: createAchievementNotificationPayload(achievementId),
+			});
+		});
+	}, [
+		achievementTrackingContext,
+		onAchievement,
+		sendAchievementNotificationEvent,
+	]);
+
+	return {
+		activeAchievement: achievementNotificationSnapshot.context
+			.activeAchievement as Achievement | null,
+	};
 };

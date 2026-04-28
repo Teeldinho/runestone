@@ -3,7 +3,7 @@ import {
 	PLAYER_MOVEMENT_KEY_ALIASES,
 	type PlayerMovementKey,
 } from "@/entities/player";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 export const getMovementKey = (key: string): PlayerMovementKey | null => {
 	return (

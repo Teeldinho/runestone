@@ -1,3 +1,4 @@
+export { useAuthContext } from "./authContext";
 export { authMachine } from "./authMachine";
 export type {
 	AuthContextValue,
@@ -6,5 +7,5 @@ export type {
 	AuthStatus,
 	UsernameFormInput,
 } from "./types";
-export { AuthProvider, useAuth, useAuthContext } from "./useAuth";
+export { useAuth } from "./useAuth";
 export { useUsernameForm } from "./useUsernameForm";

@@ -58,7 +58,26 @@ export const ROOM_GLTF_CONFIG = {
 export const ROOM_FLOOR_COLLIDER = {
 	HALF_HEIGHT: 0.3,
 	POSITION_Y: -0.3,
+	GRID_OFFSET_Y: 0.04,
 } as const;
+
+export const ROOM_GEOMETRY = {
+	HALF_WIDTH: 6,
+	HALF_DEPTH: 6,
+	WALL_Y: 0,
+	WALL_TILE_POSITIONS: [-4, 0, 4] as const,
+	WALL_TILE_WIDTH: 4,
+	TORCH_INSET: 0.2,
+} as const;
+
+export const ROOM_WALL_LAYOUT = {
+	north: { rotationY: 0, isNorthSouth: true, offsetSign: -1 },
+	south: { rotationY: Math.PI, isNorthSouth: true, offsetSign: 1 },
+	east: { rotationY: -Math.PI / 2, isNorthSouth: false, offsetSign: 1 },
+	west: { rotationY: Math.PI / 2, isNorthSouth: false, offsetSign: -1 },
+} as const;
+
+export type RoomWallSide = keyof typeof ROOM_WALL_LAYOUT;
 
 export const ROOM_ENTITY_CONFIG = {
 	DIMENSIONS: {
@@ -74,6 +93,8 @@ export const ROOM_ENTITY_CONFIG = {
 		COLOR: DUNGEON_THEME_COLORS.DOORWAY_GATE,
 		EMISSIVE: DUNGEON_THEME_COLORS.DOORWAY_GATE_EMISSIVE,
 		EMISSIVE_INTENSITY: 0.28,
+		ROUGHNESS: 0.45,
+		METALNESS: 0.55,
 	},
 	COLLIDERS: {
 		COLUMN: {
@@ -106,13 +127,22 @@ export const ROOM_ENTITY_CONFIG = {
 		RING_TUBE_RADIUS: 0.03,
 		RING_RADIAL_SEGMENTS: 16,
 		RING_TUBULAR_SEGMENTS: 24,
+		RING_ROTATION: [Math.PI / 2, 0, 0] as const,
 		SHAFT_LENGTH: 0.34,
 		SHAFT_RADIUS: 0.03,
+		SHAFT_RADIAL_SEGMENTS: 12,
+		SHAFT_ROTATION: [0, 0, Math.PI / 2] as const,
 		TOOTH_WIDTH: 0.08,
 		TOOTH_HEIGHT: 0.11,
 		TOOTH_DEPTH: 0.05,
 		COLOR: DUNGEON_THEME_COLORS.RUNE_OPEN,
 		EMISSIVE_INTENSITY: 0.9,
+		RING_METALNESS: 0.8,
+		RING_ROUGHNESS: 0.25,
+		SHAFT_METALNESS: 0.85,
+		SHAFT_ROUGHNESS: 0.2,
+		TOOTH_METALNESS: 0.8,
+		TOOTH_ROUGHNESS: 0.25,
 	},
 	LABEL: {
 		TEXT: "Rune Chamber",

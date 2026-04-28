@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { DUNGEON_THEME } from "@/entities/dungeon";
 
-import type { CanvasLightingSettings } from "./useCanvasSettings";
+import type { CanvasLightingSettings } from "./canvasSettingsTypes";
 
 import { useSceneLighting } from "./useSceneLighting";
 
@@ -46,5 +46,17 @@ describe("useSceneLighting", () => {
 				position: [1, 2, 3],
 			},
 		]);
+	});
+
+	it("returns a fresh lighting view model on rerender", () => {
+		const { result, rerender } = renderHook(() =>
+			useSceneLighting(LIGHTING_FIXTURE),
+		);
+		const firstResult = result.current;
+
+		rerender();
+
+		expect(result.current).not.toBe(firstResult);
+		expect(result.current.torchSettings).toEqual(firstResult.torchSettings);
 	});
 });

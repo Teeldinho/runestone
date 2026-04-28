@@ -1,5 +1,5 @@
 import type { CameraMachineEvent, CameraMode } from "@/features/camera-system";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/shared/ui";
 
 import { CAMERA_MODE_ICON_LABELS } from "../config/cameraModeSwitcherConfig";
 import { useCameraModeSwitcher } from "../model";

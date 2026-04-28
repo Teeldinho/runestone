@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { type ComponentProps, type ReactNode, useMemo } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 import { deduplicateErrorMessages } from "@/shared/lib";
 import { cn } from "@/shared/lib/utils";
@@ -178,7 +178,7 @@ function FieldError({
 }: ComponentProps<"div"> & {
 	errors?: Array<{ message?: string } | undefined>;
 }) {
-	const content = useMemo(() => {
+	const content = (() => {
 		if (children) {
 			return children;
 		}
@@ -200,7 +200,7 @@ function FieldError({
 				))}
 			</ul>
 		);
-	}, [children, errors]);
+	})();
 
 	if (!content) {
 		return null;

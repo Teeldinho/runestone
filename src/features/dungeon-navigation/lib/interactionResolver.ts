@@ -6,7 +6,7 @@ import {
 	type RoomId,
 } from "@/entities/dungeon";
 import { ENEMY_CONFIG } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import {
 	DOOR_GUARDS,

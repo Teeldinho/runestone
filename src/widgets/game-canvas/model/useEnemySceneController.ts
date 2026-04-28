@@ -11,10 +11,16 @@ type UseEnemySceneControllerResult = {
 	handleEnemyAttack: () => void;
 };
 
-export const useEnemySceneController = (): UseEnemySceneControllerResult => {
+type UseEnemySceneControllerInput = {
+	hapticsEnabled?: boolean;
+};
+
+export const useEnemySceneController = ({
+	hapticsEnabled = true,
+}: UseEnemySceneControllerInput = {}): UseEnemySceneControllerResult => {
 	const sendDungeonMachineEvent = useSendDungeonMachineEvent();
 	const { sendPlayerMachineEvent } = usePlayerMachineRuntime();
-	const { onEnemyHit } = useHaptics();
+	const { onEnemyHit } = useHaptics({ hapticsEnabled });
 
 	const handleEnemyDead = useCallback(() => {
 		sendDungeonMachineEvent({ type: DUNGEON_EVENTS.ENEMY_DIED });

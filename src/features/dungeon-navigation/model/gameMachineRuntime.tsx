@@ -4,6 +4,7 @@ import { useCallback, useMemo } from "react";
 
 import type { GameMachineEvent } from "@/features/dungeon-navigation/config";
 
+import { selectGameMachineSnapshot } from "../lib";
 import { createGameMachine } from "./gameMachine";
 
 type DungeonMachineSnapshot = ReturnType<
@@ -22,85 +23,6 @@ type DungeonGameMachineProviderProps = {
 };
 
 const dungeonGameMachineContext = createActorContext(createGameMachine());
-
-export const selectGameMachineSnapshot: GameMachineSelector<
-	DungeonMachineSnapshot
-> = (snapshot) => snapshot;
-
-export const selectActiveStateLabel: GameMachineSelector<string> = (snapshot) =>
-	String(snapshot.value);
-
-export const selectCurrentRoomId: GameMachineSelector<
-	DungeonMachineSnapshot["context"]["currentRoomId"]
-> = (snapshot) => snapshot.context.currentRoomId;
-
-export const selectDiscoveredRooms: GameMachineSelector<
-	DungeonMachineSnapshot["context"]["discoveredRooms"]
-> = (snapshot) => snapshot.context.discoveredRooms;
-
-export const selectEnemiesRemaining: GameMachineSelector<
-	DungeonMachineSnapshot["context"]["enemiesRemaining"]
-> = (snapshot) => snapshot.context.enemiesRemaining;
-
-export const selectHasTreasureKey: GameMachineSelector<
-	DungeonMachineSnapshot["context"]["hasTreasureKey"]
-> = (snapshot) => snapshot.context.hasTreasureKey;
-
-export const selectLastDoorwayFeedback: GameMachineSelector<
-	DungeonMachineSnapshot["context"]["lastDoorwayFeedback"]
-> = (snapshot) => snapshot.context.lastDoorwayFeedback;
-
-export const selectLastTransition: GameMachineSelector<
-	DungeonMachineSnapshot["context"]["lastTransition"]
-> = (snapshot) => snapshot.context.lastTransition;
-
-export const selectNearInteractable: GameMachineSelector<
-	DungeonMachineSnapshot["context"]["nearInteractable"]
-> = (snapshot) => snapshot.context.nearInteractable;
-
-export const selectNavigationActionContext: GameMachineSelector<{
-	currentRoomId: DungeonMachineSnapshot["context"]["currentRoomId"];
-	enemiesRemaining: DungeonMachineSnapshot["context"]["enemiesRemaining"];
-	hasTreasureKey: DungeonMachineSnapshot["context"]["hasTreasureKey"];
-	nearInteractable: DungeonMachineSnapshot["context"]["nearInteractable"];
-}> = (snapshot) => ({
-	currentRoomId: snapshot.context.currentRoomId,
-	enemiesRemaining: snapshot.context.enemiesRemaining,
-	hasTreasureKey: snapshot.context.hasTreasureKey,
-	nearInteractable: snapshot.context.nearInteractable,
-});
-
-export const selectDoorwayNavigationContext: GameMachineSelector<{
-	currentRoomId: DungeonMachineSnapshot["context"]["currentRoomId"];
-	enemiesRemaining: DungeonMachineSnapshot["context"]["enemiesRemaining"];
-	hasTreasureKey: DungeonMachineSnapshot["context"]["hasTreasureKey"];
-}> = (snapshot) => ({
-	currentRoomId: snapshot.context.currentRoomId,
-	enemiesRemaining: snapshot.context.enemiesRemaining,
-	hasTreasureKey: snapshot.context.hasTreasureKey,
-});
-
-export const selectInteractionCandidatesContext: GameMachineSelector<{
-	currentRoomId: DungeonMachineSnapshot["context"]["currentRoomId"];
-	enemiesRemaining: DungeonMachineSnapshot["context"]["enemiesRemaining"];
-	hasTreasureKey: DungeonMachineSnapshot["context"]["hasTreasureKey"];
-	nearInteractable: DungeonMachineSnapshot["context"]["nearInteractable"];
-}> = (snapshot) => ({
-	currentRoomId: snapshot.context.currentRoomId,
-	enemiesRemaining: snapshot.context.enemiesRemaining,
-	hasTreasureKey: snapshot.context.hasTreasureKey,
-	nearInteractable: snapshot.context.nearInteractable,
-});
-
-export const selectAchievementTrackingContext: GameMachineSelector<{
-	discoveredRooms: DungeonMachineSnapshot["context"]["discoveredRooms"];
-	enemiesRemaining: DungeonMachineSnapshot["context"]["enemiesRemaining"];
-	hasTreasureKey: DungeonMachineSnapshot["context"]["hasTreasureKey"];
-}> = (snapshot) => ({
-	discoveredRooms: snapshot.context.discoveredRooms,
-	enemiesRemaining: snapshot.context.enemiesRemaining,
-	hasTreasureKey: snapshot.context.hasTreasureKey,
-});
 
 export const DungeonGameMachineProvider = ({
 	children,
@@ -144,3 +66,19 @@ export const useGameMachineRuntime = (): GameMachineRuntimeContextValue => {
 		[sendDungeonMachineEvent, snapshot],
 	);
 };
+
+export {
+	selectAchievementTrackingContext,
+	selectActiveStateLabel,
+	selectCurrentRoomId,
+	selectDiscoveredRooms,
+	selectDoorwayNavigationContext,
+	selectEnemiesRemaining,
+	selectGameMachineSnapshot,
+	selectHasTreasureKey,
+	selectInteractionCandidatesContext,
+	selectLastDoorwayFeedback,
+	selectLastTransition,
+	selectNavigationActionContext,
+	selectNearInteractable,
+} from "../lib";

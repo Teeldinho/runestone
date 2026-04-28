@@ -5,3 +5,7 @@ export type {
 	XStateInspectorPanelViewModel,
 } from "./useXStateInspectorPanel";
 export { useXStateInspectorPanel } from "./useXStateInspectorPanel";
+export {
+	type UseXStateInspectorPanelSelectionResult,
+	useXStateInspectorPanelSelection,
+} from "./useXStateInspectorPanelSelection";

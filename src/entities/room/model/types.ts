@@ -1,12 +1,23 @@
-import type { Vector3Tuple } from "@/shared/types";
-import type { ROOM_DOOR_GUARDS, ROOM_KINDS } from "../config";
+import type { Vector3Tuple } from "@/shared/lib";
+import type { ROOM_DOOR_GUARDS, ROOM_KINDS, RoomWallSide } from "../config";
 
 export type RoomKind = (typeof ROOM_KINDS)[keyof typeof ROOM_KINDS];
 
 export type RoomDoorGuard =
 	(typeof ROOM_DOOR_GUARDS)[keyof typeof ROOM_DOOR_GUARDS];
 
-export type RoomWallOpening = "north" | "south" | "east" | "west";
+export type RoomWallOpening = RoomWallSide;
+
+export type RoomDoorConfig = {
+	wallOpenings: RoomWallOpening[];
+	lockedDoorSides: RoomWallOpening[];
+	openedDoorSides: RoomWallOpening[];
+};
+
+export type RoomTreasuryConfig = {
+	isTreasury: boolean;
+	showTreasureKey: boolean;
+};
 
 export type RoomNode = {
 	id: string;

@@ -80,4 +80,17 @@ describe("useCanvasSettings", () => {
 			GAME_CANVAS_CONFIG.SCENE.TORCH_POSITIONS[0],
 		);
 	});
+
+	it("returns a fresh view model on rerender while preserving derived values", () => {
+		const { result, rerender } = renderHook(() => useCanvasSettings());
+		const firstResult = result.current;
+
+		rerender();
+
+		expect(result.current).not.toBe(firstResult);
+		expect(result.current.camera.fov).toBe(firstResult.camera.fov);
+		expect(result.current.environment.rune.activeColor).toBe(
+			firstResult.environment.rune.activeColor,
+		);
+	});
 });

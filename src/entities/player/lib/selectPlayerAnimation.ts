@@ -1,4 +1,4 @@
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 import { PLAYER_STATES } from "../config";
 import { PLAYER_ANIMATION_NAMES } from "../config/playerGltfConfig";
 

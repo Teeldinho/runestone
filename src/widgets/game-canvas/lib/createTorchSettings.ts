@@ -1,6 +1,6 @@
 import type { RoomTorchSettings } from "@/entities/room";
 
-import type { CanvasLightingSettings } from "../model/useCanvasSettings";
+import type { CanvasLightingSettings } from "../model/canvasSettingsTypes";
 
 export const createTorchSettings = (
 	lighting: CanvasLightingSettings,

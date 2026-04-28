@@ -16,12 +16,16 @@ const {
 	mockPlayerInstance,
 	mockPlayerStart,
 	mockPlayerStop,
+	mockGainToDb,
 	mockTonePlayer,
 	mockToneStart,
 	mockTransportPause,
 	mockTransportStart,
 	mockTransportStop,
 } = vi.hoisted(() => {
+	const gainToDb = (value: number): number =>
+		value === 0 ? Number.NEGATIVE_INFINITY : 20 * Math.log10(value);
+
 	const playerLoad = vi.fn<() => Promise<void>>();
 	const playerStart = vi.fn();
 	const playerStop = vi.fn();
@@ -47,11 +51,13 @@ const {
 		mockPlayerStop: playerStop,
 		mockPlayerDispose: playerDispose,
 		mockPlayerInstance: playerInstance,
+		mockGainToDb: gainToDb,
 		mockTonePlayer: vi.fn(() => playerInstance),
 	};
 });
 
 vi.mock("tone", () => ({
+	gainToDb: mockGainToDb,
 	start: mockToneStart,
 	Player: mockTonePlayer,
 	getContext: vi.fn(() => ({
@@ -80,6 +86,7 @@ describe("musicManager", () => {
 		expect(mockPlayerLoad).toHaveBeenCalledWith(AUDIO_PATHS.MUSIC);
 		expect(mockTransportStart).toHaveBeenCalledTimes(1);
 		expect(mockPlayerStart).toHaveBeenCalledTimes(1);
+		expect(mockPlayerInstance.volume.value).toBeCloseTo(mockGainToDb(0.55));
 	});
 
 	it("runs start as a single in-flight operation", async () => {
@@ -139,11 +146,19 @@ describe("musicManager", () => {
 		expect(mockPlayerStart).not.toHaveBeenCalled();
 	});
 
-	it("updates background music player volume", async () => {
+	it("applies normalized background music volume as decibels", async () => {
 		await startBackgroundMusicLoop();
 		setBackgroundMusicVolume(0.45);
 
-		expect(mockPlayerInstance.volume.value).toBe(0.45);
+		expect(mockPlayerInstance.volume.value).toBeCloseTo(mockGainToDb(0.45));
+	});
+
+	it("applies pending background music volume during initialization", async () => {
+		setBackgroundMusicVolume(0.25);
+
+		await startBackgroundMusicLoop();
+
+		expect(mockPlayerInstance.volume.value).toBeCloseTo(mockGainToDb(0.25));
 	});
 
 	it("disposes background music player singleton", async () => {

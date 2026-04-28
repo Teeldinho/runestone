@@ -2,7 +2,8 @@ import { CorridorMesh } from "@/entities/corridor";
 import { EnemyMesh } from "@/entities/enemy";
 import { PlayerMesh } from "@/entities/player";
 import { RoomLabel, RoomMesh } from "@/entities/room";
-import type { Vector3Tuple } from "@/shared/types";
+import { useSettingsValues } from "@/features/settings";
+import type { Vector3Tuple } from "@/shared/lib";
 import {
 	type CanvasEnvironmentSettings,
 	useEnemySceneController,
@@ -20,7 +21,10 @@ export function SceneEnvironment({
 }: SceneEnvironmentProps) {
 	const { corridorMeshSettings, roomMeshSettings, enemyMeshSettings } =
 		useSceneEnvironmentSettings();
-	const { handleEnemyDead, handleEnemyAttack } = useEnemySceneController();
+	const { hapticsEnabled } = useSettingsValues();
+	const { handleEnemyDead, handleEnemyAttack } = useEnemySceneController({
+		hapticsEnabled,
+	});
 
 	return (
 		<>
@@ -30,24 +34,27 @@ export function SceneEnvironment({
 			{roomMeshSettings.map((room) => (
 				<RoomMesh
 					key={room.roomId}
-					isTreasury={room.isTreasury}
-					lockedDoorSides={room.lockedDoorSides}
-					openedDoorSides={room.openedDoorSides}
+					doorConfig={{
+						wallOpenings: room.wallOpenings,
+						lockedDoorSides: room.lockedDoorSides,
+						openedDoorSides: room.openedDoorSides,
+					}}
 					position={room.position}
-					showTreasureKey={room.showTreasureKey}
 					surface={environment}
-					wallOpenings={room.wallOpenings}
+					treasuryConfig={{
+						isTreasury: room.isTreasury,
+						showTreasureKey: room.showTreasureKey,
+					}}
 				/>
 			))}
 			{enemyMeshSettings.map((enemy) => (
 				<EnemyMesh
 					key={enemy.id}
-					id={enemy.id}
-					roomId={enemy.roomId}
-					position={enemy.position}
-					patrolCenter={enemy.patrolCenter}
-					onDead={handleEnemyDead}
-					onAttack={handleEnemyAttack}
+					actions={{
+						onAttack: handleEnemyAttack,
+						onDead: handleEnemyDead,
+					}}
+					settings={enemy}
 				/>
 			))}
 			<PlayerMesh initialPosition={playerSpawnPosition} />

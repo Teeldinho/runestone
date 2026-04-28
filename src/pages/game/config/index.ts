@@ -5,11 +5,7 @@ export const GAME_PAGE_COPY = {
 	},
 } as const;
 
-export const GAME_PAGE_LAYOUT = {
-	DETAILS_PANEL_HEIGHT_DVH: 35,
-	DESKTOP_LEFT_PANE_WIDTH_REM: 24,
-	DESKTOP_RIGHT_PANE_WIDTH_REM: 22,
-} as const;
+export { GAME_PAGE_CONTROLS } from "./gamePageControls";
 
 export const GAME_PAGE_MOBILE_SHEET = {
 	HEIGHT_DVH: 90,
@@ -24,4 +20,9 @@ export const GAME_PAGE_MOBILE_SHEET = {
 		STATECHART: "Statechart",
 		HUD: "HUD",
 	},
+} as const;
+
+export const GAME_PAGE_SCROLL_LOCK = {
+	OVERFLOW_LOCKED: "hidden",
+	OVERSCROLL_BEHAVIOR_LOCKED: "none",
 } as const;

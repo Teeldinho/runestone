@@ -1,4 +1,8 @@
 export type {
+	GameHudActions,
+	GameHudInput,
+	GameHudPlayerStats,
+	GameHudSnapshot,
 	GameHudViewModel,
 	HudActionButton,
 	HudDisplayVariant,

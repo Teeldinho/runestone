@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import { selectNearestRoomPositions } from "./selectNearestRoomPositions";
 

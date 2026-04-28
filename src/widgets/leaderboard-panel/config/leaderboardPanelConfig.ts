@@ -1,3 +1,7 @@
+export const LEADERBOARD_PANEL_IDS = {
+	ROOT: "leaderboard-panel-heading",
+} as const;
+
 export const LEADERBOARD_PANEL_COPY = {
 	TITLE: "Leaderboard",
 	DESCRIPTION: "Top floor-one runs synced from Convex.",

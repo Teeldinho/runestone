@@ -1,4 +1,4 @@
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 import type { CORRIDOR_DIRECTIONS } from "../config";
 
 export type CorridorDirection =

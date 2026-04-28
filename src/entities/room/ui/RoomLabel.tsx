@@ -17,21 +17,9 @@ export function RoomLabel({ settings }: RoomLabelProps) {
 			center
 			distanceFactor={ROOM_ENTITY_CONFIG.LABEL.DISTANCE_FACTOR}
 			zIndexRange={[...ROOM_ENTITY_CONFIG.LABEL.DOM_Z_INDEX_RANGE]}
-			style={{ pointerEvents: "none" }}
+			className="pointer-events-none"
 		>
-			<span
-				style={{
-					color: ROOM_ENTITY_CONFIG.LABEL.COLOR,
-					fontFamily: "Space Grotesk, sans-serif",
-					fontSize: "1.3rem",
-					fontWeight: 700,
-					letterSpacing: "0.02em",
-					padding: "0.15rem 0.35rem",
-					borderRadius: "0.2rem",
-					textShadow: `0 0 6px ${ROOM_ENTITY_CONFIG.LABEL.OUTLINE_COLOR}, 0 0 1px ${ROOM_ENTITY_CONFIG.LABEL.OUTLINE_COLOR}`,
-					whiteSpace: "nowrap",
-				}}
-			>
+			<span className="rounded-[0.2rem] px-[0.35rem] py-[0.15rem] text-[1.3rem] font-bold tracking-[0.02em] text-panel-title whitespace-nowrap [text-shadow:0_0_6px_var(--dungeon-fog),0_0_1px_var(--dungeon-fog)]">
 				{settings.text}
 			</span>
 		</Html>

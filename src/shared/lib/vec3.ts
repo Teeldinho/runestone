@@ -2,6 +2,8 @@ import * as THREE from "three";
 
 export type Vec3 = readonly [number, number, number];
 
+export type Vector3Tuple = readonly [number, number, number];
+
 export function addVec3(a: Vec3, b: Vec3): Vec3 {
 	return [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 }
@@ -39,3 +41,15 @@ export function getQuaternionFromXZ(x: number, z: number): THREE.Quaternion {
 		angle,
 	);
 }
+
+export const createVector3Tuple = (
+	x: number,
+	y: number,
+	z: number,
+): Vector3Tuple => [x, y, z];
+
+export const checkVector3TupleEqual = (
+	current: Vector3Tuple,
+	next: Vector3Tuple,
+): boolean =>
+	current[0] === next[0] && current[1] === next[1] && current[2] === next[2];

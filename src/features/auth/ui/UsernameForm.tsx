@@ -1,4 +1,3 @@
-import { useId } from "react";
 import {
 	Button,
 	Field,
@@ -8,7 +7,7 @@ import {
 	FieldLabel,
 	Input,
 } from "@/shared/ui";
-import { AUTH_COPY, USERNAME_RULES } from "../config";
+import { AUTH_COPY, USERNAME_PATTERN, USERNAME_RULES } from "../config";
 import { type UsernameFormInput, useUsernameForm } from "../model";
 
 type UsernameFormProps = {
@@ -22,9 +21,6 @@ export function UsernameForm({
 	isSubmitting,
 	onSubmit,
 }: UsernameFormProps) {
-	const usernameInputId = useId();
-	const usernameHelpId = useId();
-	const usernameErrorId = useId();
 	const {
 		getUsernameFieldViewModel,
 		handleUsernameFormSubmit,
@@ -45,14 +41,17 @@ export function UsernameForm({
 					validators={usernameFieldValidators}
 				>
 					{(field) => {
-						const { activeErrorMessage } = getUsernameFieldViewModel({
+						const {
+							activeErrorMessage,
+							describedBy,
+							usernameInputId,
+							usernameErrorId,
+							usernameHelpId,
+						} = getUsernameFieldViewModel({
 							errors: field.state.meta.errors,
 							isTouched: field.state.meta.isTouched,
 							isValid: field.state.meta.isValid,
 						});
-						const describedBy = activeErrorMessage
-							? `${usernameHelpId} ${usernameErrorId}`
-							: usernameHelpId;
 
 						return (
 							<Field data-invalid={Boolean(activeErrorMessage)}>
@@ -68,7 +67,7 @@ export function UsernameForm({
 									required
 									minLength={USERNAME_RULES.MIN_LENGTH}
 									maxLength={USERNAME_RULES.MAX_LENGTH}
-									pattern={USERNAME_RULES.PATTERN.source}
+									pattern={USERNAME_PATTERN.source}
 									autoComplete="username"
 									placeholder={AUTH_COPY.USERNAME_PLACEHOLDER}
 									value={field.state.value}

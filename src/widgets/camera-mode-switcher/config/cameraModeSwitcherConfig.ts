@@ -11,6 +11,7 @@ type CameraModeSwitchEventType =
 	| typeof CAMERA_EVENTS.SWITCH_TO_FREE_ORBITAL;
 
 export const CAMERA_MODE_SWITCHER_COPY = {
+	DESKTOP_LABEL: "Camera Mode",
 	TITLE: "Camera Modes",
 	DESCRIPTION: "Switch the active camera perspective for the dungeon scene.",
 	HOTKEY_PREFIX: "Key",

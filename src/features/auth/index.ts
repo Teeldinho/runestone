@@ -27,5 +27,5 @@ export type {
 	AuthStatus,
 	UsernameFormInput,
 } from "./model";
-export { AuthProvider, authMachine, useAuth, useAuthContext } from "./model";
-export { UsernameForm, UsernameModal } from "./ui";
+export { authMachine, useAuth, useAuthContext } from "./model";
+export { AuthProvider, UsernameForm, UsernameModal } from "./ui";

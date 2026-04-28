@@ -6,6 +6,9 @@ let backgroundMusicPlayer: Tone.Player | null = null;
 let isMusicStarted = false;
 let isMusicRequested = false;
 let startBackgroundMusicPromise: Promise<void> | null = null;
+let pendingMusicVolume: number = AUDIO_DEFAULTS.MUSIC_VOLUME;
+
+const normalizeToDb = (volume: number): number => Tone.gainToDb(volume);
 
 const initBackgroundMusicPlayer = async (): Promise<Tone.Player> => {
 	if (!backgroundMusicPlayer) {
@@ -13,7 +16,7 @@ const initBackgroundMusicPlayer = async (): Promise<Tone.Player> => {
 		await backgroundMusicPlayer.load(AUDIO_PATHS.MUSIC);
 		backgroundMusicPlayer.loop = AUDIO_DEFAULTS.MUSIC_LOOP;
 		backgroundMusicPlayer.toDestination();
-		backgroundMusicPlayer.volume.value = AUDIO_DEFAULTS.MUSIC_VOLUME;
+		backgroundMusicPlayer.volume.value = normalizeToDb(pendingMusicVolume);
 	}
 
 	return backgroundMusicPlayer;
@@ -80,15 +83,18 @@ export const stopBackgroundMusicLoop = (): void => {
 };
 
 export const setBackgroundMusicVolume = (volume: number): void => {
+	pendingMusicVolume = Math.min(Math.max(volume, 0), 1);
+
 	if (!backgroundMusicPlayer) {
 		return;
 	}
 
-	backgroundMusicPlayer.volume.value = volume;
+	backgroundMusicPlayer.volume.value = normalizeToDb(pendingMusicVolume);
 };
 
 export const disposeMusicManager = (): void => {
 	if (!backgroundMusicPlayer) {
+		pendingMusicVolume = AUDIO_DEFAULTS.MUSIC_VOLUME;
 		return;
 	}
 
@@ -97,4 +103,5 @@ export const disposeMusicManager = (): void => {
 	isMusicStarted = false;
 	isMusicRequested = false;
 	startBackgroundMusicPromise = null;
+	pendingMusicVolume = AUDIO_DEFAULTS.MUSIC_VOLUME;
 };

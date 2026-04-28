@@ -1,18 +1,27 @@
-export { useAchievementTracker } from "./useAchievementTracker";
-export type { CanvasMachineRuntime } from "./useCanvasMachineSettings";
-export { useCanvasMachineSettings } from "./useCanvasMachineSettings";
+export type {
+	CameraRigFirstPersonBindings,
+	CameraRigOrbitBindings,
+	CameraRigRefs,
+	UseCameraRigViewModelResult,
+} from "./cameraRigViewModelTypes";
 export type {
 	CanvasCameraSettings,
 	CanvasEnvironmentSettings,
 	CanvasFogSettings,
 	CanvasLightingSettings,
+	CanvasMachineSettingsViewModel,
 	CanvasPostprocessingSettings,
 	CanvasRendererSettings,
 	CanvasSettingsViewModel,
-} from "./useCanvasSettings";
+} from "./canvasSettingsTypes";
+export { useAchievementTracker } from "./useAchievementTracker";
+export { useCameraRigViewModel } from "./useCameraRigViewModel";
+export type { CanvasMachineRuntime } from "./useCanvasMachineSettings";
+export { useCanvasMachineSettings } from "./useCanvasMachineSettings";
 export { useCanvasSettings } from "./useCanvasSettings";
 export { useEnemySceneController } from "./useEnemySceneController";
 export { useFirstPersonLockHint } from "./useFirstPersonLockHint";
+export { useGameCanvasViewModel } from "./useGameCanvasViewModel";
 export { useGameOverState } from "./useGameOverState";
 export { useGameSideEffects } from "./useGameSideEffects";
 export { usePlayerSceneController } from "./usePlayerSceneController";

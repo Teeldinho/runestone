@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import {
 	addVec3,
+	checkVector3TupleEqual,
+	createVector3Tuple,
 	distanceVec3,
 	getQuaternionFromXZ,
 	normalizeVec3,
@@ -31,14 +33,22 @@ describe("vec3", () => {
 	});
 
 	it("calculates quaternion orientation from XZ vector", () => {
-		// Moving along Z axis (0, 0, 1) should be 0 degrees rotation (pointing forward)
 		const qForward = getQuaternionFromXZ(0, 1);
 		expect(qForward.y).toBeCloseTo(0);
 		expect(qForward.w).toBeCloseTo(1);
 
-		// Moving along X axis (1, 0, 0) should be 90 degrees rotation
 		const qRight = getQuaternionFromXZ(1, 0);
 		expect(qRight.y).toBeCloseTo(Math.sin(Math.PI / 4));
 		expect(qRight.w).toBeCloseTo(Math.cos(Math.PI / 4));
+	});
+
+	it("creates a vector3 tuple from three numbers", () => {
+		expect(createVector3Tuple(1, 2, 3)).toEqual([1, 2, 3]);
+	});
+
+	it("checks equality of two vector3 tuples", () => {
+		expect(checkVector3TupleEqual([1, 2, 3], [1, 2, 3])).toBe(true);
+		expect(checkVector3TupleEqual([1, 2, 3], [1, 2, 4])).toBe(false);
+		expect(checkVector3TupleEqual([0, 0, 0], [0, 0, 0])).toBe(true);
 	});
 });

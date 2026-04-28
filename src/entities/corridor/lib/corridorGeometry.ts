@@ -1,4 +1,4 @@
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import {
 	CORRIDOR_DIRECTION_ORDER,

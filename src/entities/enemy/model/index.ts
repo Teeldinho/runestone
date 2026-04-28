@@ -7,12 +7,16 @@ export type {
 	EnemyMachineContext,
 	EnemyMachineEvent,
 	EnemyMachineInput,
+	EnemyMeshActions,
+	EnemyMeshSettings,
 	EnemyTakeDamageEvent,
 	EnemyUpdatePlayerPositionEvent,
 } from "./types";
+export { useEnemyGltfResources } from "./useEnemyGltfResources";
 export type {
 	UseEnemyMeshViewModelInput,
 	UseEnemyMeshViewModelResult,
 } from "./useEnemyMeshViewModel";
 export { useEnemyMeshViewModel } from "./useEnemyMeshViewModel";
 export { useEnemyMovement } from "./useEnemyMovement";
+export { useEnemyPhysicsLoop } from "./useEnemyPhysicsLoop";

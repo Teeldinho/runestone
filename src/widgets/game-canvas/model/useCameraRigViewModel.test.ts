@@ -5,7 +5,11 @@ import * as THREE from "three";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DOOR_SIDES, ROOM_IDS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
-import { CAMERA_DEFAULT_ZOOM, PLAYER_EYE_HEIGHT } from "@/shared/config";
+import {
+	CAMERA_CONFIG,
+	CAMERA_DEFAULT_ZOOM,
+	PLAYER_EYE_HEIGHT,
+} from "@/shared/config";
 
 const frameCallbacks: Array<() => void> = [];
 const mockSetCameraMode = vi.fn();
@@ -67,7 +71,7 @@ describe("useCameraRigViewModel", () => {
 	});
 
 	it("syncs the camera mode store immediately from the snapshot mode", () => {
-		renderHook(() =>
+		const { result } = renderHook(() =>
 			useCameraRigViewModel({
 				cameraStateSnapshot: {
 					fov: 65,
@@ -80,7 +84,43 @@ describe("useCameraRigViewModel", () => {
 			}),
 		);
 
+		expect(result.current.mode).toBe(CAMERA_MODES.THIRD_PERSON);
+		expect(
+			typeof result.current.orbitBindings.thirdPerson.handleOrbitStart,
+		).toBe("function");
+		expect(typeof result.current.orbitBindings.thirdPerson.handleOrbitEnd).toBe(
+			"function",
+		);
 		expect(mockSetCameraMode).toHaveBeenCalledWith(CAMERA_MODES.THIRD_PERSON);
+	});
+
+	it("reuses shared orbit bindings and threads first-person handlers through the result", () => {
+		const { result } = renderHook(() =>
+			useCameraRigViewModel({
+				cameraStateSnapshot: {
+					fov: 65,
+					mode: CAMERA_MODES.THIRD_PERSON,
+					position: [0, 2, -4],
+					target: [0, 1, 0],
+					zoom: 1,
+				},
+				firstPersonLookElement: document.createElement("button"),
+				playerSpawnPosition: [10, 0.9, -5],
+			}),
+		);
+
+		expect(result.current.orbitBindings.freeOrbital).toBe(
+			result.current.orbitBindings.thirdPerson,
+		);
+		expect(result.current.orbitBindings.thirdPerson).toBe(
+			result.current.orbitBindings.topDown,
+		);
+		expect(result.current.firstPersonBindings.handleOrbitStart).toBe(
+			result.current.orbitBindings.freeOrbital.handleOrbitStart,
+		);
+		expect(result.current.firstPersonBindings.handleOrbitEnd).toBe(
+			result.current.orbitBindings.freeOrbital.handleOrbitEnd,
+		);
 	});
 
 	it("centers free-orbital mode on the player spawn on the first frame", () => {
@@ -101,7 +141,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -134,7 +175,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -178,7 +220,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 65,
 					mode: CAMERA_MODES.THIRD_PERSON,
-					position: [0, 2.2, -3.8],
+					position: [...CAMERA_CONFIG.THIRD_PERSON.OFFSET],
 					target: [0, 1, 0],
 					zoom: 1,
 				},
@@ -190,7 +232,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.thirdPersonOrbitRef.current = thirdPersonControls as never;
+		result.current.refs.thirdPersonOrbitRef.current =
+			thirdPersonControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -204,7 +247,10 @@ describe("useCameraRigViewModel", () => {
 
 		expect(thirdPersonControls.target.x).toBeGreaterThan(0);
 		expect(mockCamera.position.x).toBeGreaterThan(0);
-		expect(mockCamera.position.z).toBeCloseTo(-3.8, 6);
+		expect(mockCamera.position.z).toBeCloseTo(
+			CAMERA_CONFIG.THIRD_PERSON.OFFSET[2],
+			6,
+		);
 	});
 
 	it("keeps third-person behind north-entry travel while clamped inside the room", () => {
@@ -220,7 +266,7 @@ describe("useCameraRigViewModel", () => {
 				cameraStateSnapshot: {
 					fov: 65,
 					mode: CAMERA_MODES.THIRD_PERSON,
-					position: [0, 2.2, -3.8],
+					position: [...CAMERA_CONFIG.THIRD_PERSON.OFFSET],
 					target: [0, 1, 0],
 					zoom: 1,
 				},
@@ -232,7 +278,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.thirdPersonOrbitRef.current = thirdPersonControls as never;
+		result.current.refs.thirdPersonOrbitRef.current =
+			thirdPersonControls as never;
 		mockCamera.position.set(6, 5, 6);
 
 		act(() => {
@@ -326,7 +373,7 @@ describe("useCameraRigViewModel", () => {
 			target: new THREE.Vector3(),
 			update: vi.fn(),
 		};
-		result.current.firstPersonOrbitRef.current =
+		result.current.refs.firstPersonOrbitRef.current =
 			firstPersonOrbitControls as never;
 
 		// Frame 1: Sync \u2014 camera is at [5,2.6,5], forward is +Z so target = [5,2.6,5.01]
@@ -384,7 +431,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -421,7 +469,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -430,7 +479,7 @@ describe("useCameraRigViewModel", () => {
 		expect(mockSetCameraAzimuth).toHaveBeenCalledTimes(1);
 
 		act(() => {
-			result.current.handleOrbitStart();
+			result.current.orbitBindings.freeOrbital.handleOrbitStart();
 			frameCallbacks.at(-1)?.();
 		});
 
@@ -457,7 +506,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -493,7 +543,8 @@ describe("useCameraRigViewModel", () => {
 			update: vi.fn(),
 		};
 
-		result.current.freeOrbitalOrbitRef.current = freeOrbitalControls as never;
+		result.current.refs.freeOrbitalOrbitRef.current =
+			freeOrbitalControls as never;
 
 		act(() => {
 			frameCallbacks.at(-1)?.();
@@ -529,7 +580,8 @@ describe("useCameraRigViewModel", () => {
 			target: new THREE.Vector3(),
 			update: vi.fn(),
 		};
-		result.current.thirdPersonOrbitRef.current = thirdPersonControls as never;
+		result.current.refs.thirdPersonOrbitRef.current =
+			thirdPersonControls as never;
 
 		// Initial frame to clear sync
 		act(() => {
@@ -538,7 +590,7 @@ describe("useCameraRigViewModel", () => {
 
 		// User starts orbiting
 		act(() => {
-			result.current.handleOrbitStart();
+			result.current.orbitBindings.freeOrbital.handleOrbitStart();
 		});
 
 		const initialCameraPosition = mockCamera.position.clone();

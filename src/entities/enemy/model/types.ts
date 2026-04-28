@@ -1,4 +1,4 @@
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 import type { ENEMY_EVENTS } from "../config/enemyEvents";
 import type { EnemyBehaviorState } from "../config/enemyMachineStates";
 
@@ -45,4 +45,16 @@ export type EnemyMachineEvent =
 export type EnemyGlowSettings = {
 	color: string;
 	emissiveIntensity: number;
+};
+
+export type EnemyMeshSettings = {
+	id: string;
+	roomId: string;
+	position: Vector3Tuple;
+	patrolCenter: Vector3Tuple;
+};
+
+export type EnemyMeshActions = {
+	onDead: () => void;
+	onAttack: () => void;
 };

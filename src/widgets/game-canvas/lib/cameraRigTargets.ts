@@ -2,9 +2,13 @@ import { DOOR_SIDES, type DoorSide } from "@/entities/dungeon";
 import { CAMERA_MODES, type CameraMode } from "@/features/camera-system";
 import { DOORWAY_NAVIGATION_CONFIG } from "@/features/dungeon-navigation";
 import { CAMERA_CONFIG, PLAYER_EYE_HEIGHT } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
-import { CAMERA_RIG_THIRD_PERSON_TRANSITION_PADDING } from "../config";
+import {
+	CAMERA_RIG_MOBILE_FREE_ORBITAL_OFFSET_SCALE,
+	CAMERA_RIG_MOBILE_TOP_DOWN_HEIGHT_SCALE,
+	CAMERA_RIG_THIRD_PERSON_TRANSITION_PADDING,
+} from "../config";
 
 type GetCameraRigTargetsInput = {
 	mode: CameraMode;
@@ -71,7 +75,9 @@ export const getCameraRigTargets = ({
 	if (mode === CAMERA_MODES.TOP_DOWN) {
 		// Zoom in slightly on mobile by reducing the default height
 		const defaultHeight = CAMERA_CONFIG.TOP_DOWN.HEIGHT;
-		const finalHeight = isDesktopLayout ? defaultHeight : defaultHeight * 0.75;
+		const finalHeight = isDesktopLayout
+			? defaultHeight
+			: defaultHeight * CAMERA_RIG_MOBILE_TOP_DOWN_HEIGHT_SCALE;
 
 		return {
 			position: [px, finalHeight, pz],
@@ -83,7 +89,8 @@ export const getCameraRigTargets = ({
 	const [ox, oy, oz] = CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION;
 
 	// Zoom in slightly on mobile by scaling down the initial offset
-	const mobileScale = 0.8;
+	const mobileScale = CAMERA_RIG_MOBILE_FREE_ORBITAL_OFFSET_SCALE;
+
 	const finalOx = isDesktopLayout ? ox : ox * mobileScale;
 	const finalOy = isDesktopLayout ? oy : oy * mobileScale;
 	const finalOz = isDesktopLayout ? oz : oz * mobileScale;

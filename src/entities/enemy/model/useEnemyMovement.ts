@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import type { EnemyBehaviorState } from "../config";
 import {

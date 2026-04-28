@@ -1,25 +1,31 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useWebHaptics } from "web-haptics/react";
 
 import { HAPTIC_THROTTLE_MS } from "@/shared/config";
 
 import {
-	HAPTIC_EVENT_NAMES,
-	HAPTIC_EVENT_PATTERN_KEYS,
-	HAPTIC_PATTERNS,
-	HAPTICS_DEBUG_MODE_ENABLED,
 	type HapticEventName,
 	type HapticPattern,
 	type HapticPatternKey,
-	THROTTLED_HAPTIC_EVENTS,
+	isHapticEventThrottled,
 } from "../config";
+import {
+	createHapticEventHandlers,
+	resolveHapticPatternForEvent,
+	shouldSkipHapticTrigger,
+} from "../lib";
 
-const isHapticEventThrottled = (eventName: HapticEventName): boolean =>
-	THROTTLED_HAPTIC_EVENTS.has(eventName);
+const isHapticsDebugModeEnabled = import.meta.env.DEV;
 
-export const useHaptics = () => {
+type UseHapticsSettings = {
+	hapticsEnabled?: boolean;
+};
+
+export const useHaptics = ({
+	hapticsEnabled = true,
+}: UseHapticsSettings = {}) => {
 	const { trigger, cancel, isSupported } = useWebHaptics({
-		debug: HAPTICS_DEBUG_MODE_ENABLED,
+		debug: isHapticsDebugModeEnabled,
 	});
 	const lastHapticTriggerAtRef = useRef(0);
 
@@ -28,8 +34,13 @@ export const useHaptics = () => {
 			const now = Date.now();
 
 			if (
-				shouldThrottle &&
-				now - lastHapticTriggerAtRef.current < HAPTIC_THROTTLE_MS
+				!hapticsEnabled ||
+				shouldSkipHapticTrigger({
+					now,
+					lastHapticTriggerAt: lastHapticTriggerAtRef.current,
+					throttleMs: HAPTIC_THROTTLE_MS,
+					shouldThrottle,
+				})
 			) {
 				return;
 			}
@@ -37,57 +48,21 @@ export const useHaptics = () => {
 			lastHapticTriggerAtRef.current = now;
 			void trigger(pattern);
 		},
-		[trigger],
+		[trigger, hapticsEnabled],
 	);
 
 	const triggerHapticEvent = useCallback(
 		(eventName: HapticEventName) => {
-			const hapticPatternKey = HAPTIC_EVENT_PATTERN_KEYS[eventName];
-			const hapticPattern = HAPTIC_PATTERNS[hapticPatternKey] as HapticPattern;
-
-			triggerHapticPattern(hapticPattern, isHapticEventThrottled(eventName));
+			triggerHapticPattern(
+				resolveHapticPatternForEvent(eventName),
+				isHapticEventThrottled(eventName),
+			);
 		},
 		[triggerHapticPattern],
 	);
 
-	const onRoomEnter = useCallback(
-		() => triggerHapticEvent(HAPTIC_EVENT_NAMES.ON_ROOM_ENTER),
-		[triggerHapticEvent],
-	);
-	const onGuardSuccess = useCallback(
-		() => triggerHapticEvent(HAPTIC_EVENT_NAMES.ON_GUARD_SUCCESS),
-		[triggerHapticEvent],
-	);
-	const onGuardFail = useCallback(
-		() => triggerHapticEvent(HAPTIC_EVENT_NAMES.ON_GUARD_FAIL),
-		[triggerHapticEvent],
-	);
-	const onEnemyHit = useCallback(
-		() => triggerHapticEvent(HAPTIC_EVENT_NAMES.ON_ENEMY_HIT),
-		[triggerHapticEvent],
-	);
-	const onPlayerDeath = useCallback(
-		() => triggerHapticEvent(HAPTIC_EVENT_NAMES.ON_PLAYER_DEATH),
-		[triggerHapticEvent],
-	);
-	const onKeyPickup = useCallback(
-		() => triggerHapticEvent(HAPTIC_EVENT_NAMES.ON_KEY_PICKUP),
-		[triggerHapticEvent],
-	);
-	const onCameraSwitch = useCallback(
-		() => triggerHapticEvent(HAPTIC_EVENT_NAMES.ON_CAMERA_SWITCH),
-		[triggerHapticEvent],
-	);
-	const onTransition = useCallback(
-		() => triggerHapticEvent(HAPTIC_EVENT_NAMES.ON_TRANSITION),
-		[triggerHapticEvent],
-	);
-	const onAchievement = useCallback(
-		() => triggerHapticEvent(HAPTIC_EVENT_NAMES.ON_ACHIEVEMENT),
-		[triggerHapticEvent],
-	);
-	const onFloorComplete = useCallback(
-		() => triggerHapticEvent(HAPTIC_EVENT_NAMES.ON_FLOOR_COMPLETE),
+	const hapticEventHandlers = useMemo(
+		() => createHapticEventHandlers(triggerHapticEvent),
 		[triggerHapticEvent],
 	);
 
@@ -98,16 +73,7 @@ export const useHaptics = () => {
 	return {
 		isHapticsSupported: isSupported,
 		cancelHaptics,
-		onRoomEnter,
-		onGuardSuccess,
-		onGuardFail,
-		onEnemyHit,
-		onPlayerDeath,
-		onKeyPickup,
-		onCameraSwitch,
-		onTransition,
-		onAchievement,
-		onFloorComplete,
+		...hapticEventHandlers,
 	};
 };
 

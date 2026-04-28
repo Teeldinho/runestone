@@ -1,7 +1,7 @@
 import { assign, setup } from "xstate";
 
 import { MACHINE_STATE_TYPES } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import {
 	PLAYER_CONTEXT_KEYS,

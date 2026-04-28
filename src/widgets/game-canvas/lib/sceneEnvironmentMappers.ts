@@ -6,6 +6,7 @@ import { ROOM_LABELS, type RoomId } from "@/entities/dungeon";
 import {
 	ENEMY_SPAWN_HEIGHT_OFFSET,
 	ENEMY_SPAWN_OFFSET_XZ,
+	type EnemyMeshSettings,
 } from "@/entities/enemy";
 import {
 	type DungeonCorridorLayout,
@@ -15,7 +16,7 @@ import {
 	type RoomLabelSettings,
 	type RoomWallOpening,
 } from "@/entities/room";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 type SceneRoomMeshSettings = {
 	roomId: string;
@@ -126,13 +127,6 @@ export const createSceneSpawnPosition = (
 		defaultPlayerPosition[1],
 		initialRoom.position[2],
 	];
-};
-
-type EnemyMeshSettings = {
-	id: string;
-	roomId: string;
-	position: Vector3Tuple;
-	patrolCenter: Vector3Tuple;
 };
 
 export const createSceneEnemyMeshSettings = (

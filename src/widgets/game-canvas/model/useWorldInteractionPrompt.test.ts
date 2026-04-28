@@ -126,4 +126,35 @@ describe("useWorldInteractionPrompt", () => {
 		expect(result.current.attack.label).toBe(ATTACK_TOUCH_LABEL);
 		expect(result.current.attack.text).toBe("Slash");
 	});
+
+	it("returns a fresh prompt model on rerender", () => {
+		const interactionCandidates: InteractionCandidatesViewModel = {
+			hasInteract: true,
+			interactPrompt: "Open Box",
+			interactTargetId: "library:north",
+			interactEvent: "PICK_UP_KEY",
+			hasAttack: true,
+			attackPrompt: "Slash",
+			attackPosition: [10, 0, 10],
+		};
+
+		vi.mocked(lib.getWorldInteractionPromptPosition).mockReturnValue([1, 2, 3]);
+		vi.mocked(lib.getWorldAttackPromptPosition).mockReturnValue([4, 5, 6]);
+
+		const { result, rerender } = renderHook(() =>
+			useWorldInteractionPrompt({
+				interactionCandidates,
+				roomPositionsById: mockRoomPositionsById,
+			}),
+		);
+		const firstResult = result.current;
+
+		rerender();
+
+		expect(result.current).not.toBe(firstResult);
+		expect(result.current.interact.position).toEqual(
+			firstResult.interact.position,
+		);
+		expect(result.current.attack.position).toEqual(firstResult.attack.position);
+	});
 });

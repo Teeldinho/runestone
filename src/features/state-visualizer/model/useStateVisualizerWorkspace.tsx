@@ -1,69 +1,57 @@
-import {
-	createContext,
-	type ReactNode,
-	useCallback,
-	useContext,
-	useMemo,
-	useState,
-} from "react";
+import { type ReactNode, useMemo, useState } from "react";
+import { useStore } from "zustand";
 
+import { STATE_VISUALIZER_DEFAULT_OPEN_SECTION } from "../config";
 import {
-	STATE_VISUALIZER_DEFAULT_OPEN_SECTION,
-	STATE_VISUALIZER_ERROR_MESSAGES,
-} from "../config";
+	selectStateVisualizerWorkspaceHandleSelectedSectionIdChange,
+	selectStateVisualizerWorkspaceSelectedSectionId,
+} from "../lib";
+import {
+	type StateVisualizerWorkspaceContextValue,
+	stateVisualizerWorkspaceContext,
+	useRequiredStateVisualizerWorkspaceStore,
+} from "./stateVisualizerWorkspaceContext";
+import { createStateVisualizerWorkspaceStore } from "./stateVisualizerWorkspaceStore";
 import type { StateVisualizerSectionId } from "./types";
-
-type StateVisualizerWorkspaceContextValue = {
-	selectedSectionId: StateVisualizerSectionId;
-	handleSelectedSectionIdChange: (sectionId: StateVisualizerSectionId) => void;
-};
 
 type StateVisualizerWorkspaceProviderProps = {
 	children: ReactNode;
 	defaultSectionId?: StateVisualizerSectionId;
 };
 
-const stateVisualizerWorkspaceContext =
-	createContext<StateVisualizerWorkspaceContextValue | null>(null);
-
 export const StateVisualizerWorkspaceProvider = ({
 	children,
 	defaultSectionId = STATE_VISUALIZER_DEFAULT_OPEN_SECTION,
 }: StateVisualizerWorkspaceProviderProps) => {
-	const [selectedSectionId, setSelectedSectionId] = useState(defaultSectionId);
-
-	const handleSelectedSectionIdChange = useCallback(
-		(sectionId: StateVisualizerSectionId) => {
-			setSelectedSectionId(sectionId);
-		},
-		[],
-	);
-
-	const value = useMemo(
-		() => ({
-			selectedSectionId,
-			handleSelectedSectionIdChange,
-		}),
-		[selectedSectionId, handleSelectedSectionIdChange],
+	const [stateVisualizerWorkspaceStore] = useState(() =>
+		createStateVisualizerWorkspaceStore(defaultSectionId),
 	);
 
 	return (
-		<stateVisualizerWorkspaceContext.Provider value={value}>
+		<stateVisualizerWorkspaceContext.Provider
+			value={stateVisualizerWorkspaceStore}
+		>
 			{children}
 		</stateVisualizerWorkspaceContext.Provider>
 	);
 };
 
 export const useStateVisualizerWorkspace = () => {
-	const context = useContext(stateVisualizerWorkspaceContext);
+	const stateVisualizerWorkspaceStore =
+		useRequiredStateVisualizerWorkspaceStore();
+	const selectedSectionId = useStore(
+		stateVisualizerWorkspaceStore,
+		selectStateVisualizerWorkspaceSelectedSectionId,
+	);
+	const handleSelectedSectionIdChange = useStore(
+		stateVisualizerWorkspaceStore,
+		selectStateVisualizerWorkspaceHandleSelectedSectionIdChange,
+	);
 
-	if (!context) {
-		throw new Error(
-			STATE_VISUALIZER_ERROR_MESSAGES.WORKSPACE_PROVIDER_REQUIRED,
-		);
-	}
-
-	return context;
+	return useMemo(
+		() => ({ selectedSectionId, handleSelectedSectionIdChange }),
+		[handleSelectedSectionIdChange, selectedSectionId],
+	);
 };
 
 export type {

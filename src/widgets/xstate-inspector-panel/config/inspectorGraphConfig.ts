@@ -63,7 +63,6 @@ export const INSPECTOR_FLOW_EDGE_LAYOUT = {
 	GUARD_MARKER_RESPONSIVE_NO_DIRECTION_OFFSET_PX: 8,
 	GUARD_MARKER_RESPONSIVE_NODE_CLEARANCE_THRESHOLD_PX: 60,
 	GUARD_MARKER_RESPONSIVE_NODE_CLEARANCE_OFFSET_PX: 10,
-	GUARD_MARKER_ANIMATE_PULSE_CLASS: "animate-pulse",
 	MOBILE_LANDSCAPE_GRAPH_HEIGHT_PX: 400,
 } as const;
 
@@ -107,18 +106,6 @@ export const INSPECTOR_GUARD_MARKER_INTERACTION = {
 		X: "x",
 		Y: "y",
 	},
-} as const;
-
-export const INSPECTOR_FLOW_NODE_VISUALS = {
-	BASE_CLASS_NAME:
-		"rounded-md border text-xs font-semibold tracking-wide shadow-sm transition-colors",
-	CLASS_NAME_BY_KIND: {
-		initial: "border-cyan-300/80 bg-cyan-500/15 text-cyan-100",
-		state: "border-slate-300/60 bg-slate-500/20 text-slate-100",
-		final: "border-amber-300/80 bg-amber-500/15 text-amber-100",
-	},
-	ACTIVE_CLASS_NAME:
-		"ring-2 ring-cyan-300/80 ring-offset-1 ring-offset-transparent",
 } as const;
 
 export const INSPECTOR_REACT_FLOW_DEFAULTS = {

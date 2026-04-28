@@ -1,7 +1,7 @@
 import { assign, not, setup } from "xstate";
 
 import { ENEMY_CONFIG, MACHINE_STATE_TYPES } from "@/shared/config";
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 import {
 	ENEMY_ACTIONS,

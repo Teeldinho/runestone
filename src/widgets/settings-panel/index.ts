@@ -1,1 +1,1 @@
-export { SettingsPanel } from "./ui";
+export { SettingsPanel, SettingsSheet } from "./ui";

@@ -3,13 +3,16 @@ import {
 	type RefObject,
 	useCallback,
 	useRef,
-	useState,
 } from "react";
 
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
-import { TOUCH_JOYSTICK_CONFIG } from "../config";
-import { resolveJoystickVector } from "../lib";
+import {
+	TOUCH_JOYSTICK_POINTER_ACTIONS,
+	TOUCH_JOYSTICK_POINTER_PHASES,
+} from "../config";
+import { shouldHandleTouchJoystickPointerAction } from "../lib";
+import { useTouchJoystickMotion } from "./useTouchJoystickMotion";
 
 type UseTouchJoystickInputOptions = {
 	onMove: (velocity: Vector3Tuple) => void;
@@ -31,103 +34,92 @@ export const useTouchJoystickInput = ({
 	onMove,
 	onStop,
 }: UseTouchJoystickInputOptions): UseTouchJoystickInputResult => {
-	const joystickRef = useRef<HTMLDivElement>(null);
 	const activePointerIdRef = useRef<number | null>(null);
-	const [knobOffsetX, setKnobOffsetX] = useState(0);
-	const [knobOffsetY, setKnobOffsetY] = useState(0);
-	const [isActive, setIsActive] = useState(false);
-
-	const resetJoystick = useCallback(() => {
-		setKnobOffsetX(0);
-		setKnobOffsetY(0);
-		setIsActive(false);
-		onStop();
-	}, [onStop]);
-
-	const updateJoystickFromPointer = useCallback(
-		(clientX: number, clientY: number) => {
-			const joystickBounds = joystickRef.current?.getBoundingClientRect();
-
-			if (!joystickBounds) {
-				return;
-			}
-
-			const centerX = joystickBounds.left + joystickBounds.width / 2;
-			const centerY = joystickBounds.top + joystickBounds.height / 2;
-			const joystickVector = resolveJoystickVector({
-				deltaX: clientX - centerX,
-				deltaY: clientY - centerY,
-				maxRadiusPx: TOUCH_JOYSTICK_CONFIG.MAX_RADIUS_PX,
-				deadZoneRatio: TOUCH_JOYSTICK_CONFIG.DEAD_ZONE_RATIO,
-			});
-
-			setKnobOffsetX(joystickVector.knobOffsetX);
-			setKnobOffsetY(joystickVector.knobOffsetY);
-
-			if (joystickVector.hasMovement) {
-				onMove(joystickVector.velocity);
-			} else {
-				onStop();
-			}
-		},
-		[onMove, onStop],
-	);
+	const {
+		joystickRef,
+		knobOffsetX,
+		knobOffsetY,
+		isActive,
+		beginJoystickMotion,
+		updateJoystickMotion,
+		resetJoystickMotion,
+	} = useTouchJoystickMotion({ onMove, onStop });
 
 	const handlePointerDown = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
 			event.preventDefault();
-
-			if (activePointerIdRef.current !== null) {
+			if (
+				!shouldHandleTouchJoystickPointerAction({
+					activePointerId: activePointerIdRef.current,
+					eventPointerId: event.pointerId,
+					phase: TOUCH_JOYSTICK_POINTER_PHASES.DOWN,
+					expectedAction: TOUCH_JOYSTICK_POINTER_ACTIONS.ACTIVATE,
+				})
+			) {
 				return;
 			}
 
 			activePointerIdRef.current = event.pointerId;
 			event.currentTarget.setPointerCapture(event.pointerId);
-			setIsActive(true);
-			updateJoystickFromPointer(event.clientX, event.clientY);
+			beginJoystickMotion(event.clientX, event.clientY);
 		},
-		[updateJoystickFromPointer],
+		[beginJoystickMotion],
 	);
 
 	const handlePointerMove = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
 			event.preventDefault();
-
-			if (event.pointerId !== activePointerIdRef.current) {
+			if (
+				!shouldHandleTouchJoystickPointerAction({
+					activePointerId: activePointerIdRef.current,
+					eventPointerId: event.pointerId,
+					phase: TOUCH_JOYSTICK_POINTER_PHASES.MOVE,
+					expectedAction: TOUCH_JOYSTICK_POINTER_ACTIONS.UPDATE,
+				})
+			) {
 				return;
 			}
 
-			updateJoystickFromPointer(event.clientX, event.clientY);
+			updateJoystickMotion(event.clientX, event.clientY);
 		},
-		[updateJoystickFromPointer],
+		[updateJoystickMotion],
+	);
+
+	const handlePointerRelease = useCallback(
+		(
+			event: ReactPointerEvent<HTMLDivElement>,
+			phase: (typeof TOUCH_JOYSTICK_POINTER_PHASES)["UP" | "CANCEL"],
+		) => {
+			event.preventDefault();
+			if (
+				!shouldHandleTouchJoystickPointerAction({
+					activePointerId: activePointerIdRef.current,
+					eventPointerId: event.pointerId,
+					phase,
+					expectedAction: TOUCH_JOYSTICK_POINTER_ACTIONS.RELEASE,
+				})
+			) {
+				return;
+			}
+
+			activePointerIdRef.current = null;
+			resetJoystickMotion();
+		},
+		[resetJoystickMotion],
 	);
 
 	const handlePointerUp = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
-			event.preventDefault();
-
-			if (event.pointerId !== activePointerIdRef.current) {
-				return;
-			}
-
-			activePointerIdRef.current = null;
-			resetJoystick();
+			handlePointerRelease(event, TOUCH_JOYSTICK_POINTER_PHASES.UP);
 		},
-		[resetJoystick],
+		[handlePointerRelease],
 	);
 
 	const handlePointerCancel = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
-			event.preventDefault();
-
-			if (event.pointerId !== activePointerIdRef.current) {
-				return;
-			}
-
-			activePointerIdRef.current = null;
-			resetJoystick();
+			handlePointerRelease(event, TOUCH_JOYSTICK_POINTER_PHASES.CANCEL);
 		},
-		[resetJoystick],
+		[handlePointerRelease],
 	);
 
 	return {

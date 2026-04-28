@@ -1,0 +1,103 @@
+import { useFrame } from "@react-three/fiber";
+import type { RapierRigidBody } from "@react-three/rapier";
+import type { RefObject } from "react";
+import { useEffect, useRef } from "react";
+
+import type { Vector3Tuple } from "@/shared/lib";
+import {
+	getPlayerPosition,
+	removeEnemyPosition,
+	setEnemyPosition,
+} from "@/shared/lib";
+
+import { ENEMY_ENTITY_CONFIG, ENEMY_EVENTS } from "../config";
+import {
+	resolveEnemyPhysicsFrameMotion,
+	resolveEnemyPlayerPositionSync,
+} from "../lib";
+import type { EnemyUpdatePlayerPositionEvent } from "./types";
+
+type UseEnemyPhysicsLoopInput = {
+	rigidBodyRef: RefObject<RapierRigidBody | null>;
+	id: string;
+	position: Vector3Tuple;
+	send: (event: EnemyUpdatePlayerPositionEvent) => void;
+	getNextPosition: (
+		delta: number,
+		currentPosition: Vector3Tuple,
+	) => Vector3Tuple;
+};
+
+export const useEnemyPhysicsLoop = ({
+	rigidBodyRef,
+	id,
+	position,
+	send,
+	getNextPosition,
+}: UseEnemyPhysicsLoopInput): void => {
+	const playerPositionSyncRef = useRef({
+		elapsedSincePlayerSyncMs: 0,
+		lastPlayerPosition: [
+			getPlayerPosition()[0],
+			getPlayerPosition()[1],
+			getPlayerPosition()[2],
+		] as Vector3Tuple,
+	});
+
+	useFrame((_, delta) => {
+		if (delta <= Number.EPSILON) {
+			return;
+		}
+
+		const playerPosition = getPlayerPosition();
+		const playerPositionSync = resolveEnemyPlayerPositionSync({
+			currentElapsedSincePlayerSyncMs:
+				playerPositionSyncRef.current.elapsedSincePlayerSyncMs,
+			currentLastPlayerPosition:
+				playerPositionSyncRef.current.lastPlayerPosition,
+			delta,
+			nextPlayerPosition: playerPosition,
+			positionThreshold: ENEMY_ENTITY_CONFIG.PLAYER_TRACKING.POSITION_THRESHOLD,
+			updateIntervalMs: ENEMY_ENTITY_CONFIG.PLAYER_TRACKING.UPDATE_INTERVAL_MS,
+		});
+		playerPositionSyncRef.current = {
+			elapsedSincePlayerSyncMs: playerPositionSync.nextElapsedSincePlayerSyncMs,
+			lastPlayerPosition: playerPositionSync.nextLastPlayerPosition,
+		};
+
+		if (playerPositionSync.shouldSendPlayerPositionUpdate) {
+			send({
+				type: ENEMY_EVENTS.UPDATE_PLAYER_POSITION,
+				position: playerPosition,
+			});
+		}
+
+		const body = rigidBodyRef.current;
+		if (!body) return;
+		const current = body.translation();
+		setEnemyPosition(id, current.x, current.y, current.z);
+		const nextPos = getNextPosition(delta, [current.x, current.y, current.z]);
+		const frameMotion = resolveEnemyPhysicsFrameMotion({
+			currentPosition: [current.x, current.y, current.z],
+			currentRotation: body.rotation(),
+			currentVerticalVelocity: body.linvel().y,
+			delta,
+			movementThreshold: ENEMY_ENTITY_CONFIG.PHYSICS.MOVEMENT_THRESHOLD,
+			nextPosition: nextPos,
+			rotationSpeed: ENEMY_ENTITY_CONFIG.PHYSICS.ROTATION_SPEED,
+		});
+		body.setLinvel(frameMotion.frameLinearVelocity, true);
+
+		if (frameMotion.nextRotation) {
+			body.setRotation(frameMotion.nextRotation, true);
+		}
+	});
+
+	useEffect(() => {
+		setEnemyPosition(id, position[0], position[1], position[2]);
+
+		return () => {
+			removeEnemyPosition(id);
+		};
+	}, [id, position]);
+};

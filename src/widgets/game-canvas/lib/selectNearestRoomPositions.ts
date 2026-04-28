@@ -1,4 +1,4 @@
-import type { Vector3Tuple } from "@/shared/types";
+import type { Vector3Tuple } from "@/shared/lib";
 
 type SelectNearestRoomPositionsInput = {
 	roomPositions: readonly Vector3Tuple[];

@@ -9,11 +9,11 @@ import {
 	getMachineGraphGuardLabel,
 	STATE_VISUALIZER_GRAPH_SYNTAX,
 } from "@/features/state-visualizer";
+import { cn } from "@/shared/lib";
 
 import {
 	INSPECTOR_FLOW_EDGE_LAYOUT,
 	INSPECTOR_FLOW_EDGE_VISUALS,
-	INSPECTOR_FLOW_NODE_VISUALS,
 	INSPECTOR_GUARD_MARKER_INTERACTION,
 } from "../config";
 import { createGuardColorByKey } from "./guardMarkerPalette";
@@ -299,11 +299,13 @@ const getFlowNodeClassName = (
 	kind: MachineGraphNodeKind,
 	isActive: boolean,
 ): string => {
-	const activeClassName = isActive
-		? ` ${INSPECTOR_FLOW_NODE_VISUALS.ACTIVE_CLASS_NAME}`
-		: "";
-
-	return `${INSPECTOR_FLOW_NODE_VISUALS.BASE_CLASS_NAME} ${INSPECTOR_FLOW_NODE_VISUALS.CLASS_NAME_BY_KIND[kind]}${activeClassName}`;
+	return cn(
+		"rounded-md border text-xs font-semibold tracking-wide shadow-sm transition-colors",
+		kind === "initial" && "border-cyan-300/80 bg-cyan-500/15 text-cyan-100",
+		kind === "state" && "border-slate-300/60 bg-slate-500/20 text-slate-100",
+		kind === "final" && "border-amber-300/80 bg-amber-500/15 text-amber-100",
+		isActive && "ring-2 ring-cyan-300/80 ring-offset-1 ring-offset-transparent",
+	);
 };
 
 export const mapGraphNodesToFlowNodes = (
