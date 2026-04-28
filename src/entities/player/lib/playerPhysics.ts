@@ -1,4 +1,5 @@
 import type * as THREE from "three";
+import { Quaternion } from "three";
 
 import { type CameraMode, RELATIVE_CAMERA_MODES } from "@/shared/config";
 import { getQuaternionFromXZ, type Vector3Tuple } from "@/shared/lib";
@@ -26,7 +27,7 @@ type PlayerPhysicsLinearVelocity = {
 };
 
 type CreateSmoothedPlayerPhysicsRotationInput = {
-	currentRotation: THREE.Quaternion;
+	currentRotation: Pick<THREE.Quaternion, "x" | "y" | "z" | "w">;
 	delta: number;
 	rotationTarget: THREE.Quaternion;
 };
@@ -92,12 +93,12 @@ export const createSmoothedPlayerPhysicsRotation = ({
 	delta,
 	rotationTarget,
 }: CreateSmoothedPlayerPhysicsRotationInput): THREE.Quaternion =>
-	currentRotation
-		.clone()
-		.slerp(
-			rotationTarget,
-			PLAYER_ENTITY_CONFIG.MOVEMENT.ROTATION_SPEED * delta,
-		);
+	new Quaternion(
+		currentRotation.x,
+		currentRotation.y,
+		currentRotation.z,
+		currentRotation.w,
+	).slerp(rotationTarget, PLAYER_ENTITY_CONFIG.MOVEMENT.ROTATION_SPEED * delta);
 
 export type {
 	CreateSmoothedPlayerPhysicsRotationInput,

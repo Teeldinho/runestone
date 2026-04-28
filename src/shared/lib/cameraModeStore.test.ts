@@ -1,4 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { CAMERA_MODES } from "@/shared/config";
 
 import {
 	getCameraMode,
@@ -7,14 +9,22 @@ import {
 } from "./cameraModeStore";
 
 describe("cameraModeStore", () => {
+	beforeEach(() => {
+		setCameraMode(CAMERA_MODES.THIRD_PERSON);
+	});
+
+	it("initializes with the third-person camera mode", () => {
+		expect(getCameraMode()).toBe(CAMERA_MODES.THIRD_PERSON);
+	});
+
 	it("notifies subscribers when camera mode changes", () => {
 		const listener = vi.fn();
 		const unsubscribe = subscribeToCameraMode(listener);
 
-		setCameraMode("firstPerson");
+		setCameraMode(CAMERA_MODES.FIRST_PERSON);
 
 		expect(listener).toHaveBeenCalledTimes(1);
-		expect(getCameraMode()).toBe("firstPerson");
+		expect(getCameraMode()).toBe(CAMERA_MODES.FIRST_PERSON);
 
 		unsubscribe();
 	});
@@ -24,7 +34,7 @@ describe("cameraModeStore", () => {
 		const unsubscribe = subscribeToCameraMode(listener);
 
 		unsubscribe();
-		setCameraMode("topDown");
+		setCameraMode(CAMERA_MODES.TOP_DOWN);
 
 		expect(listener).not.toHaveBeenCalled();
 	});

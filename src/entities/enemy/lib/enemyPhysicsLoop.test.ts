@@ -64,6 +64,18 @@ describe("enemyPhysicsLoop", () => {
 		expect(smoothedRotation.w).toBeCloseTo(targetRotation.w, 8);
 	});
 
+	it("accepts Rapier-like rotation objects without clone()", () => {
+		const smoothedRotation = createSmoothedEnemyRotation({
+			currentRotation: { x: 0, y: 0, z: 0, w: 1 },
+			delta: 1,
+			rotationSpeed: 1,
+			velocityX: 1,
+			velocityZ: 0,
+		});
+
+		expect(smoothedRotation).toBeInstanceOf(THREE.Quaternion);
+	});
+
 	it("resolves enemy player-position sync state across frames", () => {
 		const firstSync = resolveEnemyPlayerPositionSync({
 			currentElapsedSincePlayerSyncMs: 0,

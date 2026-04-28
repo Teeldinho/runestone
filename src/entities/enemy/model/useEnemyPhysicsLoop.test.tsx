@@ -2,7 +2,6 @@
 
 import type { RapierRigidBody } from "@react-three/rapier";
 import { act, renderHook } from "@testing-library/react";
-import * as THREE from "three";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ENEMY_EVENTS } from "../config";
@@ -36,7 +35,7 @@ const createRigidBodyMock = () =>
 	({
 		linvel: vi.fn(() => ({ x: 0, y: 0.75, z: 0 })),
 		position: vi.fn(),
-		rotation: vi.fn(() => new THREE.Quaternion()),
+		rotation: vi.fn(() => ({ x: 0, y: 0, z: 0, w: 1 })),
 		setLinvel: vi.fn(),
 		setRotation: vi.fn(),
 		translation: vi.fn(() => ({ x: 10, y: 0.91, z: 5 })),
@@ -66,9 +65,11 @@ describe("useEnemyPhysicsLoop", () => {
 		vi.clearAllMocks();
 		mockGetPlayerPosition.mockReturnValue([0.5, 0.91, 0]);
 
-		act(() => {
-			frameCallbacks.at(-1)?.(undefined, 0.2);
-		});
+		expect(() => {
+			act(() => {
+				frameCallbacks.at(-1)?.(undefined, 0.2);
+			});
+		}).not.toThrow();
 
 		expect(mockSetEnemyPosition).toHaveBeenCalledWith("enemy-1", 10, 0.91, 5);
 		expect(send).toHaveBeenCalledWith({

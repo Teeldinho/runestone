@@ -71,8 +71,24 @@ describe("playerPhysics", () => {
 		expect(idleResult.rotationTarget).toBeNull();
 	});
 
-	it("creates a smoothed rotation from the current and target quaternions", () => {
-		const currentRotation = new THREE.Quaternion();
+	it("maps top-down forward input to forward world velocity", () => {
+		const result = resolvePlayerPhysicsLinearVelocity({
+			cameraAzimuth: Math.PI,
+			cameraMode: CAMERA_MODES.TOP_DOWN,
+			isSprinting: false,
+			velocity: [0, 0, 1],
+		});
+
+		expect(result.isMoving).toBe(true);
+		expect(result.horizontalVelocity).toEqual([
+			0,
+			0,
+			PLAYER_ENTITY_CONFIG.MOVEMENT.SPEED,
+		]);
+	});
+
+	it("creates a smoothed rotation from a rotation-like object and target quaternion", () => {
+		const currentRotation = { x: 0, y: 0, z: 0, w: 1 };
 		const targetRotation = getQuaternionFromXZ(1, 0);
 
 		const nextRotation = createSmoothedPlayerPhysicsRotation({
@@ -81,15 +97,18 @@ describe("playerPhysics", () => {
 			rotationTarget: targetRotation,
 		});
 
-		expect(nextRotation).not.toBe(currentRotation);
+		expect(nextRotation).toBeInstanceOf(THREE.Quaternion);
 		expect(
 			nextRotation.equals(
-				currentRotation
-					.clone()
-					.slerp(
-						targetRotation,
-						PLAYER_ENTITY_CONFIG.MOVEMENT.ROTATION_SPEED * 0.05,
-					),
+				new THREE.Quaternion(
+					currentRotation.x,
+					currentRotation.y,
+					currentRotation.z,
+					currentRotation.w,
+				).slerp(
+					targetRotation,
+					PLAYER_ENTITY_CONFIG.MOVEMENT.ROTATION_SPEED * 0.05,
+				),
 			),
 		).toBe(true);
 	});
