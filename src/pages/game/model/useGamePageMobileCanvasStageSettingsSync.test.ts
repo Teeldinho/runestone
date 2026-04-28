@@ -71,7 +71,7 @@ describe("useGamePageMobileCanvasStageModel settings sync", () => {
 		});
 		const stage = renderHook(() => useGamePageMobileCanvasStageModel());
 
-		expect(stage.result.current.postprocessingEnabled).toBe(true);
+		expect(stage.result.current.postprocessingEnabled).toBe(false);
 
 		act(() => {
 			settings.result.current.handlePostprocessingToggle(false);
@@ -83,6 +83,6 @@ describe("useGamePageMobileCanvasStageModel settings sync", () => {
 			settings.result.current.handleSettingsReset();
 		});
 
-		expect(stage.result.current.postprocessingEnabled).toBe(true);
+		expect(stage.result.current.postprocessingEnabled).toBe(false);
 	});
 });

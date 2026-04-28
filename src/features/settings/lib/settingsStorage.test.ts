@@ -28,7 +28,7 @@ describe("settingsStorage utilities", () => {
 			masterVolume: 0.8,
 			musicVolume: 0.55,
 			hapticsEnabled: true,
-			postprocessingEnabled: true,
+			postprocessingEnabled: false,
 		});
 	});
 
@@ -41,7 +41,7 @@ describe("settingsStorage utilities", () => {
 			masterVolume: 0.5,
 			musicVolume: 0.55,
 			hapticsEnabled: false,
-			postprocessingEnabled: true,
+			postprocessingEnabled: false,
 		});
 	});
 
@@ -52,7 +52,7 @@ describe("settingsStorage utilities", () => {
 			masterVolume: 0.8,
 			musicVolume: 0.55,
 			hapticsEnabled: true,
-			postprocessingEnabled: true,
+			postprocessingEnabled: false,
 		});
 	});
 
@@ -85,7 +85,7 @@ describe("settingsStorage utilities", () => {
 			masterVolume: 0.8,
 			musicVolume: 0.55,
 			hapticsEnabled: true,
-			postprocessingEnabled: true,
+			postprocessingEnabled: false,
 		});
 	});
 
@@ -99,7 +99,7 @@ describe("settingsStorage utilities", () => {
 			masterVolume: 0.6,
 			musicVolume: 0.55,
 			hapticsEnabled: true,
-			postprocessingEnabled: true,
+			postprocessingEnabled: false,
 		});
 		expect("unknownKey" in settings).toBe(false);
 	});

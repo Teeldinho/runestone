@@ -54,7 +54,7 @@ describe("useSettingsForm", () => {
 		expect(result.current.masterVolume).toBe(0.8);
 		expect(result.current.musicVolume).toBe(0.55);
 		expect(result.current.hapticsEnabled).toBe(true);
-		expect(result.current.postprocessingEnabled).toBe(true);
+		expect(result.current.postprocessingEnabled).toBe(false);
 	});
 
 	it("updates master volume and persists", () => {

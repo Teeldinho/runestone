@@ -4,7 +4,7 @@ export const SETTINGS_DEFAULTS = {
 	masterVolume: 0.8,
 	musicVolume: 0.55,
 	hapticsEnabled: true,
-	postprocessingEnabled: true,
+	postprocessingEnabled: false,
 } as const;
 
 export const SETTINGS_VOLUME_RANGE = {
