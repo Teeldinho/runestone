@@ -2,7 +2,6 @@ import { useFrame } from "@react-three/fiber";
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useEffect, useRef } from "react";
-import type { Quaternion } from "three";
 
 import type { Vector3Tuple } from "@/shared/lib";
 import {
@@ -80,7 +79,7 @@ export const useEnemyPhysicsLoop = ({
 		const nextPos = getNextPosition(delta, [current.x, current.y, current.z]);
 		const frameMotion = resolveEnemyPhysicsFrameMotion({
 			currentPosition: [current.x, current.y, current.z],
-			currentRotation: body.rotation() as Quaternion,
+			currentRotation: body.rotation(),
 			currentVerticalVelocity: body.linvel().y,
 			delta,
 			movementThreshold: ENEMY_ENTITY_CONFIG.PHYSICS.MOVEMENT_THRESHOLD,

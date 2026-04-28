@@ -1,4 +1,5 @@
 import type * as THREE from "three";
+import { Quaternion } from "three";
 
 import { getQuaternionFromXZ, type Vector3Tuple } from "@/shared/lib";
 
@@ -24,7 +25,7 @@ type ShouldRotateEnemyInput = {
 };
 
 type CreateSmoothedEnemyRotationInput = {
-	currentRotation: THREE.Quaternion;
+	currentRotation: Pick<THREE.Quaternion, "x" | "y" | "z" | "w">;
 	delta: number;
 	rotationSpeed: number;
 	velocityX: number;
@@ -48,7 +49,7 @@ type ResolveEnemyPlayerPositionSyncResult = {
 
 type ResolveEnemyPhysicsFrameMotionInput = {
 	currentPosition: Vector3Tuple;
-	currentRotation: THREE.Quaternion;
+	currentRotation: Pick<THREE.Quaternion, "x" | "y" | "z" | "w">;
 	currentVerticalVelocity: number;
 	delta: number;
 	movementThreshold: number;
@@ -92,9 +93,12 @@ export const createSmoothedEnemyRotation = ({
 	velocityX,
 	velocityZ,
 }: CreateSmoothedEnemyRotationInput): THREE.Quaternion =>
-	currentRotation
-		.clone()
-		.slerp(getQuaternionFromXZ(velocityX, velocityZ), rotationSpeed * delta);
+	new Quaternion(
+		currentRotation.x,
+		currentRotation.y,
+		currentRotation.z,
+		currentRotation.w,
+	).slerp(getQuaternionFromXZ(velocityX, velocityZ), rotationSpeed * delta);
 
 export const resolveEnemyPlayerPositionSync = ({
 	currentElapsedSincePlayerSyncMs,
