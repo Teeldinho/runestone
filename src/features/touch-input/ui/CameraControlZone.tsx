@@ -5,10 +5,6 @@ type CameraControlZoneProps = {
 	zoneRef: Ref<HTMLDivElement | null>;
 };
 
-/**
- * A transparent overlay zone that restricts camera rotation/pan inputs
- * to the right half of the screen on mobile/tablet devices.
- */
 export function CameraControlZone({
 	children,
 	zoneRef,
@@ -17,7 +13,7 @@ export function CameraControlZone({
 		<div
 			ref={zoneRef}
 			id="camera-control-zone"
-			className="pointer-events-auto absolute inset-0 touch-none select-none"
+			className="pointer-events-auto absolute inset-y-0 right-0 left-1/2 touch-none select-none"
 		>
 			{children}
 		</div>

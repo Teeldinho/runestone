@@ -264,7 +264,14 @@ export const applyThirdPersonFrame = ({
 	}
 
 	if (isUserInteracting) {
-		thirdPersonOrbitRef.current.target.set(...lookAt);
+		const desiredCameraPosition = resolveOrbitFollowTarget({
+			camera,
+			currentTarget: thirdPersonOrbitRef.current.target,
+			nextTarget: lookAt,
+		});
+
+		camera.position.set(...desiredCameraPosition);
+		setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
 		return;
 	}
 

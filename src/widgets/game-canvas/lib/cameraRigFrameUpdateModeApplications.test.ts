@@ -94,6 +94,36 @@ describe("cameraRigFrameUpdateModeApplications", () => {
 		).toBe(true);
 	});
 
+	it("preserves the third-person orbit offset while the user is actively orbiting", () => {
+		const camera = new THREE.PerspectiveCamera();
+		camera.position.set(0, 3, -6);
+		const thirdPersonOrbitRef = { current: createOrbitControls() };
+		thirdPersonOrbitRef.current.target.set(0, 1, 0);
+
+		applyThirdPersonFrame({
+			camera,
+			flags: {
+				isFreeOrbitalJump: false,
+				isModeChange: false,
+				isThirdPersonJump: false,
+				transitionAlpha: 0.5,
+			},
+			isUserInteracting: true,
+			lastTransition: null,
+			lookAt: [2, 1, 0],
+			lookAtVectorRef: { current: new THREE.Vector3() },
+			needsThirdPersonSyncRef: { current: false },
+			position: [2, 3, -6],
+			positionVectorRef: { current: new THREE.Vector3() },
+			thirdPersonOrbitRef,
+			trackedPlayerPosition: [2, 0, 0],
+		});
+
+		expect(camera.position.toArray()).toEqual([2, 3, -6]);
+		expect(thirdPersonOrbitRef.current.target.toArray()).toEqual([2, 1, 0]);
+		expect(thirdPersonOrbitRef.current.update).toHaveBeenCalledTimes(1);
+	});
+
 	it("syncs the free-orbital frame when controls mount after a mode change", () => {
 		const camera = new THREE.PerspectiveCamera();
 		const freeOrbitalOrbitRef = { current: createOrbitControls() };
