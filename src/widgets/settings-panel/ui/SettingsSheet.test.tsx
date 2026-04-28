@@ -47,7 +47,7 @@ const {
 		},
 		graphics: {
 			handlePostprocessingToggle: mockHandlePostprocessingToggle,
-			postprocessingEnabled: true,
+			postprocessingEnabled: false,
 		},
 		haptics: {
 			handleHapticsToggle: mockHandleHapticsToggle,
