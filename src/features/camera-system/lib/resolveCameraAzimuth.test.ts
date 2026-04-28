@@ -3,7 +3,7 @@ import { CAMERA_MODES } from "../config";
 import { resolveCameraAzimuth } from "./resolveCameraAzimuth";
 
 describe("resolveCameraAzimuth", () => {
-	it("returns the historical top-down azimuth contract", () => {
+	it("returns zero azimuth for top-down mode so movement stays camera-relative", () => {
 		expect(
 			resolveCameraAzimuth({
 				mode: CAMERA_MODES.TOP_DOWN,
