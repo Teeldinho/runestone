@@ -1,1 +1,1 @@
-export { PlayerMesh } from "./PlayerMesh";
+export { PlayerMesh } from "./PlayerMeshProxy";

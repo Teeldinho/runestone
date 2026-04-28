@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-
 import {
 	PLAYER_EVENTS,
 	type PlayerMachineEvent,
