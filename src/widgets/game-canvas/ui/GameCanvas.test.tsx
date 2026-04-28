@@ -2,7 +2,7 @@
 
 import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ROOM_IDS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
 
@@ -17,6 +17,11 @@ const mockWorldInteractionRuntime = vi.fn(() => (
 const mockCanvas = vi.fn(({ children }: { children: ReactNode }) => (
 	<div data-testid="canvas">{children}</div>
 ));
+const mockHandleSceneReady = vi.fn();
+const mockUseGameCanvasSceneLoading = vi.fn(() => ({
+	handleSceneReady: mockHandleSceneReady,
+	isSceneLoading: true,
+}));
 const mockUseGameCanvasViewModel = vi.fn((_value?: unknown) => ({
 	canvasSettings: {
 		camera: { far: 120, fov: 58, near: 0.1, position: [0, 16, -18], zoom: 1 },
@@ -93,6 +98,7 @@ vi.mock("@/entities/room", () => ({
 }));
 
 vi.mock("../model", () => ({
+	useGameCanvasSceneLoading: () => mockUseGameCanvasSceneLoading(),
 	useGameCanvasViewModel: (value: unknown) => mockUseGameCanvasViewModel(value),
 }));
 
@@ -121,6 +127,15 @@ vi.mock("./WorldInteractionRuntime", () => ({
 }));
 
 describe("GameCanvas", () => {
+	beforeEach(() => {
+		mockCanvas.mockClear();
+		mockHandleSceneReady.mockClear();
+		mockSceneEnvironment.mockClear();
+		mockUseGameCanvasSceneLoading.mockClear();
+		mockUseGameCanvasViewModel.mockClear();
+		mockWorldInteractionRuntime.mockClear();
+	});
+
 	it("shows a loading overlay until the 3D scene reports ready", () => {
 		const cameraStateSnapshot = {
 			fov: 58,
@@ -144,13 +159,10 @@ describe("GameCanvas", () => {
 			/>,
 		);
 
-		expect(screen.getByLabelText("Loading dungeon scene")).toBeInTheDocument();
+		expect(screen.getByLabelText("Loading dungeon scene")).not.toBeNull();
 	});
 
 	it("renders the narrow interaction runtime separately from the scene environment", () => {
-		mockCanvas.mockClear();
-		mockUseGameCanvasViewModel.mockClear();
-
 		const cameraStateSnapshot = {
 			fov: 58,
 			mode: CAMERA_MODES.FREE_ORBITAL,
