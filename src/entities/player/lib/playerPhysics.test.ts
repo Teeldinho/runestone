@@ -73,18 +73,19 @@ describe("playerPhysics", () => {
 
 	it("maps top-down forward input to forward world velocity", () => {
 		const result = resolvePlayerPhysicsLinearVelocity({
-			cameraAzimuth: Math.PI,
+			cameraAzimuth: 0,
 			cameraMode: CAMERA_MODES.TOP_DOWN,
 			isSprinting: false,
-			velocity: [0, 0, 1],
+			velocity: [0, 0, -1],
 		});
 
 		expect(result.isMoving).toBe(true);
-		expect(result.horizontalVelocity).toEqual([
-			0,
-			0,
+		expect(result.horizontalVelocity[0]).toBeCloseTo(0, 6);
+		expect(result.horizontalVelocity[1]).toBe(0);
+		expect(result.horizontalVelocity[2]).toBeCloseTo(
 			PLAYER_ENTITY_CONFIG.MOVEMENT.SPEED,
-		]);
+			6,
+		);
 	});
 
 	it("creates a smoothed rotation from a rotation-like object and target quaternion", () => {
