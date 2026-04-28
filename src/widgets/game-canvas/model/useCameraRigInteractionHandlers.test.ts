@@ -74,4 +74,50 @@ describe("useCameraRigInteractionHandlers", () => {
 		expect(freeOrbitalOrbitRef.current?.enableRotate).toBe(true);
 		expect(firstPersonOrbitRef.current?.enableRotate).toBe(true);
 	});
+
+	it("keeps rotation enabled for multi-touch gestures so pinch zoom can continue", () => {
+		const cameraControlElement = document.createElement("div");
+		const isUserInteractingRef = { current: false };
+		const isTouchInitiallyOnLeftRef = { current: false };
+		const thirdPersonOrbitRef = createOrbitRef();
+		const topDownOrbitRef = createOrbitRef();
+		const freeOrbitalOrbitRef = createOrbitRef();
+		const firstPersonOrbitRef = createOrbitRef();
+
+		const { result } = renderHook(() =>
+			useCameraRigInteractionHandlers({
+				cameraControlElement,
+				firstPersonOrbitRef,
+				freeOrbitalOrbitRef,
+				isTouchInitiallyOnLeftRef,
+				isUserInteractingRef,
+				thirdPersonOrbitRef,
+				topDownOrbitRef,
+			}),
+		);
+
+		act(() => {
+			cameraControlElement.dispatchEvent(
+				new PointerEvent("pointerdown", {
+					clientX: 100,
+					pointerId: 1,
+					pointerType: "touch",
+				}),
+			);
+			cameraControlElement.dispatchEvent(
+				new PointerEvent("pointerdown", {
+					clientX: 800,
+					pointerId: 2,
+					pointerType: "touch",
+				}),
+			);
+			result.current.handleOrbitStart();
+		});
+
+		expect(isUserInteractingRef.current).toBe(true);
+		expect(thirdPersonOrbitRef.current?.enableRotate).toBe(true);
+		expect(topDownOrbitRef.current?.enableRotate).toBe(true);
+		expect(freeOrbitalOrbitRef.current?.enableRotate).toBe(true);
+		expect(firstPersonOrbitRef.current?.enableRotate).toBe(true);
+	});
 });

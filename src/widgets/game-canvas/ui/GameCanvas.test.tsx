@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { ROOM_IDS } from "@/entities/dungeon";
@@ -121,6 +121,32 @@ vi.mock("./WorldInteractionRuntime", () => ({
 }));
 
 describe("GameCanvas", () => {
+	it("shows a loading overlay until the 3D scene reports ready", () => {
+		const cameraStateSnapshot = {
+			fov: 58,
+			mode: CAMERA_MODES.FREE_ORBITAL,
+			position: [0, 16, -18] as [number, number, number],
+			target: [0, 0, 0] as [number, number, number],
+			zoom: 1,
+		};
+
+		const machineRuntime = {
+			currentRoomId: ROOM_IDS.ENTRANCE,
+			enemiesRemaining: 1,
+			hasTreasureKey: false,
+		};
+
+		render(
+			<GameCanvas
+				cameraStateSnapshot={cameraStateSnapshot}
+				machineRuntime={machineRuntime}
+				postprocessingEnabled={false}
+			/>,
+		);
+
+		expect(screen.getByLabelText("Loading dungeon scene")).toBeInTheDocument();
+	});
+
 	it("renders the narrow interaction runtime separately from the scene environment", () => {
 		mockCanvas.mockClear();
 		mockUseGameCanvasViewModel.mockClear();
