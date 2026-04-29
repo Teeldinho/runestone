@@ -12,6 +12,7 @@ import type {
 import { SceneEnvironment } from "./SceneEnvironment";
 import { SceneFog } from "./SceneFog";
 import { SceneLighting } from "./SceneLighting";
+import { SceneReadyReporter } from "./SceneReadyReporter";
 import { WorldInteractionRuntime } from "./WorldInteractionRuntime";
 
 type GameCanvasSceneContentProps = {
@@ -19,6 +20,7 @@ type GameCanvasSceneContentProps = {
 	fog: CanvasFogSettings;
 	isPostprocessingEnabled: boolean;
 	lighting: CanvasLightingSettings;
+	onSceneReady: () => void;
 	playerSpawnPosition: Vector3Tuple;
 	postprocessing: CanvasPostprocessingSettings;
 };
@@ -28,11 +30,13 @@ export function GameCanvasSceneContent({
 	fog,
 	isPostprocessingEnabled,
 	lighting,
+	onSceneReady,
 	playerSpawnPosition,
 	postprocessing,
 }: GameCanvasSceneContentProps) {
 	return (
 		<Suspense fallback={null}>
+			<SceneReadyReporter onSceneReady={onSceneReady} />
 			<SceneFog fog={fog} />
 			<SceneLighting lighting={lighting} />
 			{isPostprocessingEnabled && (

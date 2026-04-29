@@ -12,23 +12,25 @@ export function TutorialPage() {
 	return (
 		<main
 			id="main-content"
-			className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-8 p-8 py-16"
+			className="h-dvh overflow-y-auto overscroll-contain"
 		>
-			<header className="space-y-2 text-center">
-				<h1 className="text-3xl font-semibold text-panel-title">
-					{TUTORIAL_COPY.HEADING}
-				</h1>
-				<p className="text-panel-body">{TUTORIAL_COPY.SUBTITLE}</p>
-			</header>
+			<div className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-8 p-8 py-16">
+				<header className="space-y-2 text-center">
+					<h1 className="text-3xl font-semibold text-panel-title">
+						{TUTORIAL_COPY.HEADING}
+					</h1>
+					<p className="text-panel-body">{TUTORIAL_COPY.SUBTITLE}</p>
+				</header>
 
-			<TutorialControlsCard />
-			<TutorialObjectivesCard />
-			<TutorialTipsCard />
+				<TutorialControlsCard />
+				<TutorialObjectivesCard />
+				<TutorialTipsCard />
 
-			<div className="flex justify-center">
-				<Button asChild size="lg">
-					<Link to={AUTH_ROUTE_PATHS.GAME}>{TUTORIAL_COPY.CTA_LABEL}</Link>
-				</Button>
+				<div className="flex justify-center">
+					<Button asChild size="lg">
+						<Link to={AUTH_ROUTE_PATHS.GAME}>{TUTORIAL_COPY.CTA_LABEL}</Link>
+					</Button>
+				</div>
 			</div>
 		</main>
 	);

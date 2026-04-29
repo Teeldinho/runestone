@@ -14,8 +14,10 @@ type UseUsernameFormParams = {
 
 type UsernameFieldMeta = {
 	errors: unknown[];
+	isDirty: boolean;
 	isTouched: boolean;
 	isValid: boolean;
+	submissionAttempts: number;
 };
 
 type UsernameFieldViewModel = {
@@ -79,7 +81,11 @@ export const useUsernameForm = ({
 				fieldMeta.errors,
 			);
 			const shouldShowValidationError =
-				fieldMeta.isTouched && !fieldMeta.isValid;
+				!fieldMeta.isValid &&
+				Boolean(validationErrorMessage) &&
+				(fieldMeta.isDirty ||
+					fieldMeta.isTouched ||
+					fieldMeta.submissionAttempts > 0);
 			const activeErrorMessage = shouldShowValidationError
 				? validationErrorMessage
 				: errorMessage;

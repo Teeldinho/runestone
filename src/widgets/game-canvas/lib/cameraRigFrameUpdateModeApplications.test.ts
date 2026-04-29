@@ -82,6 +82,7 @@ describe("cameraRigFrameUpdateModeApplications", () => {
 			needsThirdPersonSyncRef: { current: true },
 			position: [1, 2, 3],
 			positionVectorRef: { current: new THREE.Vector3() },
+			previousTrackedPlayerPosition: null,
 			thirdPersonOrbitRef,
 			trackedPlayerPosition: [0, 0, 0],
 		});
@@ -115,12 +116,44 @@ describe("cameraRigFrameUpdateModeApplications", () => {
 			needsThirdPersonSyncRef: { current: false },
 			position: [2, 3, -6],
 			positionVectorRef: { current: new THREE.Vector3() },
+			previousTrackedPlayerPosition: [0, 0, 0],
 			thirdPersonOrbitRef,
 			trackedPlayerPosition: [2, 0, 0],
 		});
 
 		expect(camera.position.toArray()).toEqual([2, 3, -6]);
 		expect(thirdPersonOrbitRef.current.target.toArray()).toEqual([2, 1, 0]);
+		expect(thirdPersonOrbitRef.current.update).toHaveBeenCalledTimes(1);
+	});
+
+	it("translates the active third-person orbit by player movement delta without snapping the user target", () => {
+		const camera = new THREE.PerspectiveCamera();
+		camera.position.set(1, 3, -6);
+		const thirdPersonOrbitRef = { current: createOrbitControls() };
+		thirdPersonOrbitRef.current.target.set(0.4, 1, 0.1);
+
+		applyThirdPersonFrame({
+			camera,
+			flags: {
+				isFreeOrbitalJump: false,
+				isModeChange: false,
+				isThirdPersonJump: false,
+				transitionAlpha: 0.5,
+			},
+			isUserInteracting: true,
+			lastTransition: null,
+			lookAt: [2, 1, 0],
+			lookAtVectorRef: { current: new THREE.Vector3() },
+			needsThirdPersonSyncRef: { current: false },
+			position: [2, 3, -6],
+			positionVectorRef: { current: new THREE.Vector3() },
+			previousTrackedPlayerPosition: [0, 0, 0],
+			thirdPersonOrbitRef,
+			trackedPlayerPosition: [2, 0, 0],
+		});
+
+		expect(camera.position.toArray()).toEqual([3, 3, -6]);
+		expect(thirdPersonOrbitRef.current.target.toArray()).toEqual([2.4, 1, 0.1]);
 		expect(thirdPersonOrbitRef.current.update).toHaveBeenCalledTimes(1);
 	});
 
