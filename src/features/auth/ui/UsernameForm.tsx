@@ -36,60 +36,68 @@ export function UsernameForm({
 	return (
 		<form onSubmit={handleUsernameFormSubmit} className="space-y-3">
 			<FieldGroup>
-				<usernameForm.Field
-					name="username"
-					validators={usernameFieldValidators}
-				>
-					{(field) => {
-						const {
-							activeErrorMessage,
-							describedBy,
-							usernameInputId,
-							usernameErrorId,
-							usernameHelpId,
-						} = getUsernameFieldViewModel({
-							errors: field.state.meta.errors,
-							isTouched: field.state.meta.isTouched,
-							isValid: field.state.meta.isValid,
-						});
+				<usernameForm.Subscribe selector={(state) => state.submissionAttempts}>
+					{(submissionAttempts) => (
+						<usernameForm.Field
+							name="username"
+							validators={usernameFieldValidators}
+						>
+							{(field) => {
+								const {
+									activeErrorMessage,
+									describedBy,
+									usernameInputId,
+									usernameErrorId,
+									usernameHelpId,
+								} = getUsernameFieldViewModel({
+									errors: field.state.meta.errors,
+									isDirty: field.state.meta.isDirty,
+									isTouched: field.state.meta.isTouched,
+									isValid: field.state.meta.isValid,
+									submissionAttempts,
+								});
 
-						return (
-							<Field data-invalid={Boolean(activeErrorMessage)}>
-								<FieldLabel
-									htmlFor={usernameInputId}
-									className="text-panel-title"
-								>
-									{AUTH_COPY.USERNAME_LABEL}
-								</FieldLabel>
-								<Input
-									id={usernameInputId}
-									name={field.name}
-									required
-									minLength={USERNAME_RULES.MIN_LENGTH}
-									maxLength={USERNAME_RULES.MAX_LENGTH}
-									pattern={USERNAME_PATTERN.source}
-									autoComplete="username"
-									placeholder={AUTH_COPY.USERNAME_PLACEHOLDER}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(event) => field.handleChange(event.target.value)}
-									aria-invalid={Boolean(activeErrorMessage)}
-									aria-describedby={describedBy}
-									disabled={isSubmitting}
-								/>
-								<FieldDescription
-									id={usernameHelpId}
-									className="text-panel-body"
-								>
-									{AUTH_COPY.USERNAME_HELP_TEXT}
-								</FieldDescription>
-								<FieldError id={usernameErrorId}>
-									{activeErrorMessage}
-								</FieldError>
-							</Field>
-						);
-					}}
-				</usernameForm.Field>
+								return (
+									<Field data-invalid={Boolean(activeErrorMessage)}>
+										<FieldLabel
+											htmlFor={usernameInputId}
+											className="text-panel-title"
+										>
+											{AUTH_COPY.USERNAME_LABEL}
+										</FieldLabel>
+										<Input
+											id={usernameInputId}
+											name={field.name}
+											required
+											minLength={USERNAME_RULES.MIN_LENGTH}
+											maxLength={USERNAME_RULES.MAX_LENGTH}
+											pattern={USERNAME_PATTERN.source}
+											autoComplete="username"
+											placeholder={AUTH_COPY.USERNAME_PLACEHOLDER}
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
+											aria-invalid={Boolean(activeErrorMessage)}
+											aria-describedby={describedBy}
+											disabled={isSubmitting}
+										/>
+										<FieldDescription
+											id={usernameHelpId}
+											className="text-panel-body"
+										>
+											{AUTH_COPY.USERNAME_HELP_TEXT}
+										</FieldDescription>
+										<FieldError id={usernameErrorId}>
+											{activeErrorMessage}
+										</FieldError>
+									</Field>
+								);
+							}}
+						</usernameForm.Field>
+					)}
+				</usernameForm.Subscribe>
 			</FieldGroup>
 
 			<usernameForm.Subscribe
