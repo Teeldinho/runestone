@@ -49,18 +49,62 @@ describe("useUsernameForm", () => {
 		expect(
 			result.current.getUsernameFieldViewModel({
 				errors: [AUTH_COPY.USERNAME_VALIDATION_ERROR],
+				isDirty: true,
 				isTouched: true,
 				isValid: false,
+				submissionAttempts: 0,
 			}).activeErrorMessage,
 		).toBe(AUTH_COPY.USERNAME_VALIDATION_ERROR);
 
 		expect(
 			result.current.getUsernameFieldViewModel({
 				errors: [AUTH_COPY.USERNAME_VALIDATION_ERROR],
+				isDirty: false,
 				isTouched: false,
 				isValid: false,
+				submissionAttempts: 0,
 			}).activeErrorMessage,
 		).toBe("unable to create user");
+	});
+
+	it("shows validation errors after the username field changes without requiring blur", () => {
+		const { result } = renderHook(() =>
+			useUsernameForm({
+				errorMessage: null,
+				isSubmitting: false,
+				onSubmit: vi.fn(),
+			}),
+		);
+
+		expect(
+			result.current.getUsernameFieldViewModel({
+				errors: [AUTH_COPY.USERNAME_VALIDATION_ERROR],
+				isDirty: true,
+				isTouched: false,
+				isValid: false,
+				submissionAttempts: 0,
+			}).activeErrorMessage,
+		).toBe(AUTH_COPY.USERNAME_VALIDATION_ERROR);
+	});
+
+	it("shows validation errors after a submit attempt even before blur", () => {
+		const { result } = renderHook(() =>
+			useUsernameForm({
+				errorMessage: null,
+				isSubmitting: false,
+				onSubmit: vi.fn(),
+			}),
+		);
+
+		expect(
+			result.current.getUsernameFieldViewModel({
+				errors: [AUTH_COPY.USERNAME_VALIDATION_ERROR],
+				isDirty: false,
+				isTouched: false,
+				isValid: false,
+				submissionAttempts: 1,
+			}).activeErrorMessage,
+		).toBe(AUTH_COPY.USERNAME_VALIDATION_ERROR);
 	});
 
 	it("submits form values with guarded submit event handling", async () => {
