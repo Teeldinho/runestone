@@ -130,6 +130,8 @@ export const runCameraRigFrameUpdate = (
 			needsThirdPersonSyncRef: input.needsThirdPersonSyncRef,
 			position: targets.position,
 			positionVectorRef: input.positionVectorRef,
+			previousTrackedPlayerPosition:
+				input.previousTrackedPlayerPositionRef.current,
 			thirdPersonOrbitRef: input.thirdPersonOrbitRef,
 			trackedPlayerPosition,
 		});

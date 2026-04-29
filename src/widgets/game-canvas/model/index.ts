@@ -21,6 +21,7 @@ export { useCanvasMachineSettings } from "./useCanvasMachineSettings";
 export { useCanvasSettings } from "./useCanvasSettings";
 export { useEnemySceneController } from "./useEnemySceneController";
 export { useFirstPersonLockHint } from "./useFirstPersonLockHint";
+export { useGameCanvasSceneLoading } from "./useGameCanvasSceneLoading";
 export { useGameCanvasViewModel } from "./useGameCanvasViewModel";
 export { useGameOverState } from "./useGameOverState";
 export { useGameSideEffects } from "./useGameSideEffects";

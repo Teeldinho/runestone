@@ -2,9 +2,14 @@ import { AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { GAME_CANVAS_COPY } from "../config";
-import { type CanvasMachineRuntime, useGameCanvasViewModel } from "../model";
+import {
+	type CanvasMachineRuntime,
+	useGameCanvasSceneLoading,
+	useGameCanvasViewModel,
+} from "../model";
 
 import { CameraRig } from "./CameraRig";
+import { GameCanvasLoadingOverlay } from "./GameCanvasLoadingOverlay";
 import { GameCanvasOverlays } from "./GameCanvasOverlays";
 import { GameCanvasSceneContent } from "./GameCanvasSceneContent";
 
@@ -34,6 +39,7 @@ export function GameCanvas({
 		machineRuntime,
 		postprocessingEnabled,
 	});
+	const { handleSceneReady, isSceneLoading } = useGameCanvasSceneLoading();
 	const {
 		camera,
 		environment,
@@ -47,6 +53,7 @@ export function GameCanvas({
 
 	return (
 		<div className="relative h-full w-full overflow-hidden">
+			<GameCanvasLoadingOverlay isVisible={isSceneLoading} />
 			<GameCanvasOverlays
 				activeAchievement={activeAchievement}
 				handleGameRestart={handleGameRestart}
@@ -80,6 +87,7 @@ export function GameCanvas({
 					fog={fog}
 					isPostprocessingEnabled={isPostprocessingEnabled}
 					lighting={lighting}
+					onSceneReady={handleSceneReady}
 					playerSpawnPosition={playerSpawnPosition}
 					postprocessing={postprocessing}
 				/>
