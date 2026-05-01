@@ -18,6 +18,11 @@ export type AuthMachineEvent =
 			profile: UserProfile | null;
 	  }
 	| {
+			type: (typeof AUTH_EVENTS)["SESSION_BOOTSTRAP_FAILED"];
+			uuid: string;
+			errorMessage: string;
+	  }
+	| {
 			type: (typeof AUTH_EVENTS)["USERNAME_SUBMIT_REQUESTED"];
 			username: string;
 	  }

@@ -10,10 +10,24 @@ type SessionBootstrapEvent = {
 	profile: UserProfile | null;
 };
 
+type SessionBootstrapFailureEvent = {
+	type: (typeof AUTH_EVENTS)["SESSION_BOOTSTRAP_FAILED"];
+	uuid: string;
+	errorMessage: string;
+};
+
 type SessionBootstrapInput = {
 	sessionUuid: string | null;
 	isProfileQueryPending: boolean;
 	profile: UserProfile | null | undefined;
+};
+
+type SessionBootstrapFailureInput = {
+	sessionUuid: string | null;
+	isProfileQueryPending: boolean;
+	isProfileQueryError: boolean;
+	profile: UserProfile | null | undefined;
+	error: unknown;
 };
 
 type SubmitAuthUsernameEvent =
@@ -54,6 +68,11 @@ const resolveAuthSubmitErrorMessage = (error: unknown): string =>
 		? error.message
 		: AUTH_ERROR_MESSAGES.USERNAME_SUBMIT_FAILED;
 
+const resolveSessionBootstrapErrorMessage = (error: unknown): string =>
+	error instanceof Error && error.message.length > 0
+		? error.message
+		: AUTH_ERROR_MESSAGES.SESSION_BOOTSTRAP_FAILED;
+
 const resolveSessionBootstrapEvent = ({
 	sessionUuid,
 	isProfileQueryPending,
@@ -67,6 +86,29 @@ const resolveSessionBootstrapEvent = ({
 		type: AUTH_EVENTS.SESSION_BOOTSTRAPPED,
 		uuid: sessionUuid,
 		profile: profile ?? null,
+	};
+};
+
+const resolveSessionBootstrapFailureEvent = ({
+	sessionUuid,
+	isProfileQueryPending,
+	isProfileQueryError,
+	profile,
+	error,
+}: SessionBootstrapFailureInput): SessionBootstrapFailureEvent | null => {
+	if (
+		!sessionUuid ||
+		isProfileQueryPending ||
+		!isProfileQueryError ||
+		profile
+	) {
+		return null;
+	}
+
+	return {
+		type: AUTH_EVENTS.SESSION_BOOTSTRAP_FAILED,
+		uuid: sessionUuid,
+		errorMessage: resolveSessionBootstrapErrorMessage(error),
 	};
 };
 
@@ -112,6 +154,8 @@ const submitAuthUsername = async ({
 
 export type {
 	SessionBootstrapEvent,
+	SessionBootstrapFailureEvent,
+	SessionBootstrapFailureInput,
 	SessionBootstrapInput,
 	SubmitAuthUsernameEvent,
 	SubmitAuthUsernameInput,
@@ -119,6 +163,8 @@ export type {
 export {
 	getAuthClientStorage,
 	resolveAuthSubmitErrorMessage,
+	resolveSessionBootstrapErrorMessage,
 	resolveSessionBootstrapEvent,
+	resolveSessionBootstrapFailureEvent,
 	submitAuthUsername,
 };

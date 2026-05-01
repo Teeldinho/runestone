@@ -81,6 +81,8 @@ describe("useAuthSessionBootstrap", () => {
 		mockUseQuery.mockReturnValue({
 			data: TEST_USER_PROFILE,
 			isPending: false,
+			isError: false,
+			error: null,
 		});
 		mockGetAuthClientStorage.mockReturnValue(memoryStorage);
 	});
@@ -105,6 +107,29 @@ describe("useAuthSessionBootstrap", () => {
 			type: AUTH_EVENTS.SESSION_BOOTSTRAPPED,
 			uuid: "existing-session-uuid",
 			profile: TEST_USER_PROFILE,
+		});
+	});
+
+	it("dispatches a bootstrap failure event when the profile query errors before returning a profile", async () => {
+		mockUseQuery.mockReturnValue({
+			data: undefined,
+			isPending: false,
+			isError: true,
+			error: new Error("Convex unreachable"),
+		});
+
+		renderHook(() =>
+			useAuthSessionBootstrap({
+				sendAuthEvent: mockSendAuthEvent,
+			}),
+		);
+
+		await waitFor(() => {
+			expect(mockSendAuthEvent).toHaveBeenCalledWith({
+				type: AUTH_EVENTS.SESSION_BOOTSTRAP_FAILED,
+				uuid: "existing-session-uuid",
+				errorMessage: "Convex unreachable",
+			});
 		});
 	});
 });

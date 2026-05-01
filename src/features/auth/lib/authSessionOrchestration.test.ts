@@ -8,6 +8,7 @@ import {
 	getAuthClientStorage,
 	resolveAuthSubmitErrorMessage,
 	resolveSessionBootstrapEvent,
+	resolveSessionBootstrapFailureEvent,
 	submitAuthUsername,
 } from "./authSessionOrchestration";
 import { readPersistedUsername } from "./sessionStorage";
@@ -69,6 +70,56 @@ describe("authSessionOrchestration", () => {
 			type: AUTH_EVENTS.SESSION_BOOTSTRAPPED,
 			uuid: "uuid-1",
 			profile: null,
+		});
+	});
+
+	it("resolves bootstrap failure events when the query errors before a profile exists", () => {
+		expect(
+			resolveSessionBootstrapFailureEvent({
+				sessionUuid: null,
+				isProfileQueryPending: false,
+				isProfileQueryError: true,
+				error: new Error("Convex unreachable"),
+				profile: null,
+			}),
+		).toBeNull();
+
+		expect(
+			resolveSessionBootstrapFailureEvent({
+				sessionUuid: "uuid-1",
+				isProfileQueryPending: true,
+				isProfileQueryError: true,
+				error: new Error("Convex unreachable"),
+				profile: null,
+			}),
+		).toBeNull();
+
+		expect(
+			resolveSessionBootstrapFailureEvent({
+				sessionUuid: "uuid-1",
+				isProfileQueryPending: false,
+				isProfileQueryError: true,
+				error: new Error("Convex unreachable"),
+				profile: null,
+			}),
+		).toEqual({
+			type: AUTH_EVENTS.SESSION_BOOTSTRAP_FAILED,
+			uuid: "uuid-1",
+			errorMessage: "Convex unreachable",
+		});
+
+		expect(
+			resolveSessionBootstrapFailureEvent({
+				sessionUuid: "uuid-1",
+				isProfileQueryPending: false,
+				isProfileQueryError: true,
+				error: "Convex unreachable",
+				profile: null,
+			}),
+		).toEqual({
+			type: AUTH_EVENTS.SESSION_BOOTSTRAP_FAILED,
+			uuid: "uuid-1",
+			errorMessage: AUTH_ERROR_MESSAGES.SESSION_BOOTSTRAP_FAILED,
 		});
 	});
 

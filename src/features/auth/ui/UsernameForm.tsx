@@ -54,6 +54,7 @@ export function UsernameForm({
 									isDirty: field.state.meta.isDirty,
 									isTouched: field.state.meta.isTouched,
 									isValid: field.state.meta.isValid,
+									value: field.state.value,
 									submissionAttempts,
 								});
 
@@ -83,15 +84,19 @@ export function UsernameForm({
 											aria-describedby={describedBy}
 											disabled={isSubmitting}
 										/>
-										<FieldDescription
-											id={usernameHelpId}
-											className="text-panel-body"
-										>
-											{AUTH_COPY.USERNAME_HELP_TEXT}
-										</FieldDescription>
-										<FieldError id={usernameErrorId}>
-											{activeErrorMessage}
-										</FieldError>
+										<div className="space-y-1.5">
+											<FieldDescription
+												id={usernameHelpId}
+												className="text-panel-body"
+											>
+												{AUTH_COPY.USERNAME_HELP_TEXT}
+											</FieldDescription>
+											<div className="min-h-5">
+												<FieldError id={usernameErrorId}>
+													{activeErrorMessage}
+												</FieldError>
+											</div>
+										</div>
 									</Field>
 								);
 							}}

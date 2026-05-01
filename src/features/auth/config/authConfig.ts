@@ -2,6 +2,7 @@ import { STORAGE_KEYS } from "@/shared/config";
 
 export const AUTH_STATUS = {
 	CHECKING_SESSION: "checkingSession",
+	BOOTSTRAP_FAILED: "bootstrapFailed",
 	REQUIRES_USERNAME: "requiresUsername",
 	SUBMITTING_USERNAME: "submittingUsername",
 	AUTHENTICATED: "authenticated",
@@ -15,18 +16,19 @@ export const USERNAME_RULES = {
 export const USERNAME_PATTERN = /^[A-Za-z0-9_]+$/;
 
 export const AUTH_ERROR_MESSAGES = {
+	SESSION_BOOTSTRAP_FAILED: "We could not load your profile right now.",
 	USERNAME_SUBMIT_FAILED: "We could not create your profile. Please try again.",
 	MISSING_CONTEXT: "useAuthContext must be used within AuthProvider",
 } as const;
 
 export const AUTH_COPY = {
-	MODAL_TITLE: "Claim your rune name",
+	MODAL_TITLE: "Choose your name",
 	MODAL_DESCRIPTION:
-		"Choose a username to begin your dungeon run. You can use letters, numbers, and underscores.",
-	USERNAME_LABEL: "Username",
-	USERNAME_PLACEHOLDER: "runestone_hero",
-	USERNAME_SUBMIT_LABEL: "Enter Dungeon",
-	USERNAME_SUBMITTING_LABEL: "Summoning profile...",
+		"Pick a name to save your progress and show on the leaderboard.",
+	USERNAME_LABEL: "Name",
+	USERNAME_PLACEHOLDER: "Your name",
+	USERNAME_SUBMIT_LABEL: "Save and enter",
+	USERNAME_SUBMITTING_LABEL: "Saving your name...",
 	USERNAME_HELP_TEXT:
 		"3-20 characters. Letters, numbers, and underscores only.",
 	USERNAME_VALIDATION_ERROR: "Use 3-20 letters, numbers, or underscores.",
