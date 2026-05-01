@@ -42,6 +42,29 @@ describe("authMachine", () => {
 		);
 	});
 
+	it("moves to bootstrap failed when the session query errors without a profile", () => {
+		const actor = createActor(authMachine).start();
+
+		actor.send({
+			type: AUTH_EVENTS.SESSION_BOOTSTRAP_FAILED,
+			uuid: "session-uuid",
+			errorMessage: "Convex unreachable",
+		});
+
+		expect(actor.getSnapshot().value).toBe(AUTH_STATUS.BOOTSTRAP_FAILED);
+		expect(actor.getSnapshot().context.uuid).toBe("session-uuid");
+		expect(actor.getSnapshot().context.errorMessage).toBe("Convex unreachable");
+
+		actor.send({
+			type: AUTH_EVENTS.SESSION_BOOTSTRAPPED,
+			uuid: "session-uuid",
+			profile: null,
+		});
+
+		expect(actor.getSnapshot().value).toBe(AUTH_STATUS.REQUIRES_USERNAME);
+		expect(actor.getSnapshot().context.errorMessage).toBeNull();
+	});
+
 	it("handles username submit success path", () => {
 		const actor = createActor(authMachine).start();
 

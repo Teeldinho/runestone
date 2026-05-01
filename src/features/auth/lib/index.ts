@@ -2,8 +2,12 @@ export { checkHasProfile } from "./authMachineGuards";
 export {
 	getAuthClientStorage,
 	resolveAuthSubmitErrorMessage,
+	resolveSessionBootstrapErrorMessage,
 	resolveSessionBootstrapEvent,
+	resolveSessionBootstrapFailureEvent,
 	type SessionBootstrapEvent,
+	type SessionBootstrapFailureEvent,
+	type SessionBootstrapFailureInput,
 	type SessionBootstrapInput,
 	type SubmitAuthUsernameEvent,
 	type SubmitAuthUsernameInput,

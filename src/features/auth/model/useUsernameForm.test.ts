@@ -52,6 +52,7 @@ describe("useUsernameForm", () => {
 				isDirty: true,
 				isTouched: true,
 				isValid: false,
+				value: "ab",
 				submissionAttempts: 0,
 			}).activeErrorMessage,
 		).toBe(AUTH_COPY.USERNAME_VALIDATION_ERROR);
@@ -59,9 +60,21 @@ describe("useUsernameForm", () => {
 		expect(
 			result.current.getUsernameFieldViewModel({
 				errors: [AUTH_COPY.USERNAME_VALIDATION_ERROR],
+				isDirty: true,
+				isTouched: true,
+				isValid: false,
+				value: "ab",
+				submissionAttempts: 0,
+			}).activeErrorMessage,
+		).toBe(AUTH_COPY.USERNAME_VALIDATION_ERROR);
+
+		expect(
+			result.current.getUsernameFieldViewModel({
+				errors: [],
 				isDirty: false,
 				isTouched: false,
-				isValid: false,
+				isValid: true,
+				value: "runestone_hero",
 				submissionAttempts: 0,
 			}).activeErrorMessage,
 		).toBe("unable to create user");
@@ -79,9 +92,10 @@ describe("useUsernameForm", () => {
 		expect(
 			result.current.getUsernameFieldViewModel({
 				errors: [AUTH_COPY.USERNAME_VALIDATION_ERROR],
-				isDirty: true,
+				isDirty: false,
 				isTouched: false,
 				isValid: false,
+				value: "ab",
 				submissionAttempts: 0,
 			}).activeErrorMessage,
 		).toBe(AUTH_COPY.USERNAME_VALIDATION_ERROR);
@@ -102,6 +116,7 @@ describe("useUsernameForm", () => {
 				isDirty: false,
 				isTouched: false,
 				isValid: false,
+				value: "",
 				submissionAttempts: 1,
 			}).activeErrorMessage,
 		).toBe(AUTH_COPY.USERNAME_VALIDATION_ERROR);

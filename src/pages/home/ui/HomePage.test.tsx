@@ -1,14 +1,14 @@
 // @vitest-environment happy-dom
 
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AUTH_STATUS } from "@/features/auth";
 
-import { TUTORIAL_CONTROLS, TUTORIAL_COPY } from "../config";
+import { HOME_COPY, HOME_STATUS_COPY } from "../config";
 
-import { TutorialPage } from "./TutorialPage";
+import { HomePage } from "./HomePage";
 
 const mockUseAuthContext = vi.hoisted(() => vi.fn());
 
@@ -18,6 +18,7 @@ vi.mock("@/features/auth", async () => {
 
 	return {
 		...actual,
+		UsernameModal: () => null,
 		useAuthContext: mockUseAuthContext,
 	};
 });
@@ -36,24 +37,32 @@ beforeEach(() => {
 	mockUseAuthContext.mockReset();
 });
 
-describe("TutorialPage", () => {
+describe("HomePage", () => {
 	it.each([
 		{
-			authStatus: AUTH_STATUS.CHECKING_SESSION,
 			isCheckingSession: true,
 			label: "auth checking",
+			authStatus: AUTH_STATUS.CHECKING_SESSION,
+			statusHeading: HOME_STATUS_COPY.CHECKING_SESSION.title,
 		},
 		{
-			authStatus: AUTH_STATUS.BOOTSTRAP_FAILED,
+			isCheckingSession: false,
+			label: "unauthenticated",
+			authStatus: AUTH_STATUS.REQUIRES_USERNAME,
+			statusHeading: HOME_STATUS_COPY.REQUIRES_USERNAME.title,
+		},
+		{
 			isCheckingSession: false,
 			label: "bootstrap failure",
+			authStatus: AUTH_STATUS.BOOTSTRAP_FAILED,
+			statusHeading: HOME_STATUS_COPY.BOOTSTRAP_FAILED.title,
 		},
-	])("keeps the dungeon entry CTA disabled while $label", ({
+	])("keeps dungeon entry disabled while $label", ({
 		authStatus,
 		isCheckingSession,
+		statusHeading,
 	}) => {
 		mockUseAuthContext.mockReturnValue({
-			authenticatedProfile: null,
 			authStatus,
 			errorMessage: null,
 			handleUsernameFormSubmit: vi.fn(),
@@ -64,30 +73,29 @@ describe("TutorialPage", () => {
 			readyStatusLabel: null,
 		});
 
-		render(<TutorialPage />);
+		render(<HomePage />);
 
 		const dungeonEntryButton = screen.getByRole("button", {
-			name: TUTORIAL_COPY.CTA_LABEL,
+			name: HOME_COPY.CTA_LABEL,
 		});
 
 		expect((dungeonEntryButton as HTMLButtonElement).disabled).toBe(true);
 		expect(dungeonEntryButton.getAttribute("data-variant")).toBe("default");
 		expect(
 			screen.getByRole("link", {
-				name: TUTORIAL_COPY.HOME_LABEL,
+				name: HOME_COPY.TUTORIAL_LABEL,
 			}),
 		).not.toBeNull();
 		expect(
 			screen
 				.getByRole("link", {
-					name: TUTORIAL_COPY.HOME_LABEL,
+					name: HOME_COPY.TUTORIAL_LABEL,
 				})
 				.getAttribute("data-variant"),
 		).toBe("outline");
-		expect(screen.getByText(TUTORIAL_CONTROLS[0].detail)).not.toBeNull();
-		expect(screen.getByText(TUTORIAL_CONTROLS[1].detail)).not.toBeNull();
-		expect(screen.getByText(TUTORIAL_CONTROLS[2].detail)).not.toBeNull();
-		expect(screen.getByText(TUTORIAL_CONTROLS[3].detail)).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.SUBTITLE)).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.SESSION_NOTE)).not.toBeNull();
+		expect(screen.getByText(statusHeading)).not.toBeNull();
 
 		const main = screen.getByRole("main");
 
@@ -96,12 +104,8 @@ describe("TutorialPage", () => {
 		expect(main.className).toContain("overscroll-contain");
 	});
 
-	it("keeps the dungeon entry CTA in the hero when authenticated", () => {
+	it("shows the dungeon entry CTA after authentication", () => {
 		mockUseAuthContext.mockReturnValue({
-			authenticatedProfile: {
-				discriminator: "0420",
-				username: "rune-scribe",
-			},
 			authStatus: AUTH_STATUS.AUTHENTICATED,
 			errorMessage: null,
 			handleUsernameFormSubmit: vi.fn(),
@@ -109,35 +113,32 @@ describe("TutorialPage", () => {
 			isCheckingSession: false,
 			isUsernameModalOpen: false,
 			isUsernameSubmitting: false,
-			readyStatusLabel: "rune-scribe#0420",
+			readyStatusLabel: "rune-scribe#42",
 		});
 
-		render(<TutorialPage />);
+		render(<HomePage />);
 
-		const hero = screen
-			.getByRole("heading", { name: TUTORIAL_COPY.HEADING })
-			.closest("header");
-
-		expect(hero).not.toBeNull();
 		expect(
-			within(hero as HTMLElement).getByRole("link", {
-				name: TUTORIAL_COPY.CTA_LABEL,
+			screen.getByRole("link", {
+				name: HOME_COPY.CTA_LABEL,
 			}),
 		).not.toBeNull();
 		expect(
-			within(hero as HTMLElement)
+			screen
 				.getByRole("link", {
-					name: TUTORIAL_COPY.CTA_LABEL,
+					name: HOME_COPY.CTA_LABEL,
 				})
 				.getAttribute("data-variant"),
 		).toBe("default");
 		expect(
-			within(hero as HTMLElement)
+			screen
 				.getByRole("link", {
-					name: TUTORIAL_COPY.HOME_LABEL,
+					name: HOME_COPY.TUTORIAL_LABEL,
 				})
 				.getAttribute("data-variant"),
 		).toBe("outline");
-		expect(screen.getByText(TUTORIAL_COPY.SUBTITLE)).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.BADGE)).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.SESSION_NOTE)).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.FEATURES_HEADING)).not.toBeNull();
 	});
 });

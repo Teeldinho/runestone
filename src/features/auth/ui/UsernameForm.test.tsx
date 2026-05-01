@@ -19,6 +19,15 @@ describe("UsernameForm", () => {
 			/>,
 		);
 
+		const usernameInput = screen.getByLabelText(AUTH_COPY.USERNAME_LABEL);
+		const submitButton = screen.getByRole("button", {
+			name: AUTH_COPY.USERNAME_SUBMIT_LABEL,
+		});
+
+		expect(usernameInput.getAttribute("placeholder")).toBe(
+			AUTH_COPY.USERNAME_PLACEHOLDER,
+		);
+
 		fireEvent.change(screen.getByLabelText(AUTH_COPY.USERNAME_LABEL), {
 			target: { value: "ab" },
 		});
@@ -31,11 +40,15 @@ describe("UsernameForm", () => {
 				.getByLabelText(AUTH_COPY.USERNAME_LABEL)
 				.getAttribute("aria-invalid"),
 		).toBe("true");
-		expect(
-			screen
-				.getByRole("button", { name: AUTH_COPY.USERNAME_SUBMIT_LABEL })
-				.hasAttribute("disabled"),
-		).toBe(true);
+		expect(submitButton.hasAttribute("disabled")).toBe(true);
+
+		fireEvent.change(usernameInput, {
+			target: { value: "runestone_hero" },
+		});
+
+		expect(screen.queryByRole("alert")).toBeNull();
+		expect(usernameInput.getAttribute("aria-invalid")).toBe("false");
+		expect(submitButton.hasAttribute("disabled")).toBe(false);
 	});
 
 	it("keeps external submit errors visible when field validation is not active", () => {

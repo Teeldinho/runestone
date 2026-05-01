@@ -1,4 +1,4 @@
-import { useForm } from "@tanstack/react-form";
+import { revalidateLogic, useForm } from "@tanstack/react-form";
 import { type FormEvent, useCallback, useId, useMemo } from "react";
 
 import { AUTH_COPY } from "../config";
@@ -17,6 +17,7 @@ type UsernameFieldMeta = {
 	isDirty: boolean;
 	isTouched: boolean;
 	isValid: boolean;
+	value: string;
 	submissionAttempts: number;
 };
 
@@ -51,6 +52,10 @@ export const useUsernameForm = ({
 		defaultValues: {
 			username: "",
 		},
+		validationLogic: revalidateLogic({
+			mode: "change",
+			modeAfterSubmission: "change",
+		}),
 		onSubmit: async ({ value }) => {
 			await onSubmit(value);
 		},
@@ -59,8 +64,6 @@ export const useUsernameForm = ({
 	const usernameFieldValidators = useMemo(
 		() => ({
 			onChange: ({ value }: { value: string }) =>
-				getUsernameValidationError(value),
-			onBlur: ({ value }: { value: string }) =>
 				getUsernameValidationError(value),
 		}),
 		[],
@@ -83,7 +86,8 @@ export const useUsernameForm = ({
 			const shouldShowValidationError =
 				!fieldMeta.isValid &&
 				Boolean(validationErrorMessage) &&
-				(fieldMeta.isDirty ||
+				(fieldMeta.value.length > 0 ||
+					fieldMeta.isDirty ||
 					fieldMeta.isTouched ||
 					fieldMeta.submissionAttempts > 0);
 			const activeErrorMessage = shouldShowValidationError
