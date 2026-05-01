@@ -43,9 +43,19 @@ export const authMachine = setup({
 				})),
 			},
 		],
+		[AUTH_EVENTS.SESSION_BOOTSTRAP_FAILED]: {
+			target: `.${AUTH_STATUS.BOOTSTRAP_FAILED}`,
+			actions: assign(({ event }) => ({
+				[AUTH_CONTEXT_KEYS.UUID]: event.uuid,
+				[AUTH_CONTEXT_KEYS.PROFILE]: null,
+				[AUTH_CONTEXT_KEYS.PENDING_USERNAME]: null,
+				[AUTH_CONTEXT_KEYS.ERROR_MESSAGE]: event.errorMessage,
+			})),
+		},
 	},
 	states: {
 		[AUTH_STATUS.CHECKING_SESSION]: {},
+		[AUTH_STATUS.BOOTSTRAP_FAILED]: {},
 		[AUTH_STATUS.REQUIRES_USERNAME]: {
 			on: {
 				[AUTH_EVENTS.USERNAME_SUBMIT_REQUESTED]: {

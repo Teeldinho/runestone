@@ -8,6 +8,7 @@ import {
 	ensureSessionUuid,
 	getAuthClientStorage,
 	resolveSessionBootstrapEvent,
+	resolveSessionBootstrapFailureEvent,
 } from "../lib";
 
 import type { AuthMachineEvent } from "./types";
@@ -41,6 +42,19 @@ export const useAuthSessionBootstrap = ({
 	});
 
 	useEffect(() => {
+		const sessionBootstrapFailureEvent = resolveSessionBootstrapFailureEvent({
+			sessionUuid,
+			isProfileQueryPending: profileQuery.isPending,
+			isProfileQueryError: profileQuery.isError,
+			profile: profileQuery.data,
+			error: profileQuery.error,
+		});
+
+		if (sessionBootstrapFailureEvent) {
+			sendAuthEvent(sessionBootstrapFailureEvent);
+			return;
+		}
+
 		const sessionBootstrapEvent = resolveSessionBootstrapEvent({
 			sessionUuid,
 			isProfileQueryPending: profileQuery.isPending,
@@ -52,7 +66,14 @@ export const useAuthSessionBootstrap = ({
 		}
 
 		sendAuthEvent(sessionBootstrapEvent);
-	}, [sessionUuid, profileQuery.data, profileQuery.isPending, sendAuthEvent]);
+	}, [
+		profileQuery.data,
+		profileQuery.error,
+		profileQuery.isError,
+		profileQuery.isPending,
+		sendAuthEvent,
+		sessionUuid,
+	]);
 
 	return { sessionUuid };
 };
