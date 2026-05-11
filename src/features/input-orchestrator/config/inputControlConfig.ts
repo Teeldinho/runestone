@@ -19,6 +19,10 @@ export const MOBILE_RUN_CONFIG = {
 	RUN_MAGNITUDE_MIN: 0.73,
 } as const;
 
+export const INPUT_MOVEMENT_CONFIG = {
+	MOVEMENT_EPSILON: 0.001,
+} as const;
+
 export const TOUCH_LOOK_CONFIG = {
 	SENSITIVITY_X: 0.004,
 	SENSITIVITY_Y: 0.003,

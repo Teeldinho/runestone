@@ -1,22 +1,39 @@
 import type { AnyActorRef } from "xstate";
 import { assign, sendTo, setup } from "xstate";
+import { PLAYER_EVENT_TYPES } from "@/entities/player";
+
+const OUTBOUND_CAMERA_EVENT_TYPES = {
+	LOOK_CHANGED: "camera.input.look.changed",
+	LOOK_STOPPED: "camera.input.look.stopped",
+	ZOOM_CHANGED: "camera.input.zoom.changed",
+} as const;
 
 import {
 	INPUT_ACTION_KEYS,
 	INPUT_EVENT_TYPES,
+	INPUT_GUARD_KEYS,
 	INPUT_MACHINE_IDS,
 	INPUT_STATE_KEYS,
+	MOBILE_RUN_CONFIG,
 	type PointerRole,
 } from "../config";
 import {
 	createPointerOwnershipSnapshot,
+	hasActiveInputMovement,
 	type PointerOwnershipSnapshot,
+	resolveRunIntent,
 } from "../lib";
 
 export type InputVector2 = {
 	readonly x: number;
 	readonly y: number;
 };
+
+export const INTERACTION_INPUT_EVENT_TYPES = {
+	INTERACT_PRESSED: "interaction.input.interact.pressed",
+	ATTACK_PRESSED: "interaction.input.attack.pressed",
+	FIRE_PRESSED: "interaction.input.fire.pressed",
+} as const;
 
 export type InputOrchestratorEvent =
 	| {
@@ -61,36 +78,37 @@ export type InputOrchestratorEvent =
 
 export type PlayerInputEvent =
 	| {
-			readonly type: "player.input.move.changed";
+			readonly type: typeof PLAYER_EVENT_TYPES.MOVE_CHANGED;
 			readonly vector: InputVector2;
 			readonly wantsRun: boolean;
 	  }
-	| { readonly type: "player.input.move.stopped" }
+	| { readonly type: typeof PLAYER_EVENT_TYPES.MOVE_STOPPED }
 	| {
-			readonly type: "player.input.run.held.changed";
+			readonly type: typeof PLAYER_EVENT_TYPES.RUN_HELD_CHANGED;
 			readonly isHeld: boolean;
 	  }
-	| { readonly type: "player.input.jump.pressed" };
+	| { readonly type: typeof PLAYER_EVENT_TYPES.JUMP_PRESSED };
 
 export type CameraInputEvent =
 	| {
-			readonly type: "camera.input.look.changed";
+			readonly type: typeof OUTBOUND_CAMERA_EVENT_TYPES.LOOK_CHANGED;
 			readonly delta: InputVector2;
 	  }
-	| { readonly type: "camera.input.look.stopped" }
+	| { readonly type: typeof OUTBOUND_CAMERA_EVENT_TYPES.LOOK_STOPPED }
 	| {
-			readonly type: "camera.input.zoom.changed";
+			readonly type: typeof OUTBOUND_CAMERA_EVENT_TYPES.ZOOM_CHANGED;
 			readonly delta: number;
 	  };
 
 export type InteractionInputEvent =
-	| { readonly type: "interaction.input.interact.pressed" }
-	| { readonly type: "interaction.input.attack.pressed" }
-	| { readonly type: "interaction.input.fire.pressed" };
+	| { readonly type: typeof INTERACTION_INPUT_EVENT_TYPES.INTERACT_PRESSED }
+	| { readonly type: typeof INTERACTION_INPUT_EVENT_TYPES.ATTACK_PRESSED }
+	| { readonly type: typeof INTERACTION_INPUT_EVENT_TYPES.FIRE_PRESSED };
 
 export type InputOrchestratorContext = {
 	readonly pointerOwnership: PointerOwnershipSnapshot;
 	readonly moveVector: InputVector2;
+	readonly moveMagnitude: number;
 	readonly lookDelta: InputVector2;
 	readonly zoomDelta: number;
 	readonly isDesktopRunHeld: boolean;
@@ -115,6 +133,10 @@ export const inputOrchestratorMachine = setup({
 		context: {} as InputOrchestratorContext,
 		events: {} as InputOrchestratorEvent,
 		input: {} as InputOrchestratorInput,
+	},
+	guards: {
+		[INPUT_GUARD_KEYS.HAS_ACTIVE_MOVEMENT]: ({ context }) =>
+			hasActiveInputMovement({ vector: context.moveVector }),
 	},
 	actions: {
 		[INPUT_ACTION_KEYS.ASSIGN_POINTER_OWNER]: assign({
@@ -150,10 +172,16 @@ export const inputOrchestratorMachine = setup({
 				event.type === INPUT_EVENT_TYPES.MOVE_CHANGED
 					? event.vector
 					: context.moveVector,
+
+			moveMagnitude: ({ context, event }) =>
+				event.type === INPUT_EVENT_TYPES.MOVE_CHANGED
+					? event.magnitude
+					: context.moveMagnitude,
 		}),
 
 		[INPUT_ACTION_KEYS.CLEAR_MOVE_VECTOR]: assign({
 			moveVector: () => ZERO_VECTOR,
+			moveMagnitude: () => 0,
 		}),
 
 		[INPUT_ACTION_KEYS.ASSIGN_LOOK_DELTA]: assign({
@@ -193,20 +221,41 @@ export const inputOrchestratorMachine = setup({
 			({ context }) => context.playerRef,
 			({ event }) => {
 				if (event.type !== INPUT_EVENT_TYPES.MOVE_CHANGED) {
-					return { type: "player.input.move.stopped" };
+					return { type: PLAYER_EVENT_TYPES.MOVE_STOPPED };
 				}
 
 				return {
-					type: "player.input.move.changed",
+					type: PLAYER_EVENT_TYPES.MOVE_CHANGED,
 					vector: event.vector,
 					wantsRun: event.wantsRun,
 				};
 			},
 		),
 
+		[INPUT_ACTION_KEYS.SEND_PLAYER_MOVE_WITH_TOGGLED_RUN_FROM_CONTEXT]: sendTo(
+			({ context }) => context.playerRef,
+			({ context }) => {
+				const nextIsMobileRunToggled = !context.isMobileRunToggled;
+				const isMobileMagnitudeRun =
+					context.moveMagnitude >= MOBILE_RUN_CONFIG.RUN_MAGNITUDE_MIN;
+
+				const wantsRun = resolveRunIntent({
+					isDesktopRunHeld: context.isDesktopRunHeld,
+					isMobileRunToggled: nextIsMobileRunToggled,
+					isMobileMagnitudeRun,
+				});
+
+				return {
+					type: PLAYER_EVENT_TYPES.MOVE_CHANGED,
+					vector: context.moveVector,
+					wantsRun,
+				};
+			},
+		),
+
 		[INPUT_ACTION_KEYS.SEND_PLAYER_STOP]: sendTo(
 			({ context }) => context.playerRef,
-			() => ({ type: "player.input.move.stopped" }),
+			() => ({ type: PLAYER_EVENT_TYPES.MOVE_STOPPED }),
 		),
 
 		[INPUT_ACTION_KEYS.SEND_PLAYER_RUN_HELD]: sendTo(
@@ -214,13 +263,13 @@ export const inputOrchestratorMachine = setup({
 			({ event }) => {
 				if (event.type !== INPUT_EVENT_TYPES.RUN_HELD_CHANGED) {
 					return {
-						type: "player.input.run.held.changed",
+						type: PLAYER_EVENT_TYPES.RUN_HELD_CHANGED,
 						isHeld: false,
 					};
 				}
 
 				return {
-					type: "player.input.run.held.changed",
+					type: PLAYER_EVENT_TYPES.RUN_HELD_CHANGED,
 					isHeld: event.isHeld,
 				};
 			},
@@ -228,18 +277,18 @@ export const inputOrchestratorMachine = setup({
 
 		[INPUT_ACTION_KEYS.SEND_PLAYER_JUMP]: sendTo(
 			({ context }) => context.playerRef,
-			() => ({ type: "player.input.jump.pressed" }),
+			() => ({ type: PLAYER_EVENT_TYPES.JUMP_PRESSED }),
 		),
 
 		[INPUT_ACTION_KEYS.SEND_CAMERA_LOOK]: sendTo(
 			({ context }) => context.cameraRef,
 			({ event }) => {
 				if (event.type !== INPUT_EVENT_TYPES.LOOK_CHANGED) {
-					return { type: "camera.input.look.stopped" };
+					return { type: OUTBOUND_CAMERA_EVENT_TYPES.LOOK_STOPPED };
 				}
 
 				return {
-					type: "camera.input.look.changed",
+					type: OUTBOUND_CAMERA_EVENT_TYPES.LOOK_CHANGED,
 					delta: event.delta,
 				};
 			},
@@ -247,7 +296,7 @@ export const inputOrchestratorMachine = setup({
 
 		[INPUT_ACTION_KEYS.SEND_CAMERA_LOOK_STOP]: sendTo(
 			({ context }) => context.cameraRef,
-			() => ({ type: "camera.input.look.stopped" }),
+			() => ({ type: OUTBOUND_CAMERA_EVENT_TYPES.LOOK_STOPPED }),
 		),
 
 		[INPUT_ACTION_KEYS.SEND_CAMERA_ZOOM]: sendTo(
@@ -255,13 +304,13 @@ export const inputOrchestratorMachine = setup({
 			({ event }) => {
 				if (event.type !== INPUT_EVENT_TYPES.ZOOM_CHANGED) {
 					return {
-						type: "camera.input.zoom.changed",
+						type: OUTBOUND_CAMERA_EVENT_TYPES.ZOOM_CHANGED,
 						delta: 0,
 					};
 				}
 
 				return {
-					type: "camera.input.zoom.changed",
+					type: OUTBOUND_CAMERA_EVENT_TYPES.ZOOM_CHANGED,
 					delta: event.delta,
 				};
 			},
@@ -269,17 +318,17 @@ export const inputOrchestratorMachine = setup({
 
 		[INPUT_ACTION_KEYS.SEND_INTERACT]: sendTo(
 			({ context }) => context.interactionRef,
-			() => ({ type: "interaction.input.interact.pressed" }),
+			() => ({ type: INTERACTION_INPUT_EVENT_TYPES.INTERACT_PRESSED }),
 		),
 
 		[INPUT_ACTION_KEYS.SEND_ATTACK]: sendTo(
 			({ context }) => context.interactionRef,
-			() => ({ type: "interaction.input.attack.pressed" }),
+			() => ({ type: INTERACTION_INPUT_EVENT_TYPES.ATTACK_PRESSED }),
 		),
 
 		[INPUT_ACTION_KEYS.SEND_FIRE]: sendTo(
 			({ context }) => context.interactionRef,
-			() => ({ type: "interaction.input.fire.pressed" }),
+			() => ({ type: INTERACTION_INPUT_EVENT_TYPES.FIRE_PRESSED }),
 		),
 	},
 }).createMachine({
@@ -287,6 +336,7 @@ export const inputOrchestratorMachine = setup({
 	context: ({ input }) => ({
 		pointerOwnership: [],
 		moveVector: ZERO_VECTOR,
+		moveMagnitude: 0,
 		lookDelta: ZERO_VECTOR,
 		zoomDelta: 0,
 		isDesktopRunHeld: false,
@@ -410,9 +460,18 @@ export const inputOrchestratorMachine = setup({
 										INPUT_ACTION_KEYS.SEND_PLAYER_RUN_HELD,
 									],
 								},
-								[INPUT_EVENT_TYPES.RUN_TOGGLED]: {
-									actions: [INPUT_ACTION_KEYS.TOGGLE_MOBILE_RUN],
-								},
+								[INPUT_EVENT_TYPES.RUN_TOGGLED]: [
+									{
+										guard: INPUT_GUARD_KEYS.HAS_ACTIVE_MOVEMENT,
+										actions: [
+											INPUT_ACTION_KEYS.SEND_PLAYER_MOVE_WITH_TOGGLED_RUN_FROM_CONTEXT,
+											INPUT_ACTION_KEYS.TOGGLE_MOBILE_RUN,
+										],
+									},
+									{
+										actions: [INPUT_ACTION_KEYS.TOGGLE_MOBILE_RUN],
+									},
+								],
 								[INPUT_EVENT_TYPES.JUMP_PRESSED]: {
 									actions: [INPUT_ACTION_KEYS.SEND_PLAYER_JUMP],
 								},

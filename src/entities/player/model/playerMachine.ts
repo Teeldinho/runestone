@@ -60,10 +60,26 @@ export const createPlayerMachine = () =>
 					event.type === PLAYER_EVENT_TYPES.MOVE_CHANGED
 						? (event as PlayerMoveChangedEvent).wantsRun
 						: context.isRunHeld,
+				[PLAYER_CONTEXT_KEYS.VELOCITY]: ({ context, event }) =>
+					event.type === PLAYER_EVENT_TYPES.MOVE_CHANGED
+						? ([
+								(event as PlayerMoveChangedEvent).vector.x,
+								0,
+								(event as PlayerMoveChangedEvent).vector.y,
+							] as unknown as Vector3Tuple)
+						: context.velocity,
+				[PLAYER_CONTEXT_KEYS.IS_SPRINTING]: ({ context, event }) =>
+					event.type === PLAYER_EVENT_TYPES.MOVE_CHANGED
+						? (event as PlayerMoveChangedEvent).wantsRun
+						: context.isSprinting,
 			}),
 
 			[PLAYER_ACTION_KEYS.CLEAR_MOVE_VECTOR]: assign({
 				moveVector: () => ZERO_VECTOR,
+				isRunHeld: () => false,
+				[PLAYER_CONTEXT_KEYS.VELOCITY]: () =>
+					[...PLAYER_MACHINE_DEFAULTS.VELOCITY] as unknown as Vector3Tuple,
+				[PLAYER_CONTEXT_KEYS.IS_SPRINTING]: () => false,
 			}),
 
 			[PLAYER_ACTION_KEYS.ASSIGN_RUN_HELD]: assign({

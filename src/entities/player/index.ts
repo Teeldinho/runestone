@@ -1,6 +1,7 @@
-export type { PlayerEvent, PlayerMovementKey } from "./config";
+export type { PlayerEvent, PlayerEventType, PlayerMovementKey } from "./config";
 export {
 	PLAYER_ENTITY_CONFIG,
+	PLAYER_EVENT_TYPES,
 	PLAYER_EVENTS,
 	PLAYER_MACHINE_DEFAULTS,
 	PLAYER_MACHINE_RUNTIME_ERRORS,

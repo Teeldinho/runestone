@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createActor } from "xstate";
 
 import {
+	PLAYER_EVENT_TYPES,
 	PLAYER_EVENTS,
 	PLAYER_MACHINE_DEFAULTS,
 	PLAYER_STATES,
@@ -62,6 +63,36 @@ describe("createPlayerMachine", () => {
 		expect(actor.getSnapshot().context.velocity).toEqual([1, 0, 0]);
 	});
 
+	it("sets isSprinting on MOVE_CHANGED when wantsRun is true", () => {
+		const actor = createActor(createPlayerMachine()).start();
+
+		actor.send({
+			type: PLAYER_EVENT_TYPES.MOVE_CHANGED,
+			vector: { x: 1, y: 0 },
+			wantsRun: true,
+		});
+
+		expect(actor.getSnapshot().context.isSprinting).toBe(true);
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.RUNNING,
+		});
+	});
+
+	it("clears isSprinting on MOVE_CHANGED when wantsRun is false", () => {
+		const actor = createActor(createPlayerMachine()).start();
+
+		actor.send({
+			type: PLAYER_EVENT_TYPES.MOVE_CHANGED,
+			vector: { x: 1, y: 0 },
+			wantsRun: false,
+		});
+
+		expect(actor.getSnapshot().context.isSprinting).toBe(false);
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.WALKING,
+		});
+	});
+
 	it("transitions back to idle on STOP event", () => {
 		const actor = createActor(createPlayerMachine()).start();
 
@@ -88,6 +119,22 @@ describe("createPlayerMachine", () => {
 		actor.send({ type: PLAYER_EVENTS.STOP });
 
 		expect(actor.getSnapshot().context.velocity).toEqual([0, 0, 0]);
+	});
+
+	it("clears isSprinting on MOVE_STOPPED", () => {
+		const actor = createActor(createPlayerMachine()).start();
+
+		actor.send({
+			type: PLAYER_EVENT_TYPES.MOVE_CHANGED,
+			vector: { x: 1, y: 0 },
+			wantsRun: true,
+		});
+		actor.send({ type: PLAYER_EVENT_TYPES.MOVE_STOPPED });
+
+		expect(actor.getSnapshot().context.isSprinting).toBe(false);
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
+		});
 	});
 
 	it("transitions to damaged on TAKE_DAMAGE event", () => {

@@ -54,9 +54,11 @@ describe("cameraRigFrameUpdateModeApplications", () => {
 			firstPersonTargetVectorRef: { current: new THREE.Vector3() },
 			isDesktopLayout: true,
 			needsFirstPersonSyncRef: { current: false },
+			pitch: 0,
 			pointerLockRef: { current: { isLocked: false } },
 			position: [1, 2, 3],
 			positionVectorRef: { current: new THREE.Vector3() },
+			yaw: 0,
 		});
 
 		expect(camera.position.toArray()).toEqual([1, 2, 3]);

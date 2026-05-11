@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import { CameraControlZone } from "./CameraControlZone";
 
 describe("CameraControlZone", () => {
-	it("spans the viewport so multi-touch camera gestures can start across the scene", () => {
+	it("renders right-side look zone only", () => {
 		const zoneRef = vi.fn();
 
 		render(<CameraControlZone zoneRef={zoneRef} />);
@@ -14,10 +14,22 @@ describe("CameraControlZone", () => {
 			"[data-input-pointer-role='look']",
 		);
 
-		expect(controlZone?.classList.contains("inset-0")).toBe(true);
+		expect(controlZone).toBeTruthy();
+		expect(controlZone?.classList.contains("right-0")).toBe(true);
+		expect(controlZone?.classList.contains("left-1/2")).toBe(true);
 	});
 
-	it("applies look pointer role data attribute", () => {
+	it("does not render children prop", () => {
+		const zoneRef = vi.fn();
+
+		const { container } = render(<CameraControlZone zoneRef={zoneRef} />);
+
+		expect(
+			container.querySelector("[data-input-pointer-role='look']"),
+		).toBeTruthy();
+	});
+
+	it("handlers are optional", () => {
 		const zoneRef = vi.fn();
 
 		render(<CameraControlZone zoneRef={zoneRef} />);

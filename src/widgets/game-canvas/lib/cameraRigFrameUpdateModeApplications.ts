@@ -5,8 +5,8 @@ import type { LastTransition } from "@/entities/dungeon";
 import type { Vector3Tuple } from "@/shared/lib";
 import {
 	CAMERA_RIG_CAMERA_UP,
+	CAMERA_RIG_EULER_ORDERS,
 	CAMERA_RIG_FIRST_PERSON_LOOK_AHEAD_DISTANCE,
-	CAMERA_RIG_FIRST_PERSON_TARGET_DISTANCE,
 	CAMERA_RIG_LERP_ALPHA,
 } from "../config";
 import type { OrbitControlsHandle } from "./cameraRigControls";
@@ -34,9 +34,11 @@ type ApplyFirstPersonFrameInput = {
 	firstPersonTargetVectorRef: MutableRefObject<THREE.Vector3>;
 	isDesktopLayout: boolean;
 	needsFirstPersonSyncRef: MutableRefObject<boolean>;
+	pitch: number;
 	pointerLockRef: RefObject<PointerLockControlsHandle | null>;
 	position: Vector3Tuple;
 	positionVectorRef: MutableRefObject<THREE.Vector3>;
+	yaw: number;
 };
 
 type ApplyThirdPersonFrameInput = {
@@ -62,19 +64,6 @@ type ApplyFreeOrbitalFrameInput = {
 	lookAt: Vector3Tuple;
 	needsFreeOrbitalSyncRef: MutableRefObject<boolean>;
 	position: Vector3Tuple;
-};
-
-const setFirstPersonOrbitTargetFromCamera = ({
-	camera,
-	firstPersonTargetVectorRef,
-}: Pick<
-	ApplyFirstPersonFrameInput,
-	"camera" | "firstPersonTargetVectorRef"
->): void => {
-	camera.getWorldDirection(firstPersonTargetVectorRef.current);
-	firstPersonTargetVectorRef.current
-		.multiplyScalar(CAMERA_RIG_FIRST_PERSON_TARGET_DISTANCE)
-		.add(camera.position);
 };
 
 const toVector3Tuple = (vector: THREE.Vector3): Vector3Tuple => [
@@ -124,45 +113,6 @@ const translateOrbitByPlayerDelta = ({
 		currentTarget.y + deltaY,
 		currentTarget.z + deltaZ,
 	];
-};
-
-const applyFirstPersonMobileOrbitFrame = ({
-	camera,
-	firstPersonOrbitRef,
-	firstPersonTargetVectorRef,
-	flags,
-	needsFirstPersonSyncRef,
-	position,
-}: Pick<
-	ApplyFirstPersonFrameInput,
-	| "camera"
-	| "firstPersonOrbitRef"
-	| "firstPersonTargetVectorRef"
-	| "flags"
-	| "needsFirstPersonSyncRef"
-	| "position"
->): void => {
-	if (!firstPersonOrbitRef.current) {
-		return;
-	}
-
-	camera.position.set(...position);
-	setFirstPersonOrbitTargetFromCamera({
-		camera,
-		firstPersonTargetVectorRef,
-	});
-
-	if (needsFirstPersonSyncRef.current || flags.isModeChange) {
-		setOrbitTarget(firstPersonOrbitRef.current, [
-			firstPersonTargetVectorRef.current.x,
-			firstPersonTargetVectorRef.current.y,
-			firstPersonTargetVectorRef.current.z,
-		]);
-		needsFirstPersonSyncRef.current = false;
-		return;
-	}
-
-	firstPersonOrbitRef.current.target.copy(firstPersonTargetVectorRef.current);
 };
 
 const applyFirstPersonDesktopFrame = ({
@@ -215,27 +165,44 @@ export const applyTopDownFrame = ({
 	topDownOrbitRef.current.target.set(...lookAt);
 };
 
+const applyFirstPersonMobileLookFrame = ({
+	camera,
+	pitch,
+	position,
+	yaw,
+}: {
+	readonly camera: THREE.Camera;
+	readonly pitch: number;
+	readonly position: Vector3Tuple;
+	readonly yaw: number;
+}): void => {
+	camera.position.set(...position);
+	camera.rotation.set(
+		pitch,
+		yaw,
+		0,
+		CAMERA_RIG_EULER_ORDERS.FIRST_PERSON_MOBILE,
+	);
+};
+
 export const applyFirstPersonFrame = ({
 	camera,
-	firstPersonOrbitRef,
-	firstPersonTargetVectorRef,
 	flags,
 	isDesktopLayout,
-	needsFirstPersonSyncRef,
+	pitch,
 	pointerLockRef,
 	position,
 	positionVectorRef,
+	yaw,
 }: ApplyFirstPersonFrameInput): void => {
 	setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
 
-	if (!isDesktopLayout && firstPersonOrbitRef.current) {
-		applyFirstPersonMobileOrbitFrame({
+	if (!isDesktopLayout) {
+		applyFirstPersonMobileLookFrame({
 			camera,
-			firstPersonOrbitRef,
-			firstPersonTargetVectorRef,
-			flags,
-			needsFirstPersonSyncRef,
+			pitch,
 			position,
+			yaw,
 		});
 		return;
 	}

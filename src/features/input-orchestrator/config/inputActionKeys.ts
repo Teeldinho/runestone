@@ -17,6 +17,8 @@ export const INPUT_ACTION_KEYS = {
 	TOGGLE_MOBILE_RUN: "input.action.toggleMobileRun",
 
 	SEND_PLAYER_MOVE: "input.action.sendPlayerMove",
+	SEND_PLAYER_MOVE_WITH_TOGGLED_RUN_FROM_CONTEXT:
+		"input.action.sendPlayerMoveWithToggledRunFromContext",
 	SEND_PLAYER_STOP: "input.action.sendPlayerStop",
 	SEND_PLAYER_RUN_HELD: "input.action.sendPlayerRunHeld",
 	SEND_PLAYER_JUMP: "input.action.sendPlayerJump",

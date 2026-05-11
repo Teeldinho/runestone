@@ -6,10 +6,19 @@ import {
 	CAMERA_ACTION_KEYS,
 	CAMERA_DEFAULT_MODE,
 	CAMERA_EVENT_TYPES,
+	CAMERA_HOTKEYS,
 	CAMERA_LIMITS,
+	CAMERA_LOOK_LIMITS,
 	CAMERA_MACHINE_ID,
 } from "../config";
-import { clampCameraDistance } from "../lib";
+import { clampCameraDistance, resolveNextCameraLookAngles } from "../lib";
+
+const CAMERA_HOTKEY_VALUES = [
+	CAMERA_HOTKEYS.THIRD_PERSON,
+	CAMERA_HOTKEYS.TOP_DOWN,
+	CAMERA_HOTKEYS.FIRST_PERSON,
+	CAMERA_HOTKEYS.FREE_ORBITAL,
+] as const;
 
 export const createCameraMachine = () =>
 	setup({
@@ -20,13 +29,18 @@ export const createCameraMachine = () =>
 				lookDelta: { readonly x: number; readonly y: number };
 				zoomDelta: number;
 				distance: number;
+				yaw: number;
+				pitch: number;
 			},
 			events: {} as
-				| { type: "SWITCH_TO_THIRD_PERSON" }
-				| { type: "SWITCH_TO_TOP_DOWN" }
-				| { type: "SWITCH_TO_FIRST_PERSON" }
-				| { type: "SWITCH_TO_FREE_ORBITAL" }
-				| { type: "HOTKEY"; hotkey: "1" | "2" | "3" | "4" }
+				| { type: typeof CAMERA_EVENT_TYPES.SWITCH_TO_THIRD_PERSON }
+				| { type: typeof CAMERA_EVENT_TYPES.SWITCH_TO_TOP_DOWN }
+				| { type: typeof CAMERA_EVENT_TYPES.SWITCH_TO_FIRST_PERSON }
+				| { type: typeof CAMERA_EVENT_TYPES.SWITCH_TO_FREE_ORBITAL }
+				| {
+						type: typeof CAMERA_EVENT_TYPES.HOTKEY;
+						hotkey: (typeof CAMERA_HOTKEY_VALUES)[number];
+				  }
 				| {
 						readonly type: typeof CAMERA_EVENT_TYPES.LOOK_CHANGED;
 						readonly delta: { readonly x: number; readonly y: number };
@@ -43,6 +57,24 @@ export const createCameraMachine = () =>
 					event.type === CAMERA_EVENT_TYPES.LOOK_CHANGED
 						? event.delta
 						: context.lookDelta,
+
+				yaw: ({ context, event }) =>
+					event.type === CAMERA_EVENT_TYPES.LOOK_CHANGED
+						? resolveNextCameraLookAngles({
+								currentYaw: context.yaw,
+								currentPitch: context.pitch,
+								delta: event.delta,
+							}).yaw
+						: context.yaw,
+
+				pitch: ({ context, event }) =>
+					event.type === CAMERA_EVENT_TYPES.LOOK_CHANGED
+						? resolveNextCameraLookAngles({
+								currentYaw: context.yaw,
+								currentPitch: context.pitch,
+								delta: event.delta,
+							}).pitch
+						: context.pitch,
 			}),
 
 			[CAMERA_ACTION_KEYS.CLEAR_LOOK_DELTA]: assign({
@@ -71,18 +103,20 @@ export const createCameraMachine = () =>
 			lookDelta: { x: 0, y: 0 },
 			zoomDelta: 0,
 			distance: CAMERA_LIMITS.DEFAULT_DISTANCE,
+			yaw: CAMERA_LOOK_LIMITS.DEFAULT_YAW,
+			pitch: CAMERA_LOOK_LIMITS.DEFAULT_PITCH,
 		},
 		on: {
-			SWITCH_TO_THIRD_PERSON: {
+			[CAMERA_EVENT_TYPES.SWITCH_TO_THIRD_PERSON]: {
 				target: `.${CAMERA_MODES.THIRD_PERSON}`,
 			},
-			SWITCH_TO_TOP_DOWN: {
+			[CAMERA_EVENT_TYPES.SWITCH_TO_TOP_DOWN]: {
 				target: `.${CAMERA_MODES.TOP_DOWN}`,
 			},
-			SWITCH_TO_FIRST_PERSON: {
+			[CAMERA_EVENT_TYPES.SWITCH_TO_FIRST_PERSON]: {
 				target: `.${CAMERA_MODES.FIRST_PERSON}`,
 			},
-			SWITCH_TO_FREE_ORBITAL: {
+			[CAMERA_EVENT_TYPES.SWITCH_TO_FREE_ORBITAL]: {
 				target: `.${CAMERA_MODES.FREE_ORBITAL}`,
 			},
 			[CAMERA_EVENT_TYPES.LOOK_CHANGED]: {
@@ -94,21 +128,21 @@ export const createCameraMachine = () =>
 			[CAMERA_EVENT_TYPES.ZOOM_CHANGED]: {
 				actions: [CAMERA_ACTION_KEYS.ASSIGN_ZOOM_DELTA],
 			},
-			HOTKEY: [
+			[CAMERA_EVENT_TYPES.HOTKEY]: [
 				{
-					guard: ({ event }) => event.hotkey === "1",
+					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.THIRD_PERSON,
 					target: `.${CAMERA_MODES.THIRD_PERSON}`,
 				},
 				{
-					guard: ({ event }) => event.hotkey === "2",
+					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.TOP_DOWN,
 					target: `.${CAMERA_MODES.TOP_DOWN}`,
 				},
 				{
-					guard: ({ event }) => event.hotkey === "3",
+					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.FIRST_PERSON,
 					target: `.${CAMERA_MODES.FIRST_PERSON}`,
 				},
 				{
-					guard: ({ event }) => event.hotkey === "4",
+					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.FREE_ORBITAL,
 					target: `.${CAMERA_MODES.FREE_ORBITAL}`,
 				},
 			],

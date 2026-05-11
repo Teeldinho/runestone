@@ -1,5 +1,8 @@
 import type { MutableRefObject, RefObject } from "react";
 import { useCallback, useEffect } from "react";
+
+import { shouldBlockLookFromPointerTarget } from "@/shared/lib";
+
 import { CAMERA_RIG_MULTI_TOUCH_POINTER_COUNT } from "../config";
 import {
 	type OrbitControlsHandle,
@@ -36,6 +39,10 @@ export const useCameraRigInteractionHandlers = ({
 }: UseCameraRigInteractionHandlersInput): CameraRigInteractionHandlers => {
 	const handlePointerDown = useCallback(
 		(event: PointerEvent) => {
+			if (shouldBlockLookFromPointerTarget({ target: event.target })) {
+				return;
+			}
+
 			if (event.pointerType === "touch") {
 				activeTouchPointerIdsRef.current.add(event.pointerId);
 			}
@@ -48,6 +55,10 @@ export const useCameraRigInteractionHandlers = ({
 
 	const handlePointerUp = useCallback(
 		(event: PointerEvent) => {
+			if (shouldBlockLookFromPointerTarget({ target: event.target })) {
+				return;
+			}
+
 			if (event.pointerType === "touch") {
 				activeTouchPointerIdsRef.current.delete(event.pointerId);
 			}

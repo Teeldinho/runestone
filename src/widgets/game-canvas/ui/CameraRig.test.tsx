@@ -69,6 +69,9 @@ const TEST_CAMERA_STATE_SNAPSHOT = {
 	position: [0, 8, 10] as [number, number, number],
 	target: [0, 0, 0] as [number, number, number],
 	zoom: 1,
+	yaw: 0,
+	pitch: 0,
+	distance: 6,
 } as const;
 
 describe("CameraRig", () => {

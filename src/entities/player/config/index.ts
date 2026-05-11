@@ -10,8 +10,10 @@ export {
 	PLAYER_ANIMATION_PATHS,
 	PLAYER_GLTF_CONFIG,
 } from "./playerGltfConfig";
+export { PLAYER_GROUNDING_CONFIG } from "./playerGroundingConfig";
 export type { PlayerGuardKey } from "./playerGuardKeys";
 export { PLAYER_GUARD_KEYS } from "./playerGuardKeys";
+export { PLAYER_JUMP_CONFIG } from "./playerJumpConfig";
 export { PLAYER_CONTEXT_KEYS, PLAYER_GUARDS } from "./playerMachineConfig";
 export {
 	PLAYER_MACHINE_DEFAULTS,

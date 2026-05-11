@@ -4,7 +4,10 @@ import {
 	POINTER_ROLES,
 } from "@/shared/config";
 
-import { INPUT_EVENT_TYPES } from "../config";
+import {
+	INPUT_EVENT_TYPES,
+	MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES,
+} from "../config";
 import type { InputOrchestratorEvent } from "../model";
 
 type MobileActionButtonZoneProps = {
@@ -21,11 +24,11 @@ export function MobileActionButtonZone({
 				[INPUT_POINTER_DATA_ATTRIBUTES.BLOCKS_LOOK]:
 					INPUT_POINTER_DATA_ATTRIBUTE_VALUES.TRUE,
 			}}
-			className="pointer-events-auto absolute bottom-6 right-6 grid grid-cols-2 gap-3 touch-none select-none"
+			className={MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.ROOT}
 		>
 			<button
 				type="button"
-				className="rounded-full border border-panel-border/80 bg-panel/80 px-4 py-3 text-sm font-semibold"
+				className={MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.BUTTON}
 				onPointerDown={(event) => {
 					event.preventDefault();
 					event.stopPropagation();
@@ -37,7 +40,7 @@ export function MobileActionButtonZone({
 
 			<button
 				type="button"
-				className="rounded-full border border-panel-border/80 bg-panel/80 px-4 py-3 text-sm font-semibold"
+				className={MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.BUTTON}
 				onPointerDown={(event) => {
 					event.preventDefault();
 					event.stopPropagation();
@@ -45,30 +48,6 @@ export function MobileActionButtonZone({
 				}}
 			>
 				Jump
-			</button>
-
-			<button
-				type="button"
-				className="rounded-full border border-panel-border/80 bg-panel/80 px-4 py-3 text-sm font-semibold"
-				onPointerDown={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					sendInput({ type: INPUT_EVENT_TYPES.INTERACT_PRESSED });
-				}}
-			>
-				Open
-			</button>
-
-			<button
-				type="button"
-				className="rounded-full border border-panel-border/80 bg-panel/80 px-4 py-3 text-sm font-semibold"
-				onPointerDown={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					sendInput({ type: INPUT_EVENT_TYPES.ATTACK_PRESSED });
-				}}
-			>
-				Attack
 			</button>
 		</div>
 	);

@@ -40,6 +40,9 @@ const createGamePageViewModel = (overrides = {}) => {
 				position: [0, 8, 10] as [number, number, number],
 				target: [0, 0, 0] as [number, number, number],
 				zoom: 1,
+				yaw: 0,
+				pitch: 0,
+				distance: 6,
 			},
 			canvasMachineRuntime: {
 				currentRoomId: ROOM_IDS.ENTRANCE,
@@ -235,6 +238,27 @@ vi.mock("@/pages/game/model", () => {
 				handleTouchJoystickStop: viewModel.touch.handleTouchJoystickStop,
 			};
 		},
+		useGamePageInputOrchestrator: () => ({
+			sendInput: vi.fn(),
+			isDesktopRunHeld: false,
+			isMobileRunToggled: false,
+			touchLook: {
+				handlePointerDown: vi.fn(),
+				handlePointerMove: vi.fn(),
+				handlePointerUp: vi.fn(),
+				handlePointerCancel: vi.fn(),
+			},
+			touchMovement: {
+				handleMoveVelocity: vi.fn(),
+				handleStopVelocity: vi.fn(),
+			},
+		}),
+		useGamePageMobileCameraControlHandlers: () => ({
+			onLookPointerDown: undefined,
+			onLookPointerMove: undefined,
+			onLookPointerUp: undefined,
+			onLookPointerCancel: undefined,
+		}),
 		useGamePageMachineState: () => ({
 			playerActorRef: createMockActorRef(),
 			cameraActorRef: createMockActorRef(),

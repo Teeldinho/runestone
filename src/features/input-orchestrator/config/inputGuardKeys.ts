@@ -4,6 +4,7 @@ export const INPUT_GUARD_KEYS = {
 	IS_ZOOM_EVENT: "input.guard.isZoomEvent",
 	IS_RUN_HELD_EVENT: "input.guard.isRunHeldEvent",
 	IS_POINTER_OWNER_EVENT: "input.guard.isPointerOwnerEvent",
+	HAS_ACTIVE_MOVEMENT: "input.guard.hasActiveMovement",
 } as const;
 
 export type InputGuardKey =

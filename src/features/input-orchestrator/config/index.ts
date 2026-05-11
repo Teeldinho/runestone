@@ -5,3 +5,4 @@ export * from "./inputEventTypes";
 export * from "./inputGuardKeys";
 export * from "./inputMachineIds";
 export * from "./inputStateKeys";
+export * from "./mobileActionButtonLayoutConfig";

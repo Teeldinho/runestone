@@ -1,7 +1,7 @@
 import { useMachine } from "@xstate/react";
 import { useCallback, useEffect, useMemo } from "react";
 import {
-	CAMERA_EVENTS,
+	CAMERA_EVENT_TYPES,
 	CAMERA_HOTKEY_EVENT_TYPE,
 	type CameraHotkey,
 } from "../config";
@@ -17,23 +17,37 @@ export const useCameraMachine = () => {
 	const mode = snapshot.value as CameraStateSnapshot["mode"];
 
 	const cameraStateSnapshot = useMemo<CameraStateSnapshot>(() => {
-		return createCameraStateSnapshot(mode as CameraStateSnapshot["mode"]);
-	}, [mode]);
+		const baseSnapshot = createCameraStateSnapshot(
+			mode as CameraStateSnapshot["mode"],
+		);
+
+		return {
+			...baseSnapshot,
+			yaw: snapshot.context.yaw,
+			pitch: snapshot.context.pitch,
+			distance: snapshot.context.distance,
+		};
+	}, [
+		mode,
+		snapshot.context.yaw,
+		snapshot.context.pitch,
+		snapshot.context.distance,
+	]);
 
 	const switchToThirdPerson = useCallback(() => {
-		send({ type: "SWITCH_TO_THIRD_PERSON" });
+		send({ type: CAMERA_EVENT_TYPES.SWITCH_TO_THIRD_PERSON });
 	}, [send]);
 
 	const switchToTopDown = useCallback(() => {
-		send({ type: "SWITCH_TO_TOP_DOWN" });
+		send({ type: CAMERA_EVENT_TYPES.SWITCH_TO_TOP_DOWN });
 	}, [send]);
 
 	const switchToFirstPerson = useCallback(() => {
-		send({ type: "SWITCH_TO_FIRST_PERSON" });
+		send({ type: CAMERA_EVENT_TYPES.SWITCH_TO_FIRST_PERSON });
 	}, [send]);
 
 	const switchToFreeOrbital = useCallback(() => {
-		send({ type: "SWITCH_TO_FREE_ORBITAL" });
+		send({ type: CAMERA_EVENT_TYPES.SWITCH_TO_FREE_ORBITAL });
 	}, [send]);
 
 	const handleCameraModeSwitch = useCallback(
@@ -43,7 +57,6 @@ export const useCameraMachine = () => {
 		[send],
 	);
 
-	// Listen for camera mode keyboard hotkeys.
 	useEffect(() => {
 		const handleHotkey = (event: KeyboardEvent) => {
 			if (!isCameraHotkey(event.key)) {
@@ -51,7 +64,7 @@ export const useCameraMachine = () => {
 			}
 
 			send({
-				type: CAMERA_EVENTS.HOTKEY,
+				type: CAMERA_EVENT_TYPES.HOTKEY,
 				hotkey: event.key as CameraHotkey,
 			});
 		};

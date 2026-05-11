@@ -80,6 +80,9 @@ describe("useGameCanvasViewModel", () => {
 			position: [0, 16, -18] as [number, number, number],
 			target: [0, 0, 0] as [number, number, number],
 			zoom: 1,
+			yaw: 0,
+			pitch: 0,
+			distance: 6,
 		};
 
 		const machineRuntime = {
@@ -109,6 +112,9 @@ describe("useGameCanvasViewModel", () => {
 			position: [0, 16, -18] as [number, number, number],
 			target: [0, 0, 0] as [number, number, number],
 			zoom: 1,
+			yaw: 0,
+			pitch: 0,
+			distance: 6,
 		};
 
 		const machineRuntime = {

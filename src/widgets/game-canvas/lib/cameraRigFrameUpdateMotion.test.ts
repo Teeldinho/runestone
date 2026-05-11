@@ -51,6 +51,9 @@ describe("cameraRigFrameUpdateMotion", () => {
 				position: [0, 0, 0],
 				target: [0, 0, 0],
 				zoom: 1,
+				yaw: 0,
+				pitch: 0,
+				distance: 6,
 			},
 			directionRef,
 		});
@@ -70,6 +73,9 @@ describe("cameraRigFrameUpdateMotion", () => {
 				position: [0, 0, 0],
 				target: [0, 0, 0],
 				zoom: 1,
+				yaw: 0,
+				pitch: 0,
+				distance: 6,
 			},
 			directionRef,
 		});
@@ -90,6 +96,9 @@ describe("cameraRigFrameUpdateMotion", () => {
 				position: [0, 0, 0],
 				target: [0, 0, 0],
 				zoom: 1,
+				yaw: 0,
+				pitch: 0,
+				distance: 6,
 			},
 			transitionAlpha: 0.5,
 		});
@@ -111,6 +120,9 @@ describe("cameraRigFrameUpdateMotion", () => {
 				position: [0, 0, 0],
 				target: [0, 0, 0],
 				zoom: 1,
+				yaw: 0,
+				pitch: 0,
+				distance: 6,
 			},
 			transitionAlpha: 0.5,
 		});

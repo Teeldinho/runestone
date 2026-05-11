@@ -1,7 +1,7 @@
 import type { RapierRigidBody } from "@react-three/rapier";
 import { useEffect, useRef } from "react";
 
-import { PLAYER_EVENT_TYPES, PLAYER_MOVEMENT_RUNTIME_CONFIG } from "../config";
+import { PLAYER_EVENT_TYPES, PLAYER_JUMP_CONFIG } from "../config";
 
 type UsePlayerJumpPhysicsInput = {
 	readonly rigidBodyRef: React.RefObject<RapierRigidBody | null>;
@@ -19,6 +19,7 @@ export const usePlayerJumpPhysics = ({
 	sendPlayer,
 }: UsePlayerJumpPhysicsInput) => {
 	const hasAppliedJumpRef = useRef(false);
+	const wasGroundedRef = useRef(isGrounded);
 
 	useEffect(() => {
 		const rigidBody = rigidBodyRef.current;
@@ -35,21 +36,27 @@ export const usePlayerJumpPhysics = ({
 		rigidBody.applyImpulse(
 			{
 				x: 0,
-				y: PLAYER_MOVEMENT_RUNTIME_CONFIG.JUMP_IMPULSE,
+				y: PLAYER_JUMP_CONFIG.IMPULSE,
 				z: 0,
 			},
 			true,
 		);
 
 		hasAppliedJumpRef.current = true;
+		wasGroundedRef.current = false;
 	}, [isGrounded, rigidBodyRef, wantsJumpImpulse]);
 
 	useEffect(() => {
-		if (!isGrounded) {
+		const wasGrounded = wasGroundedRef.current;
+		const hasJustLanded = !wasGrounded && isGrounded;
+
+		if (!hasJustLanded) {
+			wasGroundedRef.current = isGrounded;
 			return;
 		}
 
 		hasAppliedJumpRef.current = false;
+		wasGroundedRef.current = true;
 
 		sendPlayer({
 			type: PLAYER_EVENT_TYPES.LANDED,

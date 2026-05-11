@@ -87,6 +87,8 @@ describe("useTouchJoystickInput", () => {
 				clientY: 66,
 				currentTarget: {
 					setPointerCapture: vi.fn(),
+					hasPointerCapture: vi.fn().mockReturnValue(true),
+					releasePointerCapture: vi.fn(),
 				},
 				stopPropagation: vi.fn(),
 				preventDefault: vi.fn(),
@@ -96,6 +98,10 @@ describe("useTouchJoystickInput", () => {
 		act(() => {
 			result.current.handlePointerUp({
 				pointerId: 1,
+				currentTarget: {
+					hasPointerCapture: vi.fn().mockReturnValue(true),
+					releasePointerCapture: vi.fn(),
+				},
 				stopPropagation: vi.fn(),
 				preventDefault: vi.fn(),
 			} as unknown as ReactPointerEvent<HTMLDivElement>);
@@ -111,6 +117,8 @@ describe("useTouchJoystickInput", () => {
 				clientY: 66,
 				currentTarget: {
 					setPointerCapture: vi.fn(),
+					hasPointerCapture: vi.fn().mockReturnValue(true),
+					releasePointerCapture: vi.fn(),
 				},
 				stopPropagation: vi.fn(),
 				preventDefault: vi.fn(),
@@ -120,6 +128,10 @@ describe("useTouchJoystickInput", () => {
 		act(() => {
 			result.current.handlePointerCancel({
 				pointerId: 2,
+				currentTarget: {
+					hasPointerCapture: vi.fn().mockReturnValue(true),
+					releasePointerCapture: vi.fn(),
+				},
 				stopPropagation: vi.fn(),
 				preventDefault: vi.fn(),
 			} as unknown as ReactPointerEvent<HTMLDivElement>);

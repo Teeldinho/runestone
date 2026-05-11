@@ -115,9 +115,11 @@ export const runCameraRigFrameUpdate = (
 			flags,
 			isDesktopLayout: input.isDesktopLayout,
 			needsFirstPersonSyncRef: input.needsFirstPersonSyncRef,
+			pitch: input.cameraStateSnapshot.pitch,
 			pointerLockRef: input.pointerLockRef,
 			position: targets.position,
 			positionVectorRef: input.positionVectorRef,
+			yaw: input.cameraStateSnapshot.yaw,
 		});
 	} else if (input.cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON) {
 		applyThirdPersonFrame({

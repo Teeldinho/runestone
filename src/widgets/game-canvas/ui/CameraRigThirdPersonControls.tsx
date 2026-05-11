@@ -21,7 +21,7 @@ export function CameraRigThirdPersonControls({
 		<OrbitControls
 			ref={refs.thirdPersonOrbitRef as React.RefObject<never>}
 			makeDefault
-			enablePan
+			enablePan={false}
 			enableZoom
 			enableRotate
 			maxDistance={CAMERA_CONFIG.THIRD_PERSON.ORBIT.MAX_DISTANCE}
