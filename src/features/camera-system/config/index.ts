@@ -4,6 +4,15 @@ export {
 	CAMERA_HOTKEYS,
 	CAMERA_MODES,
 } from "./cameraConfig";
+export type { CameraModeId } from "./cameraControlConfig";
+export {
+	CAMERA_ACTION_KEYS,
+	CAMERA_EVENT_TYPES,
+	CAMERA_LIMITS,
+	CAMERA_MODE_IDS,
+	CAMERA_STATE_KEYS,
+	ORBIT_CONTROL_MODE_POLICY,
+} from "./cameraControlConfig";
 export type { CameraEvent, CameraEventObject } from "./cameraEvents";
 export { CAMERA_EVENTS } from "./cameraEvents";
 export {

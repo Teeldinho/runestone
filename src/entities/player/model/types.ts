@@ -1,11 +1,18 @@
 import type { CameraMode } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
 import type { PLAYER_EVENTS } from "../config/playerEvents";
+import type { PLAYER_EVENT_TYPES } from "../config/playerEventTypes";
 import type { PlayerHealthState } from "../config/playerStates";
 
 export type { PlayerHealthState };
 
-export type PlayerMovementState = "idle" | "walking";
+export type PlayerMovementState =
+	| "idle"
+	| "walking"
+	| "running"
+	| "grounded"
+	| "jumping"
+	| "falling";
 
 export type PlayerStats = {
 	maxHp: number;
@@ -49,15 +56,21 @@ export type ResolvePlayerAvatarVisibilityInput = {
 	cameraMode: CameraMode | string;
 };
 
-// Player machine context — source of truth for all player state
+export type InputVector2 = {
+	readonly x: number;
+	readonly y: number;
+};
+
 export type PlayerMachineContext = {
 	isSprinting: boolean;
 	position: Vector3Tuple;
 	velocity: Vector3Tuple;
 	stats: PlayerStats;
+	moveVector: InputVector2;
+	isRunHeld: boolean;
+	wantsJumpImpulse: boolean;
 };
 
-// Player machine event types
 export type PlayerMoveEvent = {
 	type: typeof PLAYER_EVENTS.MOVE;
 	velocity: Vector3Tuple;
@@ -86,10 +99,43 @@ export type PlayerRestartEvent = {
 	type: typeof PLAYER_EVENTS.RESTART;
 };
 
+export type PlayerMoveChangedEvent = {
+	readonly type: typeof PLAYER_EVENT_TYPES.MOVE_CHANGED;
+	readonly vector: InputVector2;
+	readonly wantsRun: boolean;
+};
+
+export type PlayerMoveStoppedEvent = {
+	readonly type: typeof PLAYER_EVENT_TYPES.MOVE_STOPPED;
+};
+
+export type PlayerRunHeldChangedEvent = {
+	readonly type: typeof PLAYER_EVENT_TYPES.RUN_HELD_CHANGED;
+	readonly isHeld: boolean;
+};
+
+export type PlayerJumpPressedEvent = {
+	readonly type: typeof PLAYER_EVENT_TYPES.JUMP_PRESSED;
+};
+
+export type PlayerLandedEvent = {
+	readonly type: typeof PLAYER_EVENT_TYPES.LANDED;
+};
+
+export type PlayerLeftGroundEvent = {
+	readonly type: typeof PLAYER_EVENT_TYPES.LEFT_GROUND;
+};
+
 export type PlayerMachineEvent =
 	| PlayerMoveEvent
 	| PlayerStopEvent
 	| PlayerTakeDamageEvent
 	| PlayerHealEvent
 	| PlayerDieEvent
-	| PlayerRestartEvent;
+	| PlayerRestartEvent
+	| PlayerMoveChangedEvent
+	| PlayerMoveStoppedEvent
+	| PlayerRunHeldChangedEvent
+	| PlayerJumpPressedEvent
+	| PlayerLandedEvent
+	| PlayerLeftGroundEvent;

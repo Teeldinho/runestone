@@ -10,9 +10,21 @@ describe("CameraControlZone", () => {
 		const zoneRef = vi.fn();
 
 		render(<CameraControlZone zoneRef={zoneRef} />);
-		const controlZone = document.querySelector("#camera-control-zone");
+		const controlZone = document.querySelector(
+			"[data-input-pointer-role='look']",
+		);
 
 		expect(controlZone?.classList.contains("inset-0")).toBe(true);
-		expect(controlZone?.classList.contains("left-1/2")).toBe(false);
+	});
+
+	it("applies look pointer role data attribute", () => {
+		const zoneRef = vi.fn();
+
+		render(<CameraControlZone zoneRef={zoneRef} />);
+		const controlZone = document.querySelector(
+			"[data-input-pointer-role='look']",
+		);
+
+		expect(controlZone).toBeTruthy();
 	});
 });

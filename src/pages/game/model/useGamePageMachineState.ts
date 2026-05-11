@@ -1,6 +1,9 @@
 import { usePlayerMachineRuntime } from "@/entities/player";
 import { useCameraMachine } from "@/features/camera-system";
-import { useGameMachine } from "@/features/dungeon-navigation";
+import {
+	useGameMachine,
+	useGameMachineActorRef,
+} from "@/features/dungeon-navigation";
 import { useResponsiveGameLayout } from "@/features/responsive-layout";
 
 import { deriveIsMobileTabletLandscape } from "../lib/deriveIsMobileTabletLandscape";
@@ -9,24 +12,29 @@ type GamePageMachineState = {
 	gameMachine: ReturnType<typeof useGameMachine>;
 	playerMachine: Pick<
 		ReturnType<typeof usePlayerMachineRuntime>,
-		"snapshot" | "sendPlayerMachineEvent"
+		"snapshot" | "sendPlayerMachineEvent" | "playerActorRef"
 	>;
 	cameraMachine: Pick<
 		ReturnType<typeof useCameraMachine>,
-		"cameraStateSnapshot" | "handleCameraModeSwitch" | "mode"
+		"cameraStateSnapshot" | "handleCameraModeSwitch" | "mode" | "actor"
 	>;
 	layout: {
 		isDesktopLayout: boolean;
 		isMobileTabletLandscape: boolean;
 		isTabletLayout: boolean;
 	};
+	playerActorRef: ReturnType<typeof usePlayerMachineRuntime>["playerActorRef"];
+	cameraActorRef: ReturnType<typeof useCameraMachine>["actor"];
+	gameActorRef: ReturnType<typeof useGameMachineActorRef>;
 };
 
 export const useGamePageMachineState = (): GamePageMachineState => {
 	const gameMachine = useGameMachine();
-	const { snapshot, sendPlayerMachineEvent } = usePlayerMachineRuntime();
-	const { cameraStateSnapshot, handleCameraModeSwitch, mode } =
+	const { snapshot, sendPlayerMachineEvent, playerActorRef } =
+		usePlayerMachineRuntime();
+	const { cameraStateSnapshot, handleCameraModeSwitch, mode, actor } =
 		useCameraMachine();
+	const gameActorRef = useGameMachineActorRef();
 	const { isDesktopLayout, isLandscape, isTabletLayout } =
 		useResponsiveGameLayout();
 
@@ -35,6 +43,7 @@ export const useGamePageMachineState = (): GamePageMachineState => {
 			cameraStateSnapshot,
 			handleCameraModeSwitch,
 			mode,
+			actor,
 		},
 		gameMachine,
 		layout: {
@@ -48,7 +57,11 @@ export const useGamePageMachineState = (): GamePageMachineState => {
 		playerMachine: {
 			sendPlayerMachineEvent,
 			snapshot,
+			playerActorRef,
 		},
+		playerActorRef,
+		cameraActorRef: actor,
+		gameActorRef,
 	};
 };
 

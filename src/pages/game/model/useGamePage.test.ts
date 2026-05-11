@@ -61,6 +61,12 @@ vi.mock("@/features/audio-manager", () => {
 
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachine: vi.fn(),
+	useGameMachineActorRef: vi.fn().mockReturnValue({
+		send: vi.fn(),
+		getSnapshot: vi.fn(),
+		sessionId: "mock",
+		id: "mock",
+	}),
 	useInteractionCandidates: vi.fn().mockReturnValue({
 		interactPrompt: null,
 		interactEvent: null,
@@ -136,6 +142,12 @@ vi.mock("@/entities/player", async (importOriginal) => {
 				},
 			},
 			sendPlayerMachineEvent: vi.fn(),
+			playerActorRef: {
+				send: vi.fn(),
+				getSnapshot: vi.fn(),
+				sessionId: "mock",
+				id: "mock",
+			} as never,
 		}),
 	};
 });

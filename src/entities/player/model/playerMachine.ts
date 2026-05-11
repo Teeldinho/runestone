@@ -4,8 +4,11 @@ import { MACHINE_STATE_TYPES } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
 
 import {
+	PLAYER_ACTION_KEYS,
 	PLAYER_CONTEXT_KEYS,
+	PLAYER_EVENT_TYPES,
 	PLAYER_EVENTS,
+	PLAYER_GUARD_KEYS,
 	PLAYER_GUARDS,
 	PLAYER_MACHINE_DEFAULTS,
 	PLAYER_MACHINE_ID,
@@ -22,9 +25,13 @@ import type {
 	PlayerHealEvent,
 	PlayerMachineContext,
 	PlayerMachineEvent,
+	PlayerMoveChangedEvent,
 	PlayerMoveEvent,
+	PlayerRunHeldChangedEvent,
 	PlayerTakeDamageEvent,
 } from "./types";
+
+const ZERO_VECTOR = { x: 0, y: 0 };
 
 export const createPlayerMachine = () =>
 	setup({
@@ -40,6 +47,39 @@ export const createPlayerMachine = () =>
 				),
 			[PLAYER_GUARDS.IS_PLAYER_ALIVE]: ({ context }) =>
 				checkPlayerAlive(context.stats.hp),
+			[PLAYER_GUARD_KEYS.WANTS_RUN]: ({ event }) =>
+				(event as PlayerMoveChangedEvent).wantsRun,
+		},
+		actions: {
+			[PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR]: assign({
+				moveVector: ({ context, event }) =>
+					event.type === PLAYER_EVENT_TYPES.MOVE_CHANGED
+						? (event as PlayerMoveChangedEvent).vector
+						: context.moveVector,
+				isRunHeld: ({ context, event }) =>
+					event.type === PLAYER_EVENT_TYPES.MOVE_CHANGED
+						? (event as PlayerMoveChangedEvent).wantsRun
+						: context.isRunHeld,
+			}),
+
+			[PLAYER_ACTION_KEYS.CLEAR_MOVE_VECTOR]: assign({
+				moveVector: () => ZERO_VECTOR,
+			}),
+
+			[PLAYER_ACTION_KEYS.ASSIGN_RUN_HELD]: assign({
+				isRunHeld: ({ context, event }) =>
+					event.type === PLAYER_EVENT_TYPES.RUN_HELD_CHANGED
+						? (event as PlayerRunHeldChangedEvent).isHeld
+						: context.isRunHeld,
+			}),
+
+			[PLAYER_ACTION_KEYS.REQUEST_JUMP_IMPULSE]: assign({
+				wantsJumpImpulse: () => true,
+			}),
+
+			[PLAYER_ACTION_KEYS.CLEAR_JUMP_REQUEST]: assign({
+				wantsJumpImpulse: () => false,
+			}),
 		},
 	}).createMachine({
 		id: PLAYER_MACHINE_ID,
@@ -59,6 +99,10 @@ export const createPlayerMachine = () =>
 				keyCount: PLAYER_MACHINE_DEFAULTS.STATS.KEY_COUNT,
 				chainMultiplier: PLAYER_MACHINE_DEFAULTS.STATS.CHAIN_MULTIPLIER,
 			},
+			[PLAYER_CONTEXT_KEYS.MOVE_VECTOR]: PLAYER_MACHINE_DEFAULTS.MOVE_VECTOR,
+			[PLAYER_CONTEXT_KEYS.IS_RUN_HELD]: PLAYER_MACHINE_DEFAULTS.IS_RUN_HELD,
+			[PLAYER_CONTEXT_KEYS.WANTS_JUMP_IMPULSE]:
+				PLAYER_MACHINE_DEFAULTS.WANTS_JUMP_IMPULSE,
 		},
 		states: {
 			[PLAYER_STATES.REGIONS.MOVEMENT]: {
@@ -76,6 +120,17 @@ export const createPlayerMachine = () =>
 										.isSprinting,
 								})),
 							},
+							[PLAYER_EVENT_TYPES.MOVE_CHANGED]: [
+								{
+									guard: PLAYER_GUARD_KEYS.WANTS_RUN,
+									target: PLAYER_STATES.MOVEMENT.RUNNING,
+									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
+								},
+								{
+									target: PLAYER_STATES.MOVEMENT.WALKING,
+									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
+								},
+							],
 						},
 					},
 					[PLAYER_STATES.MOVEMENT.WALKING]: {
@@ -96,6 +151,76 @@ export const createPlayerMachine = () =>
 										0, 0, 0,
 									] as unknown as Vector3Tuple,
 								})),
+							},
+							[PLAYER_EVENT_TYPES.MOVE_CHANGED]: [
+								{
+									guard: PLAYER_GUARD_KEYS.WANTS_RUN,
+									target: PLAYER_STATES.MOVEMENT.RUNNING,
+									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
+								},
+								{
+									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
+								},
+							],
+							[PLAYER_EVENT_TYPES.MOVE_STOPPED]: {
+								target: PLAYER_STATES.MOVEMENT.IDLE,
+								actions: [PLAYER_ACTION_KEYS.CLEAR_MOVE_VECTOR],
+							},
+							[PLAYER_EVENT_TYPES.RUN_HELD_CHANGED]: {
+								actions: [PLAYER_ACTION_KEYS.ASSIGN_RUN_HELD],
+							},
+						},
+					},
+					[PLAYER_STATES.MOVEMENT.RUNNING]: {
+						on: {
+							[PLAYER_EVENT_TYPES.MOVE_CHANGED]: [
+								{
+									guard: PLAYER_GUARD_KEYS.WANTS_RUN,
+									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
+								},
+								{
+									target: PLAYER_STATES.MOVEMENT.WALKING,
+									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
+								},
+							],
+							[PLAYER_EVENT_TYPES.MOVE_STOPPED]: {
+								target: PLAYER_STATES.MOVEMENT.IDLE,
+								actions: [PLAYER_ACTION_KEYS.CLEAR_MOVE_VECTOR],
+							},
+							[PLAYER_EVENT_TYPES.RUN_HELD_CHANGED]: {
+								actions: [PLAYER_ACTION_KEYS.ASSIGN_RUN_HELD],
+							},
+						},
+					},
+				},
+			},
+			[PLAYER_STATES.REGIONS.AIRBORNE]: {
+				initial: PLAYER_STATES.AIRBORNE.GROUNDED,
+				states: {
+					[PLAYER_STATES.AIRBORNE.GROUNDED]: {
+						on: {
+							[PLAYER_EVENT_TYPES.JUMP_PRESSED]: {
+								target: PLAYER_STATES.AIRBORNE.JUMPING,
+								actions: [PLAYER_ACTION_KEYS.REQUEST_JUMP_IMPULSE],
+							},
+							[PLAYER_EVENT_TYPES.LEFT_GROUND]: {
+								target: PLAYER_STATES.AIRBORNE.FALLING,
+							},
+						},
+					},
+					[PLAYER_STATES.AIRBORNE.JUMPING]: {
+						on: {
+							[PLAYER_EVENT_TYPES.LANDED]: {
+								target: PLAYER_STATES.AIRBORNE.GROUNDED,
+								actions: [PLAYER_ACTION_KEYS.CLEAR_JUMP_REQUEST],
+							},
+						},
+					},
+					[PLAYER_STATES.AIRBORNE.FALLING]: {
+						on: {
+							[PLAYER_EVENT_TYPES.LANDED]: {
+								target: PLAYER_STATES.AIRBORNE.GROUNDED,
+								actions: [PLAYER_ACTION_KEYS.CLEAR_JUMP_REQUEST],
 							},
 						},
 					},

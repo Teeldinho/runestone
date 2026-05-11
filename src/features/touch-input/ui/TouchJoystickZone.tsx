@@ -1,17 +1,24 @@
+import {
+	INPUT_POINTER_DATA_ATTRIBUTE_VALUES,
+	INPUT_POINTER_DATA_ATTRIBUTES,
+	POINTER_ROLES,
+} from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
 import { cn } from "@/shared/lib";
 
 import { useTouchJoystickInput } from "../model";
 
-type TouchJoystickOverlayProps = {
-	onMoveVelocity: (velocity: Vector3Tuple) => void;
-	onStopVelocity: () => void;
+type TouchJoystickZoneProps = {
+	readonly onMoveVelocity: (velocity: Vector3Tuple) => void;
+	readonly onStopVelocity: () => void;
+	readonly className?: string;
 };
 
-export function TouchJoystickOverlay({
+export function TouchJoystickZone({
 	onMoveVelocity,
 	onStopVelocity,
-}: TouchJoystickOverlayProps) {
+	className,
+}: TouchJoystickZoneProps) {
 	const joystickInput = useTouchJoystickInput({
 		onMove: onMoveVelocity,
 		onStop: onStopVelocity,
@@ -20,7 +27,15 @@ export function TouchJoystickOverlay({
 	return (
 		<div
 			ref={joystickInput.joystickRef}
-			className="relative h-[132px] w-[132px] touch-none select-none rounded-full border border-panel-border/90 bg-panel/70 shadow-lg backdrop-blur-md"
+			{...{
+				[INPUT_POINTER_DATA_ATTRIBUTES.ROLE]: POINTER_ROLES.MOVEMENT,
+				[INPUT_POINTER_DATA_ATTRIBUTES.BLOCKS_LOOK]:
+					INPUT_POINTER_DATA_ATTRIBUTE_VALUES.TRUE,
+			}}
+			className={cn(
+				"relative h-[132px] w-[132px] touch-none select-none rounded-full border border-panel-border/90 bg-panel/70 shadow-lg backdrop-blur-md",
+				className,
+			)}
 			onPointerDown={joystickInput.handlePointerDown}
 			onPointerMove={joystickInput.handlePointerMove}
 			onPointerUp={joystickInput.handlePointerUp}
@@ -40,4 +55,4 @@ export function TouchJoystickOverlay({
 	);
 }
 
-export type { TouchJoystickOverlayProps };
+export type { TouchJoystickZoneProps };

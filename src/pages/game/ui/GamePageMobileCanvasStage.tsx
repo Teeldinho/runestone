@@ -1,12 +1,16 @@
 import { CAMERA_MODES } from "@/features/camera-system";
 import {
-	CameraControlZone,
-	TouchJoystickOverlay,
-} from "@/features/touch-input";
+	MobileActionButtonZone,
+	useInputOrchestrator,
+	useKeyboardInputOrchestrator,
+	useTouchLookInput,
+	useTouchMovementInput,
+} from "@/features/input-orchestrator";
+import { CameraControlZone, TouchJoystickZone } from "@/features/touch-input";
 import {
 	useGamePageCameraElements,
+	useGamePageMachineState,
 	useGamePageMobileCanvasStageModel,
-	useGamePageMobileJoystickModel,
 } from "@/pages/game/model";
 import { GameCanvas } from "@/widgets/game-canvas";
 
@@ -16,7 +20,28 @@ import { GamePageMobileTopBar } from "./GamePageMobileTopBar";
 export function GamePageMobileCanvasStage() {
 	const cameraElements = useGamePageCameraElements();
 	const viewModel = useGamePageMobileCanvasStageModel();
-	const joystickModel = useGamePageMobileJoystickModel();
+	const { playerActorRef, cameraActorRef, gameActorRef } =
+		useGamePageMachineState();
+
+	const input = useInputOrchestrator({
+		playerRef: playerActorRef,
+		cameraRef: cameraActorRef,
+		interactionRef: gameActorRef,
+	});
+
+	useKeyboardInputOrchestrator({
+		sendInput: input.sendInput,
+	});
+
+	const touchLook = useTouchLookInput({
+		sendInput: input.sendInput,
+	});
+
+	const touchMovement = useTouchMovementInput({
+		sendInput: input.sendInput,
+		isDesktopRunHeld: input.isDesktopRunHeld,
+		isMobileRunToggled: input.isMobileRunToggled,
+	});
 
 	return (
 		<section
@@ -39,14 +64,24 @@ export function GamePageMobileCanvasStage() {
 
 			<GamePageMobileTopBar />
 
-			<div className="pointer-events-none absolute bottom-4 left-4 z-30">
-				<div className="pointer-events-auto">
-					<TouchJoystickOverlay
-						onMoveVelocity={joystickModel.handleTouchJoystickMove}
-						onStopVelocity={joystickModel.handleTouchJoystickStop}
-					/>
+			<CameraControlZone
+				zoneRef={cameraElements.cameraControlRef}
+				onLookPointerDown={touchLook.handlePointerDown}
+				onLookPointerMove={touchLook.handlePointerMove}
+				onLookPointerUp={touchLook.handlePointerUp}
+				onLookPointerCancel={touchLook.handlePointerCancel}
+			>
+				<div className="pointer-events-none absolute bottom-4 left-4 z-30">
+					<div className="pointer-events-auto">
+						<TouchJoystickZone
+							onMoveVelocity={touchMovement.handleMoveVelocity}
+							onStopVelocity={touchMovement.handleStopVelocity}
+						/>
+					</div>
 				</div>
-			</div>
+
+				<MobileActionButtonZone sendInput={input.sendInput} />
+			</CameraControlZone>
 
 			{viewModel.cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON ? (
 				<div
@@ -55,8 +90,6 @@ export function GamePageMobileCanvasStage() {
 					className="pointer-events-auto absolute inset-y-0 right-0 left-1/2 z-20 touch-none select-none"
 				/>
 			) : null}
-
-			<CameraControlZone zoneRef={cameraElements.cameraControlRef} />
 			<GamePageMobileActionPanel />
 		</section>
 	);

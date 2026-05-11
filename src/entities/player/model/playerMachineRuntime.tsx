@@ -1,5 +1,6 @@
 import { useMachine } from "@xstate/react";
 import { createContext, type ReactNode, useContext, useMemo } from "react";
+import type { AnyActorRef } from "xstate";
 
 import { PLAYER_MACHINE_RUNTIME_ERRORS } from "../config";
 import { createPlayerMachine } from "./playerMachine";
@@ -12,6 +13,7 @@ type PlayerMachineSnapshot = ReturnType<
 type PlayerMachineRuntimeContextValue = {
 	sendPlayerMachineEvent: (event: PlayerMachineEvent) => void;
 	snapshot: PlayerMachineSnapshot;
+	playerActorRef: AnyActorRef;
 };
 
 type PlayerMachineProviderProps = {
@@ -25,11 +27,12 @@ export const PlayerMachineProvider = ({
 	children,
 }: PlayerMachineProviderProps) => {
 	const machine = useMemo(() => createPlayerMachine(), []);
-	const [snapshot, sendPlayerMachineEvent] = useMachine(machine);
+	const [snapshot, sendPlayerMachineEvent, playerActorRef] =
+		useMachine(machine);
 
 	const value = useMemo(
-		() => ({ sendPlayerMachineEvent, snapshot }),
-		[sendPlayerMachineEvent, snapshot],
+		() => ({ sendPlayerMachineEvent, snapshot, playerActorRef }),
+		[sendPlayerMachineEvent, snapshot, playerActorRef],
 	);
 
 	return (

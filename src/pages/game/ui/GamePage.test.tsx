@@ -3,6 +3,7 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import type React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createActor, fromTransition } from "xstate";
 import { DUNGEON_EVENTS, ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
 import {
@@ -11,9 +12,16 @@ import {
 	GAME_PAGE_MOBILE_SHEET,
 } from "@/pages/game/config";
 import { useGamePage } from "@/pages/game/model";
+
 import { TooltipProvider } from "@/shared/ui";
 
 import { GamePage } from "./GamePage";
+
+const createMockActorRef = () => {
+	const logic = fromTransition((s: unknown) => s, null);
+
+	return createActor(logic);
+};
 
 const TEST_NAVIGATION_ACTION_LABELS = {
 	[DUNGEON_EVENTS.ENTER_LIBRARY]: "Enter Library",
@@ -227,6 +235,19 @@ vi.mock("@/pages/game/model", () => {
 				handleTouchJoystickStop: viewModel.touch.handleTouchJoystickStop,
 			};
 		},
+		useGamePageMachineState: () => ({
+			playerActorRef: createMockActorRef(),
+			cameraActorRef: createMockActorRef(),
+			gameActorRef: createMockActorRef(),
+			playerMachine: {} as never,
+			cameraMachine: {} as never,
+			gameMachine: {} as never,
+			layout: {
+				isDesktopLayout: false,
+				isMobileTabletLandscape: false,
+				isTabletLayout: false,
+			},
+		}),
 		useGamePageMobileActionPanelModel: () => {
 			const viewModel = useGamePage();
 
@@ -290,8 +311,30 @@ vi.mock("@/features/settings", () => ({
 }));
 
 vi.mock("@/features/touch-input", () => ({
-	TouchJoystickOverlay: () => <div data-testid="touch-joystick-widget" />,
-	CameraControlZone: () => <div data-testid="camera-control-zone-widget" />,
+	TouchJoystickZone: () => <div data-testid="touch-joystick-widget" />,
+	CameraControlZone: ({ children }: { children?: React.ReactNode }) => (
+		<div data-testid="camera-control-zone-widget">{children}</div>
+	),
+}));
+
+vi.mock("@/features/input-orchestrator", () => ({
+	MobileActionButtonZone: () => <div data-testid="mobile-action-button-zone" />,
+	useInputOrchestrator: () => ({
+		sendInput: vi.fn(),
+		isDesktopRunHeld: false,
+		isMobileRunToggled: false,
+	}),
+	useKeyboardInputOrchestrator: vi.fn(),
+	useTouchLookInput: () => ({
+		handlePointerDown: vi.fn(),
+		handlePointerMove: vi.fn(),
+		handlePointerUp: vi.fn(),
+		handlePointerCancel: vi.fn(),
+	}),
+	useTouchMovementInput: () => ({
+		handleMoveVelocity: vi.fn(),
+		handleStopVelocity: vi.fn(),
+	}),
 }));
 
 vi.mock("@/widgets/game-canvas", () => ({

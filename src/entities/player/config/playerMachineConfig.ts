@@ -8,4 +8,7 @@ export const PLAYER_CONTEXT_KEYS = {
 	POSITION: "position",
 	VELOCITY: "velocity",
 	STATS: "stats",
+	MOVE_VECTOR: "moveVector",
+	IS_RUN_HELD: "isRunHeld",
+	WANTS_JUMP_IMPULSE: "wantsJumpImpulse",
 } as const;
