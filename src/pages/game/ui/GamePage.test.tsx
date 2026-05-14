@@ -34,6 +34,11 @@ const createGamePageViewModel = (overrides = {}) => {
 			isAudioMuted: false,
 		},
 		canvas: {
+			cameraActorRef: {
+				send: vi.fn(),
+			} as unknown as ReturnType<
+				typeof useGamePage
+			>["canvas"]["cameraActorRef"],
 			cameraStateSnapshot: {
 				fov: 58,
 				mode: CAMERA_MODES.FREE_ORBITAL,
@@ -241,6 +246,7 @@ vi.mock("@/pages/game/model", () => {
 		useGamePageInputOrchestrator: () => ({
 			sendInput: vi.fn(),
 			isDesktopRunHeld: false,
+			isJumpActive: false,
 			isMobileRunToggled: false,
 			touchLook: {
 				handlePointerDown: vi.fn(),

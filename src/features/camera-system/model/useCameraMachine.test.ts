@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import {
 	CAMERA_DEFAULT_MODE,
+	CAMERA_EVENT_TYPES,
 	CAMERA_EVENTS,
 	CAMERA_HOTKEYS,
 	CAMERA_MODES,
@@ -64,5 +65,19 @@ describe("useCameraMachine", () => {
 		});
 
 		expect(result.current.mode).toBe(CAMERA_MODES.TOP_DOWN);
+	});
+
+	it("exposes updated yaw and pitch in the camera state snapshot", () => {
+		const { result } = renderHook(() => useCameraMachine());
+
+		act(() => {
+			result.current.actor.send({
+				type: CAMERA_EVENT_TYPES.LOOK_CHANGED,
+				delta: { x: 2, y: -3 },
+			});
+		});
+
+		expect(result.current.cameraStateSnapshot.yaw).not.toBe(0);
+		expect(result.current.cameraStateSnapshot.pitch).not.toBe(0);
 	});
 });

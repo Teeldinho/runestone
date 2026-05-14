@@ -52,6 +52,7 @@ type FakeBody = {
 	linvel: () => { x: number; y: number; z: number };
 	rotation: () => { x: number; y: number; z: number; w: number };
 	setLinvel: ReturnType<typeof vi.fn>;
+	setCurrentLinvel: (next: { x: number; y: number; z: number }) => void;
 	setRotation: ReturnType<typeof vi.fn>;
 	setTranslation: ReturnType<typeof vi.fn>;
 };
@@ -64,6 +65,9 @@ const createFakeBody = (): FakeBody => {
 		translation: () => ({ x: 2, y: 1, z: -3 }),
 		linvel: () => currentLinvel,
 		rotation: () => currentRotation,
+		setCurrentLinvel: (next: { x: number; y: number; z: number }) => {
+			currentLinvel = next;
+		},
 		setLinvel: vi.fn((next: { x: number; y: number; z: number }) => {
 			currentLinvel = next;
 		}),
@@ -256,5 +260,35 @@ describe("usePlayerPhysics", () => {
 		expect(body.setLinvel).toHaveBeenCalledWith({ x: 0, y: 0, z: 0 }, true);
 		expect(body.setRotation).not.toHaveBeenCalled();
 		expect(mockCreateSmoothedPlayerPhysicsRotation).not.toHaveBeenCalled();
+	});
+
+	it("requires sustained grounded frames before reporting grounded", () => {
+		const { result } = renderHook(() =>
+			usePlayerPhysics({ velocity: [0, 0, 0], isSprinting: false }),
+		);
+		const body = createFakeBody();
+
+		result.current.rigidBodyRef.current = body as never;
+
+		act(() => {
+			body.setCurrentLinvel({ x: 0, y: 1, z: 0 });
+			frameCallbacks.at(-1)?.({}, 0.016);
+		});
+
+		expect(result.current.isGrounded).toBe(false);
+
+		act(() => {
+			body.setCurrentLinvel({ x: 0, y: 0.04, z: 0 });
+			frameCallbacks.at(-1)?.({}, 0.016);
+		});
+
+		expect(result.current.isGrounded).toBe(false);
+
+		act(() => {
+			body.setCurrentLinvel({ x: 0, y: 0.04, z: 0 });
+			frameCallbacks.at(-1)?.({}, 0.016);
+		});
+
+		expect(result.current.isGrounded).toBe(true);
 	});
 });

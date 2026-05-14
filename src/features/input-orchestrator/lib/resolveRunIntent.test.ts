@@ -8,7 +8,6 @@ describe("resolveRunIntent", () => {
 			resolveRunIntent({
 				isDesktopRunHeld: false,
 				isMobileRunToggled: false,
-				isMobileMagnitudeRun: false,
 			}),
 		).toBe(false);
 	});
@@ -18,7 +17,6 @@ describe("resolveRunIntent", () => {
 			resolveRunIntent({
 				isDesktopRunHeld: true,
 				isMobileRunToggled: false,
-				isMobileMagnitudeRun: false,
 			}),
 		).toBe(true);
 	});
@@ -28,17 +26,6 @@ describe("resolveRunIntent", () => {
 			resolveRunIntent({
 				isDesktopRunHeld: false,
 				isMobileRunToggled: true,
-				isMobileMagnitudeRun: false,
-			}),
-		).toBe(true);
-	});
-
-	it("returns true when mobile magnitude indicates run", () => {
-		expect(
-			resolveRunIntent({
-				isDesktopRunHeld: false,
-				isMobileRunToggled: false,
-				isMobileMagnitudeRun: true,
 			}),
 		).toBe(true);
 	});

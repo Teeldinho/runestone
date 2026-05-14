@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import { CameraControlZone } from "./CameraControlZone";
 
 describe("CameraControlZone", () => {
-	it("renders right-side look zone only", () => {
+	it("renders full-screen childless look zone", () => {
 		const zoneRef = vi.fn();
 
 		render(<CameraControlZone zoneRef={zoneRef} />);
@@ -15,11 +15,11 @@ describe("CameraControlZone", () => {
 		);
 
 		expect(controlZone).toBeTruthy();
-		expect(controlZone?.classList.contains("right-0")).toBe(true);
-		expect(controlZone?.classList.contains("left-1/2")).toBe(true);
+		expect(controlZone?.childElementCount).toBe(0);
+		expect(controlZone?.classList.contains("inset-0")).toBe(true);
 	});
 
-	it("does not render children prop", () => {
+	it("does not require pointer handlers", () => {
 		const zoneRef = vi.fn();
 
 		const { container } = render(<CameraControlZone zoneRef={zoneRef} />);

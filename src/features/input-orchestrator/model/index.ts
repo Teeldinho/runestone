@@ -4,6 +4,7 @@ export * from "./lookInputMachine";
 export * from "./movementInputMachine";
 export * from "./useInputOrchestrator";
 export * from "./useKeyboardInputOrchestrator";
+export * from "./useMobileActionButtonZoneModel";
 export * from "./useTouchLookInput";
 export * from "./useTouchMovementInput";
 export * from "./zoomInputMachine";

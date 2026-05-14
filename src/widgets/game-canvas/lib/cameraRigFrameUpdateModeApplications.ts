@@ -158,6 +158,7 @@ export const applyTopDownFrame = ({
 	if (needsTopDownSyncRef.current) {
 		camera.position.set(...position);
 		setOrbitTarget(topDownOrbitRef.current, lookAt);
+		topDownOrbitRef.current.update();
 		needsTopDownSyncRef.current = false;
 		return;
 	}
@@ -242,6 +243,7 @@ export const applyThirdPersonFrame = ({
 	if (needsThirdPersonSyncRef.current) {
 		camera.position.set(...position);
 		setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
+		thirdPersonOrbitRef.current.update();
 		needsThirdPersonSyncRef.current = false;
 		return;
 	}
@@ -270,6 +272,7 @@ export const applyThirdPersonFrame = ({
 
 			camera.position.set(...desiredCameraPosition);
 			setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
+			thirdPersonOrbitRef.current.update();
 			return;
 		}
 
@@ -281,6 +284,7 @@ export const applyThirdPersonFrame = ({
 		});
 
 		setOrbitTarget(thirdPersonOrbitRef.current, nextTarget);
+		thirdPersonOrbitRef.current.update();
 		return;
 	}
 
@@ -326,6 +330,7 @@ export const applyFreeOrbitalFrame = ({
 		setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
 		camera.position.set(...position);
 		setOrbitTarget(freeOrbitalOrbitRef.current, lookAt);
+		freeOrbitalOrbitRef.current.update();
 		needsFreeOrbitalSyncRef.current = false;
 		return;
 	}

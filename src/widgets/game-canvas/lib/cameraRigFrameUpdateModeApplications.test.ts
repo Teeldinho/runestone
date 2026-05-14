@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { describe, expect, it, vi } from "vitest";
 
+import { CAMERA_RIG_EULER_ORDERS } from "../config";
 import {
 	applyFirstPersonFrame,
 	applyFreeOrbitalFrame,
@@ -63,6 +64,47 @@ describe("cameraRigFrameUpdateModeApplications", () => {
 
 		expect(camera.position.toArray()).toEqual([1, 2, 3]);
 		expect(lookAtSpy).toHaveBeenCalledWith(1, 2, 4);
+	});
+
+	it("applies the mobile first-person frame directly from yaw and pitch", () => {
+		const camera = new THREE.PerspectiveCamera();
+		const firstPersonOrbitRef = new Proxy(
+			{ current: null },
+			{
+				get: () => {
+					throw new Error(
+						"firstPersonOrbitRef should not be read in mobile mode",
+					);
+				},
+			},
+		);
+
+		applyFirstPersonFrame({
+			camera,
+			flags: {
+				isFreeOrbitalJump: false,
+				isModeChange: false,
+				isThirdPersonJump: false,
+				transitionAlpha: 1,
+			},
+			firstPersonOrbitRef: firstPersonOrbitRef as never,
+			firstPersonTargetVectorRef: { current: new THREE.Vector3() },
+			isDesktopLayout: false,
+			needsFirstPersonSyncRef: { current: false },
+			pitch: 0.4,
+			pointerLockRef: { current: null },
+			position: [1, 2, 3],
+			positionVectorRef: { current: new THREE.Vector3() },
+			yaw: -0.75,
+		});
+
+		expect(camera.position.toArray()).toEqual([1, 2, 3]);
+		expect(camera.rotation.order).toBe(
+			CAMERA_RIG_EULER_ORDERS.FIRST_PERSON_MOBILE,
+		);
+		expect(camera.rotation.x).toBeCloseTo(0.4);
+		expect(camera.rotation.y).toBeCloseTo(-0.75);
+		expect(camera.rotation.z).toBe(0);
 	});
 
 	it("syncs the third-person orbit target when a sync is requested", () => {

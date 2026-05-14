@@ -1,5 +1,7 @@
 import { CAMERA_MODES } from "@/shared/config";
 
+export { CAMERA_EVENT_TYPES } from "@/shared/config";
+
 export const CAMERA_MODE_IDS = {
 	THIRD_PERSON: CAMERA_MODES.THIRD_PERSON,
 	TOP_DOWN: CAMERA_MODES.TOP_DOWN,
@@ -9,18 +11,6 @@ export const CAMERA_MODE_IDS = {
 
 export type CameraModeId =
 	(typeof CAMERA_MODE_IDS)[keyof typeof CAMERA_MODE_IDS];
-
-export const CAMERA_EVENT_TYPES = {
-	LOOK_CHANGED: "camera.input.look.changed",
-	LOOK_STOPPED: "camera.input.look.stopped",
-	ZOOM_CHANGED: "camera.input.zoom.changed",
-	MODE_CHANGED: "camera.mode.changed",
-	SWITCH_TO_THIRD_PERSON: "SWITCH_TO_THIRD_PERSON",
-	SWITCH_TO_TOP_DOWN: "SWITCH_TO_TOP_DOWN",
-	SWITCH_TO_FIRST_PERSON: "SWITCH_TO_FIRST_PERSON",
-	SWITCH_TO_FREE_ORBITAL: "SWITCH_TO_FREE_ORBITAL",
-	HOTKEY: "HOTKEY",
-} as const;
 
 export const CAMERA_ACTION_KEYS = {
 	ASSIGN_LOOK_DELTA: "camera.action.assignLookDelta",
@@ -46,14 +36,11 @@ export const CAMERA_LIMITS = {
 	MAX_DISTANCE: 12,
 	DEFAULT_DISTANCE: 6,
 	ZOOM_STEP: 0.6,
-
-	TOUCH_LOOK_SENSITIVITY_X: 0.004,
-	TOUCH_LOOK_SENSITIVITY_Y: 0.003,
 } as const;
 
 export const CAMERA_LOOK_LIMITS = {
-	MIN_PITCH: -0.85,
-	MAX_PITCH: 0.85,
+	MIN_PITCH: -1.35,
+	MAX_PITCH: 1.35,
 	DEFAULT_YAW: 0,
 	DEFAULT_PITCH: 0,
 } as const;

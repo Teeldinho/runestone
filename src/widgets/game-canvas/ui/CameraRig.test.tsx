@@ -37,19 +37,22 @@ const createCameraRigViewModel = (mode: string | undefined) => ({
 	},
 	orbitBindings: {
 		freeOrbital: {
-			cameraControlElement: null,
+			domElement: document.createElement("div"),
 			handleOrbitEnd: vi.fn(),
 			handleOrbitStart: vi.fn(),
+			shouldRenderOrbitControls: true,
 		},
 		thirdPerson: {
-			cameraControlElement: null,
+			domElement: document.createElement("div"),
 			handleOrbitEnd: vi.fn(),
 			handleOrbitStart: vi.fn(),
+			shouldRenderOrbitControls: true,
 		},
 		topDown: {
-			cameraControlElement: null,
+			domElement: document.createElement("div"),
 			handleOrbitEnd: vi.fn(),
 			handleOrbitStart: vi.fn(),
+			shouldRenderOrbitControls: true,
 		},
 	},
 	mode,

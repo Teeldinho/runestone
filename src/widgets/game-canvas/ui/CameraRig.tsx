@@ -35,7 +35,6 @@ export function CameraRig({
 				key={mode}
 				orbitBindings={orbitBindings.freeOrbital}
 				refs={refs}
-				isDesktopLayout={isDesktopLayout}
 			/>
 		);
 	}
@@ -46,7 +45,6 @@ export function CameraRig({
 				key={mode}
 				orbitBindings={orbitBindings.thirdPerson}
 				refs={refs}
-				isDesktopLayout={isDesktopLayout}
 			/>
 		);
 	}
@@ -68,7 +66,6 @@ export function CameraRig({
 				key={mode}
 				orbitBindings={orbitBindings.topDown}
 				refs={refs}
-				isDesktopLayout={isDesktopLayout}
 			/>
 		);
 	}

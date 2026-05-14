@@ -14,11 +14,14 @@ export const INPUT_ACTION_KEYS = {
 	CLEAR_ZOOM_DELTA: "input.action.clearZoomDelta",
 
 	ASSIGN_RUN_HELD: "input.action.assignRunHeld",
-	TOGGLE_MOBILE_RUN: "input.action.toggleMobileRun",
+	SET_MOBILE_RUN_ENABLED: "input.action.setMobileRunEnabled",
+	SET_MOBILE_RUN_DISABLED: "input.action.setMobileRunDisabled",
 
 	SEND_PLAYER_MOVE: "input.action.sendPlayerMove",
-	SEND_PLAYER_MOVE_WITH_TOGGLED_RUN_FROM_CONTEXT:
-		"input.action.sendPlayerMoveWithToggledRunFromContext",
+	SEND_PLAYER_MOVE_WITH_RUN_ENABLED_FROM_CONTEXT:
+		"input.action.sendPlayerMoveWithRunEnabledFromContext",
+	SEND_PLAYER_MOVE_WITH_RUN_DISABLED_FROM_CONTEXT:
+		"input.action.sendPlayerMoveWithRunDisabledFromContext",
 	SEND_PLAYER_STOP: "input.action.sendPlayerStop",
 	SEND_PLAYER_RUN_HELD: "input.action.sendPlayerRunHeld",
 	SEND_PLAYER_JUMP: "input.action.sendPlayerJump",

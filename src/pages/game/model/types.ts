@@ -24,6 +24,7 @@ type GamePageHudSlice = {
 };
 
 type GamePageCanvasSlice = {
+	cameraActorRef: ReturnType<typeof useGamePageMachineState>["cameraActorRef"];
 	cameraStateSnapshot: CameraStateSnapshot;
 	canvasMachineRuntime: CanvasMachineRuntime;
 	handleCameraModeSwitch: (event: CameraMachineEvent) => void;

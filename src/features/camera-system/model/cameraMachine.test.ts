@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createActor } from "xstate";
 
 import { CAMERA_DEFAULT_MODE, CAMERA_MODES } from "../config/cameraConfig";
+import { CAMERA_EVENT_TYPES } from "../config/cameraControlConfig";
 import { createCameraMachine } from "./cameraMachine";
 
 describe("cameraMachine", () => {
@@ -87,5 +88,18 @@ describe("cameraMachine", () => {
 		// Jump directly to topDown (skipping thirdPerson)
 		actor.send({ type: "SWITCH_TO_TOP_DOWN" });
 		expect(actor.getSnapshot().value).toBe(CAMERA_MODES.TOP_DOWN);
+	});
+
+	it("updates yaw and pitch on LOOK_CHANGED", () => {
+		const machine = createCameraMachine();
+		const actor = createActor(machine).start();
+
+		actor.send({
+			type: CAMERA_EVENT_TYPES.LOOK_CHANGED,
+			delta: { x: 2, y: -3 },
+		});
+
+		expect(actor.getSnapshot().context.yaw).not.toBe(0);
+		expect(actor.getSnapshot().context.pitch).not.toBe(0);
 	});
 });

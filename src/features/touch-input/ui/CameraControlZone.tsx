@@ -36,7 +36,7 @@ export function CameraControlZone({
 			{...{
 				[INPUT_POINTER_DATA_ATTRIBUTES.ROLE]: POINTER_ROLES.LOOK,
 			}}
-			className="pointer-events-auto absolute inset-y-0 right-0 left-1/2 z-20 touch-none select-none"
+			className="pointer-events-auto absolute inset-0 z-20 touch-none select-none"
 			onPointerDown={handlePointerDown}
 			onPointerMove={onLookPointerMove}
 			onPointerUp={onLookPointerUp}

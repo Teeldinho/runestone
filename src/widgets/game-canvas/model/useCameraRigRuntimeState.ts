@@ -20,8 +20,6 @@ export const useCameraRigRuntimeState = (): CameraRigRuntimeState => {
 	const needsTopDownSyncRef = useRef(false);
 	const needsFirstPersonSyncRef = useRef(false);
 	const isUserInteractingRef = useRef(false);
-	const isTouchInitiallyOnLeftRef = useRef(false);
-	const activeTouchPointerIdsRef = useRef(new Set<number>());
 	const previousTrackedPlayerPositionRef = useRef<Vector3Tuple | null>(null);
 	const previousModeRef = useRef<string | undefined>(undefined);
 	const directionRef = useRef(new THREE.Vector3());
@@ -32,8 +30,6 @@ export const useCameraRigRuntimeState = (): CameraRigRuntimeState => {
 
 	return {
 		interaction: {
-			activeTouchPointerIdsRef,
-			isTouchInitiallyOnLeftRef,
 			isUserInteractingRef,
 		},
 		isDesktopLayout,

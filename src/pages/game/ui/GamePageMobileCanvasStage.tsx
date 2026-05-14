@@ -58,7 +58,11 @@ export function GamePageMobileCanvasStage() {
 				</div>
 			</div>
 
-			<MobileActionButtonZone sendInput={input.sendInput} />
+			<MobileActionButtonZone
+				isJumpActive={input.isJumpActive}
+				isRunEnabled={input.isMobileRunToggled}
+				sendInput={input.sendInput}
+			/>
 
 			<GamePageMobileActionPanel />
 		</section>

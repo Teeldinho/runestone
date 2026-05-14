@@ -2,11 +2,7 @@ import { useCallback } from "react";
 import type { Vector3Tuple } from "@/shared/lib";
 
 import { INPUT_EVENT_TYPES } from "../config";
-import {
-	resolveMobileRunIntent,
-	resolveRunIntent,
-	resolveTouchVelocityMagnitude,
-} from "../lib";
+import { resolveRunIntent, resolveTouchVelocityMagnitude } from "../lib";
 import type { InputOrchestratorEvent } from "./inputOrchestratorMachine";
 
 type UseTouchMovementInputInput = {
@@ -26,11 +22,9 @@ export const useTouchMovementInput = ({
 	const handleMoveVelocity = useCallback(
 		(velocity: Vector3Tuple) => {
 			const magnitude = resolveTouchVelocityMagnitude({ velocity });
-			const isMobileMagnitudeRun = resolveMobileRunIntent({ magnitude });
 			const wantsRun = resolveRunIntent({
 				isDesktopRunHeld,
 				isMobileRunToggled,
-				isMobileMagnitudeRun,
 			});
 
 			sendInput({

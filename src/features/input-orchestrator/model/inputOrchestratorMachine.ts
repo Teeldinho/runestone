@@ -1,12 +1,8 @@
 import type { AnyActorRef } from "xstate";
 import { assign, sendTo, setup } from "xstate";
-import { PLAYER_EVENT_TYPES } from "@/entities/player";
 
-const OUTBOUND_CAMERA_EVENT_TYPES = {
-	LOOK_CHANGED: "camera.input.look.changed",
-	LOOK_STOPPED: "camera.input.look.stopped",
-	ZOOM_CHANGED: "camera.input.zoom.changed",
-} as const;
+import { PLAYER_EVENT_TYPES } from "@/entities/player";
+import { CAMERA_EVENT_TYPES } from "@/shared/config";
 
 import {
 	INPUT_ACTION_KEYS,
@@ -14,7 +10,6 @@ import {
 	INPUT_GUARD_KEYS,
 	INPUT_MACHINE_IDS,
 	INPUT_STATE_KEYS,
-	MOBILE_RUN_CONFIG,
 	type PointerRole,
 } from "../config";
 import {
@@ -91,12 +86,12 @@ export type PlayerInputEvent =
 
 export type CameraInputEvent =
 	| {
-			readonly type: typeof OUTBOUND_CAMERA_EVENT_TYPES.LOOK_CHANGED;
+			readonly type: typeof CAMERA_EVENT_TYPES.LOOK_CHANGED;
 			readonly delta: InputVector2;
 	  }
-	| { readonly type: typeof OUTBOUND_CAMERA_EVENT_TYPES.LOOK_STOPPED }
+	| { readonly type: typeof CAMERA_EVENT_TYPES.LOOK_STOPPED }
 	| {
-			readonly type: typeof OUTBOUND_CAMERA_EVENT_TYPES.ZOOM_CHANGED;
+			readonly type: typeof CAMERA_EVENT_TYPES.ZOOM_CHANGED;
 			readonly delta: number;
 	  };
 
@@ -213,8 +208,12 @@ export const inputOrchestratorMachine = setup({
 					: context.isDesktopRunHeld,
 		}),
 
-		[INPUT_ACTION_KEYS.TOGGLE_MOBILE_RUN]: assign({
-			isMobileRunToggled: ({ context }) => !context.isMobileRunToggled,
+		[INPUT_ACTION_KEYS.SET_MOBILE_RUN_ENABLED]: assign({
+			isMobileRunToggled: () => true,
+		}),
+
+		[INPUT_ACTION_KEYS.SET_MOBILE_RUN_DISABLED]: assign({
+			isMobileRunToggled: () => false,
 		}),
 
 		[INPUT_ACTION_KEYS.SEND_PLAYER_MOVE]: sendTo(
@@ -232,25 +231,28 @@ export const inputOrchestratorMachine = setup({
 			},
 		),
 
-		[INPUT_ACTION_KEYS.SEND_PLAYER_MOVE_WITH_TOGGLED_RUN_FROM_CONTEXT]: sendTo(
+		[INPUT_ACTION_KEYS.SEND_PLAYER_MOVE_WITH_RUN_ENABLED_FROM_CONTEXT]: sendTo(
 			({ context }) => context.playerRef,
-			({ context }) => {
-				const nextIsMobileRunToggled = !context.isMobileRunToggled;
-				const isMobileMagnitudeRun =
-					context.moveMagnitude >= MOBILE_RUN_CONFIG.RUN_MAGNITUDE_MIN;
-
-				const wantsRun = resolveRunIntent({
+			({ context }) => ({
+				type: PLAYER_EVENT_TYPES.MOVE_CHANGED,
+				vector: context.moveVector,
+				wantsRun: resolveRunIntent({
 					isDesktopRunHeld: context.isDesktopRunHeld,
-					isMobileRunToggled: nextIsMobileRunToggled,
-					isMobileMagnitudeRun,
-				});
+					isMobileRunToggled: true,
+				}),
+			}),
+		),
 
-				return {
-					type: PLAYER_EVENT_TYPES.MOVE_CHANGED,
-					vector: context.moveVector,
-					wantsRun,
-				};
-			},
+		[INPUT_ACTION_KEYS.SEND_PLAYER_MOVE_WITH_RUN_DISABLED_FROM_CONTEXT]: sendTo(
+			({ context }) => context.playerRef,
+			({ context }) => ({
+				type: PLAYER_EVENT_TYPES.MOVE_CHANGED,
+				vector: context.moveVector,
+				wantsRun: resolveRunIntent({
+					isDesktopRunHeld: context.isDesktopRunHeld,
+					isMobileRunToggled: false,
+				}),
+			}),
 		),
 
 		[INPUT_ACTION_KEYS.SEND_PLAYER_STOP]: sendTo(
@@ -284,11 +286,11 @@ export const inputOrchestratorMachine = setup({
 			({ context }) => context.cameraRef,
 			({ event }) => {
 				if (event.type !== INPUT_EVENT_TYPES.LOOK_CHANGED) {
-					return { type: OUTBOUND_CAMERA_EVENT_TYPES.LOOK_STOPPED };
+					return { type: CAMERA_EVENT_TYPES.LOOK_STOPPED };
 				}
 
 				return {
-					type: OUTBOUND_CAMERA_EVENT_TYPES.LOOK_CHANGED,
+					type: CAMERA_EVENT_TYPES.LOOK_CHANGED,
 					delta: event.delta,
 				};
 			},
@@ -296,7 +298,7 @@ export const inputOrchestratorMachine = setup({
 
 		[INPUT_ACTION_KEYS.SEND_CAMERA_LOOK_STOP]: sendTo(
 			({ context }) => context.cameraRef,
-			() => ({ type: OUTBOUND_CAMERA_EVENT_TYPES.LOOK_STOPPED }),
+			() => ({ type: CAMERA_EVENT_TYPES.LOOK_STOPPED }),
 		),
 
 		[INPUT_ACTION_KEYS.SEND_CAMERA_ZOOM]: sendTo(
@@ -304,13 +306,13 @@ export const inputOrchestratorMachine = setup({
 			({ event }) => {
 				if (event.type !== INPUT_EVENT_TYPES.ZOOM_CHANGED) {
 					return {
-						type: OUTBOUND_CAMERA_EVENT_TYPES.ZOOM_CHANGED,
+						type: CAMERA_EVENT_TYPES.ZOOM_CHANGED,
 						delta: 0,
 					};
 				}
 
 				return {
-					type: OUTBOUND_CAMERA_EVENT_TYPES.ZOOM_CHANGED,
+					type: CAMERA_EVENT_TYPES.ZOOM_CHANGED,
 					delta: event.delta,
 				};
 			},
@@ -460,18 +462,6 @@ export const inputOrchestratorMachine = setup({
 										INPUT_ACTION_KEYS.SEND_PLAYER_RUN_HELD,
 									],
 								},
-								[INPUT_EVENT_TYPES.RUN_TOGGLED]: [
-									{
-										guard: INPUT_GUARD_KEYS.HAS_ACTIVE_MOVEMENT,
-										actions: [
-											INPUT_ACTION_KEYS.SEND_PLAYER_MOVE_WITH_TOGGLED_RUN_FROM_CONTEXT,
-											INPUT_ACTION_KEYS.TOGGLE_MOBILE_RUN,
-										],
-									},
-									{
-										actions: [INPUT_ACTION_KEYS.TOGGLE_MOBILE_RUN],
-									},
-								],
 								[INPUT_EVENT_TYPES.JUMP_PRESSED]: {
 									actions: [INPUT_ACTION_KEYS.SEND_PLAYER_JUMP],
 								},
@@ -484,6 +474,48 @@ export const inputOrchestratorMachine = setup({
 								[INPUT_EVENT_TYPES.FIRE_PRESSED]: {
 									actions: [INPUT_ACTION_KEYS.SEND_FIRE],
 								},
+							},
+						},
+					},
+				},
+
+				[INPUT_STATE_KEYS.RUN_TOGGLE_REGION]: {
+					initial: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
+					states: {
+						[INPUT_STATE_KEYS.RUN_TOGGLE_OFF]: {
+							on: {
+								[INPUT_EVENT_TYPES.RUN_TOGGLED]: [
+									{
+										guard: INPUT_GUARD_KEYS.HAS_ACTIVE_MOVEMENT,
+										target: INPUT_STATE_KEYS.RUN_TOGGLE_ON,
+										actions: [
+											INPUT_ACTION_KEYS.SET_MOBILE_RUN_ENABLED,
+											INPUT_ACTION_KEYS.SEND_PLAYER_MOVE_WITH_RUN_ENABLED_FROM_CONTEXT,
+										],
+									},
+									{
+										target: INPUT_STATE_KEYS.RUN_TOGGLE_ON,
+										actions: [INPUT_ACTION_KEYS.SET_MOBILE_RUN_ENABLED],
+									},
+								],
+							},
+						},
+						[INPUT_STATE_KEYS.RUN_TOGGLE_ON]: {
+							on: {
+								[INPUT_EVENT_TYPES.RUN_TOGGLED]: [
+									{
+										guard: INPUT_GUARD_KEYS.HAS_ACTIVE_MOVEMENT,
+										target: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
+										actions: [
+											INPUT_ACTION_KEYS.SET_MOBILE_RUN_DISABLED,
+											INPUT_ACTION_KEYS.SEND_PLAYER_MOVE_WITH_RUN_DISABLED_FROM_CONTEXT,
+										],
+									},
+									{
+										target: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
+										actions: [INPUT_ACTION_KEYS.SET_MOBILE_RUN_DISABLED],
+									},
+								],
 							},
 						},
 					},

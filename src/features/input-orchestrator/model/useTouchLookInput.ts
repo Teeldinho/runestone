@@ -1,12 +1,14 @@
-import { useCallback, useRef } from "react";
+import {
+	type PointerEvent as ReactPointerEvent,
+	useCallback,
+	useRef,
+} from "react";
 
 import { POINTER_ROLES } from "@/shared/config";
 import { shouldBlockLookFromPointerTarget } from "@/shared/lib";
-import { INPUT_EVENT_TYPES, TOUCH_LOOK_CONFIG } from "../config";
-import type {
-	InputOrchestratorEvent,
-	InputVector2,
-} from "./inputOrchestratorMachine";
+import { INPUT_EVENT_TYPES } from "../config";
+import { resolveTouchLookDelta } from "../lib";
+import type { InputOrchestratorEvent } from "./inputOrchestratorMachine";
 
 type UseTouchLookInputInput = {
 	readonly sendInput: (event: InputOrchestratorEvent) => void;
@@ -18,21 +20,10 @@ type PointerPosition = {
 };
 
 const createPointerPosition = (
-	event: PointerEvent | React.PointerEvent,
+	event: ReactPointerEvent<HTMLDivElement>,
 ): PointerPosition => ({
 	x: event.clientX,
 	y: event.clientY,
-});
-
-const createLookDelta = ({
-	current,
-	previous,
-}: {
-	readonly current: PointerPosition;
-	readonly previous: PointerPosition;
-}): InputVector2 => ({
-	x: (current.x - previous.x) * TOUCH_LOOK_CONFIG.SENSITIVITY_X,
-	y: (current.y - previous.y) * TOUCH_LOOK_CONFIG.SENSITIVITY_Y,
 });
 
 export const useTouchLookInput = ({ sendInput }: UseTouchLookInputInput) => {
@@ -40,7 +31,7 @@ export const useTouchLookInput = ({ sendInput }: UseTouchLookInputInput) => {
 	const previousPositionRef = useRef<PointerPosition | null>(null);
 
 	const handlePointerDown = useCallback(
-		(event: React.PointerEvent<HTMLDivElement>) => {
+		(event: ReactPointerEvent<HTMLDivElement>) => {
 			if (shouldBlockLookFromPointerTarget({ target: event.target })) {
 				return;
 			}
@@ -66,7 +57,7 @@ export const useTouchLookInput = ({ sendInput }: UseTouchLookInputInput) => {
 	);
 
 	const handlePointerMove = useCallback(
-		(event: React.PointerEvent<HTMLDivElement>) => {
+		(event: ReactPointerEvent<HTMLDivElement>) => {
 			if (activePointerIdRef.current !== event.pointerId) {
 				return;
 			}
@@ -80,9 +71,11 @@ export const useTouchLookInput = ({ sendInput }: UseTouchLookInputInput) => {
 			event.preventDefault();
 
 			const currentPosition = createPointerPosition(event);
-			const delta = createLookDelta({
+			const delta = resolveTouchLookDelta({
 				current: currentPosition,
 				previous: previousPosition,
+				viewportHeight: window.innerHeight,
+				viewportWidth: window.innerWidth,
 			});
 
 			previousPositionRef.current = currentPosition;
@@ -96,7 +89,7 @@ export const useTouchLookInput = ({ sendInput }: UseTouchLookInputInput) => {
 	);
 
 	const stopLook = useCallback(
-		(event: React.PointerEvent<HTMLDivElement>) => {
+		(event: ReactPointerEvent<HTMLDivElement>) => {
 			if (activePointerIdRef.current !== event.pointerId) {
 				return;
 			}

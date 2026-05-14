@@ -25,9 +25,10 @@ describe("CameraRigTopDownControls", () => {
 	it("locks the top-down orbit to the shared polar and azimuth angles", () => {
 		const cameraControlElement = document.createElement("div");
 		const orbitBindings = {
-			cameraControlElement,
+			domElement: cameraControlElement,
 			handleOrbitEnd: vi.fn(),
 			handleOrbitStart: vi.fn(),
+			shouldRenderOrbitControls: true,
 		};
 		const refs = {
 			firstPersonOrbitRef: { current: null },
@@ -38,11 +39,7 @@ describe("CameraRigTopDownControls", () => {
 		};
 
 		render(
-			<CameraRigTopDownControls
-				orbitBindings={orbitBindings}
-				refs={refs}
-				isDesktopLayout={false}
-			/>,
+			<CameraRigTopDownControls orbitBindings={orbitBindings} refs={refs} />,
 		);
 
 		expect(mockOrbitControls).toHaveBeenCalledWith(
@@ -60,5 +57,27 @@ describe("CameraRigTopDownControls", () => {
 				touches: CAMERA_RIG_TOUCH_GESTURES.TOP_DOWN,
 			}),
 		);
+	});
+
+	it("renders null when orbit controls are not ready", () => {
+		const orbitBindings = {
+			domElement: undefined,
+			handleOrbitEnd: vi.fn(),
+			handleOrbitStart: vi.fn(),
+			shouldRenderOrbitControls: false,
+		};
+		const refs = {
+			firstPersonOrbitRef: { current: null },
+			freeOrbitalOrbitRef: { current: null },
+			pointerLockRef: { current: null },
+			thirdPersonOrbitRef: { current: null },
+			topDownOrbitRef: { current: null },
+		};
+
+		const { container } = render(
+			<CameraRigTopDownControls orbitBindings={orbitBindings} refs={refs} />,
+		);
+
+		expect(container.firstChild).toBeNull();
 	});
 });

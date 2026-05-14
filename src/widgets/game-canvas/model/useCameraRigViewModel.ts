@@ -54,14 +54,7 @@ export const useCameraRigViewModel = ({
 		handleOrbitEnd,
 		handleOrbitStart,
 	} = useCameraRigInteractionHandlers({
-		cameraControlElement,
-		activeTouchPointerIdsRef: interaction.activeTouchPointerIdsRef,
-		firstPersonOrbitRef: refs.firstPersonOrbitRef,
-		freeOrbitalOrbitRef: refs.freeOrbitalOrbitRef,
-		isTouchInitiallyOnLeftRef: interaction.isTouchInitiallyOnLeftRef,
 		isUserInteractingRef: interaction.isUserInteractingRef,
-		thirdPersonOrbitRef: refs.thirdPersonOrbitRef,
-		topDownOrbitRef: refs.topDownOrbitRef,
 	});
 
 	useCameraRigFrameUpdate({
@@ -92,6 +85,7 @@ export const useCameraRigViewModel = ({
 		cameraControlElement,
 		handleOrbitEnd,
 		handleOrbitStart,
+		isDesktopLayout,
 	});
 	const firstPersonBindings = createCameraRigFirstPersonBindings({
 		firstPersonLookElement,

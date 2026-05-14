@@ -1,3 +1,5 @@
+import { PLAYER_STATES, usePlayerMachineRuntime } from "@/entities/player";
+import { useGameMachineActorRef } from "@/features/dungeon-navigation";
 import {
 	useInputOrchestrator,
 	useKeyboardInputOrchestrator,
@@ -5,11 +7,16 @@ import {
 	useTouchMovementInput,
 } from "@/features/input-orchestrator";
 
-import { useGamePageMachineState } from "./useGamePageMachineState";
+import { useGamePageCanvasContext } from "./useGamePageSliceContexts";
 
 export const useGamePageInputOrchestrator = () => {
-	const { playerActorRef, cameraActorRef, gameActorRef } =
-		useGamePageMachineState();
+	const { snapshot, playerActorRef } = usePlayerMachineRuntime();
+	const { cameraActorRef } = useGamePageCanvasContext();
+	const gameActorRef = useGameMachineActorRef();
+	const airborneState =
+		snapshot.value[PLAYER_STATES.REGIONS.AIRBORNE] ??
+		PLAYER_STATES.AIRBORNE.GROUNDED;
+	const isJumpActive = airborneState !== PLAYER_STATES.AIRBORNE.GROUNDED;
 
 	const input = useInputOrchestrator({
 		playerRef: playerActorRef,
@@ -34,6 +41,7 @@ export const useGamePageInputOrchestrator = () => {
 	return {
 		sendInput: input.sendInput,
 		isDesktopRunHeld: input.isDesktopRunHeld,
+		isJumpActive,
 		isMobileRunToggled: input.isMobileRunToggled,
 		touchLook,
 		touchMovement,

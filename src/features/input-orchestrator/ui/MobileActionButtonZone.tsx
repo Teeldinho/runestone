@@ -1,22 +1,35 @@
+import { ChevronsUp, Footprints } from "lucide-react";
+
 import {
 	INPUT_POINTER_DATA_ATTRIBUTE_VALUES,
 	INPUT_POINTER_DATA_ATTRIBUTES,
 	POINTER_ROLES,
 } from "@/shared/config";
+import { Button } from "@/shared/ui";
 
+import { MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES } from "../config";
 import {
-	INPUT_EVENT_TYPES,
-	MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES,
-} from "../config";
-import type { InputOrchestratorEvent } from "../model";
+	type InputOrchestratorEvent,
+	useMobileActionButtonZoneModel,
+} from "../model";
 
 type MobileActionButtonZoneProps = {
+	readonly isJumpActive: boolean;
+	readonly isRunEnabled: boolean;
 	readonly sendInput: (event: InputOrchestratorEvent) => void;
 };
 
 export function MobileActionButtonZone({
+	isJumpActive,
+	isRunEnabled,
 	sendInput,
 }: MobileActionButtonZoneProps) {
+	const viewModel = useMobileActionButtonZoneModel({
+		isJumpActive,
+		isRunEnabled,
+		sendInput,
+	});
+
 	return (
 		<div
 			{...{
@@ -26,29 +39,37 @@ export function MobileActionButtonZone({
 			}}
 			className={MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.ROOT}
 		>
-			<button
+			<Button
 				type="button"
 				className={MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.BUTTON}
-				onPointerDown={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					sendInput({ type: INPUT_EVENT_TYPES.RUN_TOGGLED });
-				}}
+				size="icon"
+				variant={viewModel.runButtonVariant}
+				aria-label={viewModel.runAriaLabel}
+				aria-pressed={viewModel.runButtonPressed}
+				onPointerDown={viewModel.handleButtonPointerDown}
+				onClick={viewModel.handleRunClick}
 			>
-				Run
-			</button>
+				<Footprints
+					aria-hidden="true"
+					className={MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.ICON}
+				/>
+			</Button>
 
-			<button
+			<Button
 				type="button"
 				className={MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.BUTTON}
-				onPointerDown={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					sendInput({ type: INPUT_EVENT_TYPES.JUMP_PRESSED });
-				}}
+				size="icon"
+				variant={viewModel.jumpButtonVariant}
+				aria-label={viewModel.jumpAriaLabel}
+				aria-pressed={viewModel.jumpButtonPressed}
+				onPointerDown={viewModel.handleButtonPointerDown}
+				onClick={viewModel.handleJumpClick}
 			>
-				Jump
-			</button>
+				<ChevronsUp
+					aria-hidden="true"
+					className={MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.ICON}
+				/>
+			</Button>
 		</div>
 	);
 }

@@ -15,6 +15,9 @@ vi.mock("./useGamePageSliceContexts", () => ({
 }));
 
 const mockCanvasContext = {
+	cameraActorRef: {
+		send: vi.fn(),
+	} as unknown as ReturnType<typeof useGamePageCanvasContext>["cameraActorRef"],
 	cameraStateSnapshot: {
 		fov: 58,
 		mode: CAMERA_MODES.FREE_ORBITAL,

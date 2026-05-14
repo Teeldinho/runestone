@@ -9,14 +9,16 @@ import type { CameraRigOrbitBindings, CameraRigRefs } from "../model";
 type CameraRigThirdPersonControlsProps = {
 	orbitBindings: CameraRigOrbitBindings;
 	refs: CameraRigRefs;
-	isDesktopLayout: boolean;
 };
 
 export function CameraRigThirdPersonControls({
 	orbitBindings,
 	refs,
-	isDesktopLayout,
 }: CameraRigThirdPersonControlsProps) {
+	if (!orbitBindings.shouldRenderOrbitControls) {
+		return null;
+	}
+
 	return (
 		<OrbitControls
 			ref={refs.thirdPersonOrbitRef as React.RefObject<never>}
@@ -31,11 +33,7 @@ export function CameraRigThirdPersonControls({
 			touches={CAMERA_RIG_TOUCH_GESTURES.ORBIT}
 			onStart={orbitBindings.handleOrbitStart}
 			onEnd={orbitBindings.handleOrbitEnd}
-			domElement={
-				isDesktopLayout
-					? undefined
-					: (orbitBindings.cameraControlElement ?? undefined)
-			}
+			domElement={orbitBindings.domElement}
 		/>
 	);
 }

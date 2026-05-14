@@ -33,6 +33,10 @@ export const usePlayerPhysics = ({
 	isSprinting,
 }: UsePlayerPhysicsInput): UsePlayerPhysicsResult => {
 	const rigidBodyRef = useRef<RapierRigidBody>(null);
+	const groundedFrameCountRef = useRef<number>(
+		PLAYER_GROUNDING_CONFIG.GROUND_STABILITY_FRAME_COUNT,
+	);
+	const isGroundedRef = useRef(true);
 	const [isGrounded, setIsGrounded] = useState(true);
 
 	useFrame((_, delta) => {
@@ -52,9 +56,23 @@ export const usePlayerPhysics = ({
 		setPlayerPosition(current.x, current.y, current.z);
 
 		const currentLinvel = body.linvel();
-		const nextIsGrounded =
+		const isGroundedCandidate =
 			Math.abs(currentLinvel.y) <
 			PLAYER_GROUNDING_CONFIG.VERTICAL_VELOCITY_EPSILON;
+
+		if (isGroundedCandidate) {
+			groundedFrameCountRef.current += 1;
+		} else {
+			groundedFrameCountRef.current = 0;
+		}
+
+		const nextIsGrounded =
+			isGroundedCandidate &&
+			(isGroundedRef.current ||
+				groundedFrameCountRef.current >=
+					PLAYER_GROUNDING_CONFIG.GROUND_STABILITY_FRAME_COUNT);
+
+		isGroundedRef.current = nextIsGrounded;
 		setIsGrounded((previousIsGrounded) =>
 			previousIsGrounded === nextIsGrounded
 				? previousIsGrounded
