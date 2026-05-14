@@ -13,7 +13,9 @@ export {
 	CAMERA_LOOK_LIMITS,
 	CAMERA_MODE_IDS,
 	CAMERA_STATE_KEYS,
+	CAMERA_UP_VECTORS,
 	ORBIT_CONTROL_MODE_POLICY,
+	ORBIT_CONTROL_TOUCH_GESTURES,
 } from "./cameraControlConfig";
 export type { CameraEvent, CameraEventObject } from "./cameraEvents";
 export { CAMERA_EVENTS } from "./cameraEvents";

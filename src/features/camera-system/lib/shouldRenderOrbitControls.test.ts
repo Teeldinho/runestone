@@ -1,22 +1,34 @@
 import { describe, expect, it } from "vitest";
 
-import { CAMERA_MODE_IDS } from "../config";
 import { shouldRenderOrbitControls } from "./shouldRenderOrbitControls";
 
 describe("shouldRenderOrbitControls", () => {
-	it("returns false for first-person", () => {
-		expect(shouldRenderOrbitControls(CAMERA_MODE_IDS.FIRST_PERSON)).toBe(false);
+	it("returns true on desktop without a dedicated look element", () => {
+		expect(
+			shouldRenderOrbitControls({
+				cameraControlElement: null,
+				isDesktopLayout: true,
+			}),
+		).toBe(true);
 	});
 
-	it("returns true for third-person", () => {
-		expect(shouldRenderOrbitControls(CAMERA_MODE_IDS.THIRD_PERSON)).toBe(true);
+	it("returns false on mobile before the look surface exists", () => {
+		expect(
+			shouldRenderOrbitControls({
+				cameraControlElement: null,
+				isDesktopLayout: false,
+			}),
+		).toBe(false);
 	});
 
-	it("returns true for top-down", () => {
-		expect(shouldRenderOrbitControls(CAMERA_MODE_IDS.TOP_DOWN)).toBe(true);
-	});
+	it("returns true on mobile once the dedicated look surface exists", () => {
+		const cameraControlElement = {} as HTMLElement;
 
-	it("returns true for free-orbit", () => {
-		expect(shouldRenderOrbitControls(CAMERA_MODE_IDS.FREE_ORBIT)).toBe(true);
+		expect(
+			shouldRenderOrbitControls({
+				cameraControlElement,
+				isDesktopLayout: false,
+			}),
+		).toBe(true);
 	});
 });

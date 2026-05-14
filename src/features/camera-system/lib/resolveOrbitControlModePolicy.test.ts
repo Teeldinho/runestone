@@ -4,10 +4,10 @@ import { CAMERA_MODE_IDS } from "../config";
 import { resolveOrbitControlModePolicy } from "./resolveOrbitControlModePolicy";
 
 describe("resolveOrbitControlModePolicy", () => {
-	it("disables rotate/pan/zoom for first-person", () => {
+	it("enables rotate but disables pan and zoom for first-person", () => {
 		const policy = resolveOrbitControlModePolicy(CAMERA_MODE_IDS.FIRST_PERSON);
 
-		expect(policy.enableRotate).toBe(false);
+		expect(policy.enableRotate).toBe(true);
 		expect(policy.enablePan).toBe(false);
 		expect(policy.enableZoom).toBe(false);
 	});

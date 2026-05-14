@@ -1,4 +1,12 @@
-import { CAMERA_MODE_IDS, type CameraModeId } from "../config";
+type ShouldRenderOrbitControlsInput = {
+	readonly cameraControlElement?: HTMLElement | null;
+	readonly isDesktopLayout: boolean;
+};
 
-export const shouldRenderOrbitControls = (mode: CameraModeId): boolean =>
-	mode !== CAMERA_MODE_IDS.FIRST_PERSON;
+export const shouldRenderOrbitControls = ({
+	cameraControlElement,
+	isDesktopLayout,
+}: ShouldRenderOrbitControlsInput): boolean =>
+	isDesktopLayout || cameraControlElement != null;
+
+export type { ShouldRenderOrbitControlsInput };

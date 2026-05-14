@@ -1,12 +1,14 @@
 import { OrbitControls } from "@react-three/drei";
-import type { RefObject } from "react";
-import type { Group } from "three";
+import type { AnyActorRef } from "xstate";
 
-import type { CameraRuntimeSnapshot } from "../model/useRunestoneOrbitControls";
-import { useRunestoneOrbitControls } from "../model/useRunestoneOrbitControls";
+import {
+	type CameraRuntimeSnapshot,
+	useRunestoneOrbitControls,
+} from "../model/useRunestoneOrbitControls";
 
 type RunestoneOrbitControlsProps = {
-	readonly playerRef: RefObject<Group | null>;
+	readonly cameraActorRef: AnyActorRef;
+	readonly cameraControlElement?: HTMLElement | null;
 	readonly cameraSnapshot: CameraRuntimeSnapshot;
 };
 
@@ -29,6 +31,11 @@ export function RunestoneOrbitControls(props: RunestoneOrbitControlsProps) {
 			maxDistance={orbitControls.maxDistance}
 			minPolarAngle={orbitControls.minPolarAngle}
 			maxPolarAngle={orbitControls.maxPolarAngle}
+			touches={orbitControls.touches}
+			domElement={orbitControls.domElement}
+			onChange={orbitControls.onChange}
+			onStart={orbitControls.onStart}
+			onEnd={orbitControls.onEnd}
 		/>
 	);
 }

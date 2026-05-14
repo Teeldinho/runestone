@@ -40,6 +40,8 @@ type CameraRigFrameUpdateInput = {
 	isUserInteractingRef: MutableRefObject<boolean>;
 	lastTransition: LastTransition | null;
 	lookAtVectorRef: MutableRefObject<THREE.Vector3>;
+	smoothedFirstPersonPitchRef: MutableRefObject<number>;
+	smoothedFirstPersonYawRef: MutableRefObject<number>;
 	needsFirstPersonSyncRef: MutableRefObject<boolean>;
 	needsFreeOrbitalSyncRef: MutableRefObject<boolean>;
 	needsThirdPersonSyncRef: MutableRefObject<boolean>;
@@ -119,6 +121,8 @@ export const runCameraRigFrameUpdate = (
 			pointerLockRef: input.pointerLockRef,
 			position: targets.position,
 			positionVectorRef: input.positionVectorRef,
+			smoothedFirstPersonPitchRef: input.smoothedFirstPersonPitchRef,
+			smoothedFirstPersonYawRef: input.smoothedFirstPersonYawRef,
 			yaw: input.cameraStateSnapshot.yaw,
 		});
 	} else if (input.cameraStateSnapshot.mode === CAMERA_MODES.THIRD_PERSON) {

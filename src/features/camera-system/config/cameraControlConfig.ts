@@ -1,4 +1,5 @@
 import { CAMERA_MODES } from "@/shared/config";
+import type { Vector3Tuple } from "@/shared/lib";
 
 export { CAMERA_EVENT_TYPES } from "@/shared/config";
 
@@ -30,12 +31,18 @@ export const CAMERA_LIMITS = {
 	FREE_ORBIT_MIN_POLAR_ANGLE: Math.PI * 0.12,
 	FREE_ORBIT_MAX_POLAR_ANGLE: Math.PI * 0.82,
 
+	FIRST_PERSON_MIN_POLAR_ANGLE: Math.PI / 2 - 1.35,
+	FIRST_PERSON_MAX_POLAR_ANGLE: Math.PI / 2 + 1.35,
+	FIRST_PERSON_ORBIT_DISTANCE: 1,
+
 	TOP_DOWN_POLAR_ANGLE: Math.PI * 0.08,
 
 	MIN_DISTANCE: 3.5,
 	MAX_DISTANCE: 12,
 	DEFAULT_DISTANCE: 6,
 	ZOOM_STEP: 0.6,
+	FOV_EPSILON: 0.01,
+	ORBIT_CONTROLS_DIFF_EPSILON: 0.0001,
 } as const;
 
 export const CAMERA_LOOK_LIMITS = {
@@ -62,7 +69,7 @@ export const ORBIT_CONTROL_MODE_POLICY = {
 		enableZoom: true,
 	},
 	[CAMERA_MODE_IDS.FIRST_PERSON]: {
-		enableRotate: false,
+		enableRotate: true,
 		enablePan: false,
 		enableZoom: false,
 	},
@@ -71,4 +78,28 @@ export const ORBIT_CONTROL_MODE_POLICY = {
 		enablePan: true,
 		enableZoom: true,
 	},
+} as const;
+
+export const ORBIT_CONTROL_TOUCH_GESTURES = {
+	[CAMERA_MODE_IDS.THIRD_PERSON]: {
+		ONE: 0,
+		TWO: 2,
+	},
+	[CAMERA_MODE_IDS.TOP_DOWN]: {
+		ONE: 1,
+		TWO: 2,
+	},
+	[CAMERA_MODE_IDS.FIRST_PERSON]: {
+		ONE: 0,
+		TWO: 2,
+	},
+	[CAMERA_MODE_IDS.FREE_ORBIT]: {
+		ONE: 0,
+		TWO: 2,
+	},
+} as const;
+
+export const CAMERA_UP_VECTORS = {
+	DEFAULT: [0, 1, 0] as Vector3Tuple,
+	TOP_DOWN: [0, 0, 1] as Vector3Tuple,
 } as const;

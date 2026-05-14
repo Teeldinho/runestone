@@ -17,6 +17,7 @@ import type {
 	PointerLockControlsHandle,
 } from "./cameraRigFrameUpdate";
 import { getThirdPersonTransitionTargets } from "./cameraRigTargets";
+import { resolveFirstPersonMobileLookAngles } from "./resolveFirstPersonMobileLookAngles";
 
 type ApplyTopDownFrameInput = {
 	camera: THREE.Camera;
@@ -33,11 +34,13 @@ type ApplyFirstPersonFrameInput = {
 	firstPersonOrbitRef: RefObject<OrbitControlsHandle | null>;
 	firstPersonTargetVectorRef: MutableRefObject<THREE.Vector3>;
 	isDesktopLayout: boolean;
-	needsFirstPersonSyncRef: MutableRefObject<boolean>;
+	needsFirstPersonSyncRef?: MutableRefObject<boolean>;
 	pitch: number;
 	pointerLockRef: RefObject<PointerLockControlsHandle | null>;
 	position: Vector3Tuple;
 	positionVectorRef: MutableRefObject<THREE.Vector3>;
+	smoothedFirstPersonPitchRef?: MutableRefObject<number>;
+	smoothedFirstPersonYawRef?: MutableRefObject<number>;
 	yaw: number;
 };
 
@@ -168,19 +171,56 @@ export const applyTopDownFrame = ({
 
 const applyFirstPersonMobileLookFrame = ({
 	camera,
+	needsFirstPersonSyncRef,
 	pitch,
 	position,
+	smoothedFirstPersonPitchRef,
+	smoothedFirstPersonYawRef,
 	yaw,
 }: {
 	readonly camera: THREE.Camera;
+	readonly needsFirstPersonSyncRef: MutableRefObject<boolean>;
 	readonly pitch: number;
 	readonly position: Vector3Tuple;
+	readonly smoothedFirstPersonPitchRef?: MutableRefObject<number>;
+	readonly smoothedFirstPersonYawRef?: MutableRefObject<number>;
 	readonly yaw: number;
 }): void => {
 	camera.position.set(...position);
+
+	if (
+		!smoothedFirstPersonPitchRef ||
+		!smoothedFirstPersonYawRef ||
+		needsFirstPersonSyncRef.current
+	) {
+		if (smoothedFirstPersonPitchRef && smoothedFirstPersonYawRef) {
+			smoothedFirstPersonPitchRef.current = pitch;
+			smoothedFirstPersonYawRef.current = yaw;
+		}
+
+		needsFirstPersonSyncRef.current = false;
+		camera.rotation.set(
+			pitch,
+			yaw,
+			0,
+			CAMERA_RIG_EULER_ORDERS.FIRST_PERSON_MOBILE,
+		);
+		return;
+	}
+
+	const smoothedFirstPersonLookAngles = resolveFirstPersonMobileLookAngles({
+		currentPitch: smoothedFirstPersonPitchRef.current,
+		currentYaw: smoothedFirstPersonYawRef.current,
+		targetPitch: pitch,
+		targetYaw: yaw,
+	});
+
+	smoothedFirstPersonPitchRef.current = smoothedFirstPersonLookAngles.pitch;
+	smoothedFirstPersonYawRef.current = smoothedFirstPersonLookAngles.yaw;
+
 	camera.rotation.set(
-		pitch,
-		yaw,
+		smoothedFirstPersonLookAngles.pitch,
+		smoothedFirstPersonLookAngles.yaw,
 		0,
 		CAMERA_RIG_EULER_ORDERS.FIRST_PERSON_MOBILE,
 	);
@@ -190,19 +230,28 @@ export const applyFirstPersonFrame = ({
 	camera,
 	flags,
 	isDesktopLayout,
+	needsFirstPersonSyncRef,
 	pitch,
 	pointerLockRef,
 	position,
 	positionVectorRef,
+	smoothedFirstPersonPitchRef,
+	smoothedFirstPersonYawRef,
 	yaw,
 }: ApplyFirstPersonFrameInput): void => {
 	setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
+	const resolvedNeedsFirstPersonSyncRef = needsFirstPersonSyncRef ?? {
+		current: false,
+	};
 
 	if (!isDesktopLayout) {
 		applyFirstPersonMobileLookFrame({
 			camera,
+			needsFirstPersonSyncRef: resolvedNeedsFirstPersonSyncRef,
 			pitch,
 			position,
+			smoothedFirstPersonPitchRef,
+			smoothedFirstPersonYawRef,
 			yaw,
 		});
 		return;

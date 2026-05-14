@@ -32,6 +32,12 @@ describe("useCameraRigRuntimeState", () => {
 		expect(result.current.syncFlags.needsFirstPersonSyncRef.current).toBe(
 			false,
 		);
+		expect(result.current.lookSmoothing.smoothedFirstPersonYawRef.current).toBe(
+			0,
+		);
+		expect(
+			result.current.lookSmoothing.smoothedFirstPersonPitchRef.current,
+		).toBe(0);
 		expect(result.current.interaction.isUserInteractingRef.current).toBe(false);
 		expect(result.current.previousTrackedPlayerPositionRef.current).toBeNull();
 	});

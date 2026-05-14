@@ -3,6 +3,7 @@ import { createActor } from "xstate";
 
 import { CAMERA_DEFAULT_MODE, CAMERA_MODES } from "../config/cameraConfig";
 import { CAMERA_EVENT_TYPES } from "../config/cameraControlConfig";
+import { resolveCameraModeDistance } from "../lib";
 import { createCameraMachine } from "./cameraMachine";
 
 describe("cameraMachine", () => {
@@ -20,6 +21,9 @@ describe("cameraMachine", () => {
 		actor.send({ type: "SWITCH_TO_THIRD_PERSON" });
 
 		expect(actor.getSnapshot().value).toBe(CAMERA_MODES.THIRD_PERSON);
+		expect(actor.getSnapshot().context.distance).toBe(
+			resolveCameraModeDistance(CAMERA_MODES.THIRD_PERSON),
+		);
 	});
 
 	it("transitions to topDown on SWITCH_TO_TOP_DOWN event", () => {
@@ -29,6 +33,9 @@ describe("cameraMachine", () => {
 		actor.send({ type: "SWITCH_TO_TOP_DOWN" });
 
 		expect(actor.getSnapshot().value).toBe(CAMERA_MODES.TOP_DOWN);
+		expect(actor.getSnapshot().context.distance).toBe(
+			resolveCameraModeDistance(CAMERA_MODES.TOP_DOWN),
+		);
 	});
 
 	it("transitions to firstPerson on SWITCH_TO_FIRST_PERSON event", () => {
@@ -38,6 +45,9 @@ describe("cameraMachine", () => {
 		actor.send({ type: "SWITCH_TO_FIRST_PERSON" });
 
 		expect(actor.getSnapshot().value).toBe(CAMERA_MODES.FIRST_PERSON);
+		expect(actor.getSnapshot().context.distance).toBe(
+			resolveCameraModeDistance(CAMERA_MODES.FIRST_PERSON),
+		);
 	});
 
 	it("transitions to freeOrbital on SWITCH_TO_FREE_ORBITAL event", () => {
@@ -51,6 +61,9 @@ describe("cameraMachine", () => {
 		// Then switch back to freeOrbital
 		actor.send({ type: "SWITCH_TO_FREE_ORBITAL" });
 		expect(actor.getSnapshot().value).toBe(CAMERA_MODES.FREE_ORBITAL);
+		expect(actor.getSnapshot().context.distance).toBe(
+			resolveCameraModeDistance(CAMERA_MODES.FREE_ORBITAL),
+		);
 	});
 
 	it("supports hotkey events for mode switching", () => {

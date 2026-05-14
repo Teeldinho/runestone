@@ -22,6 +22,13 @@ export const resolveCameraPolarLimits = (
 		};
 	}
 
+	if (mode === CAMERA_MODE_IDS.FIRST_PERSON) {
+		return {
+			minPolarAngle: CAMERA_LIMITS.FIRST_PERSON_MIN_POLAR_ANGLE,
+			maxPolarAngle: CAMERA_LIMITS.FIRST_PERSON_MAX_POLAR_ANGLE,
+		};
+	}
+
 	return {
 		minPolarAngle: CAMERA_LIMITS.THIRD_PERSON_MIN_POLAR_ANGLE,
 		maxPolarAngle: CAMERA_LIMITS.THIRD_PERSON_MAX_POLAR_ANGLE,

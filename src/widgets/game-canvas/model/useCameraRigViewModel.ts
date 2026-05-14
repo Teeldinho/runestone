@@ -33,6 +33,7 @@ export const useCameraRigViewModel = ({
 	const {
 		interaction,
 		isDesktopLayout,
+		lookSmoothing,
 		previousModeRef,
 		previousTrackedPlayerPositionRef,
 		refs,
@@ -77,6 +78,8 @@ export const useCameraRigViewModel = ({
 		positionVectorRef: vectors.positionVectorRef,
 		previousModeRef,
 		previousTrackedPlayerPositionRef,
+		smoothedFirstPersonPitchRef: lookSmoothing.smoothedFirstPersonPitchRef,
+		smoothedFirstPersonYawRef: lookSmoothing.smoothedFirstPersonYawRef,
 		thirdPersonOrbitRef: refs.thirdPersonOrbitRef,
 		topDownOrbitRef: refs.topDownOrbitRef,
 	});

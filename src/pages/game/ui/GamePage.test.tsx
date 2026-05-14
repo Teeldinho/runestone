@@ -156,13 +156,12 @@ vi.mock("@/pages/game/model", () => {
 		useGamePageCameraElements: () => ({
 			cameraControlElement: null,
 			cameraControlRef: vi.fn(),
-			firstPersonLookElement: null,
-			firstPersonLookRef: vi.fn(),
 		}),
 		useGamePageDesktopLayoutModel: () => {
 			const viewModel = useGamePage();
 
 			return {
+				cameraActorRef: viewModel.canvas.cameraActorRef,
 				cameraStateSnapshot: viewModel.canvas.cameraStateSnapshot,
 				canvasMachineRuntime: viewModel.canvas.canvasMachineRuntime,
 				currentRoomLabel: viewModel.hud.currentRoomLabel,
@@ -219,6 +218,7 @@ vi.mock("@/pages/game/model", () => {
 			const viewModel = useGamePage();
 
 			return {
+				cameraActorRef: viewModel.canvas.cameraActorRef,
 				cameraStateSnapshot: viewModel.canvas.cameraStateSnapshot,
 				canvasMachineRuntime: viewModel.canvas.canvasMachineRuntime,
 				postprocessingEnabled: true,

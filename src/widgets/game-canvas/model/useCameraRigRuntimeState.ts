@@ -26,6 +26,8 @@ export const useCameraRigRuntimeState = (): CameraRigRuntimeState => {
 	const lookAtVectorRef = useRef(new THREE.Vector3());
 	const positionVectorRef = useRef(new THREE.Vector3());
 	const firstPersonTargetVectorRef = useRef(new THREE.Vector3());
+	const smoothedFirstPersonYawRef = useRef(0);
+	const smoothedFirstPersonPitchRef = useRef(0);
 	const { isDesktopLayout } = useResponsiveGameLayout();
 
 	return {
@@ -33,6 +35,10 @@ export const useCameraRigRuntimeState = (): CameraRigRuntimeState => {
 			isUserInteractingRef,
 		},
 		isDesktopLayout,
+		lookSmoothing: {
+			smoothedFirstPersonPitchRef,
+			smoothedFirstPersonYawRef,
+		},
 		previousModeRef,
 		previousTrackedPlayerPositionRef,
 		refs: {

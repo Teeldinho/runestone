@@ -18,6 +18,17 @@ describe("resolveCameraPolarLimits", () => {
 		expect(limits.maxPolarAngle).toBe(CAMERA_LIMITS.FREE_ORBIT_MAX_POLAR_ANGLE);
 	});
 
+	it("returns first-person limits for first-person mode", () => {
+		const limits = resolveCameraPolarLimits(CAMERA_MODE_IDS.FIRST_PERSON);
+
+		expect(limits.minPolarAngle).toBe(
+			CAMERA_LIMITS.FIRST_PERSON_MIN_POLAR_ANGLE,
+		);
+		expect(limits.maxPolarAngle).toBe(
+			CAMERA_LIMITS.FIRST_PERSON_MAX_POLAR_ANGLE,
+		);
+	});
+
 	it("returns third-person limits as default", () => {
 		const limits = resolveCameraPolarLimits(CAMERA_MODE_IDS.THIRD_PERSON);
 

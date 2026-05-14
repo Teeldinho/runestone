@@ -36,6 +36,10 @@ type CameraRigRuntimeState = {
 		isUserInteractingRef: MutableRefObject<boolean>;
 	};
 	isDesktopLayout: boolean;
+	lookSmoothing: {
+		smoothedFirstPersonPitchRef: MutableRefObject<number>;
+		smoothedFirstPersonYawRef: MutableRefObject<number>;
+	};
 	previousModeRef: MutableRefObject<string | undefined>;
 	previousTrackedPlayerPositionRef: MutableRefObject<Vector3Tuple | null>;
 	refs: CameraRigRefs;

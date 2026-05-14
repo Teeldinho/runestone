@@ -9,8 +9,6 @@ vi.mock("@/pages/game/model", () => ({
 	useGamePageCameraElements: () => ({
 		cameraControlElement: null,
 		cameraControlRef: vi.fn(),
-		firstPersonLookElement: null,
-		firstPersonLookRef: vi.fn(),
 	}),
 	useGamePageInputOrchestrator: () => ({
 		sendInput: vi.fn(),
@@ -35,6 +33,7 @@ vi.mock("@/pages/game/model", () => ({
 		onLookPointerCancel: undefined,
 	}),
 	useGamePageMobileCanvasStageModel: () => ({
+		cameraActorRef: { send: vi.fn() },
 		cameraStateSnapshot: {
 			fov: 58,
 			mode: CAMERA_MODES.FREE_ORBITAL,

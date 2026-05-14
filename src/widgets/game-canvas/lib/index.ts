@@ -44,6 +44,7 @@ export {
 	type CameraRigOrbitControlSurface,
 	resolveCameraRigOrbitControlSurface,
 } from "./resolveCameraRigOrbitControlSurface";
+export { resolveFirstPersonMobileLookAngles } from "./resolveFirstPersonMobileLookAngles";
 export type {
 	EnemyMeshSettings,
 	SceneRoomMeshSettings,

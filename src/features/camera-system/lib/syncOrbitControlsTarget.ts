@@ -1,15 +1,16 @@
-import type { Group, Vector3 } from "three";
+import type { Vector3 } from "three";
+import type { Vector3Tuple } from "@/shared/lib";
 
 type SyncOrbitControlsTargetInput = {
 	readonly controls: {
 		readonly target: Vector3;
 	};
-	readonly targetObject: Group;
+	readonly target: Vector3Tuple;
 };
 
 export const syncOrbitControlsTarget = ({
 	controls,
-	targetObject,
+	target,
 }: SyncOrbitControlsTargetInput): void => {
-	controls.target.copy(targetObject.position);
+	controls.target.set(...target);
 };

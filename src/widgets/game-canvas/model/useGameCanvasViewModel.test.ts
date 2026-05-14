@@ -33,7 +33,6 @@ const mockUseGameOverState = vi.fn(() => ({
 const mockUseAchievementTracker = vi.fn(() => ({
 	activeAchievement: null,
 }));
-const mockUseFirstPersonLockHint = vi.fn((_value?: unknown) => false);
 
 vi.mock("./useCanvasMachineSettings", () => ({
 	useCanvasMachineSettings: (
@@ -62,10 +61,6 @@ vi.mock("./useGameOverState", () => ({
 
 vi.mock("./useAchievementTracker", () => ({
 	useAchievementTracker: () => mockUseAchievementTracker(),
-}));
-
-vi.mock("./useFirstPersonLockHint", () => ({
-	useFirstPersonLockHint: (value: unknown) => mockUseFirstPersonLockHint(value),
 }));
 
 describe("useGameCanvasViewModel", () => {
@@ -101,7 +96,6 @@ describe("useGameCanvasViewModel", () => {
 
 		expect(result.current.canvasSettings.camera.fov).toBe(58);
 		expect(result.current.isGameOver).toBe(false);
-		expect(result.current.showFirstPersonLockHint).toBe(false);
 		expect(result.current.activeAchievement).toBeNull();
 	});
 
@@ -136,9 +130,6 @@ describe("useGameCanvasViewModel", () => {
 			cameraStateSnapshot,
 			true,
 		);
-		expect(mockUseFirstPersonLockHint).toHaveBeenCalledWith({
-			mode: CAMERA_MODES.TOP_DOWN,
-		});
 		expect(mockUsePlayerSceneController).toHaveBeenCalledTimes(1);
 		expect(mockUseGameSideEffects).toHaveBeenCalledTimes(1);
 	});

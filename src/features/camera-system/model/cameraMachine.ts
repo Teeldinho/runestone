@@ -11,7 +11,11 @@ import {
 	CAMERA_LOOK_LIMITS,
 	CAMERA_MACHINE_ID,
 } from "../config";
-import { clampCameraDistance, resolveNextCameraLookAngles } from "../lib";
+import {
+	clampCameraDistance,
+	resolveCameraModeDistance,
+	resolveNextCameraLookAngles,
+} from "../lib";
 
 const CAMERA_HOTKEY_VALUES = [
 	CAMERA_HOTKEYS.THIRD_PERSON,
@@ -102,21 +106,33 @@ export const createCameraMachine = () =>
 			orbitTarget: [0, 0, 0],
 			lookDelta: { x: 0, y: 0 },
 			zoomDelta: 0,
-			distance: CAMERA_LIMITS.DEFAULT_DISTANCE,
+			distance: resolveCameraModeDistance(CAMERA_DEFAULT_MODE),
 			yaw: CAMERA_LOOK_LIMITS.DEFAULT_YAW,
 			pitch: CAMERA_LOOK_LIMITS.DEFAULT_PITCH,
 		},
 		on: {
 			[CAMERA_EVENT_TYPES.SWITCH_TO_THIRD_PERSON]: {
+				actions: assign({
+					distance: () => resolveCameraModeDistance(CAMERA_MODES.THIRD_PERSON),
+				}),
 				target: `.${CAMERA_MODES.THIRD_PERSON}`,
 			},
 			[CAMERA_EVENT_TYPES.SWITCH_TO_TOP_DOWN]: {
+				actions: assign({
+					distance: () => resolveCameraModeDistance(CAMERA_MODES.TOP_DOWN),
+				}),
 				target: `.${CAMERA_MODES.TOP_DOWN}`,
 			},
 			[CAMERA_EVENT_TYPES.SWITCH_TO_FIRST_PERSON]: {
+				actions: assign({
+					distance: () => resolveCameraModeDistance(CAMERA_MODES.FIRST_PERSON),
+				}),
 				target: `.${CAMERA_MODES.FIRST_PERSON}`,
 			},
 			[CAMERA_EVENT_TYPES.SWITCH_TO_FREE_ORBITAL]: {
+				actions: assign({
+					distance: () => resolveCameraModeDistance(CAMERA_MODES.FREE_ORBITAL),
+				}),
 				target: `.${CAMERA_MODES.FREE_ORBITAL}`,
 			},
 			[CAMERA_EVENT_TYPES.LOOK_CHANGED]: {
@@ -131,18 +147,33 @@ export const createCameraMachine = () =>
 			[CAMERA_EVENT_TYPES.HOTKEY]: [
 				{
 					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.THIRD_PERSON,
+					actions: assign({
+						distance: () =>
+							resolveCameraModeDistance(CAMERA_MODES.THIRD_PERSON),
+					}),
 					target: `.${CAMERA_MODES.THIRD_PERSON}`,
 				},
 				{
 					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.TOP_DOWN,
+					actions: assign({
+						distance: () => resolveCameraModeDistance(CAMERA_MODES.TOP_DOWN),
+					}),
 					target: `.${CAMERA_MODES.TOP_DOWN}`,
 				},
 				{
 					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.FIRST_PERSON,
+					actions: assign({
+						distance: () =>
+							resolveCameraModeDistance(CAMERA_MODES.FIRST_PERSON),
+					}),
 					target: `.${CAMERA_MODES.FIRST_PERSON}`,
 				},
 				{
 					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.FREE_ORBITAL,
+					actions: assign({
+						distance: () =>
+							resolveCameraModeDistance(CAMERA_MODES.FREE_ORBITAL),
+					}),
 					target: `.${CAMERA_MODES.FREE_ORBITAL}`,
 				},
 			],
