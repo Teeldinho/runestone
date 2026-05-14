@@ -3,7 +3,6 @@ import { CameraControlZone, TouchJoystickZone } from "@/features/touch-input";
 import {
 	useGamePageCameraElements,
 	useGamePageInputOrchestrator,
-	useGamePageMobileCameraControlHandlers,
 	useGamePageMobileCanvasStageModel,
 } from "@/pages/game/model";
 import { GameCanvas } from "@/widgets/game-canvas";
@@ -15,10 +14,6 @@ export function GamePageMobileCanvasStage() {
 	const cameraElements = useGamePageCameraElements();
 	const viewModel = useGamePageMobileCanvasStageModel();
 	const input = useGamePageInputOrchestrator();
-	const cameraControlHandlers = useGamePageMobileCameraControlHandlers({
-		cameraStateSnapshot: viewModel.cameraStateSnapshot,
-		touchLook: input.touchLook,
-	});
 
 	return (
 		<section
@@ -31,9 +26,9 @@ export function GamePageMobileCanvasStage() {
 
 			<div className="h-full w-full cursor-grab">
 				<GameCanvas
+					cameraActorRef={viewModel.cameraActorRef}
 					cameraControlElement={cameraElements.cameraControlElement}
 					cameraStateSnapshot={viewModel.cameraStateSnapshot}
-					firstPersonLookElement={cameraElements.firstPersonLookElement}
 					machineRuntime={viewModel.canvasMachineRuntime}
 					postprocessingEnabled={viewModel.postprocessingEnabled}
 				/>
@@ -41,13 +36,7 @@ export function GamePageMobileCanvasStage() {
 
 			<GamePageMobileTopBar />
 
-			<CameraControlZone
-				zoneRef={cameraElements.cameraControlRef}
-				onLookPointerDown={cameraControlHandlers.onLookPointerDown}
-				onLookPointerMove={cameraControlHandlers.onLookPointerMove}
-				onLookPointerUp={cameraControlHandlers.onLookPointerUp}
-				onLookPointerCancel={cameraControlHandlers.onLookPointerCancel}
-			/>
+			<CameraControlZone zoneRef={cameraElements.cameraControlRef} />
 
 			<div className="pointer-events-none absolute bottom-4 left-4 z-30">
 				<div className="pointer-events-auto">

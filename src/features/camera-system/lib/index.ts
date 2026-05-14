@@ -6,6 +6,7 @@ export * from "./clampCameraPitch";
 export * from "./resolveCameraAzimuth";
 export * from "./resolveCameraModeDistance";
 export * from "./resolveCameraPolarLimits";
+export * from "./resolveMovementAzimuthFromCameraSnapshot";
 export * from "./resolveNextCameraLookAngles";
 export * from "./resolveOrbitControlDistanceLimits";
 export * from "./resolveOrbitControlModePolicy";

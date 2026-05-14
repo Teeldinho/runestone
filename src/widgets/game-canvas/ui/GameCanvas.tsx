@@ -1,5 +1,6 @@
 import { AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import type { AnyActorRef } from "xstate";
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { GAME_CANVAS_COPY } from "../config";
 import {
@@ -14,31 +15,26 @@ import { GameCanvasOverlays } from "./GameCanvasOverlays";
 import { GameCanvasSceneContent } from "./GameCanvasSceneContent";
 
 type GameCanvasProps = {
+	cameraActorRef: AnyActorRef;
 	cameraControlElement?: HTMLElement | null;
-	cameraStateSnapshot?: CameraStateSnapshot;
-	firstPersonLookElement?: HTMLElement | null;
+	cameraStateSnapshot: CameraStateSnapshot;
 	machineRuntime: CanvasMachineRuntime;
 	postprocessingEnabled: boolean;
 };
 
 export function GameCanvas({
+	cameraActorRef,
 	cameraControlElement,
 	cameraStateSnapshot,
-	firstPersonLookElement,
 	machineRuntime,
 	postprocessingEnabled,
 }: GameCanvasProps) {
-	const {
-		canvasSettings,
-		activeAchievement,
-		handleGameRestart,
-		isGameOver,
-		showFirstPersonLockHint,
-	} = useGameCanvasViewModel({
-		cameraStateSnapshot,
-		machineRuntime,
-		postprocessingEnabled,
-	});
+	const { canvasSettings, activeAchievement, handleGameRestart, isGameOver } =
+		useGameCanvasViewModel({
+			cameraStateSnapshot,
+			machineRuntime,
+			postprocessingEnabled,
+		});
 	const { handleSceneReady, isSceneLoading } = useGameCanvasSceneLoading();
 	const {
 		camera,
@@ -58,7 +54,6 @@ export function GameCanvas({
 				activeAchievement={activeAchievement}
 				handleGameRestart={handleGameRestart}
 				isGameOver={isGameOver}
-				showFirstPersonLockHint={showFirstPersonLockHint}
 			/>
 			<Canvas
 				className="h-full w-full touch-none"
@@ -77,10 +72,9 @@ export function GameCanvas({
 				<PerformanceMonitor />
 				<AdaptiveDpr pixelated />
 				<CameraRig
+					cameraActorRef={cameraActorRef}
 					cameraControlElement={cameraControlElement}
-					cameraStateSnapshot={cameraStateSnapshot}
-					firstPersonLookElement={firstPersonLookElement}
-					playerSpawnPosition={playerSpawnPosition}
+					cameraSnapshot={cameraStateSnapshot}
 				/>
 				<GameCanvasSceneContent
 					environment={environment}

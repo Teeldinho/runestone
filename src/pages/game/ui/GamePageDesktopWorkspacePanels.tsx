@@ -11,6 +11,7 @@ import { GamePageHudPanel } from "./GamePageHudPanel";
 
 export function GamePageDesktopWorkspacePanels() {
 	const {
+		cameraActorRef,
 		cameraStateSnapshot,
 		canvasMachineRuntime,
 		graphSections,
@@ -39,6 +40,7 @@ export function GamePageDesktopWorkspacePanels() {
 
 					<div className="min-h-0 flex-1 cursor-grab">
 						<GameCanvas
+							cameraActorRef={cameraActorRef}
 							cameraStateSnapshot={cameraStateSnapshot}
 							machineRuntime={canvasMachineRuntime}
 							postprocessingEnabled={postprocessingEnabled}

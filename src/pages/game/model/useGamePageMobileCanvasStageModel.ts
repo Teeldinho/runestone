@@ -7,6 +7,7 @@ export const useGamePageMobileCanvasStageModel = () => {
 	const { postprocessingEnabled } = useSettingsValues();
 
 	return {
+		cameraActorRef: canvas.cameraActorRef,
 		cameraStateSnapshot: canvas.cameraStateSnapshot,
 		canvasMachineRuntime: canvas.canvasMachineRuntime,
 		postprocessingEnabled,

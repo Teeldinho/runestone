@@ -20,8 +20,8 @@ import {
 	ORBIT_CONTROL_TOUCH_GESTURES,
 } from "../config";
 import {
-	resolveCameraAzimuth,
 	resolveCameraPolarLimits,
+	resolveMovementAzimuthFromCameraSnapshot,
 	resolveOrbitControlDistanceLimits,
 	resolveOrbitControlModePolicy,
 	resolveOrbitControlsCameraPosition,
@@ -84,7 +84,6 @@ export const useRunestoneOrbitControls = ({
 		pitch: cameraSnapshot.pitch,
 		yaw: cameraSnapshot.yaw,
 	});
-	const directionRef = useRef(new THREE.Vector3());
 	const { camera } = useThree();
 	const { isDesktopLayout } = useResponsiveLayout();
 	const shouldRender = shouldRenderOrbitControls({
@@ -215,15 +214,7 @@ export const useRunestoneOrbitControls = ({
 			});
 		}
 
-		camera.getWorldDirection(directionRef.current);
-		const nextAzimuth = resolveCameraAzimuth({
-			mode: cameraSnapshot.mode,
-			direction: directionRef.current,
-		});
-
-		if (nextAzimuth !== null) {
-			setCameraAzimuth(nextAzimuth);
-		}
+		setCameraAzimuth(resolveMovementAzimuthFromCameraSnapshot(cameraSnapshot));
 	}, -2);
 
 	return {

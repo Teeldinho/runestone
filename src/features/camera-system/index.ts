@@ -28,6 +28,7 @@ export {
 	resolveCameraAzimuth,
 	resolveCameraModeDistance,
 	resolveCameraPolarLimits,
+	resolveMovementAzimuthFromCameraSnapshot,
 	resolveOrbitControlDistanceLimits,
 	resolveOrbitControlModePolicy,
 	resolveOrbitControlsCameraPosition,
