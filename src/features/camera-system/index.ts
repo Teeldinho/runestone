@@ -29,6 +29,7 @@ export {
 
 export {
 	areVector3TuplesApproximatelyEqual,
+	clampCameraControlsPolarAngle,
 	createCameraStateSnapshot,
 	getCameraModeFromEvent,
 	isCameraHotkey,
@@ -36,8 +37,10 @@ export {
 	resolveCameraControlsInputBindings,
 	resolveCameraControlsModePolicy,
 	resolveCameraControlsModePose,
+	resolveCameraControlsTransitionAngles,
 	resolveCameraControlsUpAxisKey,
 	resolveCameraControlsUpVector,
+	resolveCameraControlsWorldFacingAzimuth,
 	resolveMovementAzimuthFromCameraControls,
 	shouldRenderCameraControls,
 } from "./lib";

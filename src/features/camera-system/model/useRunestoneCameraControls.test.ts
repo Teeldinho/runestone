@@ -5,7 +5,11 @@ import type CameraControlsImpl from "camera-controls";
 import * as THREE from "three";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CAMERA_CONFIG, PLAYER_EYE_HEIGHT } from "@/shared/config";
-import { CAMERA_MODES, type CameraMode } from "../config";
+import {
+	CAMERA_CONTROLS_TOP_DOWN_AZIMUTH,
+	CAMERA_MODES,
+	type CameraMode,
+} from "../config";
 import {
 	type CameraRuntimeSnapshot,
 	useRunestoneCameraControls,
@@ -43,8 +47,10 @@ vi.mock("@/shared/lib", async (importOriginal) => {
 
 type MockCameraControls = {
 	azimuthAngle: number;
+	polarAngle: number;
 	moveTo: ReturnType<typeof vi.fn>;
 	normalizeRotations: ReturnType<typeof vi.fn>;
+	rotateTo: ReturnType<typeof vi.fn>;
 	setLookAt: ReturnType<typeof vi.fn>;
 };
 
@@ -65,15 +71,21 @@ const createCameraSnapshot = (
 });
 
 describe("useRunestoneCameraControls", () => {
-	const createControls = (azimuthAngle = 0.75): MockCameraControls => {
+	const createControls = (
+		azimuthAngle = 0.75,
+		polarAngle = 0.85,
+	): MockCameraControls => {
 		const controls = {
 			azimuthAngle,
+			polarAngle,
 			moveTo: vi.fn(),
 			normalizeRotations: vi.fn(),
+			rotateTo: vi.fn(),
 			setLookAt: vi.fn(),
 		} as MockCameraControls;
 
 		controls.normalizeRotations.mockReturnValue(controls);
+		controls.rotateTo.mockReturnValue(controls);
 		controls.setLookAt.mockReturnValue(controls);
 
 		return controls;
@@ -88,7 +100,7 @@ describe("useRunestoneCameraControls", () => {
 		mockIsDesktopLayout.mockReturnValue(true);
 	});
 
-	it("sets look-at on mode change and mirrors the current azimuth", () => {
+	it("uses the destination preset on initial mount", () => {
 		const { result } = renderHook(() =>
 			useRunestoneCameraControls({
 				cameraSnapshot: createCameraSnapshot(
@@ -118,8 +130,137 @@ describe("useRunestoneCameraControls", () => {
 			0,
 			false,
 		);
+		expect(controls.rotateTo).not.toHaveBeenCalled();
 		expect(controls.moveTo).not.toHaveBeenCalled();
 		expect(mockSetCameraAzimuth).toHaveBeenCalledWith(0.45 + Math.PI);
+	});
+
+	it("preserves the last world-facing heading when switching between non-top-down modes", () => {
+		type RenderHookProps = {
+			cameraSnapshot: CameraRuntimeSnapshot;
+		};
+
+		const { result, rerender } = renderHook<
+			ReturnType<typeof useRunestoneCameraControls>,
+			RenderHookProps
+		>(
+			({ cameraSnapshot }: RenderHookProps) =>
+				useRunestoneCameraControls({
+					cameraSnapshot,
+				}),
+			{
+				initialProps: {
+					cameraSnapshot: createCameraSnapshot(
+						CAMERA_MODES.THIRD_PERSON,
+						CAMERA_CONFIG.THIRD_PERSON.FOV,
+						CAMERA_CONFIG.THIRD_PERSON.OFFSET,
+						[0, PLAYER_EYE_HEIGHT, 0],
+					),
+				},
+			},
+		);
+
+		const controls = createControls(0.45, 0.82);
+		result.current.controlsRef.current =
+			controls as unknown as CameraControlsImpl;
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		rerender({
+			cameraSnapshot: createCameraSnapshot(
+				CAMERA_MODES.FREE_ORBITAL,
+				CAMERA_CONFIG.FREE_ORBITAL.FOV,
+				CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION,
+				[0, 0, 0],
+			),
+		});
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(controls.rotateTo).toHaveBeenCalledWith(
+			expect.closeTo(0.45, 6),
+			0.82,
+			false,
+		);
+	});
+
+	it("keeps the last non-top-down look memory when entering and leaving top-down", () => {
+		type RenderHookProps = {
+			cameraSnapshot: CameraRuntimeSnapshot;
+		};
+
+		const { result, rerender } = renderHook<
+			ReturnType<typeof useRunestoneCameraControls>,
+			RenderHookProps
+		>(
+			({ cameraSnapshot }: RenderHookProps) =>
+				useRunestoneCameraControls({
+					cameraSnapshot,
+				}),
+			{
+				initialProps: {
+					cameraSnapshot: createCameraSnapshot(
+						CAMERA_MODES.THIRD_PERSON,
+						CAMERA_CONFIG.THIRD_PERSON.FOV,
+						CAMERA_CONFIG.THIRD_PERSON.OFFSET,
+						[0, PLAYER_EYE_HEIGHT, 0],
+					),
+				},
+			},
+		);
+
+		const controls = createControls(0.35, 0.76);
+		result.current.controlsRef.current =
+			controls as unknown as CameraControlsImpl;
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		rerender({
+			cameraSnapshot: createCameraSnapshot(
+				CAMERA_MODES.TOP_DOWN,
+				CAMERA_CONFIG.TOP_DOWN.FOV,
+				[0, CAMERA_CONFIG.TOP_DOWN.HEIGHT, 0],
+				[0, 0, 0],
+			),
+		});
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(controls.rotateTo).toHaveBeenLastCalledWith(
+			CAMERA_CONTROLS_TOP_DOWN_AZIMUTH,
+			CAMERA_CONFIG.TOP_DOWN.POLAR_ANGLE,
+			false,
+		);
+
+		controls.azimuthAngle = 2.1;
+		controls.polarAngle = CAMERA_CONFIG.TOP_DOWN.POLAR_ANGLE;
+
+		rerender({
+			cameraSnapshot: createCameraSnapshot(
+				CAMERA_MODES.THIRD_PERSON,
+				CAMERA_CONFIG.THIRD_PERSON.FOV,
+				CAMERA_CONFIG.THIRD_PERSON.OFFSET,
+				[0, PLAYER_EYE_HEIGHT, 0],
+			),
+		});
+
+		act(() => {
+			frameCallbacks.at(-1)?.();
+		});
+
+		expect(controls.rotateTo).toHaveBeenLastCalledWith(
+			expect.closeTo(0.35, 6),
+			0.76,
+			false,
+		);
 	});
 
 	it("moves the follow target without reapplying look-at while the mode stays stable", () => {

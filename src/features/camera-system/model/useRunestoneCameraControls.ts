@@ -9,15 +9,21 @@ import {
 	setCameraAzimuth,
 	useResponsiveLayout,
 } from "@/shared/lib";
-import { CAMERA_CONTROLS_CONSTANTS, type CameraModeId } from "../config";
+import {
+	CAMERA_CONTROLS_CONSTANTS,
+	CAMERA_MODE_IDS,
+	type CameraModeId,
+} from "../config";
 import {
 	areVector3TuplesApproximatelyEqual,
 	resolveCameraControlsFollowTarget,
 	resolveCameraControlsInputBindings,
 	resolveCameraControlsModePolicy,
 	resolveCameraControlsModePose,
+	resolveCameraControlsTransitionAngles,
 	resolveCameraControlsUpAxisKey,
 	resolveCameraControlsUpVector,
+	resolveCameraControlsWorldFacingAzimuth,
 	resolveMovementAzimuthFromCameraControls,
 	shouldRenderCameraControls,
 } from "../lib";
@@ -61,6 +67,8 @@ export const useRunestoneCameraControls = ({
 	const previousModeRef = useRef<CameraModeId | undefined>(undefined);
 	const previousFollowTargetRef = useRef<Vector3Tuple | null>(null);
 	const previousUpAxisKeyRef = useRef<string | null>(null);
+	const preservedWorldFacingAzimuthRef = useRef<number | null>(null);
+	const preservedPolarAngleRef = useRef<number | null>(null);
 	const [controlsKey, setControlsKey] = useState(0);
 
 	const { camera } = useThree();
@@ -145,6 +153,22 @@ export const useRunestoneCameraControls = ({
 					CAMERA_CONTROLS_CONSTANTS.MODE_TRANSITION_ENABLED,
 				);
 
+			if (previousModeRef.current !== undefined) {
+				const transitionAngles = resolveCameraControlsTransitionAngles({
+					destinationMode: cameraSnapshot.mode,
+					preservedWorldFacingAzimuth: preservedWorldFacingAzimuthRef.current,
+					preservedPolarAngle: preservedPolarAngleRef.current,
+					destinationMinPolarAngle: modePolicy.minPolarAngle,
+					destinationMaxPolarAngle: modePolicy.maxPolarAngle,
+				});
+
+				controls.rotateTo(
+					transitionAngles.azimuthAngle,
+					transitionAngles.polarAngle,
+					CAMERA_CONTROLS_CONSTANTS.MODE_TRANSITION_ENABLED,
+				);
+			}
+
 			previousModeRef.current = cameraSnapshot.mode;
 			previousFollowTargetRef.current = followTarget;
 		} else {
@@ -168,6 +192,17 @@ export const useRunestoneCameraControls = ({
 
 				previousFollowTargetRef.current = followTarget;
 			}
+		}
+
+		const nextWorldFacingAzimuth = resolveCameraControlsWorldFacingAzimuth({
+			mode: cameraSnapshot.mode,
+			cameraAzimuthAngle: controls.azimuthAngle,
+			previousWorldFacingAzimuth: preservedWorldFacingAzimuthRef.current,
+		});
+
+		if (cameraSnapshot.mode !== CAMERA_MODE_IDS.TOP_DOWN) {
+			preservedWorldFacingAzimuthRef.current = nextWorldFacingAzimuth;
+			preservedPolarAngleRef.current = controls.polarAngle;
 		}
 
 		setCameraAzimuth(
