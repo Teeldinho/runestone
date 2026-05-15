@@ -2,59 +2,65 @@ import { setup } from "xstate";
 
 import {
 	CAMERA_DEFAULT_MODE,
+	CAMERA_EVENTS,
+	CAMERA_HOTKEYS,
 	CAMERA_MACHINE_ID,
 	CAMERA_MODES,
 } from "../config";
 
+const CAMERA_HOTKEY_VALUES = [
+	CAMERA_HOTKEYS.THIRD_PERSON,
+	CAMERA_HOTKEYS.TOP_DOWN,
+	CAMERA_HOTKEYS.FIRST_PERSON,
+	CAMERA_HOTKEYS.FREE_ORBITAL,
+] as const;
+
 export const createCameraMachine = () =>
 	setup({
 		types: {
-			context: {} as {
-				playerPosition: [number, number, number];
-				orbitTarget: [number, number, number];
-			},
+			context: {} as Record<string, never>,
 			events: {} as
-				| { type: "SWITCH_TO_THIRD_PERSON" }
-				| { type: "SWITCH_TO_TOP_DOWN" }
-				| { type: "SWITCH_TO_FIRST_PERSON" }
-				| { type: "SWITCH_TO_FREE_ORBITAL" }
-				| { type: "HOTKEY"; hotkey: "1" | "2" | "3" | "4" },
+				| { type: typeof CAMERA_EVENTS.SWITCH_TO_THIRD_PERSON }
+				| { type: typeof CAMERA_EVENTS.SWITCH_TO_TOP_DOWN }
+				| { type: typeof CAMERA_EVENTS.SWITCH_TO_FIRST_PERSON }
+				| { type: typeof CAMERA_EVENTS.SWITCH_TO_FREE_ORBITAL }
+				| {
+						type: typeof CAMERA_EVENTS.HOTKEY;
+						hotkey: (typeof CAMERA_HOTKEY_VALUES)[number];
+				  },
 		},
 	}).createMachine({
 		id: CAMERA_MACHINE_ID,
 		initial: CAMERA_DEFAULT_MODE,
-		context: {
-			playerPosition: [0, 0, 0],
-			orbitTarget: [0, 0, 0],
-		},
+		context: {},
 		on: {
-			SWITCH_TO_THIRD_PERSON: {
+			[CAMERA_EVENTS.SWITCH_TO_THIRD_PERSON]: {
 				target: `.${CAMERA_MODES.THIRD_PERSON}`,
 			},
-			SWITCH_TO_TOP_DOWN: {
+			[CAMERA_EVENTS.SWITCH_TO_TOP_DOWN]: {
 				target: `.${CAMERA_MODES.TOP_DOWN}`,
 			},
-			SWITCH_TO_FIRST_PERSON: {
+			[CAMERA_EVENTS.SWITCH_TO_FIRST_PERSON]: {
 				target: `.${CAMERA_MODES.FIRST_PERSON}`,
 			},
-			SWITCH_TO_FREE_ORBITAL: {
+			[CAMERA_EVENTS.SWITCH_TO_FREE_ORBITAL]: {
 				target: `.${CAMERA_MODES.FREE_ORBITAL}`,
 			},
-			HOTKEY: [
+			[CAMERA_EVENTS.HOTKEY]: [
 				{
-					guard: ({ event }) => event.hotkey === "1",
+					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.THIRD_PERSON,
 					target: `.${CAMERA_MODES.THIRD_PERSON}`,
 				},
 				{
-					guard: ({ event }) => event.hotkey === "2",
+					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.TOP_DOWN,
 					target: `.${CAMERA_MODES.TOP_DOWN}`,
 				},
 				{
-					guard: ({ event }) => event.hotkey === "3",
+					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.FIRST_PERSON,
 					target: `.${CAMERA_MODES.FIRST_PERSON}`,
 				},
 				{
-					guard: ({ event }) => event.hotkey === "4",
+					guard: ({ event }) => event.hotkey === CAMERA_HOTKEYS.FREE_ORBITAL,
 					target: `.${CAMERA_MODES.FREE_ORBITAL}`,
 				},
 			],

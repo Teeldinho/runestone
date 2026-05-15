@@ -13,6 +13,12 @@ import { useGamePageMachineState } from "./useGamePageMachineState";
 
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachine: vi.fn(),
+	useGameMachineActorRef: vi.fn().mockReturnValue({
+		send: vi.fn(),
+		getSnapshot: vi.fn(),
+		sessionId: "mock",
+		id: "mock",
+	}),
 }));
 
 vi.mock("@/entities/player", async (importOriginal) => {
@@ -81,6 +87,12 @@ describe("useGamePageMachineState", () => {
 				},
 			},
 			sendPlayerMachineEvent,
+			playerActorRef: {
+				send: vi.fn(),
+				getSnapshot: vi.fn(),
+				sessionId: "mock",
+				id: "mock",
+			} as never,
 		} as unknown as ReturnType<typeof usePlayerMachineRuntime>);
 
 		vi.mocked(useCameraMachine).mockReturnValue({
@@ -90,6 +102,9 @@ describe("useGamePageMachineState", () => {
 				position: [0, 0, 0],
 				target: [0, 0, 0],
 				zoom: 1,
+				yaw: 0,
+				pitch: 0,
+				distance: 6,
 			},
 			handleCameraModeSwitch,
 			mode: CAMERA_MODES.FREE_ORBITAL,

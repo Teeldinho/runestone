@@ -79,6 +79,9 @@ describe("useCameraRigViewModel", () => {
 					position: [0, 2, -4],
 					target: [0, 1, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [10, 0.9, -5],
 			}),
@@ -103,6 +106,9 @@ describe("useCameraRigViewModel", () => {
 					position: [0, 2, -4],
 					target: [0, 1, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				firstPersonLookElement: document.createElement("button"),
 				playerSpawnPosition: [10, 0.9, -5],
@@ -132,6 +138,9 @@ describe("useCameraRigViewModel", () => {
 					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [10, 0.9, -5],
 			}),
@@ -161,6 +170,9 @@ describe("useCameraRigViewModel", () => {
 					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [10, 0.9, -5],
 			}),
@@ -199,6 +211,9 @@ describe("useCameraRigViewModel", () => {
 					position: [0, 35, 0],
 					target: [0, 0, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [10, 0.9, -5],
 			}),
@@ -208,7 +223,11 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([3, 20, -7]);
+		expect(mockCamera.position.toArray()).toEqual([
+			3,
+			CAMERA_CONFIG.TOP_DOWN.HEIGHT,
+			-7,
+		]);
 		expect(mockCamera.up.toArray()).toEqual([0, 0, 1]);
 		expect(mockSetCameraAzimuth).toHaveBeenCalledWith(0);
 	});
@@ -224,6 +243,9 @@ describe("useCameraRigViewModel", () => {
 					position: [...CAMERA_CONFIG.THIRD_PERSON.OFFSET],
 					target: [0, 1, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [0, 0.9, 0],
 			}),
@@ -270,6 +292,9 @@ describe("useCameraRigViewModel", () => {
 					position: [...CAMERA_CONFIG.THIRD_PERSON.OFFSET],
 					target: [0, 1, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [0, 0.9, 0],
 			}),
@@ -318,6 +343,9 @@ describe("useCameraRigViewModel", () => {
 					position: [0, 1.5, 0],
 					target: [0, 0, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [0, 0.9, 0],
 			}),
@@ -349,15 +377,14 @@ describe("useCameraRigViewModel", () => {
 		expect(lastCallArgs?.[2]).toBeGreaterThan(mockCamera.position.z);
 	});
 
-	it("places the orbit target in camera-space (head + forward*0.01) on sync, then tracks camera forward each frame without calling update()", () => {
+	it("sets camera position on first-person mobile using yaw/pitch Euler", () => {
 		mockIsDesktopLayout.mockReturnValue(false);
 		mockHasPlayerPosition.mockReturnValue(true);
 		mockGetPlayerPosition.mockReturnValue([5, 0.9, 5]);
 
-		// Camera starts looking in +Z (default)
 		mockCamera.position.set(5, 2.6, 5);
 
-		const { result } = renderHook(() =>
+		renderHook(() =>
 			useCameraRigViewModel({
 				cameraStateSnapshot: {
 					fov: 78,
@@ -365,51 +392,19 @@ describe("useCameraRigViewModel", () => {
 					position: [5, 2.6, 5],
 					target: [5, 2.6, 6],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [0, 0.9, 0],
 			}),
 		);
 
-		const firstPersonOrbitControls = {
-			target: new THREE.Vector3(),
-			update: vi.fn(),
-		};
-		result.current.refs.firstPersonOrbitRef.current =
-			firstPersonOrbitControls as never;
-
-		// Frame 1: Sync \u2014 camera is at [5,2.6,5], forward is +Z so target = [5,2.6,5.01]
 		act(() => {
 			frameCallbacks.at(-1)?.();
 		});
 
 		expect(mockCamera.position.toArray()).toEqual([5, 2.6, 5]);
-		expect(firstPersonOrbitControls.target.x).toBeCloseTo(5, 5);
-		expect(firstPersonOrbitControls.target.y).toBeCloseTo(2.6, 5);
-		expect(firstPersonOrbitControls.target.z).toBeCloseTo(5.01, 3);
-
-		// Frame 2: non-sync path — player moves. Camera should snap to the new head position
-		// and the target should stay 0.01 ahead in camera-forward.
-		// We do NOT expect update() to be called (Drei handles it).
-		mockGetPlayerPosition.mockReturnValue([6, 0.9, 5]);
-
-		const callsAfterSync = firstPersonOrbitControls.update.mock.calls.length;
-		act(() => {
-			frameCallbacks.at(-1)?.();
-		});
-
-		// Camera should have followed the player's new head position: [6, 1.7+0.9, 5]
-		expect(mockCamera.position.x).toBeCloseTo(6, 5);
-		expect(mockCamera.position.y).toBeCloseTo(2.6, 5);
-		expect(mockCamera.position.z).toBeCloseTo(5, 5);
-
-		// Target is still camera-forward 0.01 away from the NEW current position
-		expect(firstPersonOrbitControls.target.x).toBeCloseTo(6, 5);
-		expect(firstPersonOrbitControls.target.y).toBeCloseTo(2.6, 5);
-		expect(firstPersonOrbitControls.target.z).toBeCloseTo(5.01, 3);
-		// update() must NOT be called again in the non-sync path
-		expect(firstPersonOrbitControls.update.mock.calls.length).toBe(
-			callsAfterSync,
-		);
 	});
 
 	it("does not rewrite movement azimuth during free-orbital auto-follow", () => {
@@ -423,6 +418,9 @@ describe("useCameraRigViewModel", () => {
 					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [0, 0.9, 0],
 			}),
@@ -461,6 +459,9 @@ describe("useCameraRigViewModel", () => {
 					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [0, 0.9, 0],
 			}),
@@ -498,6 +499,9 @@ describe("useCameraRigViewModel", () => {
 					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [0, 0.9, 0],
 			}),
@@ -535,6 +539,9 @@ describe("useCameraRigViewModel", () => {
 					position: [0, 16, -18],
 					target: [0, 0, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [0, 0.9, 0],
 			}),
@@ -573,6 +580,9 @@ describe("useCameraRigViewModel", () => {
 					position: [0, 2, -4],
 					target: [0, 1, 0],
 					zoom: 1,
+					yaw: 0,
+					pitch: 0,
+					distance: 6,
 				},
 				playerSpawnPosition: [0, 0.9, 0],
 			}),

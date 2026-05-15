@@ -15,8 +15,7 @@ import { GameCanvasSceneContent } from "./GameCanvasSceneContent";
 
 type GameCanvasProps = {
 	cameraControlElement?: HTMLElement | null;
-	cameraStateSnapshot?: CameraStateSnapshot;
-	firstPersonLookElement?: HTMLElement | null;
+	cameraStateSnapshot: CameraStateSnapshot;
 	machineRuntime: CanvasMachineRuntime;
 	postprocessingEnabled: boolean;
 };
@@ -24,21 +23,15 @@ type GameCanvasProps = {
 export function GameCanvas({
 	cameraControlElement,
 	cameraStateSnapshot,
-	firstPersonLookElement,
 	machineRuntime,
 	postprocessingEnabled,
 }: GameCanvasProps) {
-	const {
-		canvasSettings,
-		activeAchievement,
-		handleGameRestart,
-		isGameOver,
-		showFirstPersonLockHint,
-	} = useGameCanvasViewModel({
-		cameraStateSnapshot,
-		machineRuntime,
-		postprocessingEnabled,
-	});
+	const { canvasSettings, activeAchievement, handleGameRestart, isGameOver } =
+		useGameCanvasViewModel({
+			cameraStateSnapshot,
+			machineRuntime,
+			postprocessingEnabled,
+		});
 	const { handleSceneReady, isSceneLoading } = useGameCanvasSceneLoading();
 	const {
 		camera,
@@ -58,7 +51,6 @@ export function GameCanvas({
 				activeAchievement={activeAchievement}
 				handleGameRestart={handleGameRestart}
 				isGameOver={isGameOver}
-				showFirstPersonLockHint={showFirstPersonLockHint}
 			/>
 			<Canvas
 				className="h-full w-full touch-none"
@@ -78,9 +70,7 @@ export function GameCanvas({
 				<AdaptiveDpr pixelated />
 				<CameraRig
 					cameraControlElement={cameraControlElement}
-					cameraStateSnapshot={cameraStateSnapshot}
-					firstPersonLookElement={firstPersonLookElement}
-					playerSpawnPosition={playerSpawnPosition}
+					cameraSnapshot={cameraStateSnapshot}
 				/>
 				<GameCanvasSceneContent
 					environment={environment}

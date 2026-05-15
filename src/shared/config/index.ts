@@ -40,5 +40,11 @@ export {
 	TOP_DOWN_CAMERA_POLAR_ANGLE,
 } from "./gameConfig";
 export { GRAPH_LAYOUT_DEFAULTS } from "./graphLayoutConfig";
+export type { PointerRole } from "./pointerInteractionConfig";
+export {
+	INPUT_POINTER_DATA_ATTRIBUTE_VALUES,
+	INPUT_POINTER_DATA_ATTRIBUTES,
+	POINTER_ROLES,
+} from "./pointerInteractionConfig";
 export { RESPONSIVE_LAYOUT_MEDIA_QUERIES } from "./responsiveLayoutMediaQueries";
 export { XSTATE_ACTOR_STATUS } from "./xstateActorStatus";

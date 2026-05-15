@@ -31,6 +31,7 @@ export {
 	setPlayerTeleportTarget,
 	subscribeToPlayerPosition,
 } from "./playerPositionStore";
+export { shouldBlockLookFromPointerTarget } from "./shouldBlockLookFromPointerTarget";
 export type { ResponsiveLayoutState } from "./useResponsiveLayout";
 export { useResponsiveLayout } from "./useResponsiveLayout";
 export type { Vec3, Vector3Tuple } from "./vec3";

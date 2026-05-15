@@ -98,6 +98,12 @@ vi.mock("@/entities/player", () => ({
 	usePlayerMachineRuntime: () => ({
 		snapshot: mockPlayerSnapshotGetter(),
 		sendPlayerMachineEvent: vi.fn(),
+		playerActorRef: {
+			send: vi.fn(),
+			getSnapshot: vi.fn(),
+			sessionId: "mock",
+			id: "mock",
+		} as never,
 	}),
 	PLAYER_STATES: {
 		REGIONS: { HEALTH: "health", MOVEMENT: "movement" },

@@ -11,6 +11,14 @@ vi.mock("@react-three/fiber", () => ({
 	useFrame: vi.fn(),
 }));
 
+import { createActor, fromTransition } from "xstate";
+
+const createMockActorRef = () => {
+	const logic = fromTransition((s: unknown) => s, null);
+
+	return createActor(logic);
+};
+
 vi.mock("./playerMachineRuntime", () => ({
 	usePlayerMachineRuntime: vi.fn(() => ({
 		snapshot: {
@@ -31,6 +39,7 @@ vi.mock("./playerMachineRuntime", () => ({
 			},
 		},
 		sendPlayerMachineEvent: vi.fn(),
+		playerActorRef: createMockActorRef(),
 	})),
 }));
 
@@ -81,6 +90,7 @@ describe("usePlayerMeshViewModel", () => {
 				},
 			} as unknown as ReturnType<typeof usePlayerMachineRuntime>["snapshot"],
 			sendPlayerMachineEvent: vi.fn(),
+			playerActorRef: createMockActorRef(),
 		});
 
 		const { result } = renderHook(() => usePlayerMeshViewModel());

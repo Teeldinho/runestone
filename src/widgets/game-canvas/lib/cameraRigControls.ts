@@ -36,7 +36,6 @@ export const setOrbitTarget = (
 	}
 
 	orbitControls.target.set(nextX, nextY, nextZ);
-	orbitControls.update();
 };
 
 export type { OrbitControlsHandle };

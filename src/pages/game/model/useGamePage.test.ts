@@ -61,6 +61,12 @@ vi.mock("@/features/audio-manager", () => {
 
 vi.mock("@/features/dungeon-navigation", () => ({
 	useGameMachine: vi.fn(),
+	useGameMachineActorRef: vi.fn().mockReturnValue({
+		send: vi.fn(),
+		getSnapshot: vi.fn(),
+		sessionId: "mock",
+		id: "mock",
+	}),
 	useInteractionCandidates: vi.fn().mockReturnValue({
 		interactPrompt: null,
 		interactEvent: null,
@@ -87,6 +93,9 @@ vi.mock("@/features/camera-system", () => {
 				position: [0, 8, 10],
 				target: [0, 0, 0],
 				zoom: 1,
+				yaw: 0,
+				pitch: 0,
+				distance: 6,
 			},
 			handleCameraModeSwitch: vi.fn(),
 			mode: MOCK_CAMERA_MODES.FREE_ORBITAL,
@@ -136,6 +145,12 @@ vi.mock("@/entities/player", async (importOriginal) => {
 				},
 			},
 			sendPlayerMachineEvent: vi.fn(),
+			playerActorRef: {
+				send: vi.fn(),
+				getSnapshot: vi.fn(),
+				sessionId: "mock",
+				id: "mock",
+			} as never,
 		}),
 	};
 });

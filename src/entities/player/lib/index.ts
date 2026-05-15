@@ -18,4 +18,5 @@ export {
 	resolvePlayerPhysicsTeleportTranslation,
 } from "./playerPhysics";
 export { resolvePlayerAvatarVisibility } from "./playerVisibility";
+export { resolvePlayerVerticalVelocity } from "./resolvePlayerVerticalVelocity";
 export { selectPlayerAnimation } from "./selectPlayerAnimation";

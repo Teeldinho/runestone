@@ -3,6 +3,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import { TOUCH_JOYSTICK_CONFIG } from "../config";
 import { useTouchJoystickMotion } from "./useTouchJoystickMotion";
 
 describe("useTouchJoystickMotion", () => {
@@ -18,10 +19,10 @@ describe("useTouchJoystickMotion", () => {
 			({
 				left: 0,
 				top: 0,
-				width: 132,
-				height: 132,
-				right: 132,
-				bottom: 132,
+				width: TOUCH_JOYSTICK_CONFIG.CONTAINER_SIZE_PX,
+				height: TOUCH_JOYSTICK_CONFIG.CONTAINER_SIZE_PX,
+				right: TOUCH_JOYSTICK_CONFIG.CONTAINER_SIZE_PX,
+				bottom: TOUCH_JOYSTICK_CONFIG.CONTAINER_SIZE_PX,
 				x: 0,
 				y: 0,
 				toJSON: () => ({}),
@@ -29,20 +30,20 @@ describe("useTouchJoystickMotion", () => {
 		result.current.joystickRef.current = joystickElement;
 
 		act(() => {
-			result.current.beginJoystickMotion(110, 66);
+			result.current.beginJoystickMotion(140, 88);
 		});
 
 		expect(result.current.isActive).toBe(true);
 		expect(handleMove).toHaveBeenCalledTimes(1);
 
 		act(() => {
-			result.current.updateJoystickMotion(111, 66);
+			result.current.updateJoystickMotion(141, 88);
 		});
 
 		expect(handleMove).toHaveBeenCalledTimes(1);
 
 		act(() => {
-			result.current.updateJoystickMotion(66, 110);
+			result.current.updateJoystickMotion(88, 140);
 		});
 
 		expect(handleMove).toHaveBeenCalledTimes(2);

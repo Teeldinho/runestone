@@ -11,6 +11,9 @@ export type CameraStateSnapshot = {
 	position: Vector3Tuple;
 	target: Vector3Tuple;
 	zoom: number;
+	yaw: number;
+	pitch: number;
+	distance: number;
 };
 
 export type CameraMachineEvent = CameraEventObject;

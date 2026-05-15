@@ -1,0 +1,5 @@
+export const PLAYER_JUMP_CONFIG = {
+	IMPULSE: 5.6,
+	FALL_GRAVITY_SCALE: 1.65,
+	MAX_FALL_SPEED: -14,
+} as const;

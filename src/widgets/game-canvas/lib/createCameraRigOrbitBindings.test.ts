@@ -14,12 +14,14 @@ describe("createCameraRigOrbitBindings", () => {
 			cameraControlElement,
 			handleOrbitEnd,
 			handleOrbitStart,
+			isDesktopLayout: false,
 		});
 
 		expect(bindings).toEqual({
-			cameraControlElement,
+			domElement: cameraControlElement,
 			handleOrbitEnd,
 			handleOrbitStart,
+			shouldRenderOrbitControls: true,
 		});
 	});
 });

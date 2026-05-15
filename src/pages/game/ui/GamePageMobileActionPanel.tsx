@@ -1,4 +1,9 @@
 import { useGamePageMobileActionPanelModel } from "@/pages/game/model";
+import {
+	INPUT_POINTER_DATA_ATTRIBUTE_VALUES,
+	INPUT_POINTER_DATA_ATTRIBUTES,
+	POINTER_ROLES,
+} from "@/shared/config";
 
 import { GamePageMobileAudioAction } from "./GamePageMobileAudioAction";
 import { GamePageMobileLeaderboardAction } from "./GamePageMobileLeaderboardAction";
@@ -10,7 +15,14 @@ export function GamePageMobileActionPanel() {
 	const viewModel = useGamePageMobileActionPanelModel();
 
 	return (
-		<div className="pointer-events-none absolute right-4 bottom-4 z-30 flex w-[11rem] flex-col items-end gap-2 empty:hidden">
+		<div
+			{...{
+				[INPUT_POINTER_DATA_ATTRIBUTES.ROLE]: POINTER_ROLES.DISCRETE_ACTION,
+				[INPUT_POINTER_DATA_ATTRIBUTES.BLOCKS_LOOK]:
+					INPUT_POINTER_DATA_ATTRIBUTE_VALUES.TRUE,
+			}}
+			className="pointer-events-auto absolute right-4 bottom-4 z-30 flex w-[11rem] flex-col items-end gap-2 empty:hidden"
+		>
 			<GamePageMobileTouchActions touchActions={viewModel.touchActions} />
 			<GamePageMobileAudioAction audioToggle={viewModel.audioToggle} />
 			<GamePageMobileLeaderboardAction

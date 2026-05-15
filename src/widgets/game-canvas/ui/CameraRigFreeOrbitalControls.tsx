@@ -10,14 +10,16 @@ import type { CameraRigOrbitBindings, CameraRigRefs } from "../model";
 type CameraRigFreeOrbitalControlsProps = {
 	orbitBindings: CameraRigOrbitBindings;
 	refs: CameraRigRefs;
-	isDesktopLayout: boolean;
 };
 
 export function CameraRigFreeOrbitalControls({
 	orbitBindings,
 	refs,
-	isDesktopLayout,
 }: CameraRigFreeOrbitalControlsProps) {
+	if (!orbitBindings.shouldRenderOrbitControls) {
+		return null;
+	}
+
 	return (
 		<OrbitControls
 			ref={refs.freeOrbitalOrbitRef as React.RefObject<never>}
@@ -41,11 +43,7 @@ export function CameraRigFreeOrbitalControls({
 				RIGHT: THREE.MOUSE.ROTATE,
 			}}
 			touches={CAMERA_RIG_TOUCH_GESTURES.ORBIT}
-			domElement={
-				isDesktopLayout
-					? undefined
-					: (orbitBindings.cameraControlElement ?? undefined)
-			}
+			domElement={orbitBindings.domElement}
 		/>
 	);
 }

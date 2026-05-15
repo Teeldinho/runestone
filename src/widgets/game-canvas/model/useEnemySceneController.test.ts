@@ -19,6 +19,12 @@ vi.mock("@/entities/player", () => ({
 	},
 	usePlayerMachineRuntime: () => ({
 		sendPlayerMachineEvent: mockSendPlayerMachineEvent,
+		playerActorRef: {
+			send: vi.fn(),
+			getSnapshot: vi.fn(),
+			sessionId: "mock",
+			id: "mock",
+		} as never,
 	}),
 }));
 
