@@ -11,17 +11,12 @@ export const useGamePageCanvasSlice = ({
 	cameraMachine,
 	gameMachine,
 }: UseGamePageCanvasSliceInput) => {
-	const {
-		actor: cameraActorRef,
-		cameraStateSnapshot,
-		handleCameraModeSwitch,
-	} = cameraMachine;
+	const { cameraStateSnapshot, handleCameraModeSwitch } = cameraMachine;
 	const { room, status } = gameMachine;
 	const { currentRoomId } = room;
 	const { enemiesRemaining, hasTreasureKey } = status;
 
 	return {
-		cameraActorRef,
 		cameraStateSnapshot,
 		canvasMachineRuntime: {
 			currentRoomId: currentRoomId as RoomId,

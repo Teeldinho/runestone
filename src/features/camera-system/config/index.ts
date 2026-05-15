@@ -4,18 +4,17 @@ export {
 	CAMERA_HOTKEYS,
 	CAMERA_MODES,
 } from "./cameraConfig";
-export type { CameraModeId } from "./cameraControlConfig";
+export type {
+	CameraControlsUpAxisKey,
+	CameraModeId,
+} from "./cameraControlConfig";
 export {
-	CAMERA_ACTION_KEYS,
-	CAMERA_EVENT_TYPES,
-	CAMERA_LIMITS,
-	CAMERA_LOOK_CONFIG,
-	CAMERA_LOOK_LIMITS,
+	CAMERA_CONTROLS_CONSTANTS,
+	CAMERA_CONTROLS_MODE_POLICY,
+	CAMERA_CONTROLS_TOP_DOWN_AZIMUTH,
+	CAMERA_CONTROLS_UP_AXIS_KEYS,
 	CAMERA_MODE_IDS,
-	CAMERA_STATE_KEYS,
 	CAMERA_UP_VECTORS,
-	ORBIT_CONTROL_MODE_POLICY,
-	ORBIT_CONTROL_TOUCH_GESTURES,
 } from "./cameraControlConfig";
 export type { CameraEvent, CameraEventObject } from "./cameraEvents";
 export { CAMERA_EVENTS } from "./cameraEvents";

@@ -3,7 +3,6 @@ import { createActor, fromTransition } from "xstate";
 
 import { PLAYER_EVENT_TYPES } from "@/entities/player";
 import { INPUT_EVENT_TYPES } from "@/features/input-orchestrator";
-import { CAMERA_EVENT_TYPES } from "@/shared/config";
 
 import { inputOrchestratorMachine } from "./inputOrchestratorMachine";
 
@@ -26,7 +25,6 @@ describe("inputOrchestratorMachine", () => {
 		const actor = createActor(inputOrchestratorMachine, {
 			input: {
 				playerRef: createEventRecorderActor(),
-				cameraRef: createEventRecorderActor(),
 				interactionRef: createEventRecorderActor(),
 			},
 		}).start();
@@ -44,7 +42,6 @@ describe("inputOrchestratorMachine", () => {
 		const actor = createActor(inputOrchestratorMachine, {
 			input: {
 				playerRef: createEventRecorderActor(),
-				cameraRef: createEventRecorderActor(),
 				interactionRef: createEventRecorderActor(),
 			},
 		}).start();
@@ -72,13 +69,11 @@ describe("inputOrchestratorMachine", () => {
 
 	it("sends player move with wantsRun true when run toggles while moving", () => {
 		const playerRef = createEventRecorderActor();
-		const cameraRef = createEventRecorderActor();
 		const interactionRef = createEventRecorderActor();
 
 		const actor = createActor(inputOrchestratorMachine, {
 			input: {
 				playerRef,
-				cameraRef,
 				interactionRef,
 			},
 		}).start();
@@ -108,13 +103,11 @@ describe("inputOrchestratorMachine", () => {
 
 	it("only toggles mobile run when run is pressed without movement", () => {
 		const playerRef = createEventRecorderActor();
-		const cameraRef = createEventRecorderActor();
 		const interactionRef = createEventRecorderActor();
 
 		const actor = createActor(inputOrchestratorMachine, {
 			input: {
 				playerRef,
-				cameraRef,
 				interactionRef,
 			},
 		}).start();
@@ -127,13 +120,11 @@ describe("inputOrchestratorMachine", () => {
 
 	it("sends player move with wantsRun false when run toggles off while moving", () => {
 		const playerRef = createEventRecorderActor();
-		const cameraRef = createEventRecorderActor();
 		const interactionRef = createEventRecorderActor();
 
 		const actor = createActor(inputOrchestratorMachine, {
 			input: {
 				playerRef,
-				cameraRef,
 				interactionRef,
 			},
 		}).start();
@@ -165,35 +156,5 @@ describe("inputOrchestratorMachine", () => {
 			},
 		]);
 		expect(actor.getSnapshot().context.isMobileRunToggled).toBe(false);
-	});
-
-	it("forwards look events with camera-system event types", () => {
-		const playerRef = createEventRecorderActor();
-		const cameraRef = createEventRecorderActor();
-		const interactionRef = createEventRecorderActor();
-
-		const actor = createActor(inputOrchestratorMachine, {
-			input: {
-				playerRef,
-				cameraRef,
-				interactionRef,
-			},
-		}).start();
-
-		actor.send({
-			type: INPUT_EVENT_TYPES.LOOK_CHANGED,
-			delta: { x: 2, y: -3 },
-		});
-		actor.send({ type: INPUT_EVENT_TYPES.LOOK_STOPPED });
-
-		expect(cameraRef.getSnapshot().context).toEqual([
-			{
-				type: CAMERA_EVENT_TYPES.LOOK_CHANGED,
-				delta: { x: 2, y: -3 },
-			},
-			{
-				type: CAMERA_EVENT_TYPES.LOOK_STOPPED,
-			},
-		]);
 	});
 });

@@ -16,7 +16,7 @@ type GamePageMachineState = {
 	>;
 	cameraMachine: Pick<
 		ReturnType<typeof useCameraMachine>,
-		"cameraStateSnapshot" | "handleCameraModeSwitch" | "mode" | "actor"
+		"cameraStateSnapshot" | "handleCameraModeSwitch" | "mode"
 	>;
 	layout: {
 		isDesktopLayout: boolean;
@@ -24,7 +24,6 @@ type GamePageMachineState = {
 		isTabletLayout: boolean;
 	};
 	playerActorRef: ReturnType<typeof usePlayerMachineRuntime>["playerActorRef"];
-	cameraActorRef: ReturnType<typeof useCameraMachine>["actor"];
 	gameActorRef: ReturnType<typeof useGameMachineActorRef>;
 };
 
@@ -32,9 +31,10 @@ export const useGamePageMachineState = (): GamePageMachineState => {
 	const gameMachine = useGameMachine();
 	const { snapshot, sendPlayerMachineEvent, playerActorRef } =
 		usePlayerMachineRuntime();
-	const { cameraStateSnapshot, handleCameraModeSwitch, mode, actor } =
+	const { cameraStateSnapshot, handleCameraModeSwitch, mode } =
 		useCameraMachine();
 	const gameActorRef = useGameMachineActorRef();
+
 	const { isDesktopLayout, isLandscape, isTabletLayout } =
 		useResponsiveGameLayout();
 
@@ -43,7 +43,6 @@ export const useGamePageMachineState = (): GamePageMachineState => {
 			cameraStateSnapshot,
 			handleCameraModeSwitch,
 			mode,
-			actor,
 		},
 		gameMachine,
 		layout: {
@@ -60,7 +59,6 @@ export const useGamePageMachineState = (): GamePageMachineState => {
 			playerActorRef,
 		},
 		playerActorRef,
-		cameraActorRef: actor,
 		gameActorRef,
 	};
 };

@@ -46,8 +46,8 @@ const createFirstPersonSnapshot = (
 ): CameraStateSnapshot => ({
 	fov: firstPersonConfig.FOV,
 	mode: CAMERA_MODES.FIRST_PERSON,
-	position: CAMERA_STATE_TARGETS.PLAYER_HEAD,
-	target: CAMERA_STATE_TARGETS.PLAYER_HEAD_FORWARD,
+	position: CAMERA_STATE_TARGETS.PLAYER_HEAD_FORWARD_EPSILON,
+	target: CAMERA_STATE_TARGETS.PLAYER_HEAD,
 	zoom: CAMERA_DEFAULT_ZOOM,
 	yaw: DEFAULT_YAW,
 	pitch: DEFAULT_PITCH,

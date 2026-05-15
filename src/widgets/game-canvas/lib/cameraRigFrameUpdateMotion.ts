@@ -1,8 +1,8 @@
 import * as THREE from "three";
 
 import {
+	CAMERA_MODES,
 	type CameraStateSnapshot,
-	resolveCameraAzimuth,
 } from "@/features/camera-system";
 import { setCameraAzimuth } from "@/shared/lib";
 import { CAMERA_RIG_FOV_EPSILON } from "../config";
@@ -20,13 +20,39 @@ type UpdatePerspectiveFovInput = Pick<CameraRigFrameUpdateInput, "camera"> & {
 	transitionAlpha: number;
 };
 
+type CameraDirection = {
+	x: number;
+	y: number;
+	z: number;
+};
+
+const resolveMovementAzimuth = ({
+	direction,
+	mode,
+}: {
+	direction: CameraDirection;
+	mode: CameraStateSnapshot["mode"];
+}): number | null => {
+	if (mode === CAMERA_MODES.TOP_DOWN) {
+		return 0;
+	}
+
+	const horizontalMagnitude = Math.hypot(direction.x, direction.z);
+
+	if (horizontalMagnitude === 0) {
+		return null;
+	}
+
+	return Math.atan2(direction.x, direction.z);
+};
+
 export const syncMovementAzimuth = ({
 	camera,
 	cameraStateSnapshot,
 	directionRef,
 }: SyncMovementAzimuthInput): void => {
 	camera.getWorldDirection(directionRef.current);
-	const nextAzimuth = resolveCameraAzimuth({
+	const nextAzimuth = resolveMovementAzimuth({
 		mode: cameraStateSnapshot.mode,
 		direction: directionRef.current,
 	});

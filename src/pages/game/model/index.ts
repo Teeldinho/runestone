@@ -14,7 +14,6 @@ export type {
 	GamePageMobileActionPanelTouchInteract,
 } from "./useGamePageMobileActionPanelModel";
 export { useGamePageMobileActionPanelModel } from "./useGamePageMobileActionPanelModel";
-export { useGamePageMobileCameraControlHandlers } from "./useGamePageMobileCameraControlHandlers";
 export { useGamePageMobileCanvasStageModel } from "./useGamePageMobileCanvasStageModel";
 export { useGamePageMobileJoystickModel } from "./useGamePageMobileJoystickModel";
 export { useGamePageMobileLayoutShellModel } from "./useGamePageMobileLayoutShellModel";

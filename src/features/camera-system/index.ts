@@ -4,6 +4,7 @@ export type {
 	CameraHotkey,
 	CameraMode,
 } from "./config";
+
 export {
 	CAMERA_DEFAULT_MODE,
 	CAMERA_EVENTS,
@@ -11,32 +12,36 @@ export {
 	CAMERA_MACHINE_ID,
 	CAMERA_MODES,
 } from "./config";
-export type { CameraModeId } from "./config/cameraControlConfig";
-export {
-	CAMERA_ACTION_KEYS,
-	CAMERA_EVENT_TYPES,
-	CAMERA_LIMITS,
-	CAMERA_MODE_IDS,
-	CAMERA_STATE_KEYS,
-	CAMERA_UP_VECTORS,
-	ORBIT_CONTROL_MODE_POLICY,
-	ORBIT_CONTROL_TOUCH_GESTURES,
+
+export type {
+	CameraControlsUpAxisKey,
+	CameraModeId,
 } from "./config/cameraControlConfig";
+
 export {
-	clampCameraDistance,
+	CAMERA_CONTROLS_CONSTANTS,
+	CAMERA_CONTROLS_MODE_POLICY,
+	CAMERA_CONTROLS_TOP_DOWN_AZIMUTH,
+	CAMERA_CONTROLS_UP_AXIS_KEYS,
+	CAMERA_MODE_IDS,
+	CAMERA_UP_VECTORS,
+} from "./config/cameraControlConfig";
+
+export {
+	areVector3TuplesApproximatelyEqual,
 	createCameraStateSnapshot,
-	resolveCameraAzimuth,
-	resolveCameraModeDistance,
-	resolveCameraPolarLimits,
-	resolveMovementAzimuthFromCameraSnapshot,
-	resolveOrbitControlDistanceLimits,
-	resolveOrbitControlModePolicy,
-	resolveOrbitControlsCameraPosition,
-	resolveOrbitControlsSnapshot,
-	shouldRenderOrbitControls,
-	syncOrbitControlsDistance,
-	syncOrbitControlsTarget,
+	getCameraModeFromEvent,
+	isCameraHotkey,
+	resolveCameraControlsFollowTarget,
+	resolveCameraControlsInputBindings,
+	resolveCameraControlsModePolicy,
+	resolveCameraControlsModePose,
+	resolveCameraControlsUpAxisKey,
+	resolveCameraControlsUpVector,
+	resolveMovementAzimuthFromCameraControls,
+	shouldRenderCameraControls,
 } from "./lib";
+
 export { useCameraSystem } from "./model";
 export { createCameraMachine } from "./model/cameraMachine";
 export type {
@@ -45,7 +50,8 @@ export type {
 	CameraStateSnapshot,
 } from "./model/types";
 export { useCameraMachine } from "./model/useCameraMachine";
-export type { CameraRuntimeSnapshot } from "./model/useRunestoneOrbitControls";
-export { useRunestoneOrbitControls } from "./model/useRunestoneOrbitControls";
-export type { RunestoneOrbitControlsProps } from "./ui/RunestoneOrbitControls";
-export { RunestoneOrbitControls } from "./ui/RunestoneOrbitControls";
+export type { CameraRuntimeSnapshot } from "./model/useRunestoneCameraControls";
+export { useRunestoneCameraControls } from "./model/useRunestoneCameraControls";
+
+export type { RunestoneCameraControlsProps } from "./ui/RunestoneCameraControls";
+export { RunestoneCameraControls } from "./ui/RunestoneCameraControls";

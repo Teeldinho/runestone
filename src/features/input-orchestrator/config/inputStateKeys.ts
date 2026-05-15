@@ -5,14 +5,6 @@ export const INPUT_STATE_KEYS = {
 	MOVEMENT_IDLE: "movementIdle",
 	MOVEMENT_ACTIVE: "movementActive",
 
-	LOOK_REGION: "lookRegion",
-	LOOK_IDLE: "lookIdle",
-	LOOK_ACTIVE: "lookActive",
-
-	ZOOM_REGION: "zoomRegion",
-	ZOOM_IDLE: "zoomIdle",
-	ZOOM_ACTIVE: "zoomActive",
-
 	ACTION_REGION: "actionRegion",
 	ACTION_READY: "actionReady",
 

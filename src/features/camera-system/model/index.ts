@@ -6,5 +6,5 @@ export type {
 } from "./types";
 export { useCameraMachine } from "./useCameraMachine";
 export { useCameraSystem } from "./useCameraSystem";
-export type { CameraRuntimeSnapshot } from "./useRunestoneOrbitControls";
-export { useRunestoneOrbitControls } from "./useRunestoneOrbitControls";
+export type { CameraRuntimeSnapshot } from "./useRunestoneCameraControls";
+export { useRunestoneCameraControls } from "./useRunestoneCameraControls";

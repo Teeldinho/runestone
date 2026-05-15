@@ -1,12 +1,12 @@
-type ShouldRenderOrbitControlsInput = {
+type ShouldRenderCameraControlsInput = {
 	readonly cameraControlElement?: HTMLElement | null;
 	readonly isDesktopLayout: boolean;
 };
 
-export const shouldRenderOrbitControls = ({
+export const shouldRenderCameraControls = ({
 	cameraControlElement,
 	isDesktopLayout,
-}: ShouldRenderOrbitControlsInput): boolean =>
+}: ShouldRenderCameraControlsInput): boolean =>
 	isDesktopLayout || cameraControlElement != null;
 
-export type { ShouldRenderOrbitControlsInput };
+export type { ShouldRenderCameraControlsInput };

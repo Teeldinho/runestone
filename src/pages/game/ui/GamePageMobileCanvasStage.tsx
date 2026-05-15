@@ -26,7 +26,6 @@ export function GamePageMobileCanvasStage() {
 
 			<div className="h-full w-full cursor-grab">
 				<GameCanvas
-					cameraActorRef={viewModel.cameraActorRef}
 					cameraControlElement={cameraElements.cameraControlElement}
 					cameraStateSnapshot={viewModel.cameraStateSnapshot}
 					machineRuntime={viewModel.canvasMachineRuntime}

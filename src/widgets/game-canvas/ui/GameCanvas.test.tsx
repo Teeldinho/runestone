@@ -18,9 +18,6 @@ const mockCanvas = vi.fn(({ children }: { children: ReactNode }) => (
 	<div data-testid="canvas">{children}</div>
 ));
 const mockHandleSceneReady = vi.fn();
-const mockCameraActorRef = {
-	send: vi.fn(),
-};
 const mockUseGameCanvasSceneLoading = vi.fn(() => ({
 	handleSceneReady: mockHandleSceneReady,
 	isSceneLoading: true,
@@ -159,7 +156,6 @@ describe("GameCanvas", () => {
 
 		render(
 			<GameCanvas
-				cameraActorRef={mockCameraActorRef as never}
 				cameraStateSnapshot={cameraStateSnapshot}
 				machineRuntime={machineRuntime}
 				postprocessingEnabled={false}
@@ -189,7 +185,6 @@ describe("GameCanvas", () => {
 
 		render(
 			<GameCanvas
-				cameraActorRef={mockCameraActorRef as never}
 				cameraStateSnapshot={cameraStateSnapshot}
 				machineRuntime={machineRuntime}
 				postprocessingEnabled={false}

@@ -17,7 +17,6 @@ export const useGamePageDesktopLayoutModel = () => {
 	const { postprocessingEnabled } = useSettingsValues();
 
 	return {
-		cameraActorRef: canvas.cameraActorRef,
 		cameraStateSnapshot: canvas.cameraStateSnapshot,
 		canvasMachineRuntime: canvas.canvasMachineRuntime,
 		currentRoomLabel: hud.currentRoomLabel,

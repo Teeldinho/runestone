@@ -40,11 +40,6 @@ const createGamePageContextSlices = () => ({
 		isAudioMuted: false,
 	},
 	canvas: {
-		cameraActorRef: {
-			send: vi.fn(),
-		} as unknown as ReturnType<
-			typeof useGamePageCanvasContext
-		>["cameraActorRef"],
 		cameraStateSnapshot: {
 			fov: 58,
 			mode: CAMERA_MODES.FREE_ORBITAL,

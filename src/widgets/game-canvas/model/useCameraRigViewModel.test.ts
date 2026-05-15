@@ -223,7 +223,11 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([3, 20, -7]);
+		expect(mockCamera.position.toArray()).toEqual([
+			3,
+			CAMERA_CONFIG.TOP_DOWN.HEIGHT,
+			-7,
+		]);
 		expect(mockCamera.up.toArray()).toEqual([0, 0, 1]);
 		expect(mockSetCameraAzimuth).toHaveBeenCalledWith(0);
 	});

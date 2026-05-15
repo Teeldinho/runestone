@@ -5,9 +5,6 @@ import { buildGamePageViewModelPatch } from "./buildGamePageViewModelPatch";
 
 const STABLE_AUDIO = { handleAudioMuteToggle: () => {}, isAudioMuted: false };
 const STABLE_CANVAS = {
-	cameraActorRef: {
-		send: () => {},
-	} as unknown as GamePageViewModel["canvas"]["cameraActorRef"],
 	cameraStateSnapshot: {} as GamePageViewModel["canvas"]["cameraStateSnapshot"],
 	canvasMachineRuntime:
 		{} as GamePageViewModel["canvas"]["canvasMachineRuntime"],

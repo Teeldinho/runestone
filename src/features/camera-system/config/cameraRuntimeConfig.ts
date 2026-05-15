@@ -8,6 +8,7 @@ type CameraStateTargets = {
 	ORIGIN: Vector3Tuple;
 	PLAYER_HEAD: Vector3Tuple;
 	PLAYER_HEAD_FORWARD: Vector3Tuple;
+	PLAYER_HEAD_FORWARD_EPSILON: Vector3Tuple;
 };
 
 export const CAMERA_MACHINE_ID = "camera";
@@ -32,4 +33,5 @@ export const CAMERA_STATE_TARGETS: CameraStateTargets = {
 	ORIGIN: [0, 0, 0],
 	PLAYER_HEAD: [0, PLAYER_EYE_HEIGHT, 0],
 	PLAYER_HEAD_FORWARD: [0, PLAYER_EYE_HEIGHT, 1],
+	PLAYER_HEAD_FORWARD_EPSILON: [0, PLAYER_EYE_HEIGHT, 0.01],
 };

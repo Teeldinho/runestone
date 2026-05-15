@@ -34,11 +34,6 @@ const createGamePageViewModel = (overrides = {}) => {
 			isAudioMuted: false,
 		},
 		canvas: {
-			cameraActorRef: {
-				send: vi.fn(),
-			} as unknown as ReturnType<
-				typeof useGamePage
-			>["canvas"]["cameraActorRef"],
 			cameraStateSnapshot: {
 				fov: 58,
 				mode: CAMERA_MODES.FREE_ORBITAL,
@@ -161,7 +156,6 @@ vi.mock("@/pages/game/model", () => {
 			const viewModel = useGamePage();
 
 			return {
-				cameraActorRef: viewModel.canvas.cameraActorRef,
 				cameraStateSnapshot: viewModel.canvas.cameraStateSnapshot,
 				canvasMachineRuntime: viewModel.canvas.canvasMachineRuntime,
 				currentRoomLabel: viewModel.hud.currentRoomLabel,
@@ -218,7 +212,6 @@ vi.mock("@/pages/game/model", () => {
 			const viewModel = useGamePage();
 
 			return {
-				cameraActorRef: viewModel.canvas.cameraActorRef,
 				cameraStateSnapshot: viewModel.canvas.cameraStateSnapshot,
 				canvasMachineRuntime: viewModel.canvas.canvasMachineRuntime,
 				postprocessingEnabled: true,
@@ -248,26 +241,13 @@ vi.mock("@/pages/game/model", () => {
 			isDesktopRunHeld: false,
 			isJumpActive: false,
 			isMobileRunToggled: false,
-			touchLook: {
-				handlePointerDown: vi.fn(),
-				handlePointerMove: vi.fn(),
-				handlePointerUp: vi.fn(),
-				handlePointerCancel: vi.fn(),
-			},
 			touchMovement: {
 				handleMoveVelocity: vi.fn(),
 				handleStopVelocity: vi.fn(),
 			},
 		}),
-		useGamePageMobileCameraControlHandlers: () => ({
-			onLookPointerDown: undefined,
-			onLookPointerMove: undefined,
-			onLookPointerUp: undefined,
-			onLookPointerCancel: undefined,
-		}),
 		useGamePageMachineState: () => ({
 			playerActorRef: createMockActorRef(),
-			cameraActorRef: createMockActorRef(),
 			gameActorRef: createMockActorRef(),
 			playerMachine: {} as never,
 			cameraMachine: {} as never,
@@ -342,9 +322,7 @@ vi.mock("@/features/settings", () => ({
 
 vi.mock("@/features/touch-input", () => ({
 	TouchJoystickZone: () => <div data-testid="touch-joystick-widget" />,
-	CameraControlZone: ({ children }: { children?: React.ReactNode }) => (
-		<div data-testid="camera-control-zone-widget">{children}</div>
-	),
+	CameraControlZone: () => <div data-testid="camera-control-zone-widget" />,
 }));
 
 vi.mock("@/features/input-orchestrator", () => ({
@@ -355,12 +333,6 @@ vi.mock("@/features/input-orchestrator", () => ({
 		isMobileRunToggled: false,
 	}),
 	useKeyboardInputOrchestrator: vi.fn(),
-	useTouchLookInput: () => ({
-		handlePointerDown: vi.fn(),
-		handlePointerMove: vi.fn(),
-		handlePointerUp: vi.fn(),
-		handlePointerCancel: vi.fn(),
-	}),
 	useTouchMovementInput: () => ({
 		handleMoveVelocity: vi.fn(),
 		handleStopVelocity: vi.fn(),

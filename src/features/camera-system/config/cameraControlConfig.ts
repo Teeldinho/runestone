@@ -1,7 +1,10 @@
-import { CAMERA_MODES } from "@/shared/config";
+import {
+	CAMERA_CONFIG,
+	CAMERA_MODES,
+	TOP_DOWN_CAMERA_LOCKED_AZIMUTH_ANGLE,
+	TOP_DOWN_CAMERA_POLAR_ANGLE,
+} from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
-
-export { CAMERA_EVENT_TYPES } from "@/shared/config";
 
 export const CAMERA_MODE_IDS = {
 	THIRD_PERSON: CAMERA_MODES.THIRD_PERSON,
@@ -13,93 +16,77 @@ export const CAMERA_MODE_IDS = {
 export type CameraModeId =
 	(typeof CAMERA_MODE_IDS)[keyof typeof CAMERA_MODE_IDS];
 
-export const CAMERA_ACTION_KEYS = {
-	ASSIGN_LOOK_DELTA: "camera.action.assignLookDelta",
-	CLEAR_LOOK_DELTA: "camera.action.clearLookDelta",
-	ASSIGN_ZOOM_DELTA: "camera.action.assignZoomDelta",
-	ASSIGN_MODE: "camera.action.assignMode",
-} as const;
-
-export const CAMERA_STATE_KEYS = {
-	ACTIVE: "active",
-} as const;
-
-export const CAMERA_LIMITS = {
-	THIRD_PERSON_MIN_POLAR_ANGLE: Math.PI * 0.2,
-	THIRD_PERSON_MAX_POLAR_ANGLE: Math.PI * 0.48,
-
-	FREE_ORBIT_MIN_POLAR_ANGLE: Math.PI * 0.12,
-	FREE_ORBIT_MAX_POLAR_ANGLE: Math.PI * 0.82,
-
-	FIRST_PERSON_MIN_POLAR_ANGLE: Math.PI / 2 - 1.35,
-	FIRST_PERSON_MAX_POLAR_ANGLE: Math.PI / 2 + 1.35,
-	FIRST_PERSON_ORBIT_DISTANCE: 1,
-
-	TOP_DOWN_POLAR_ANGLE: Math.PI * 0.08,
-
-	MIN_DISTANCE: 3.5,
-	MAX_DISTANCE: 12,
-	DEFAULT_DISTANCE: 6,
-	ZOOM_STEP: 0.6,
+export const CAMERA_CONTROLS_CONSTANTS = {
 	FOV_EPSILON: 0.01,
-	ORBIT_CONTROLS_DIFF_EPSILON: 0.0001,
+	FOLLOW_TARGET_EPSILON: 0.0001,
+	FIRST_PERSON_DISTANCE_EPSILON: 0.01,
+	MODE_TRANSITION_ENABLED: false,
+	FOLLOW_TRANSITION_ENABLED: false,
 } as const;
 
-export const CAMERA_LOOK_LIMITS = {
-	MIN_PITCH: -1.35,
-	MAX_PITCH: 1.35,
-	DEFAULT_YAW: 0,
-	DEFAULT_PITCH: 0,
+export const CAMERA_CONTROLS_UP_AXIS_KEYS = {
+	UPRIGHT: "upright",
+	TOP_DOWN: "topDown",
 } as const;
 
-export const CAMERA_LOOK_CONFIG = {
-	YAW_DIRECTION_MULTIPLIER: -1,
-	PITCH_DIRECTION_MULTIPLIER: -1,
-} as const;
-
-export const ORBIT_CONTROL_MODE_POLICY = {
-	[CAMERA_MODE_IDS.THIRD_PERSON]: {
-		enableRotate: true,
-		enablePan: false,
-		enableZoom: true,
-	},
-	[CAMERA_MODE_IDS.TOP_DOWN]: {
-		enableRotate: false,
-		enablePan: false,
-		enableZoom: true,
-	},
-	[CAMERA_MODE_IDS.FIRST_PERSON]: {
-		enableRotate: true,
-		enablePan: false,
-		enableZoom: false,
-	},
-	[CAMERA_MODE_IDS.FREE_ORBIT]: {
-		enableRotate: true,
-		enablePan: true,
-		enableZoom: true,
-	},
-} as const;
-
-export const ORBIT_CONTROL_TOUCH_GESTURES = {
-	[CAMERA_MODE_IDS.THIRD_PERSON]: {
-		ONE: 0,
-		TWO: 2,
-	},
-	[CAMERA_MODE_IDS.TOP_DOWN]: {
-		ONE: 1,
-		TWO: 2,
-	},
-	[CAMERA_MODE_IDS.FIRST_PERSON]: {
-		ONE: 0,
-		TWO: 2,
-	},
-	[CAMERA_MODE_IDS.FREE_ORBIT]: {
-		ONE: 0,
-		TWO: 2,
-	},
-} as const;
+export type CameraControlsUpAxisKey =
+	(typeof CAMERA_CONTROLS_UP_AXIS_KEYS)[keyof typeof CAMERA_CONTROLS_UP_AXIS_KEYS];
 
 export const CAMERA_UP_VECTORS = {
 	DEFAULT: [0, 1, 0] as Vector3Tuple,
 	TOP_DOWN: [0, 0, 1] as Vector3Tuple,
+} as const;
+
+export const CAMERA_CONTROLS_TOP_DOWN_AZIMUTH =
+	TOP_DOWN_CAMERA_LOCKED_AZIMUTH_ANGLE;
+
+export const CAMERA_CONTROLS_MODE_POLICY = {
+	[CAMERA_MODE_IDS.THIRD_PERSON]: {
+		minDistance: CAMERA_CONFIG.THIRD_PERSON.ORBIT.MIN_DISTANCE,
+		maxDistance: CAMERA_CONFIG.THIRD_PERSON.ORBIT.MAX_DISTANCE,
+		minPolarAngle: CAMERA_CONFIG.THIRD_PERSON.ORBIT.MIN_POLAR_ANGLE,
+		maxPolarAngle: CAMERA_CONFIG.THIRD_PERSON.ORBIT.MAX_POLAR_ANGLE,
+		smoothTime: 0.18,
+		draggingSmoothTime: 0.08,
+		azimuthRotateSpeed: 1,
+		polarRotateSpeed: 1,
+		dollySpeed: 1,
+		truckSpeed: 0,
+	},
+	[CAMERA_MODE_IDS.TOP_DOWN]: {
+		minDistance: CAMERA_CONFIG.TOP_DOWN.MIN_DISTANCE,
+		maxDistance: CAMERA_CONFIG.TOP_DOWN.MAX_DISTANCE,
+		minPolarAngle: TOP_DOWN_CAMERA_POLAR_ANGLE,
+		maxPolarAngle: TOP_DOWN_CAMERA_POLAR_ANGLE,
+		smoothTime: 0.18,
+		draggingSmoothTime: 0.08,
+		azimuthRotateSpeed: 0,
+		polarRotateSpeed: 0,
+		dollySpeed: CAMERA_CONFIG.TOP_DOWN.ZOOM_SPEED,
+		truckSpeed: 0,
+	},
+	[CAMERA_MODE_IDS.FIRST_PERSON]: {
+		minDistance: CAMERA_CONTROLS_CONSTANTS.FIRST_PERSON_DISTANCE_EPSILON,
+		maxDistance: CAMERA_CONTROLS_CONSTANTS.FIRST_PERSON_DISTANCE_EPSILON,
+		minPolarAngle: Math.PI / 2 - 1.35,
+		maxPolarAngle: Math.PI / 2 + 1.35,
+		smoothTime: 0.08,
+		draggingSmoothTime: 0.035,
+		azimuthRotateSpeed: 1.35,
+		polarRotateSpeed: 1.2,
+		dollySpeed: 0,
+		truckSpeed: 0,
+	},
+	[CAMERA_MODE_IDS.FREE_ORBIT]: {
+		minDistance: CAMERA_CONFIG.FREE_ORBITAL.MIN_DISTANCE,
+		maxDistance: CAMERA_CONFIG.FREE_ORBITAL.MAX_DISTANCE,
+		minPolarAngle: CAMERA_CONFIG.FREE_ORBITAL.MIN_POLAR_ANGLE,
+		maxPolarAngle: CAMERA_CONFIG.FREE_ORBITAL.MAX_POLAR_ANGLE,
+		smoothTime: 0.18,
+		draggingSmoothTime: 0.08,
+		azimuthRotateSpeed: CAMERA_CONFIG.FREE_ORBITAL.ROTATE_SPEED,
+		polarRotateSpeed: CAMERA_CONFIG.FREE_ORBITAL.ROTATE_SPEED,
+		dollySpeed: CAMERA_CONFIG.FREE_ORBITAL.ZOOM_SPEED,
+		truckSpeed: CAMERA_CONFIG.FREE_ORBITAL.PAN_SPEED,
+	},
 } as const;

@@ -1,9 +1,16 @@
 // @vitest-environment happy-dom
 
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { CAMERA_MODES } from "@/features/camera-system";
+
+let mockCameraMode: (typeof CAMERA_MODES)[keyof typeof CAMERA_MODES] =
+	CAMERA_MODES.FREE_ORBITAL;
+
+afterEach(() => {
+	cleanup();
+});
 
 vi.mock("@/pages/game/model", () => ({
 	useGamePageCameraElements: () => ({
@@ -15,28 +22,15 @@ vi.mock("@/pages/game/model", () => ({
 		isDesktopRunHeld: false,
 		isJumpActive: false,
 		isMobileRunToggled: false,
-		touchLook: {
-			handlePointerDown: vi.fn(),
-			handlePointerMove: vi.fn(),
-			handlePointerUp: vi.fn(),
-			handlePointerCancel: vi.fn(),
-		},
 		touchMovement: {
 			handleMoveVelocity: vi.fn(),
 			handleStopVelocity: vi.fn(),
 		},
 	}),
-	useGamePageMobileCameraControlHandlers: () => ({
-		onLookPointerDown: undefined,
-		onLookPointerMove: undefined,
-		onLookPointerUp: undefined,
-		onLookPointerCancel: undefined,
-	}),
 	useGamePageMobileCanvasStageModel: () => ({
-		cameraActorRef: { send: vi.fn() },
 		cameraStateSnapshot: {
 			fov: 58,
-			mode: CAMERA_MODES.FREE_ORBITAL,
+			mode: mockCameraMode,
 			position: [0, 8, 10] as [number, number, number],
 			target: [0, 0, 0] as [number, number, number],
 			zoom: 1,
@@ -67,10 +61,6 @@ vi.mock("@/features/input-orchestrator", () => ({
 			data-run-enabled={String(isRunEnabled)}
 		/>
 	),
-	useInputOrchestrator: vi.fn(),
-	useKeyboardInputOrchestrator: vi.fn(),
-	useTouchLookInput: vi.fn(),
-	useTouchMovementInput: vi.fn(),
 }));
 
 vi.mock("@/features/touch-input", () => ({
@@ -96,6 +86,8 @@ import { GamePageMobileCanvasStage } from "./GamePageMobileCanvasStage";
 
 describe("GamePageMobileCanvasStage", () => {
 	it("renders the mobile controls as siblings of the camera control zone", () => {
+		mockCameraMode = CAMERA_MODES.FREE_ORBITAL;
+
 		render(<GamePageMobileCanvasStage />);
 
 		expect(screen.getByTestId("game-canvas")).toBeTruthy();
@@ -135,5 +127,13 @@ describe("GamePageMobileCanvasStage", () => {
 				.getByTestId("game-page-mobile-top-bar")
 				.closest('[data-testid="camera-control-zone"]'),
 		).toBeNull();
+	});
+
+	it("keeps the camera surface mounted in first-person mode", () => {
+		mockCameraMode = CAMERA_MODES.FIRST_PERSON;
+
+		render(<GamePageMobileCanvasStage />);
+
+		expect(screen.getByTestId("camera-control-zone")).toBeTruthy();
 	});
 });

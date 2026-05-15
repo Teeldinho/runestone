@@ -1,6 +1,5 @@
 import { AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import type { AnyActorRef } from "xstate";
 import type { CameraStateSnapshot } from "@/features/camera-system";
 import { GAME_CANVAS_COPY } from "../config";
 import {
@@ -15,7 +14,6 @@ import { GameCanvasOverlays } from "./GameCanvasOverlays";
 import { GameCanvasSceneContent } from "./GameCanvasSceneContent";
 
 type GameCanvasProps = {
-	cameraActorRef: AnyActorRef;
 	cameraControlElement?: HTMLElement | null;
 	cameraStateSnapshot: CameraStateSnapshot;
 	machineRuntime: CanvasMachineRuntime;
@@ -23,7 +21,6 @@ type GameCanvasProps = {
 };
 
 export function GameCanvas({
-	cameraActorRef,
 	cameraControlElement,
 	cameraStateSnapshot,
 	machineRuntime,
@@ -72,7 +69,6 @@ export function GameCanvas({
 				<PerformanceMonitor />
 				<AdaptiveDpr pixelated />
 				<CameraRig
-					cameraActorRef={cameraActorRef}
 					cameraControlElement={cameraControlElement}
 					cameraSnapshot={cameraStateSnapshot}
 				/>

@@ -8,19 +8,7 @@ import {
 	updatePerspectiveFov,
 } from "./cameraRigFrameUpdateMotion";
 
-const mockResolveCameraAzimuth = vi.fn();
 const mockSetCameraAzimuth = vi.fn();
-
-vi.mock("@/features/camera-system", async (importOriginal) => {
-	const original =
-		await importOriginal<typeof import("@/features/camera-system")>();
-
-	return {
-		...original,
-		resolveCameraAzimuth: (...args: unknown[]) =>
-			mockResolveCameraAzimuth(...args),
-	};
-});
 
 vi.mock("@/shared/lib", async (importOriginal) => {
 	const original = await importOriginal<typeof import("@/shared/lib")>();
@@ -34,15 +22,15 @@ vi.mock("@/shared/lib", async (importOriginal) => {
 describe("cameraRigFrameUpdateMotion", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockResolveCameraAzimuth.mockReturnValue(null);
 	});
 
-	it("syncs movement azimuth when the resolver returns a value", () => {
+	it("syncs movement azimuth from the camera direction when available", () => {
 		const camera = new THREE.PerspectiveCamera();
 		const directionRef = { current: new THREE.Vector3() };
 
-		mockResolveCameraAzimuth.mockReturnValue(7);
-
+		vi.spyOn(camera, "getWorldDirection").mockImplementation((target) =>
+			target.set(1, 0, 0),
+		);
 		syncMovementAzimuth({
 			camera,
 			cameraStateSnapshot: {
@@ -58,13 +46,16 @@ describe("cameraRigFrameUpdateMotion", () => {
 			directionRef,
 		});
 
-		expect(mockSetCameraAzimuth).toHaveBeenCalledWith(7);
+		expect(mockSetCameraAzimuth).toHaveBeenCalledWith(Math.PI / 2);
 	});
 
-	it("skips movement azimuth sync when the resolver returns null", () => {
+	it("skips movement azimuth sync when the camera has no horizontal direction", () => {
 		const camera = new THREE.PerspectiveCamera();
 		const directionRef = { current: new THREE.Vector3() };
 
+		vi.spyOn(camera, "getWorldDirection").mockImplementation((target) =>
+			target.set(0, 1, 0),
+		);
 		syncMovementAzimuth({
 			camera,
 			cameraStateSnapshot: {

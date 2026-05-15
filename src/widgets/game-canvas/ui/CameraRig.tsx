@@ -1,25 +1,21 @@
-import type {
-	CameraRuntimeSnapshot,
-	RunestoneOrbitControlsProps,
-} from "@/features/camera-system";
-import { RunestoneOrbitControls } from "@/features/camera-system";
+import type { CameraRuntimeSnapshot } from "@/features/camera-system";
+import { RunestoneCameraControls } from "@/features/camera-system";
 
 type CameraRigProps = {
-	cameraActorRef: RunestoneOrbitControlsProps["cameraActorRef"];
 	cameraControlElement?: HTMLElement | null;
 	cameraSnapshot: CameraRuntimeSnapshot;
 };
 
 export function CameraRig({
-	cameraActorRef,
 	cameraControlElement,
 	cameraSnapshot,
 }: CameraRigProps) {
 	return (
-		<RunestoneOrbitControls
-			cameraActorRef={cameraActorRef}
+		<RunestoneCameraControls
 			cameraControlElement={cameraControlElement}
 			cameraSnapshot={cameraSnapshot}
 		/>
 	);
 }
+
+export type { CameraRigProps };

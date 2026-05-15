@@ -3,25 +3,17 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { CAMERA_EVENT_TYPES } from "@/shared/config";
-
 const mocks = vi.hoisted(() => {
-	const canonicalCameraActorRef = { send: vi.fn() };
 	const gameActorRef = { send: vi.fn() };
 	const inputSend = vi.fn();
 	const playerActorRef = { send: vi.fn() };
-	const useGamePageMachineState = vi.fn();
-	const useGamePageCanvasContext = vi.fn(() => ({
-		cameraActorRef: canonicalCameraActorRef,
-	}));
+	const useGamePageCanvasContext = vi.fn();
 
 	return {
-		canonicalCameraActorRef,
 		gameActorRef,
 		inputSend,
 		playerActorRef,
 		useGamePageCanvasContext,
-		useGamePageMachineState,
 	};
 });
 
@@ -47,11 +39,9 @@ vi.mock("@/features/dungeon-navigation", () => ({
 }));
 
 vi.mock("@/features/input-orchestrator", () => ({
-	useInputOrchestrator: vi.fn(({ cameraRef }) => {
-		cameraRef.send({
-			type: CAMERA_EVENT_TYPES.LOOK_CHANGED,
-			delta: { x: 1, y: -1 },
-		});
+	useInputOrchestrator: vi.fn(({ playerRef, interactionRef }) => {
+		expect(playerRef).toBe(mocks.playerActorRef);
+		expect(interactionRef).toBe(mocks.gameActorRef);
 
 		return {
 			isDesktopRunHeld: false,
@@ -60,20 +50,10 @@ vi.mock("@/features/input-orchestrator", () => ({
 		};
 	}),
 	useKeyboardInputOrchestrator: vi.fn(),
-	useTouchLookInput: vi.fn(() => ({
-		handlePointerCancel: vi.fn(),
-		handlePointerDown: vi.fn(),
-		handlePointerMove: vi.fn(),
-		handlePointerUp: vi.fn(),
-	})),
 	useTouchMovementInput: vi.fn(() => ({
 		handleMoveVelocity: vi.fn(),
 		handleStopVelocity: vi.fn(),
 	})),
-}));
-
-vi.mock("./useGamePageMachineState", () => ({
-	useGamePageMachineState: mocks.useGamePageMachineState,
 }));
 
 vi.mock("./useGamePageSliceContexts", () => ({
@@ -83,15 +63,12 @@ vi.mock("./useGamePageSliceContexts", () => ({
 import { useGamePageInputOrchestrator } from "./useGamePageInputOrchestrator";
 
 describe("useGamePageInputOrchestrator", () => {
-	it("routes look input to the canonical canvas camera actor", () => {
+	it("binds player movement and interaction refs without camera look plumbing", () => {
 		const { result } = renderHook(() => useGamePageInputOrchestrator());
 
-		expect(mocks.useGamePageMachineState).not.toHaveBeenCalled();
-		expect(mocks.useGamePageCanvasContext).toHaveBeenCalledTimes(1);
-		expect(mocks.canonicalCameraActorRef.send).toHaveBeenCalledWith({
-			type: CAMERA_EVENT_TYPES.LOOK_CHANGED,
-			delta: { x: 1, y: -1 },
-		});
+		expect(mocks.useGamePageCanvasContext).not.toHaveBeenCalled();
 		expect(result.current.isJumpActive).toBe(false);
+		expect(result.current.sendInput).toBe(mocks.inputSend);
+		expect(result.current.touchMovement.handleMoveVelocity).toBeDefined();
 	});
 });

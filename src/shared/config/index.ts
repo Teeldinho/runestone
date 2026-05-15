@@ -1,4 +1,3 @@
-export { CAMERA_EVENT_TYPES } from "./cameraEventTypes";
 export type { CameraMode } from "./cameraModesConfig";
 export { CAMERA_MODES } from "./cameraModesConfig";
 export type { ChainMultiplier, ScoreValueKey, StorageKey } from "./constants";

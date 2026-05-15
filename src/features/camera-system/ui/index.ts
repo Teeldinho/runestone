@@ -1,2 +1,2 @@
-export type { RunestoneOrbitControlsProps } from "./RunestoneOrbitControls";
-export { RunestoneOrbitControls } from "./RunestoneOrbitControls";
+export type { RunestoneCameraControlsProps } from "./RunestoneCameraControls";
+export { RunestoneCameraControls } from "./RunestoneCameraControls";
