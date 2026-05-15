@@ -1,6 +1,8 @@
 # Runestone
 
-Runestone is a 3D exploration of manifest logic. By literalizing a Finite State Machine into a navigable dungeon—where rooms represent states and corridors function as explicit transitions—the project renders complex state management into a tangible, inspectable environment.
+Runestone is a 3D exploration of **manifest logic**: a dungeon crawler that turns Finite State Machines into a navigable, inspectable world. Rooms represent states, corridors represent explicit transitions, and progression is governed by guards, context, and actor-driven behavior rather than hidden control flow.
+
+The project is intentionally both **playable** and **architectural**. It explores how event-driven systems, state machines, physics, agent-native engineering practices, and real-time 3D interaction can work together without collapsing into ad hoc runtime logic. The result is a small game world that doubles as a visual argument for deliberate software design.
 
 **[🏰 Enter the Dungeon - Play Now!](https://runestone.teeldinho.com)**
 
@@ -10,25 +12,48 @@ Runestone is a 3D exploration of manifest logic. By literalizing a Finite State 
 
 ## Methodology
 
-The development of Runestone is guided by a formal lifecycle focused on systemic reliability. We prioritize architectural correctness over rapid prototyping, utilizing a series of controlled engineering cycles to ensure that every system remains auditable and predictable.
+The development of Runestone is guided by a formal lifecycle focused on systemic reliability. We prioritize architectural correctness over rapid prototyping and use controlled engineering loops so that requirements, implementation, verification, and handoff context remain auditable.
 
 ### Spec-Driven Development (SDD)
+
 **Spec-Driven Development** is the engineering practice of formalizing a feature's blueprint before implementation begins.
 
-*   **The Concept**: A discipline of formalizing constraints and success criteria as a prerequisite for implementation.
-*   **The Rationale**: Unvetted code is the primary driver of technical debt. By articulating edge cases in a specification, we move beyond opportunistic prototyping toward a standard of high-integrity engineering.
-*   **The Outcome**: Systems that are "Right-First-Time" by design, drastically reducing the surface area for logic drift and ensuring the codebase scales without losing structural integrity.
+- **The Concept**: A discipline of articulating constraints, risks, edge cases, and success criteria as a prerequisite for implementation.
+- **The Practice in Runestone**: We keep implementation-loop artifacts in a local, non-committed hidden workspace that persists between agent sessions. These artifacts capture feature specs, acceptance criteria, decision trails, review findings, implementation notes, and verification outcomes without polluting source control.
+- **Why This Matters**: Persistent loop artifacts help preserve context across long-running agent workflows, reduce avoidable rediscovery, protect limited context windows, and give both humans and agents a stable source of truth during iterative refinement.
+- **The Inspiration**: This approach is influenced by recursive agent-loop thinking often discussed through the **Ralph Wiggum loop** shorthand, but Runestone applies that idea with stronger engineering controls: explicit specifications, deliberate review points, local verification, and clear stopping conditions.
+- **The Outcome**: Systems that are more likely to converge cleanly, with less logic drift, fewer repeated mistakes, and a clearer audit trail for why a solution exists.
 
 ![Implementation plan](./public/screenshots/implementation-sdd.png)
 
 ### Test-Driven Development (TDD)
+
 **Test-Driven Development** is a verification-first cycle where functional contracts are drafted through tests before implementation logic is authored.
 
-*   **The Concept**: Defining a component's behavioral contract through failing tests using the Red-Green-Refactor cycle.
-*   **Technical Justification**: Writing tests first forces the design of cleaner, decoupled APIs. It ensures that our model hooks are built for testability and that business logic is never implicitly coupled to the UI layer.
-*   **The Outcome**: Produces a self-documenting test suite that proves the engine's correctness at every commit, transforming "working code" from an assumption into a verified certainty.
+- **The Concept**: Defining a component's behavioral contract through failing tests using the Red-Green-Refactor cycle.
+- **Technical Justification**: Writing tests first forces the design of cleaner, decoupled APIs. It ensures that our model hooks are built for testability and that business logic is never implicitly coupled to the UI layer.
+- **The Outcome**: Produces a self-documenting test suite that proves the engine's correctness at every commit, transforming "working code" from an assumption into a verified standard.
 
 ![Vitest suite execution showing passing tests and test files](./public/screenshots/vitest-full-suite-pass.png)
+
+### Local CI and Reversible Delivery
+
+Runestone treats “ready for review” as a verified state, not a hopeful one. Before an implementation loop is considered complete, the working branch is expected to pass the relevant local validation flow rather than deferring preventable failures to remote CI.
+
+The repository provides a local verification path through commands such as:
+
+```bash
+npm run lint:ci
+npm run lint:purity
+npm run lint:fsd
+npm run typecheck
+npm run test
+npm run ci:local
+```
+
+This reduces avoidable back-and-forth with remote pipelines and keeps review cycles focused on design, correctness, and behavior rather than fixable validation misses.
+
+We also favor **small, coherent, reversible commits**. Each commit should represent a meaningful unit of change that can be reviewed, explained, and rolled back without unraveling unrelated work. This mirrors disciplined delivery practices used by high-performing engineering teams: ship in clear increments, preserve rollback safety, and keep history useful.
 
 ---
 
@@ -86,25 +111,50 @@ Real-time channels such as WebSocket and Server-Sent Events (SSE) require precis
 
 ## The Actor Model Engine: Core State Machines
 
-Runestone behavior is grounded in the **actor model**, where every major system operates as a self-contained, auditable event loop. By literalizing these logic units into finite state machines, we ensure that every transition in the dungeon, the player’s behavior, or the camera angle is a deliberate structural shift rather than a cascading side effect.
+Runestone behavior is grounded in the **actor model**, where every major system operates as a self-contained, auditable event loop. By literalizing these logic units into finite state machines, we ensure that every transition in the dungeon, the player’s behavior, or the camera mode is a deliberate structural shift rather than a cascading side effect.
 
 ### Spatial Logic: The Dungeon Machine
+
 Manages the physical state of the dungeon. It tracks which rooms are "active," handles the logic of moving between areas, and acts as a gatekeeper for progress—locking doorways until specific criteria, such as defeating guards or collecting keys, are met.
+
 ![Dungeon State Machine Visualization](./public/screenshots/xstate-dungeon-graph.png)
 
 ### Perspectives: The Camera Machine
-Resolves the transition between our four view modes. Instead of simple toggles, every perspective change is a structural shift, preserving camera transforms whether you are in **First-Person (1P)**, **Third-Person (3P)**, **Top-Down (TD)**, or **Free Orbital (FO)**.
+
+Defines which view mode is active — **First-Person (1P)**, **Third-Person (3P)**, **Top-Down (TD)**, or **Free Orbital (FO)** — and keeps those transitions explicit, inspectable, and testable through XState.
+
+Continuous camera motion is handled by Drei `CameraControls`, which owns live rotation, zoom, follow behavior, and smooth target updates without feeding transient runtime telemetry back into the machine. This keeps the camera state model simple while avoiding control loops between player movement and camera interaction.
+
+Mode switches preserve the player’s world-facing look direction where the destination camera mode allows it, so changing perspective does not unexpectedly reset orientation.
+
 ![Camera State Machine Visualization](./public/screenshots/xstate-camera-graph.png)
 
+### Input Orchestration: Movement, Actions, and Touch Semantics
+
+Runestone routes gameplay intent through a dedicated input orchestration layer before it reaches the player or dungeon systems. Keyboard and touch input converge through the same event-driven flow, which standardizes:
+
+- movement vectors,
+- desktop run hold and mobile Run toggle behavior,
+- Jump events,
+- contextual Attack / Interact actions,
+- pointer ownership around mobile controls.
+
+This keeps UI surfaces lightweight while ensuring that player and interaction machines receive consistent domain events regardless of device.
+
 ### Atmosphere: The Audio Machine
+
 Handles the global sound environment using the actor model to track the audio lifecycle through **Paused**, **Playing**, and **Muted** states. This provides a centralized point for managing volume transitions and ensuring audio persistence across scene loads.
+
 ![Audio State Machine Visualization](./public/screenshots/xstate-audio-graph.png)
 
 ### Vitality & Movement: The Player Machine
-Orchestrates the complex lifecycle of the explorer. It manages parallel states for movement (Idle, Walking, Running) and vitality (Healthy, Damaged, Dead), ensuring combat interactions and damage feedback are always synchronized.
+
+Orchestrates the explorer’s runtime through parallel behavioral concerns. It manages locomotion states such as **Idle**, **Walking**, and **Running**, tracks vitality through **Healthy**, **Damaged**, and **Dead**, and models grounded versus airborne behavior to support Jump and landing flow without burying those rules in UI code.
+
 ![Player State Machine Visualization](./public/screenshots/xstate-player-graph.png)
 
 --- 
+
 ## Interface Tour
 
 ### Desktop (three-pane workflow)
@@ -126,16 +176,22 @@ When you see the left pane, bottom pane, and right pane together with no joystic
 
 ### Mobile and Tablet Interaction
 
-Runestone strictly enforces a landscape gameplay environment for optimal 3D perspective. The interface adaptively scales between compact mobile handsets and expanded tablet displays, with a consistent ergonomic pattern:
+Runestone strictly enforces a landscape gameplay environment for optimal 3D spatial control. The interface scales between compact mobile handsets and larger tablet displays while preserving a consistent interaction model:
 
-*   **Mobile HUD**: Optimized for reachability on smaller screens using **icon-only** triggers for side-panels and audio controls.
-*   **Tablet HUD**: Leverages additional screen real-estate with expanded **icon + text** buttons for immediate tactical clarity.
+- **Left-side joystick** for player movement
+- **Scene-wide look surface** for camera rotation outside interactive overlays
+- **Run** and **Jump** action buttons for mobile play
+- **Contextual Attack / Interact** actions when the player is near relevant dungeon entities
+- **Mobile HUD** controls optimized for reachability and viewport visibility
+- **Tablet HUD** treatments that use additional space for clearer labels and action affordances
+
+Pointer ownership and layered input boundaries prevent the joystick, action buttons, and camera surface from competing for the same touch gesture. This keeps simultaneous **Move + Look** interaction stable and predictable on mobile/tablet devices.
 
 ![Mobile landscape gameplay with compact HUD](./public/screenshots/mobile-landscape-hud.png)
-<p align="center"><em>Compact Mobile HUD featuring icon-only controls for maximized viewport visibility</em></p>
+<p align="center"><em>Compact mobile gameplay with joystick movement, camera look space, and action controls</em></p>
 
 ![Tablet landscape HUD with optimized scaling](./public/screenshots/tablet-landscape-hud.png)
-<p align="center"><em>Tablet landscape HUD showcasing expanded icon-plus-text interface triggers</em></p>
+<p align="center"><em>Tablet gameplay layout with expanded controls and clearer tactical affordances</em></p>
 
 ### Combat and Resilience
 
@@ -156,16 +212,19 @@ The player actor handles interaction prompts and resilience feedback through exp
 <p align="center"><em>The 'YOU DIED' termination state with restart loop (Tablet view)</em></p>
 
 ### Camera Mode Showcase
-Transitioning between perspectives is handled with mathematical precision by the camera actor:
+
+Perspective switching is driven by the camera mode state machine, while live camera motion is handled through Drei `CameraControls`. This separation preserves inspectable mode transitions without sacrificing stable runtime behavior during movement, look input, zoom, or camera-mode changes.
 
 #### Camera Modes
 
 | Mode | Hotkey | Description |
 | --- | --- | --- |
-| **Third-Person (3P)** | `1` | Offset behind player, constrained orbit |
-| **Top-Down (TD)** | `2` | Fixed overhead angle, zoom only |
-| **First-Person (1P)** | `3` | Head-level view with pointer lock |
-| **Free Orbital (FO)** | `4` | Pan + rotate + zoom |
+| **Third-Person (3P)** | `1` | Offset follow view with constrained orbit |
+| **Top-Down (TD)** | `2` | Fixed overhead perspective with controlled zoom |
+| **First-Person (1P)** | `3` | Head-level view with direct look control |
+| **Free Orbital (FO)** | `4` | Pan, rotate, and zoom exploration camera |
+
+Mode changes preserve the player’s world-facing look direction where the destination camera constraints allow it. Switching from one perspective to another should feel like changing vantage point, not losing orientation.
 
 #### Perspectives
 
@@ -206,9 +265,12 @@ Implemented systems:
 
 - 3D dungeon scene with KayKit assets and atmospheric fog
 - Four camera modes (third-person, top-down, first-person, free-orbital)
+- CameraControls-based camera runtime that decouples follow movement from live camera interaction
+- Look-direction continuity across camera-mode switches
+- Mobile/tablet control model with joystick movement, scene-wide look interaction, Run, Jump, and contextual action buttons
 - Machine-authoritative room traversal with doorway-relative arrival
 - Live XState inspector (React Flow + dagre)
-- Player movement, collision physics (Rapier), health points (HP), death, and restart loop
+- Player movement, collision physics (Rapier), airborne/grounded behavior, health points (HP), death, and restart loop
 - Guard-room enemy behavior and treasury key progression
 - Convex-backed auth and leaderboard flow
 - Audio (Tone.js, Howler) and Web Haptics integration
@@ -224,7 +286,7 @@ Runestone follows **Feature-Sliced Design (FSD)** to keep imports and responsibi
 | `app/` | Providers, router, root wiring |
 | `pages/` | Route composition |
 | `widgets/` | Game canvas, heads-up display (HUD), inspector panel |
-| `features/` | Camera, auth, audio, haptics, traversal |
+| `features/` | Camera, input orchestration, auth, audio, haptics, traversal |
 | `entities/` | Player, enemy, room, dungeon, score |
 | `shared/` | Reusable UI, config, types, infrastructure |
 
@@ -234,6 +296,18 @@ Slice flow:
 ui/ -> model/ -> lib/ -> config/
 ```
 
+### Runtime Ownership Boundaries
+
+Runestone uses state machines where explicit transitions and event contracts improve clarity, while leaving highly continuous runtime concerns to specialized libraries built for them.
+
+| Concern | Primary Owner |
+| --- | --- |
+| Camera mode semantics | XState camera machine |
+| Continuous camera rotation, zoom, and follow behavior | Drei `CameraControls` |
+| Movement, Run, Jump, and action routing | Input orchestrator |
+| Player locomotion and airborne state | Player machine + physics hooks |
+| Contextual dungeon interactions | Dungeon/navigation machine |
+
 ---
 
 ## Technical Stack
@@ -241,8 +315,8 @@ ui/ -> model/ -> lib/ -> config/
 | Component | Technology |
 | --- | --- |
 | Framework | TanStack Start + React 19 |
-| 3D Engine | React Three Fiber + Rapier |
-| State Management | XState v5 (actor model) |
+| 3D Engine | React Three Fiber + Drei CameraControls + Rapier |
+| State Management | XState v5 actor model for gameplay modes, orchestration, and inspectable transitions |
 | Backend | Convex (real-time) |
 | Audio | Tone.js + Howler |
 | Haptics | Web Haptics API |
@@ -309,4 +383,4 @@ npm run ci:local      # Full local CI check
 
 Runestone is an engineering experiment with production-grade guardrails.
 
-The goal is not to ship a commercial game; it is to explore what software feels like when the state machine is the product, not hidden plumbing.
+The goal is not to ship a commercial game; it is to explore what software feels like when the state machine is visible, inspectable, and deliberately scoped — central where behavior benefits from explicit transitions, and restrained where specialized runtime systems should lead.
