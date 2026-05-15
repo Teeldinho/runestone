@@ -38,22 +38,11 @@ The development of Runestone is guided by a formal lifecycle focused on systemic
 
 ### Local CI and Reversible Delivery
 
-Runestone treats “ready for review” as a verified state, not a hopeful one. Before an implementation loop is considered complete, the working branch is expected to pass the relevant local validation flow rather than deferring preventable failures to remote CI.
+Runestone treats “ready for review” as a locally proven state. Work is scoped in the agent-native loop, implemented in small reversible commits, and checked against the repository’s quality gates before it is handed off.
 
-The repository provides a local verification path through commands such as:
+That means we use local validation to catch formatting, architecture, type, and test regressions at the branch level, while the loop artifacts keep the implementation intent, verification notes, and outstanding decisions auditable between sessions.
 
-```bash
-npm run lint:ci
-npm run lint:purity
-npm run lint:fsd
-npm run typecheck
-npm run test
-npm run ci:local
-```
-
-This reduces avoidable back-and-forth with remote pipelines and keeps review cycles focused on design, correctness, and behavior rather than fixable validation misses.
-
-We also favor **small, coherent, reversible commits**. Each commit should represent a meaningful unit of change that can be reviewed, explained, and rolled back without unraveling unrelated work. This mirrors disciplined delivery practices used by high-performing engineering teams: ship in clear increments, preserve rollback safety, and keep history useful.
+We prefer this over a post-hoc scramble because it keeps review focused on design and correctness instead of avoidable validation misses.
 
 ---
 
