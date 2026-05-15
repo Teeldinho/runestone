@@ -7,6 +7,7 @@ import { PLAYER_STATES } from "../config";
 import { resolvePlayerAvatarVisibility, selectPlayerAnimation } from "../lib";
 import { usePlayerMachineRuntime } from "./playerMachineRuntime";
 import type { PlayerHealthState, PlayerMeshSettings } from "./types";
+import { usePlayerJumpPhysics } from "./usePlayerJumpPhysics";
 import { usePlayerMesh } from "./usePlayerMesh";
 import { usePlayerPhysics } from "./usePlayerPhysics";
 
@@ -30,7 +31,7 @@ export const usePlayerMeshViewModel = ({
 		initialPositionRef.current = initialPosition;
 	}
 
-	const { snapshot } = usePlayerMachineRuntime();
+	const { snapshot, sendPlayerMachineEvent } = usePlayerMachineRuntime();
 	const healthState = snapshot.value[
 		PLAYER_STATES.REGIONS.HEALTH
 	] as PlayerHealthState;
@@ -38,9 +39,16 @@ export const usePlayerMeshViewModel = ({
 		healthState,
 		position: initialPositionRef.current,
 	});
-	const { rigidBodyRef } = usePlayerPhysics({
+	const { rigidBodyRef, isGrounded } = usePlayerPhysics({
 		velocity: snapshot.context.velocity,
 		isSprinting: snapshot.context.isSprinting,
+	});
+
+	usePlayerJumpPhysics({
+		rigidBodyRef,
+		wantsJumpImpulse: snapshot.context.wantsJumpImpulse,
+		isGrounded,
+		sendPlayer: sendPlayerMachineEvent,
 	});
 	const cameraMode = useCameraModeValue();
 	const { isAuraVisible, isAvatarVisible } = resolvePlayerAvatarVisibility({

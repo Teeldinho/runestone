@@ -5,6 +5,7 @@ export { useGamePageCameraElements } from "./useGamePageCameraElements";
 export { useGamePageDesktopHeaderModel } from "./useGamePageDesktopHeaderModel";
 export { useGamePageDesktopLayoutModel } from "./useGamePageDesktopLayoutModel";
 export { useGamePageHudPanelModel } from "./useGamePageHudPanelModel";
+export { useGamePageInputOrchestrator } from "./useGamePageInputOrchestrator";
 export { useGamePageLayoutMode } from "./useGamePageLayoutMode";
 export { useGamePageMachineState } from "./useGamePageMachineState";
 export type {

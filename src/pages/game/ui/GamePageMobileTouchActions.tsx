@@ -1,6 +1,7 @@
 import { Badge, Button } from "@/shared/ui";
 
 import type { GamePageMobileActionPanelModel } from "../model";
+import { useMobileActionPointerGuards } from "../model/useMobileActionPointerGuards";
 
 type GamePageMobileTouchActionsProps = {
 	touchActions: GamePageMobileActionPanelModel["touchActions"];
@@ -10,6 +11,7 @@ export function GamePageMobileTouchActions({
 	touchActions,
 }: GamePageMobileTouchActionsProps) {
 	const { attack, interact } = touchActions;
+	const { stopActionPointerPropagation } = useMobileActionPointerGuards();
 
 	return (
 		<>
@@ -18,6 +20,7 @@ export function GamePageMobileTouchActions({
 					variant="default"
 					size="default"
 					onClick={interact.handleTouchInteract}
+					onPointerDown={stopActionPointerPropagation}
 					className="pointer-events-auto relative w-full font-bold"
 				>
 					{interact.touchInteractPrompt}
@@ -30,6 +33,7 @@ export function GamePageMobileTouchActions({
 					variant="default"
 					size="default"
 					onClick={attack.handleTouchAttack}
+					onPointerDown={stopActionPointerPropagation}
 					className="pointer-events-auto relative w-full font-bold"
 				>
 					{attack.touchAttackPrompt}

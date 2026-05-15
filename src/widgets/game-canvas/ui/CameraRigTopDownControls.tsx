@@ -9,14 +9,16 @@ import type { CameraRigOrbitBindings, CameraRigRefs } from "../model";
 type CameraRigTopDownControlsProps = {
 	orbitBindings: CameraRigOrbitBindings;
 	refs: CameraRigRefs;
-	isDesktopLayout: boolean;
 };
 
 export function CameraRigTopDownControls({
 	orbitBindings,
 	refs,
-	isDesktopLayout,
 }: CameraRigTopDownControlsProps) {
+	if (!orbitBindings.shouldRenderOrbitControls) {
+		return null;
+	}
+
 	return (
 		<OrbitControls
 			ref={refs.topDownOrbitRef as React.RefObject<never>}
@@ -34,11 +36,7 @@ export function CameraRigTopDownControls({
 			touches={CAMERA_RIG_TOUCH_GESTURES.TOP_DOWN}
 			onStart={orbitBindings.handleOrbitStart}
 			onEnd={orbitBindings.handleOrbitEnd}
-			domElement={
-				isDesktopLayout
-					? undefined
-					: (orbitBindings.cameraControlElement ?? undefined)
-			}
+			domElement={orbitBindings.domElement}
 		/>
 	);
 }

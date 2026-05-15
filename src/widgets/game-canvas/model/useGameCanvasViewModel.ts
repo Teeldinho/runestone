@@ -6,7 +6,6 @@ import type { CanvasMachineSettingsViewModel } from "./canvasSettingsTypes";
 import { useAchievementTracker } from "./useAchievementTracker";
 import type { CanvasMachineRuntime } from "./useCanvasMachineSettings";
 import { useCanvasMachineSettings } from "./useCanvasMachineSettings";
-import { useFirstPersonLockHint } from "./useFirstPersonLockHint";
 import { useGameOverState } from "./useGameOverState";
 import { useGameSideEffects } from "./useGameSideEffects";
 import { usePlayerSceneController } from "./usePlayerSceneController";
@@ -22,7 +21,6 @@ type UseGameCanvasViewModelResult = {
 	isGameOver: boolean;
 	handleGameRestart: () => void;
 	activeAchievement: Achievement | null;
-	showFirstPersonLockHint: boolean;
 };
 
 export const useGameCanvasViewModel = ({
@@ -42,16 +40,12 @@ export const useGameCanvasViewModel = ({
 
 	const { isGameOver, handleGameRestart } = useGameOverState();
 	const { activeAchievement } = useAchievementTracker({ hapticsEnabled });
-	const showFirstPersonLockHint = useFirstPersonLockHint({
-		mode: cameraStateSnapshot?.mode,
-	});
 
 	return {
 		canvasSettings,
 		isGameOver,
 		handleGameRestart,
 		activeAchievement,
-		showFirstPersonLockHint,
 	};
 };
 

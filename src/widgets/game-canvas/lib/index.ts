@@ -40,6 +40,11 @@ export {
 	getWorldAttackPromptPosition,
 	getWorldInteractionPromptPosition,
 } from "./getWorldInteractionPromptPosition";
+export {
+	type CameraRigOrbitControlSurface,
+	resolveCameraRigOrbitControlSurface,
+} from "./resolveCameraRigOrbitControlSurface";
+export { resolveFirstPersonMobileLookAngles } from "./resolveFirstPersonMobileLookAngles";
 export type {
 	EnemyMeshSettings,
 	SceneRoomMeshSettings,

@@ -54,13 +54,53 @@ describe("cameraRigFrameUpdateModeApplications", () => {
 			firstPersonTargetVectorRef: { current: new THREE.Vector3() },
 			isDesktopLayout: true,
 			needsFirstPersonSyncRef: { current: false },
+			pitch: 0,
 			pointerLockRef: { current: { isLocked: false } },
 			position: [1, 2, 3],
 			positionVectorRef: { current: new THREE.Vector3() },
+			yaw: 0,
 		});
 
 		expect(camera.position.toArray()).toEqual([1, 2, 3]);
 		expect(lookAtSpy).toHaveBeenCalledWith(1, 2, 4);
+	});
+
+	it("does not apply mobile first-person camera transforms in the frame loop", () => {
+		const camera = new THREE.PerspectiveCamera();
+		const firstPersonOrbitRef = new Proxy(
+			{ current: null },
+			{
+				get: () => {
+					throw new Error(
+						"firstPersonOrbitRef should not be read in mobile mode",
+					);
+				},
+			},
+		);
+
+		applyFirstPersonFrame({
+			camera,
+			flags: {
+				isFreeOrbitalJump: false,
+				isModeChange: false,
+				isThirdPersonJump: false,
+				transitionAlpha: 1,
+			},
+			firstPersonOrbitRef: firstPersonOrbitRef as never,
+			firstPersonTargetVectorRef: { current: new THREE.Vector3() },
+			isDesktopLayout: false,
+			pointerLockRef: { current: null },
+			position: [1, 2, 3],
+			positionVectorRef: { current: new THREE.Vector3() },
+			needsFirstPersonSyncRef: { current: false },
+			smoothedFirstPersonPitchRef: { current: 0 },
+			smoothedFirstPersonYawRef: { current: 0 },
+			pitch: 1,
+			yaw: 1,
+		});
+
+		expect(camera.position.toArray()).toEqual([0, 0, 0]);
+		expect(camera.rotation.order).toBe("XYZ");
 	});
 
 	it("syncs the third-person orbit target when a sync is requested", () => {

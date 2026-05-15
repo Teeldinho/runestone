@@ -21,6 +21,9 @@ const mockCanvasContext = {
 		position: [0, 8, 10] as [number, number, number],
 		target: [0, 0, 0] as [number, number, number],
 		zoom: 1,
+		yaw: 0,
+		pitch: 0,
+		distance: 6,
 	},
 	canvasMachineRuntime: {
 		currentRoomId: ROOM_IDS.ENTRANCE,

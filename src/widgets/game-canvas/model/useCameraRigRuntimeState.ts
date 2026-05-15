@@ -20,23 +20,25 @@ export const useCameraRigRuntimeState = (): CameraRigRuntimeState => {
 	const needsTopDownSyncRef = useRef(false);
 	const needsFirstPersonSyncRef = useRef(false);
 	const isUserInteractingRef = useRef(false);
-	const isTouchInitiallyOnLeftRef = useRef(false);
-	const activeTouchPointerIdsRef = useRef(new Set<number>());
 	const previousTrackedPlayerPositionRef = useRef<Vector3Tuple | null>(null);
 	const previousModeRef = useRef<string | undefined>(undefined);
 	const directionRef = useRef(new THREE.Vector3());
 	const lookAtVectorRef = useRef(new THREE.Vector3());
 	const positionVectorRef = useRef(new THREE.Vector3());
 	const firstPersonTargetVectorRef = useRef(new THREE.Vector3());
+	const smoothedFirstPersonYawRef = useRef(0);
+	const smoothedFirstPersonPitchRef = useRef(0);
 	const { isDesktopLayout } = useResponsiveGameLayout();
 
 	return {
 		interaction: {
-			activeTouchPointerIdsRef,
-			isTouchInitiallyOnLeftRef,
 			isUserInteractingRef,
 		},
 		isDesktopLayout,
+		lookSmoothing: {
+			smoothedFirstPersonPitchRef,
+			smoothedFirstPersonYawRef,
+		},
 		previousModeRef,
 		previousTrackedPlayerPositionRef,
 		refs: {

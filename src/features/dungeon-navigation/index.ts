@@ -34,6 +34,7 @@ export {
 	selectNearInteractable,
 	useDoorwayNavigation,
 	useGameMachine,
+	useGameMachineActorRef,
 	useGameMachineRuntime,
 	useGameMachineSelector,
 	useInteractionCandidates,

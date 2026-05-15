@@ -82,6 +82,9 @@ describe("useCanvasMachineSettings", () => {
 				position: [0, 20, 0],
 				target: [0, 0, 0],
 				zoom: 1,
+				yaw: 0,
+				pitch: 0,
+				distance: 6,
 			}),
 		);
 
@@ -100,6 +103,9 @@ describe("useCanvasMachineSettings", () => {
 				position: [0, 16, -18],
 				target: [0, 0, 0],
 				zoom: 1,
+				yaw: 0,
+				pitch: 0,
+				distance: 6,
 			}),
 		);
 
@@ -121,6 +127,9 @@ describe("useCanvasMachineSettings", () => {
 				position: [0, 2.2, -3.8],
 				target: [0, 0, 0],
 				zoom: 1,
+				yaw: 0,
+				pitch: 0,
+				distance: 6,
 			}),
 		);
 
@@ -188,6 +197,9 @@ describe("useCanvasMachineSettings", () => {
 				position: [1, 2, 3],
 				target: [0, 0, 0],
 				zoom: 1.25,
+				yaw: 0,
+				pitch: 0,
+				distance: 6,
 			}),
 		);
 

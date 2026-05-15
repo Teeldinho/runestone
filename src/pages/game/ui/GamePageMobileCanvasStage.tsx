@@ -1,12 +1,9 @@
-import { CAMERA_MODES } from "@/features/camera-system";
-import {
-	CameraControlZone,
-	TouchJoystickOverlay,
-} from "@/features/touch-input";
+import { MobileActionButtonZone } from "@/features/input-orchestrator";
+import { CameraControlZone, TouchJoystickZone } from "@/features/touch-input";
 import {
 	useGamePageCameraElements,
+	useGamePageInputOrchestrator,
 	useGamePageMobileCanvasStageModel,
-	useGamePageMobileJoystickModel,
 } from "@/pages/game/model";
 import { GameCanvas } from "@/widgets/game-canvas";
 
@@ -16,7 +13,7 @@ import { GamePageMobileTopBar } from "./GamePageMobileTopBar";
 export function GamePageMobileCanvasStage() {
 	const cameraElements = useGamePageCameraElements();
 	const viewModel = useGamePageMobileCanvasStageModel();
-	const joystickModel = useGamePageMobileJoystickModel();
+	const input = useGamePageInputOrchestrator();
 
 	return (
 		<section
@@ -31,7 +28,6 @@ export function GamePageMobileCanvasStage() {
 				<GameCanvas
 					cameraControlElement={cameraElements.cameraControlElement}
 					cameraStateSnapshot={viewModel.cameraStateSnapshot}
-					firstPersonLookElement={cameraElements.firstPersonLookElement}
 					machineRuntime={viewModel.canvasMachineRuntime}
 					postprocessingEnabled={viewModel.postprocessingEnabled}
 				/>
@@ -39,24 +35,23 @@ export function GamePageMobileCanvasStage() {
 
 			<GamePageMobileTopBar />
 
+			<CameraControlZone zoneRef={cameraElements.cameraControlRef} />
+
 			<div className="pointer-events-none absolute bottom-4 left-4 z-30">
 				<div className="pointer-events-auto">
-					<TouchJoystickOverlay
-						onMoveVelocity={joystickModel.handleTouchJoystickMove}
-						onStopVelocity={joystickModel.handleTouchJoystickStop}
+					<TouchJoystickZone
+						onMoveVelocity={input.touchMovement.handleMoveVelocity}
+						onStopVelocity={input.touchMovement.handleStopVelocity}
 					/>
 				</div>
 			</div>
 
-			{viewModel.cameraStateSnapshot.mode === CAMERA_MODES.FIRST_PERSON ? (
-				<div
-					ref={cameraElements.firstPersonLookRef}
-					id="fp-look-zone"
-					className="pointer-events-auto absolute inset-y-0 right-0 left-1/2 z-20 touch-none select-none"
-				/>
-			) : null}
+			<MobileActionButtonZone
+				isJumpActive={input.isJumpActive}
+				isRunEnabled={input.isMobileRunToggled}
+				sendInput={input.sendInput}
+			/>
 
-			<CameraControlZone zoneRef={cameraElements.cameraControlRef} />
 			<GamePageMobileActionPanel />
 		</section>
 	);

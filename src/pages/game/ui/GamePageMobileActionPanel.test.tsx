@@ -68,7 +68,8 @@ vi.mock("@/widgets/settings-panel", () => ({
 
 describe("GamePageMobileActionPanel", () => {
 	it("renders grouped mobile action controls", () => {
-		render(<GamePageMobileActionPanel />);
+		const { container } = render(<GamePageMobileActionPanel />);
+		const panelRoot = container.firstElementChild as HTMLElement;
 
 		expect(screen.getByRole("button", { name: "Attack" })).toBeTruthy();
 		expect(screen.getByRole("button", { name: "Open Door" })).toBeTruthy();
@@ -82,6 +83,8 @@ describe("GamePageMobileActionPanel", () => {
 		expect(screen.getByText("Rankings")).toBeTruthy();
 		expect(screen.getByText("Panels")).toBeTruthy();
 		expect(screen.getByText("Settings")).toBeTruthy();
+		expect(panelRoot.classList.contains("pointer-events-auto")).toBe(true);
+		expect(panelRoot.getAttribute("data-input-blocks-look")).toBe("true");
 
 		expect(
 			screen

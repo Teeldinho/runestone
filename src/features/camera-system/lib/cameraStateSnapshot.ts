@@ -11,6 +11,10 @@ import {
 
 import type { CameraStateSnapshot } from "../model/types";
 
+const DEFAULT_YAW = 0;
+const DEFAULT_PITCH = 0;
+const DEFAULT_DISTANCE = 6;
+
 const createThirdPersonSnapshot = (
 	thirdPersonConfig: CameraConfig["THIRD_PERSON"],
 ): CameraStateSnapshot => ({
@@ -19,6 +23,9 @@ const createThirdPersonSnapshot = (
 	position: thirdPersonConfig.OFFSET,
 	target: CAMERA_STATE_TARGETS.PLAYER_HEAD,
 	zoom: CAMERA_DEFAULT_ZOOM,
+	yaw: DEFAULT_YAW,
+	pitch: DEFAULT_PITCH,
+	distance: DEFAULT_DISTANCE,
 });
 
 const createTopDownSnapshot = (
@@ -29,6 +36,9 @@ const createTopDownSnapshot = (
 	position: [0, topDownConfig.HEIGHT, topDownConfig.DISTANCE],
 	target: CAMERA_STATE_TARGETS.ORIGIN,
 	zoom: CAMERA_DEFAULT_ZOOM,
+	yaw: DEFAULT_YAW,
+	pitch: DEFAULT_PITCH,
+	distance: DEFAULT_DISTANCE,
 });
 
 const createFirstPersonSnapshot = (
@@ -36,9 +46,12 @@ const createFirstPersonSnapshot = (
 ): CameraStateSnapshot => ({
 	fov: firstPersonConfig.FOV,
 	mode: CAMERA_MODES.FIRST_PERSON,
-	position: CAMERA_STATE_TARGETS.PLAYER_HEAD,
-	target: CAMERA_STATE_TARGETS.PLAYER_HEAD_FORWARD,
+	position: CAMERA_STATE_TARGETS.PLAYER_HEAD_FORWARD_EPSILON,
+	target: CAMERA_STATE_TARGETS.PLAYER_HEAD,
 	zoom: CAMERA_DEFAULT_ZOOM,
+	yaw: DEFAULT_YAW,
+	pitch: DEFAULT_PITCH,
+	distance: DEFAULT_DISTANCE,
 });
 
 const createFreeOrbitalSnapshot = (
@@ -49,6 +62,9 @@ const createFreeOrbitalSnapshot = (
 	position: freeOrbitalConfig.INITIAL_POSITION,
 	target: CAMERA_STATE_TARGETS.ORIGIN,
 	zoom: CAMERA_DEFAULT_ZOOM,
+	yaw: DEFAULT_YAW,
+	pitch: DEFAULT_PITCH,
+	distance: DEFAULT_DISTANCE,
 });
 
 export const createCameraStateSnapshot = (

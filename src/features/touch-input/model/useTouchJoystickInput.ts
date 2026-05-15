@@ -30,6 +30,13 @@ type UseTouchJoystickInputResult = {
 	handlePointerCancel: (event: ReactPointerEvent<HTMLDivElement>) => void;
 };
 
+const stopTouchControlPointerEvent = (
+	event: ReactPointerEvent<HTMLDivElement>,
+): void => {
+	event.preventDefault();
+	event.stopPropagation();
+};
+
 export const useTouchJoystickInput = ({
 	onMove,
 	onStop,
@@ -47,7 +54,8 @@ export const useTouchJoystickInput = ({
 
 	const handlePointerDown = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
-			event.preventDefault();
+			stopTouchControlPointerEvent(event);
+
 			if (
 				!shouldHandleTouchJoystickPointerAction({
 					activePointerId: activePointerIdRef.current,
@@ -68,7 +76,8 @@ export const useTouchJoystickInput = ({
 
 	const handlePointerMove = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
-			event.preventDefault();
+			stopTouchControlPointerEvent(event);
+
 			if (
 				!shouldHandleTouchJoystickPointerAction({
 					activePointerId: activePointerIdRef.current,
@@ -90,7 +99,8 @@ export const useTouchJoystickInput = ({
 			event: ReactPointerEvent<HTMLDivElement>,
 			phase: (typeof TOUCH_JOYSTICK_POINTER_PHASES)["UP" | "CANCEL"],
 		) => {
-			event.preventDefault();
+			stopTouchControlPointerEvent(event);
+
 			if (
 				!shouldHandleTouchJoystickPointerAction({
 					activePointerId: activePointerIdRef.current,
@@ -100,6 +110,10 @@ export const useTouchJoystickInput = ({
 				})
 			) {
 				return;
+			}
+
+			if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+				event.currentTarget.releasePointerCapture(event.pointerId);
 			}
 
 			activePointerIdRef.current = null;

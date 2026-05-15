@@ -1,22 +1,20 @@
-import type { ReactNode, Ref } from "react";
+import type { Ref } from "react";
+
+import { INPUT_POINTER_DATA_ATTRIBUTES, POINTER_ROLES } from "@/shared/config";
 
 type CameraControlZoneProps = {
-	children?: ReactNode;
-	zoneRef: Ref<HTMLDivElement | null>;
+	readonly zoneRef: Ref<HTMLDivElement | null>;
 };
 
-export function CameraControlZone({
-	children,
-	zoneRef,
-}: CameraControlZoneProps) {
+export function CameraControlZone({ zoneRef }: CameraControlZoneProps) {
 	return (
 		<div
 			ref={zoneRef}
-			id="camera-control-zone"
-			className="pointer-events-auto absolute inset-0 touch-none select-none"
-		>
-			{children}
-		</div>
+			{...{
+				[INPUT_POINTER_DATA_ATTRIBUTES.ROLE]: POINTER_ROLES.LOOK,
+			}}
+			className="pointer-events-auto absolute inset-0 z-20 touch-none select-none"
+		/>
 	);
 }
 

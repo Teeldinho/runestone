@@ -35,8 +35,8 @@ describe("createCameraStateSnapshot", () => {
 
 		expect(result.mode).toBe(CAMERA_MODES.FIRST_PERSON);
 		expect(result.fov).toBe(CAMERA_CONFIG.FIRST_PERSON.FOV);
-		expect(result.position).toEqual([0, PLAYER_EYE_HEIGHT, 0]);
-		expect(result.target).toEqual([0, PLAYER_EYE_HEIGHT, 1]);
+		expect(result.position).toEqual([0, PLAYER_EYE_HEIGHT, 0.01]);
+		expect(result.target).toEqual([0, PLAYER_EYE_HEIGHT, 0]);
 		expect(result.zoom).toBe(1);
 	});
 

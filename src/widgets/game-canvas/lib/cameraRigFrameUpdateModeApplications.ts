@@ -6,7 +6,6 @@ import type { Vector3Tuple } from "@/shared/lib";
 import {
 	CAMERA_RIG_CAMERA_UP,
 	CAMERA_RIG_FIRST_PERSON_LOOK_AHEAD_DISTANCE,
-	CAMERA_RIG_FIRST_PERSON_TARGET_DISTANCE,
 	CAMERA_RIG_LERP_ALPHA,
 } from "../config";
 import type { OrbitControlsHandle } from "./cameraRigControls";
@@ -33,10 +32,14 @@ type ApplyFirstPersonFrameInput = {
 	firstPersonOrbitRef: RefObject<OrbitControlsHandle | null>;
 	firstPersonTargetVectorRef: MutableRefObject<THREE.Vector3>;
 	isDesktopLayout: boolean;
-	needsFirstPersonSyncRef: MutableRefObject<boolean>;
+	needsFirstPersonSyncRef?: MutableRefObject<boolean>;
+	pitch: number;
 	pointerLockRef: RefObject<PointerLockControlsHandle | null>;
 	position: Vector3Tuple;
 	positionVectorRef: MutableRefObject<THREE.Vector3>;
+	smoothedFirstPersonPitchRef?: MutableRefObject<number>;
+	smoothedFirstPersonYawRef?: MutableRefObject<number>;
+	yaw: number;
 };
 
 type ApplyThirdPersonFrameInput = {
@@ -62,19 +65,6 @@ type ApplyFreeOrbitalFrameInput = {
 	lookAt: Vector3Tuple;
 	needsFreeOrbitalSyncRef: MutableRefObject<boolean>;
 	position: Vector3Tuple;
-};
-
-const setFirstPersonOrbitTargetFromCamera = ({
-	camera,
-	firstPersonTargetVectorRef,
-}: Pick<
-	ApplyFirstPersonFrameInput,
-	"camera" | "firstPersonTargetVectorRef"
->): void => {
-	camera.getWorldDirection(firstPersonTargetVectorRef.current);
-	firstPersonTargetVectorRef.current
-		.multiplyScalar(CAMERA_RIG_FIRST_PERSON_TARGET_DISTANCE)
-		.add(camera.position);
 };
 
 const toVector3Tuple = (vector: THREE.Vector3): Vector3Tuple => [
@@ -126,45 +116,6 @@ const translateOrbitByPlayerDelta = ({
 	];
 };
 
-const applyFirstPersonMobileOrbitFrame = ({
-	camera,
-	firstPersonOrbitRef,
-	firstPersonTargetVectorRef,
-	flags,
-	needsFirstPersonSyncRef,
-	position,
-}: Pick<
-	ApplyFirstPersonFrameInput,
-	| "camera"
-	| "firstPersonOrbitRef"
-	| "firstPersonTargetVectorRef"
-	| "flags"
-	| "needsFirstPersonSyncRef"
-	| "position"
->): void => {
-	if (!firstPersonOrbitRef.current) {
-		return;
-	}
-
-	camera.position.set(...position);
-	setFirstPersonOrbitTargetFromCamera({
-		camera,
-		firstPersonTargetVectorRef,
-	});
-
-	if (needsFirstPersonSyncRef.current || flags.isModeChange) {
-		setOrbitTarget(firstPersonOrbitRef.current, [
-			firstPersonTargetVectorRef.current.x,
-			firstPersonTargetVectorRef.current.y,
-			firstPersonTargetVectorRef.current.z,
-		]);
-		needsFirstPersonSyncRef.current = false;
-		return;
-	}
-
-	firstPersonOrbitRef.current.target.copy(firstPersonTargetVectorRef.current);
-};
-
 const applyFirstPersonDesktopFrame = ({
 	camera,
 	flags,
@@ -208,6 +159,7 @@ export const applyTopDownFrame = ({
 	if (needsTopDownSyncRef.current) {
 		camera.position.set(...position);
 		setOrbitTarget(topDownOrbitRef.current, lookAt);
+		topDownOrbitRef.current.update();
 		needsTopDownSyncRef.current = false;
 		return;
 	}
@@ -217,28 +169,17 @@ export const applyTopDownFrame = ({
 
 export const applyFirstPersonFrame = ({
 	camera,
-	firstPersonOrbitRef,
-	firstPersonTargetVectorRef,
 	flags,
 	isDesktopLayout,
-	needsFirstPersonSyncRef,
 	pointerLockRef,
 	position,
 	positionVectorRef,
 }: ApplyFirstPersonFrameInput): void => {
-	setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
-
-	if (!isDesktopLayout && firstPersonOrbitRef.current) {
-		applyFirstPersonMobileOrbitFrame({
-			camera,
-			firstPersonOrbitRef,
-			firstPersonTargetVectorRef,
-			flags,
-			needsFirstPersonSyncRef,
-			position,
-		});
+	if (!isDesktopLayout) {
 		return;
 	}
+
+	setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
 
 	applyFirstPersonDesktopFrame({
 		camera,
@@ -275,6 +216,7 @@ export const applyThirdPersonFrame = ({
 	if (needsThirdPersonSyncRef.current) {
 		camera.position.set(...position);
 		setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
+		thirdPersonOrbitRef.current.update();
 		needsThirdPersonSyncRef.current = false;
 		return;
 	}
@@ -303,6 +245,7 @@ export const applyThirdPersonFrame = ({
 
 			camera.position.set(...desiredCameraPosition);
 			setOrbitTarget(thirdPersonOrbitRef.current, lookAt);
+			thirdPersonOrbitRef.current.update();
 			return;
 		}
 
@@ -314,6 +257,7 @@ export const applyThirdPersonFrame = ({
 		});
 
 		setOrbitTarget(thirdPersonOrbitRef.current, nextTarget);
+		thirdPersonOrbitRef.current.update();
 		return;
 	}
 
@@ -359,6 +303,7 @@ export const applyFreeOrbitalFrame = ({
 		setCameraUp(camera, CAMERA_RIG_CAMERA_UP.DEFAULT);
 		camera.position.set(...position);
 		setOrbitTarget(freeOrbitalOrbitRef.current, lookAt);
+		freeOrbitalOrbitRef.current.update();
 		needsFreeOrbitalSyncRef.current = false;
 		return;
 	}

@@ -13,19 +13,21 @@ import {
 describe("touchJoystickRuntime", () => {
 	it("resolves joystick vector from pointer using joystick bounds", () => {
 		const joystickVector = resolveTouchJoystickVectorFromPointer({
-			clientX: 110,
-			clientY: 66,
+			clientX: 140,
+			clientY: 88,
 			joystickBounds: {
 				left: 0,
 				top: 0,
-				width: 132,
-				height: 132,
+				width: TOUCH_JOYSTICK_CONFIG.CONTAINER_SIZE_PX,
+				height: TOUCH_JOYSTICK_CONFIG.CONTAINER_SIZE_PX,
 			},
 			maxRadiusPx: TOUCH_JOYSTICK_CONFIG.MAX_RADIUS_PX,
 			deadZoneRatio: TOUCH_JOYSTICK_CONFIG.DEAD_ZONE_RATIO,
 		});
 
-		expect(joystickVector.knobOffsetX).toBe(44);
+		expect(joystickVector.knobOffsetX).toBe(
+			TOUCH_JOYSTICK_CONFIG.MAX_RADIUS_PX,
+		);
 		expect(joystickVector.knobOffsetY).toBe(0);
 		expect(joystickVector.hasMovement).toBe(true);
 		expect(joystickVector.velocity).toEqual([1, 0, 0]);

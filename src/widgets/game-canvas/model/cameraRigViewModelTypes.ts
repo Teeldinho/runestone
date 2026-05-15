@@ -9,9 +9,10 @@ import type { OrbitControlsHandle } from "../lib";
 import type { PointerLockControlsHandle } from "./useCameraRigFrameUpdate";
 
 type CameraRigOrbitBindings = {
-	cameraControlElement?: HTMLElement | null;
+	domElement?: HTMLElement;
 	handleOrbitEnd: () => void;
 	handleOrbitStart: () => void;
+	shouldRenderOrbitControls: boolean;
 };
 
 type CameraRigFirstPersonBindings = {
@@ -32,11 +33,13 @@ type CameraRigRefs = {
 
 type CameraRigRuntimeState = {
 	interaction: {
-		activeTouchPointerIdsRef: MutableRefObject<Set<number>>;
-		isTouchInitiallyOnLeftRef: MutableRefObject<boolean>;
 		isUserInteractingRef: MutableRefObject<boolean>;
 	};
 	isDesktopLayout: boolean;
+	lookSmoothing: {
+		smoothedFirstPersonPitchRef: MutableRefObject<number>;
+		smoothedFirstPersonYawRef: MutableRefObject<number>;
+	};
 	previousModeRef: MutableRefObject<string | undefined>;
 	previousTrackedPlayerPositionRef: MutableRefObject<Vector3Tuple | null>;
 	refs: CameraRigRefs;

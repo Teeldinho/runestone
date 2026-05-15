@@ -1,126 +1,43 @@
 // @vitest-environment happy-dom
 
 import { act, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { useCameraRigInteractionHandlers } from "./useCameraRigInteractionHandlers";
 
-type MockOrbitControl = {
-	enableRotate: boolean;
-	target: never;
-	update: () => void;
-};
-
-const createOrbitRef = () => ({
-	current: {
-		enableRotate: true,
-		target: {} as never,
-		update: () => {},
-	} as MockOrbitControl,
-});
-
 describe("useCameraRigInteractionHandlers", () => {
-	beforeEach(() => {
-		Object.defineProperty(window, "innerWidth", {
-			value: 1000,
-			configurable: true,
-		});
-	});
-
-	it("disables rotation when touch starts on joystick side and re-enables it on orbit end", () => {
-		const cameraControlElement = document.createElement("div");
-		const activeTouchPointerIdsRef = { current: new Set<number>() };
+	it("marks the camera rig as interacting while orbiting and clears it on end", () => {
 		const isUserInteractingRef = { current: false };
-		const isTouchInitiallyOnLeftRef = { current: false };
-		const thirdPersonOrbitRef = createOrbitRef();
-		const topDownOrbitRef = createOrbitRef();
-		const freeOrbitalOrbitRef = createOrbitRef();
-		const firstPersonOrbitRef = createOrbitRef();
 
 		const { result } = renderHook(() =>
 			useCameraRigInteractionHandlers({
-				activeTouchPointerIdsRef,
-				cameraControlElement,
-				firstPersonOrbitRef,
-				freeOrbitalOrbitRef,
-				isTouchInitiallyOnLeftRef,
 				isUserInteractingRef,
-				thirdPersonOrbitRef,
-				topDownOrbitRef,
 			}),
 		);
 
 		act(() => {
-			cameraControlElement.dispatchEvent(
-				new PointerEvent("pointerdown", {
-					clientX: 100,
-				}),
-			);
 			result.current.handleOrbitStart();
 		});
 
 		expect(isUserInteractingRef.current).toBe(true);
-		expect(thirdPersonOrbitRef.current?.enableRotate).toBe(false);
-		expect(topDownOrbitRef.current?.enableRotate).toBe(false);
-		expect(freeOrbitalOrbitRef.current?.enableRotate).toBe(false);
-		expect(firstPersonOrbitRef.current?.enableRotate).toBe(false);
 
 		act(() => {
 			result.current.handleOrbitEnd();
 		});
 
 		expect(isUserInteractingRef.current).toBe(false);
-		expect(thirdPersonOrbitRef.current?.enableRotate).toBe(true);
-		expect(topDownOrbitRef.current?.enableRotate).toBe(true);
-		expect(freeOrbitalOrbitRef.current?.enableRotate).toBe(true);
-		expect(firstPersonOrbitRef.current?.enableRotate).toBe(true);
 	});
 
-	it("keeps rotation enabled for multi-touch gestures so pinch zoom can continue", () => {
-		const cameraControlElement = document.createElement("div");
-		const activeTouchPointerIdsRef = { current: new Set<number>() };
+	it("exposes first-person lock handlers without extra touch gating state", () => {
 		const isUserInteractingRef = { current: false };
-		const isTouchInitiallyOnLeftRef = { current: false };
-		const thirdPersonOrbitRef = createOrbitRef();
-		const topDownOrbitRef = createOrbitRef();
-		const freeOrbitalOrbitRef = createOrbitRef();
-		const firstPersonOrbitRef = createOrbitRef();
 
 		const { result } = renderHook(() =>
 			useCameraRigInteractionHandlers({
-				activeTouchPointerIdsRef,
-				cameraControlElement,
-				firstPersonOrbitRef,
-				freeOrbitalOrbitRef,
-				isTouchInitiallyOnLeftRef,
 				isUserInteractingRef,
-				thirdPersonOrbitRef,
-				topDownOrbitRef,
 			}),
 		);
 
-		act(() => {
-			cameraControlElement.dispatchEvent(
-				new PointerEvent("pointerdown", {
-					clientX: 100,
-					pointerId: 1,
-					pointerType: "touch",
-				}),
-			);
-			cameraControlElement.dispatchEvent(
-				new PointerEvent("pointerdown", {
-					clientX: 800,
-					pointerId: 2,
-					pointerType: "touch",
-				}),
-			);
-			result.current.handleOrbitStart();
-		});
-
-		expect(isUserInteractingRef.current).toBe(true);
-		expect(thirdPersonOrbitRef.current?.enableRotate).toBe(true);
-		expect(topDownOrbitRef.current?.enableRotate).toBe(true);
-		expect(freeOrbitalOrbitRef.current?.enableRotate).toBe(true);
-		expect(firstPersonOrbitRef.current?.enableRotate).toBe(true);
+		expect(typeof result.current.handleFirstPersonLock).toBe("function");
+		expect(typeof result.current.handleFirstPersonUnlock).toBe("function");
 	});
 });
