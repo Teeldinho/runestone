@@ -37,7 +37,7 @@ export function HomeBootstrapStatusCard({
 			<section
 				aria-label="Session status"
 				aria-live="polite"
-				className="rounded-xl bg-background/15 px-4 py-4 sm:px-5"
+				className="w-full rounded-xl bg-background/15 px-4 py-4 sm:px-5"
 			>
 				<div className="flex items-start gap-3">
 					<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-dungeon-gold/10 text-dungeon-gold">
@@ -74,15 +74,12 @@ export function HomeBootstrapStatusCard({
 		return (
 			<Alert
 				variant="destructive"
-				className="items-start gap-3 rounded-xl border-destructive/30 bg-destructive/5 px-4 py-4 sm:px-5"
+				className="w-full items-start gap-3 rounded-xl border-destructive/30 bg-destructive/5 px-4 py-4 sm:px-5"
 			>
 				<TriangleAlert className="size-4" />
-				<div className="min-w-0 space-y-1.5">
+				<div className="min-w-0 w-full space-y-1.5">
 					<div className="flex flex-wrap items-center gap-2">
-						<Badge
-							variant="destructive"
-							className="border-0 bg-transparent px-0 text-destructive shadow-none"
-						>
+						<Badge variant="destructive" className="shrink-0">
 							{HOME_STATUS_COPY.BOOTSTRAP_FAILED.badge}
 						</Badge>
 						<AlertTitle className="text-sm font-semibold text-panel-title">
@@ -110,7 +107,7 @@ export function HomeBootstrapStatusCard({
 			<section
 				aria-label="Session status"
 				aria-live="polite"
-				className="rounded-xl bg-background/15 px-4 py-4 sm:px-5"
+				className="w-full rounded-xl bg-background/15 px-4 py-4 sm:px-5"
 			>
 				<div className="flex items-start gap-3">
 					<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-dungeon-gold/10 text-dungeon-gold">
@@ -152,7 +149,7 @@ export function HomeBootstrapStatusCard({
 		<section
 			aria-label="Session status"
 			aria-live="polite"
-			className="rounded-xl bg-background/15 px-4 py-4 sm:px-5"
+			className="w-full rounded-xl bg-background/15 px-4 py-4 sm:px-5"
 		>
 			<div className="flex items-start gap-3">
 				<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-dungeon-gold/10 text-dungeon-gold">
