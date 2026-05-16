@@ -65,6 +65,25 @@ describe("authMachine", () => {
 		expect(actor.getSnapshot().context.errorMessage).toBeNull();
 	});
 
+	it("returns to checking session when bootstrap retry is requested", () => {
+		const actor = createActor(authMachine).start();
+
+		actor.send({
+			type: AUTH_EVENTS.SESSION_BOOTSTRAP_FAILED,
+			uuid: "session-uuid",
+			errorMessage: "Convex unreachable",
+		});
+
+		actor.send({
+			type: AUTH_EVENTS.SESSION_BOOTSTRAP_RETRY_REQUESTED,
+		});
+
+		expect(actor.getSnapshot().value).toBe(AUTH_STATUS.CHECKING_SESSION);
+		expect(actor.getSnapshot().context.uuid).toBe("session-uuid");
+		expect(actor.getSnapshot().context.profile).toBeNull();
+		expect(actor.getSnapshot().context.errorMessage).toBeNull();
+	});
+
 	it("handles username submit success path", () => {
 		const actor = createActor(authMachine).start();
 

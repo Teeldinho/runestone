@@ -66,6 +66,7 @@ describe("HomePage", () => {
 			authStatus,
 			errorMessage: null,
 			handleUsernameFormSubmit: vi.fn(),
+			handleSessionBootstrapRetry: vi.fn(),
 			isAuthenticated: false,
 			isCheckingSession,
 			isUsernameModalOpen: false,
@@ -109,6 +110,7 @@ describe("HomePage", () => {
 			authStatus: AUTH_STATUS.AUTHENTICATED,
 			errorMessage: null,
 			handleUsernameFormSubmit: vi.fn(),
+			handleSessionBootstrapRetry: vi.fn(),
 			isAuthenticated: true,
 			isCheckingSession: false,
 			isUsernameModalOpen: false,
@@ -140,5 +142,36 @@ describe("HomePage", () => {
 		expect(screen.getByText(HOME_COPY.BADGE)).not.toBeNull();
 		expect(screen.getByText(HOME_COPY.SESSION_NOTE)).not.toBeNull();
 		expect(screen.getByText(HOME_COPY.FEATURES_HEADING)).not.toBeNull();
+	});
+
+	it("shows a retry action when bootstrap fails", () => {
+		const handleSessionBootstrapRetry = vi.fn();
+
+		mockUseAuthContext.mockReturnValue({
+			authStatus: AUTH_STATUS.BOOTSTRAP_FAILED,
+			authenticatedProfile: null,
+			errorMessage: "Convex unreachable",
+			handleUsernameFormSubmit: vi.fn(),
+			handleSessionBootstrapRetry,
+			isAuthenticated: false,
+			isCheckingSession: false,
+			isUsernameModalOpen: false,
+			isUsernameSubmitting: false,
+			readyStatusLabel: null,
+		});
+
+		render(<HomePage />);
+
+		expect(
+			screen.getByRole("button", {
+				name: HOME_STATUS_COPY.BOOTSTRAP_FAILED.actionLabel,
+			}),
+		).not.toBeNull();
+		screen
+			.getByRole("button", {
+				name: HOME_STATUS_COPY.BOOTSTRAP_FAILED.actionLabel,
+			})
+			.click();
+		expect(handleSessionBootstrapRetry).toHaveBeenCalledOnce();
 	});
 });

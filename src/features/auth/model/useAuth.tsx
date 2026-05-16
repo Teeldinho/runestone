@@ -10,7 +10,9 @@ import { useAuthUsernameSubmission } from "./useAuthUsernameSubmission";
 
 export const useAuth = (): AuthContextValue => {
 	const [snapshot, sendAuthEvent] = useMachine(authMachine);
-	const { sessionUuid } = useAuthSessionBootstrap({ sendAuthEvent });
+	const { handleSessionBootstrapRetry, sessionUuid } = useAuthSessionBootstrap({
+		sendAuthEvent,
+	});
 	const { handleUsernameFormSubmit } = useAuthUsernameSubmission({
 		sendAuthEvent,
 		sessionUuid,
@@ -20,8 +22,9 @@ export const useAuth = (): AuthContextValue => {
 		() =>
 			createAuthContextValue({
 				snapshot,
+				handleSessionBootstrapRetry,
 				handleUsernameFormSubmit,
 			}),
-		[snapshot, handleUsernameFormSubmit],
+		[snapshot, handleSessionBootstrapRetry, handleUsernameFormSubmit],
 	);
 };

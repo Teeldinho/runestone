@@ -1,11 +1,15 @@
 // @vitest-environment happy-dom
 
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { UserProfile } from "@/entities/user";
 
-import { AUTH_EVENTS } from "../config";
+import {
+	AUTH_BOOTSTRAP_TIMEOUT_MS,
+	AUTH_ERROR_MESSAGES,
+	AUTH_EVENTS,
+} from "../config";
 
 const TEST_USER_PROFILE: UserProfile = {
 	id: "user-1",
@@ -19,11 +23,13 @@ const TEST_USER_PROFILE: UserProfile = {
 const {
 	mockSendAuthEvent,
 	mockUseQuery,
+	mockRefetch,
 	mockUserQueriesByUuid,
 	mockGetAuthClientStorage,
 } = vi.hoisted(() => ({
 	mockSendAuthEvent: vi.fn(),
 	mockUseQuery: vi.fn(),
+	mockRefetch: vi.fn(),
 	mockUserQueriesByUuid: vi.fn((uuid: string) => ({
 		queryKey: ["user", uuid],
 		queryFn: vi.fn(),
@@ -83,11 +89,14 @@ describe("useAuthSessionBootstrap", () => {
 			isPending: false,
 			isError: false,
 			error: null,
+			refetch: mockRefetch,
 		});
 		mockGetAuthClientStorage.mockReturnValue(memoryStorage);
+		mockRefetch.mockReset();
 	});
 
 	afterEach(() => {
+		vi.useRealTimers();
 		vi.clearAllMocks();
 	});
 
@@ -116,6 +125,7 @@ describe("useAuthSessionBootstrap", () => {
 			isPending: false,
 			isError: true,
 			error: new Error("Convex unreachable"),
+			refetch: mockRefetch,
 		});
 
 		renderHook(() =>
@@ -131,5 +141,73 @@ describe("useAuthSessionBootstrap", () => {
 				errorMessage: "Convex unreachable",
 			});
 		});
+	});
+
+	it("dispatches a bootstrap failure event when the profile query times out before returning a profile", async () => {
+		vi.useFakeTimers();
+		mockUseQuery.mockReturnValue({
+			data: undefined,
+			isPending: true,
+			isError: false,
+			error: null,
+			refetch: mockRefetch,
+		});
+
+		const { result } = renderHook(() =>
+			useAuthSessionBootstrap({
+				sendAuthEvent: mockSendAuthEvent,
+			}),
+		);
+
+		await act(async () => {
+			await Promise.resolve();
+		});
+
+		expect(result.current.sessionUuid).toBe("existing-session-uuid");
+
+		act(() => {
+			vi.advanceTimersByTime(AUTH_BOOTSTRAP_TIMEOUT_MS);
+		});
+
+		expect(mockSendAuthEvent).toHaveBeenCalledWith({
+			type: AUTH_EVENTS.SESSION_BOOTSTRAP_FAILED,
+			uuid: "existing-session-uuid",
+			errorMessage: AUTH_ERROR_MESSAGES.SESSION_BOOTSTRAP_TIMED_OUT,
+		});
+		vi.clearAllTimers();
+	});
+
+	it("dispatches a retry event and re-runs the bootstrap query when retry is requested", async () => {
+		vi.useFakeTimers();
+		mockUseQuery.mockReturnValue({
+			data: undefined,
+			isPending: true,
+			isError: false,
+			error: null,
+			refetch: mockRefetch,
+		});
+
+		const { result } = renderHook(() =>
+			useAuthSessionBootstrap({
+				sendAuthEvent: mockSendAuthEvent,
+			}),
+		);
+
+		await act(async () => {
+			await Promise.resolve();
+		});
+
+		expect(result.current.sessionUuid).toBe("existing-session-uuid");
+
+		act(() => {
+			result.current.handleSessionBootstrapRetry();
+		});
+
+		expect(mockSendAuthEvent).toHaveBeenCalledWith({
+			type: AUTH_EVENTS.SESSION_BOOTSTRAP_RETRY_REQUESTED,
+		});
+		expect(mockRefetch).toHaveBeenCalledOnce();
+
+		vi.clearAllTimers();
 	});
 });

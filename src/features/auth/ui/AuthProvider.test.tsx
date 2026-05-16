@@ -26,6 +26,7 @@ describe("AuthProvider", () => {
 			authenticatedProfile: null,
 			errorMessage: null,
 			handleUsernameFormSubmit: vi.fn(),
+			handleSessionBootstrapRetry: vi.fn(),
 			isAuthenticated: true,
 			isCheckingSession: false,
 			isUsernameModalOpen: false,

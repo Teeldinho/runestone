@@ -52,6 +52,15 @@ export const authMachine = setup({
 				[AUTH_CONTEXT_KEYS.ERROR_MESSAGE]: event.errorMessage,
 			})),
 		},
+		[AUTH_EVENTS.SESSION_BOOTSTRAP_RETRY_REQUESTED]: {
+			target: `.${AUTH_STATUS.CHECKING_SESSION}`,
+			actions: assign(({ context }) => ({
+				[AUTH_CONTEXT_KEYS.UUID]: context.uuid,
+				[AUTH_CONTEXT_KEYS.PROFILE]: null,
+				[AUTH_CONTEXT_KEYS.PENDING_USERNAME]: null,
+				[AUTH_CONTEXT_KEYS.ERROR_MESSAGE]: null,
+			})),
+		},
 	},
 	states: {
 		[AUTH_STATUS.CHECKING_SESSION]: {},

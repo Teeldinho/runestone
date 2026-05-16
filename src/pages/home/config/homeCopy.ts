@@ -38,6 +38,7 @@ export const HOME_STATUS_COPY = {
 		badge: "Session unavailable",
 		description: "Try again in a moment.",
 		detail: "The dungeon is still here once the backend is reachable.",
+		actionLabel: "Try again",
 		iconLabel: "Unavailable",
 		title: "We couldn’t load your profile",
 	},
