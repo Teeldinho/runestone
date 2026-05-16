@@ -7,17 +7,29 @@ import {
 } from "lucide-react";
 
 import { AUTH_STATUS, type AuthStatus } from "@/features/auth";
-import { Badge, Skeleton } from "@/shared/ui";
+import {
+	Alert,
+	AlertAction,
+	AlertDescription,
+	AlertTitle,
+	Badge,
+	Button,
+	Skeleton,
+} from "@/shared/ui";
 
 import { HOME_STATUS_COPY } from "../config";
 
 type HomeBootstrapStatusCardProps = {
 	authStatus: AuthStatus;
+	errorMessage: string | null;
+	onRetry: () => void;
 	readyStatusLabel: string | null;
 };
 
 export function HomeBootstrapStatusCard({
 	authStatus,
+	errorMessage,
+	onRetry,
 	readyStatusLabel,
 }: HomeBootstrapStatusCardProps) {
 	if (authStatus === AUTH_STATUS.CHECKING_SESSION) {
@@ -60,36 +72,36 @@ export function HomeBootstrapStatusCard({
 
 	if (authStatus === AUTH_STATUS.BOOTSTRAP_FAILED) {
 		return (
-			<section
-				aria-label="Session status"
-				aria-live="polite"
-				className="rounded-xl bg-background/15 px-4 py-4 sm:px-5"
+			<Alert
+				variant="destructive"
+				className="items-start gap-3 rounded-xl border-destructive/30 bg-destructive/5 px-4 py-4 sm:px-5"
 			>
-				<div className="flex items-start gap-3">
-					<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
-						<TriangleAlert className="size-4" />
+				<TriangleAlert className="size-4" />
+				<div className="min-w-0 space-y-1.5">
+					<div className="flex flex-wrap items-center gap-2">
+						<Badge
+							variant="destructive"
+							className="border-0 bg-transparent px-0 text-destructive shadow-none"
+						>
+							{HOME_STATUS_COPY.BOOTSTRAP_FAILED.badge}
+						</Badge>
+						<AlertTitle className="text-sm font-semibold text-panel-title">
+							{HOME_STATUS_COPY.BOOTSTRAP_FAILED.title}
+						</AlertTitle>
 					</div>
-					<div className="min-w-0 space-y-1.5">
-						<div className="flex flex-wrap items-center gap-2">
-							<Badge
-								variant="destructive"
-								className="border-0 bg-transparent px-0 text-destructive shadow-none"
-							>
-								{HOME_STATUS_COPY.BOOTSTRAP_FAILED.badge}
-							</Badge>
-							<p className="text-sm font-semibold text-panel-title">
-								{HOME_STATUS_COPY.BOOTSTRAP_FAILED.title}
-							</p>
-						</div>
-						<p className="text-sm leading-6 text-panel-body">
-							{HOME_STATUS_COPY.BOOTSTRAP_FAILED.description}
-						</p>
-						<p className="text-xs leading-5 text-muted-foreground">
-							{HOME_STATUS_COPY.BOOTSTRAP_FAILED.detail}
-						</p>
-					</div>
+					<AlertDescription className="text-sm leading-6 text-panel-body">
+						{errorMessage ?? HOME_STATUS_COPY.BOOTSTRAP_FAILED.description}
+					</AlertDescription>
+					<p className="text-xs leading-5 text-muted-foreground">
+						{HOME_STATUS_COPY.BOOTSTRAP_FAILED.detail}
+					</p>
 				</div>
-			</section>
+				<AlertAction>
+					<Button size="sm" variant="destructive" onClick={onRetry}>
+						{HOME_STATUS_COPY.BOOTSTRAP_FAILED.actionLabel}
+					</Button>
+				</AlertAction>
+			</Alert>
 		);
 	}
 

@@ -17,9 +17,13 @@ export const USERNAME_PATTERN = /^[A-Za-z0-9_]+$/;
 
 export const AUTH_ERROR_MESSAGES = {
 	SESSION_BOOTSTRAP_FAILED: "We could not load your profile right now.",
+	SESSION_BOOTSTRAP_TIMED_OUT:
+		"We could not load your profile in time. Please try again.",
 	USERNAME_SUBMIT_FAILED: "We could not create your profile. Please try again.",
 	MISSING_CONTEXT: "useAuthContext must be used within AuthProvider",
 } as const;
+
+export const AUTH_BOOTSTRAP_TIMEOUT_MS = 10_000;
 
 export const AUTH_COPY = {
 	MODAL_TITLE: "Choose your name",
@@ -38,6 +42,8 @@ export const AUTH_COPY = {
 export const AUTH_ROUTE_PATHS = {
 	HOME: "/",
 	GAME: "/game",
+	SETTINGS: "/settings",
+	LEADERBOARD: "/leaderboard",
 	TUTORIAL: "/tutorial",
 } as const;
 

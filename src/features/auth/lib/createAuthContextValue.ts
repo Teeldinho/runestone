@@ -17,11 +17,13 @@ type AuthSnapshotLike = {
 
 type CreateAuthContextValueInput = {
 	snapshot: AuthSnapshotLike;
+	handleSessionBootstrapRetry: AuthContextValue["handleSessionBootstrapRetry"];
 	handleUsernameFormSubmit: AuthContextValue["handleUsernameFormSubmit"];
 };
 
 const createAuthContextValue = ({
 	snapshot,
+	handleSessionBootstrapRetry,
 	handleUsernameFormSubmit,
 }: CreateAuthContextValueInput): AuthContextValue => {
 	const isCheckingSession = snapshot.matches(AUTH_STATUS.CHECKING_SESSION);
@@ -45,6 +47,7 @@ const createAuthContextValue = ({
 					snapshot.context.profile.discriminator,
 				)
 			: null,
+		handleSessionBootstrapRetry,
 		handleUsernameFormSubmit,
 	};
 };

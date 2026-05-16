@@ -23,6 +23,9 @@ export type AuthMachineEvent =
 			errorMessage: string;
 	  }
 	| {
+			type: (typeof AUTH_EVENTS)["SESSION_BOOTSTRAP_RETRY_REQUESTED"];
+	  }
+	| {
 			type: (typeof AUTH_EVENTS)["USERNAME_SUBMIT_REQUESTED"];
 			username: string;
 	  }
@@ -51,5 +54,6 @@ export type AuthContextValue = {
 	isUsernameModalOpen: boolean;
 	isUsernameSubmitting: boolean;
 	readyStatusLabel: string | null;
+	handleSessionBootstrapRetry: () => void;
 	handleUsernameFormSubmit: (input: UsernameFormInput) => Promise<void>;
 };

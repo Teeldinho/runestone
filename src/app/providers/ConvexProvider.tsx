@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 
 import { convexClient, convexQueryClient } from "@/shared/api";
 
+import { AppDevtools } from "./AppDevtools";
+
 type ConvexProviderProps = {
 	children: ReactNode;
 };
@@ -13,6 +15,7 @@ export function ConvexProvider({ children }: ConvexProviderProps) {
 		<ConvexReactProvider client={convexClient}>
 			<QueryClientProvider client={convexQueryClient}>
 				{children}
+				<AppDevtools />
 			</QueryClientProvider>
 		</ConvexReactProvider>
 	);
