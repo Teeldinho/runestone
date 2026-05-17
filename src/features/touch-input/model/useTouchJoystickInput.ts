@@ -2,12 +2,15 @@ import {
 	type PointerEvent as ReactPointerEvent,
 	type RefObject,
 	useCallback,
+	useEffect,
 	useRef,
 } from "react";
 
 import type { Vector3Tuple } from "@/shared/lib";
 
 import {
+	TOUCH_JOYSTICK_GLOBAL_RELEASE_EVENTS,
+	TOUCH_JOYSTICK_GLOBAL_RELEASE_LISTENER_OPTIONS,
 	TOUCH_JOYSTICK_POINTER_ACTIONS,
 	TOUCH_JOYSTICK_POINTER_PHASES,
 } from "../config";
@@ -26,6 +29,9 @@ type UseTouchJoystickInputResult = {
 	isActive: boolean;
 	handlePointerDown: (event: ReactPointerEvent<HTMLDivElement>) => void;
 	handlePointerMove: (event: ReactPointerEvent<HTMLDivElement>) => void;
+	handlePointerLostPointerCapture: (
+		event: ReactPointerEvent<HTMLDivElement>,
+	) => void;
 	handlePointerUp: (event: ReactPointerEvent<HTMLDivElement>) => void;
 	handlePointerCancel: (event: ReactPointerEvent<HTMLDivElement>) => void;
 };
@@ -42,6 +48,7 @@ export const useTouchJoystickInput = ({
 	onStop,
 }: UseTouchJoystickInputOptions): UseTouchJoystickInputResult => {
 	const activePointerIdRef = useRef<number | null>(null);
+	const activePointerCaptureTargetRef = useRef<HTMLDivElement | null>(null);
 	const {
 		joystickRef,
 		knobOffsetX,
@@ -51,6 +58,30 @@ export const useTouchJoystickInput = ({
 		updateJoystickMotion,
 		resetJoystickMotion,
 	} = useTouchJoystickMotion({ onMove, onStop });
+
+	const completeActiveJoystickMotion = useCallback(
+		(shouldReleasePointerCapture: boolean) => {
+			const activePointerId = activePointerIdRef.current;
+			const activePointerCaptureTarget = activePointerCaptureTargetRef.current;
+
+			if (activePointerId === null) {
+				return;
+			}
+
+			activePointerIdRef.current = null;
+
+			if (
+				shouldReleasePointerCapture &&
+				activePointerCaptureTarget?.hasPointerCapture(activePointerId)
+			) {
+				activePointerCaptureTarget.releasePointerCapture(activePointerId);
+			}
+
+			activePointerCaptureTargetRef.current = null;
+			resetJoystickMotion();
+		},
+		[resetJoystickMotion],
+	);
 
 	const handlePointerDown = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
@@ -68,10 +99,12 @@ export const useTouchJoystickInput = ({
 			}
 
 			activePointerIdRef.current = event.pointerId;
+			activePointerCaptureTargetRef.current =
+				joystickRef.current ?? event.currentTarget;
 			event.currentTarget.setPointerCapture(event.pointerId);
 			beginJoystickMotion(event.clientX, event.clientY);
 		},
-		[beginJoystickMotion],
+		[beginJoystickMotion, joystickRef],
 	);
 
 	const handlePointerMove = useCallback(
@@ -112,15 +145,78 @@ export const useTouchJoystickInput = ({
 				return;
 			}
 
-			if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-				event.currentTarget.releasePointerCapture(event.pointerId);
+			completeActiveJoystickMotion(true);
+		},
+		[completeActiveJoystickMotion],
+	);
+
+	const handlePointerLostPointerCapture = useCallback(
+		(event: ReactPointerEvent<HTMLDivElement>) => {
+			stopTouchControlPointerEvent(event);
+
+			if (activePointerIdRef.current !== event.pointerId) {
+				return;
 			}
 
-			activePointerIdRef.current = null;
-			resetJoystickMotion();
+			completeActiveJoystickMotion(false);
 		},
-		[resetJoystickMotion],
+		[completeActiveJoystickMotion],
 	);
+
+	useEffect(() => {
+		const handleGlobalPointerRelease = (event: PointerEvent) => {
+			if (activePointerIdRef.current !== event.pointerId) {
+				return;
+			}
+
+			completeActiveJoystickMotion(true);
+		};
+
+		const handleWindowBlur = () => {
+			completeActiveJoystickMotion(false);
+		};
+
+		const handleDocumentVisibilityChange = () => {
+			if (document.visibilityState === "hidden") {
+				completeActiveJoystickMotion(false);
+			}
+		};
+
+		window.addEventListener(
+			TOUCH_JOYSTICK_GLOBAL_RELEASE_EVENTS.POINTER_UP,
+			handleGlobalPointerRelease,
+			TOUCH_JOYSTICK_GLOBAL_RELEASE_LISTENER_OPTIONS.CAPTURE,
+		);
+		window.addEventListener(
+			TOUCH_JOYSTICK_GLOBAL_RELEASE_EVENTS.POINTER_CANCEL,
+			handleGlobalPointerRelease,
+			TOUCH_JOYSTICK_GLOBAL_RELEASE_LISTENER_OPTIONS.CAPTURE,
+		);
+		window.addEventListener("blur", handleWindowBlur);
+		document.addEventListener(
+			"visibilitychange",
+			handleDocumentVisibilityChange,
+		);
+
+		return () => {
+			window.removeEventListener(
+				TOUCH_JOYSTICK_GLOBAL_RELEASE_EVENTS.POINTER_UP,
+				handleGlobalPointerRelease,
+				TOUCH_JOYSTICK_GLOBAL_RELEASE_LISTENER_OPTIONS.CAPTURE,
+			);
+			window.removeEventListener(
+				TOUCH_JOYSTICK_GLOBAL_RELEASE_EVENTS.POINTER_CANCEL,
+				handleGlobalPointerRelease,
+				TOUCH_JOYSTICK_GLOBAL_RELEASE_LISTENER_OPTIONS.CAPTURE,
+			);
+			window.removeEventListener("blur", handleWindowBlur);
+			document.removeEventListener(
+				"visibilitychange",
+				handleDocumentVisibilityChange,
+			);
+			completeActiveJoystickMotion(true);
+		};
+	}, [completeActiveJoystickMotion]);
 
 	const handlePointerUp = useCallback(
 		(event: ReactPointerEvent<HTMLDivElement>) => {
@@ -143,6 +239,7 @@ export const useTouchJoystickInput = ({
 		isActive,
 		handlePointerDown,
 		handlePointerMove,
+		handlePointerLostPointerCapture,
 		handlePointerUp,
 		handlePointerCancel,
 	};
