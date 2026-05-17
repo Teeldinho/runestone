@@ -21,7 +21,7 @@ export function GamePageMobileActionPanel() {
 				[INPUT_POINTER_DATA_ATTRIBUTES.BLOCKS_LOOK]:
 					INPUT_POINTER_DATA_ATTRIBUTE_VALUES.TRUE,
 			}}
-			className="pointer-events-auto absolute right-4 bottom-4 z-30 flex w-[11rem] flex-col items-end gap-2 empty:hidden"
+			className="pointer-events-auto flex w-fit flex-col items-end gap-2 empty:hidden"
 		>
 			<GamePageMobileTouchActions touchActions={viewModel.touchActions} />
 			<GamePageMobileAudioAction audioToggle={viewModel.audioToggle} />
