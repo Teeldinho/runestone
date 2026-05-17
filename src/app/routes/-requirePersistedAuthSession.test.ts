@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { requirePersistedAuthSession } from "./-requirePersistedAuthSession";
 
@@ -21,20 +21,32 @@ const createMemoryStorage = (
 };
 
 describe("requirePersistedAuthSession", () => {
+	afterEach(() => {
+		vi.unstubAllGlobals();
+	});
+
+	it("returns when browser storage is unavailable", () => {
+		vi.stubGlobal("window", undefined as never);
+
+		expect(() => requirePersistedAuthSession()).not.toThrowError();
+	});
+
 	it("throws when the persisted auth session is missing", () => {
-		expect(() =>
-			requirePersistedAuthSession(createMemoryStorage() as Storage),
-		).toThrowError();
+		vi.stubGlobal("window", {
+			localStorage: createMemoryStorage(),
+		} as Window);
+
+		expect(() => requirePersistedAuthSession()).toThrowError();
 	});
 
 	it("allows access when the persisted auth session exists", () => {
-		expect(() =>
-			requirePersistedAuthSession(
-				createMemoryStorage({
-					rs_uuid: "uuid",
-					rs_username: "hero",
-				}) as Storage,
-			),
-		).not.toThrowError();
+		vi.stubGlobal("window", {
+			localStorage: createMemoryStorage({
+				rs_uuid: "uuid",
+				rs_username: "hero",
+			}),
+		} as Window);
+
+		expect(() => requirePersistedAuthSession()).not.toThrowError();
 	});
 });

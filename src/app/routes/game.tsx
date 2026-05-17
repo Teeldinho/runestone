@@ -11,13 +11,7 @@ const GamePage = lazy(() =>
 
 export const Route = createFileRoute("/game")({
 	ssr: APP_CONFIG.SSR,
-	beforeLoad: () => {
-		if (typeof window === "undefined") {
-			return;
-		}
-
-		requirePersistedAuthSession(window.localStorage);
-	},
+	beforeLoad: requirePersistedAuthSession,
 	component: LazyGamePage,
 });
 

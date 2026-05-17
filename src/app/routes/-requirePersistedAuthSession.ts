@@ -1,9 +1,15 @@
 import { redirect } from "@tanstack/react-router";
 
-import { AUTH_ROUTE_PATHS, hasPersistedAuthSession } from "@/features/auth";
+import {
+	AUTH_ROUTE_PATHS,
+	getAuthClientStorage,
+	hasPersistedAuthSession,
+} from "@/features/auth";
 
-export const requirePersistedAuthSession = (storage: Storage): void => {
-	if (hasPersistedAuthSession(storage)) {
+export const requirePersistedAuthSession = (): void => {
+	const storage = getAuthClientStorage();
+
+	if (!storage || hasPersistedAuthSession(storage)) {
 		return;
 	}
 
