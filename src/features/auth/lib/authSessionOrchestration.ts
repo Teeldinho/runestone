@@ -26,6 +26,7 @@ type SessionBootstrapFailureInput = {
 	sessionUuid: string | null;
 	isProfileQueryPending: boolean;
 	isProfileQueryError: boolean;
+	hasSessionBootstrapTimedOut: boolean;
 	profile: UserProfile | null | undefined;
 	error: unknown;
 };
@@ -93,14 +94,15 @@ const resolveSessionBootstrapFailureEvent = ({
 	sessionUuid,
 	isProfileQueryPending,
 	isProfileQueryError,
+	hasSessionBootstrapTimedOut,
 	profile,
 	error,
 }: SessionBootstrapFailureInput): SessionBootstrapFailureEvent | null => {
 	if (
 		!sessionUuid ||
-		isProfileQueryPending ||
-		!isProfileQueryError ||
-		profile
+		profile ||
+		(!isProfileQueryError && !hasSessionBootstrapTimedOut) ||
+		(isProfileQueryPending && !hasSessionBootstrapTimedOut)
 	) {
 		return null;
 	}
@@ -108,7 +110,9 @@ const resolveSessionBootstrapFailureEvent = ({
 	return {
 		type: AUTH_EVENTS.SESSION_BOOTSTRAP_FAILED,
 		uuid: sessionUuid,
-		errorMessage: resolveSessionBootstrapErrorMessage(error),
+		errorMessage: hasSessionBootstrapTimedOut
+			? AUTH_ERROR_MESSAGES.SESSION_BOOTSTRAP_TIMED_OUT
+			: resolveSessionBootstrapErrorMessage(error),
 	};
 };
 

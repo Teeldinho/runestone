@@ -15,6 +15,7 @@ export function HomePage() {
 	const {
 		authStatus,
 		errorMessage,
+		handleSessionBootstrapRetry,
 		handleUsernameFormSubmit,
 		isAuthenticated,
 		isUsernameModalOpen,
@@ -79,6 +80,8 @@ export function HomePage() {
 
 							<HomeBootstrapStatusCard
 								authStatus={authStatus}
+								errorMessage={errorMessage}
+								onRetry={handleSessionBootstrapRetry}
 								readyStatusLabel={readyStatusLabel}
 							/>
 

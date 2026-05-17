@@ -79,6 +79,7 @@ describe("authSessionOrchestration", () => {
 				sessionUuid: null,
 				isProfileQueryPending: false,
 				isProfileQueryError: true,
+				hasSessionBootstrapTimedOut: false,
 				error: new Error("Convex unreachable"),
 				profile: null,
 			}),
@@ -89,6 +90,7 @@ describe("authSessionOrchestration", () => {
 				sessionUuid: "uuid-1",
 				isProfileQueryPending: true,
 				isProfileQueryError: true,
+				hasSessionBootstrapTimedOut: false,
 				error: new Error("Convex unreachable"),
 				profile: null,
 			}),
@@ -99,6 +101,7 @@ describe("authSessionOrchestration", () => {
 				sessionUuid: "uuid-1",
 				isProfileQueryPending: false,
 				isProfileQueryError: true,
+				hasSessionBootstrapTimedOut: false,
 				error: new Error("Convex unreachable"),
 				profile: null,
 			}),
@@ -113,6 +116,7 @@ describe("authSessionOrchestration", () => {
 				sessionUuid: "uuid-1",
 				isProfileQueryPending: false,
 				isProfileQueryError: true,
+				hasSessionBootstrapTimedOut: false,
 				error: "Convex unreachable",
 				profile: null,
 			}),
@@ -120,6 +124,23 @@ describe("authSessionOrchestration", () => {
 			type: AUTH_EVENTS.SESSION_BOOTSTRAP_FAILED,
 			uuid: "uuid-1",
 			errorMessage: AUTH_ERROR_MESSAGES.SESSION_BOOTSTRAP_FAILED,
+		});
+	});
+
+	it("resolves timeout failure events when the query stays pending too long", () => {
+		expect(
+			resolveSessionBootstrapFailureEvent({
+				sessionUuid: "uuid-1",
+				isProfileQueryPending: true,
+				isProfileQueryError: false,
+				hasSessionBootstrapTimedOut: true,
+				error: new Error("Convex unreachable"),
+				profile: null,
+			}),
+		).toEqual({
+			type: AUTH_EVENTS.SESSION_BOOTSTRAP_FAILED,
+			uuid: "uuid-1",
+			errorMessage: AUTH_ERROR_MESSAGES.SESSION_BOOTSTRAP_TIMED_OUT,
 		});
 	});
 

@@ -4,6 +4,7 @@ import type { GamePageViewModel } from "./types";
 import { useGamePageAudioSlice } from "./useGamePageAudioSlice";
 import { useGamePageCanvasSlice } from "./useGamePageCanvasSlice";
 import { useGamePageHudSlice } from "./useGamePageHudSlice";
+import { useGamePageInputOrchestrator } from "./useGamePageInputOrchestrator";
 import { useGamePageLayoutSlice } from "./useGamePageLayoutSlice";
 import { useGamePageMachineState } from "./useGamePageMachineState";
 import { useGamePageMobileSheetSlice } from "./useGamePageMobileSheetSlice";
@@ -35,6 +36,8 @@ export const useGamePageSlices = (): GamePageViewModel => {
 		gameMachine,
 	});
 
+	const input = useGamePageInputOrchestrator();
+
 	const layoutSlice = useGamePageLayoutSlice({
 		layout,
 	});
@@ -49,6 +52,7 @@ export const useGamePageSlices = (): GamePageViewModel => {
 	return {
 		audio,
 		canvas,
+		input,
 		hud,
 		layout: layoutSlice,
 		mobileSheet,

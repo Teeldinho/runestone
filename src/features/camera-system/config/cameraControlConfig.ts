@@ -75,7 +75,7 @@ export const CAMERA_CONTROLS_MODE_POLICY = {
 		smoothTime: 0.08,
 		draggingSmoothTime: 0.035,
 		azimuthRotateSpeed: 1.35,
-		polarRotateSpeed: 1.2,
+		polarRotateSpeed: 0.75,
 		dollySpeed: 0,
 		truckSpeed: 0,
 	},

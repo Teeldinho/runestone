@@ -12,6 +12,7 @@ export {
 	clearPersistedUsername,
 	ensureSessionUuid,
 	formatUserDisplayTag,
+	getAuthClientStorage,
 	getUsernameValidationError,
 	hasPersistedAuthSession,
 	isUsernameValid,

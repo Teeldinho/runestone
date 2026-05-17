@@ -37,6 +37,7 @@ const createAuthSnapshot = ({
 describe("createAuthContextValue", () => {
 	it("builds authenticated context state with ready label", () => {
 		const handleUsernameFormSubmit = vi.fn();
+		const handleSessionBootstrapRetry = vi.fn();
 		const snapshot = createAuthSnapshot({
 			value: AUTH_STATUS.AUTHENTICATED,
 			profile: TEST_USER_PROFILE,
@@ -47,6 +48,7 @@ describe("createAuthContextValue", () => {
 		const authContextValue = createAuthContextValue({
 			snapshot,
 			handleUsernameFormSubmit,
+			handleSessionBootstrapRetry,
 		});
 
 		expect(authContextValue.authStatus).toBe(AUTH_STATUS.AUTHENTICATED);
@@ -59,6 +61,9 @@ describe("createAuthContextValue", () => {
 		expect(authContextValue.handleUsernameFormSubmit).toBe(
 			handleUsernameFormSubmit,
 		);
+		expect(authContextValue.handleSessionBootstrapRetry).toBe(
+			handleSessionBootstrapRetry,
+		);
 	});
 
 	it("opens username modal for requires-username and submitting states", () => {
@@ -70,6 +75,7 @@ describe("createAuthContextValue", () => {
 				matchedStates: [AUTH_STATUS.REQUIRES_USERNAME],
 			}),
 			handleUsernameFormSubmit: vi.fn(),
+			handleSessionBootstrapRetry: vi.fn(),
 		});
 
 		expect(requiresUsernameContext.isUsernameModalOpen).toBe(true);
@@ -84,6 +90,7 @@ describe("createAuthContextValue", () => {
 				matchedStates: [AUTH_STATUS.SUBMITTING_USERNAME],
 			}),
 			handleUsernameFormSubmit: vi.fn(),
+			handleSessionBootstrapRetry: vi.fn(),
 		});
 
 		expect(submittingContext.isUsernameSubmitting).toBe(true);

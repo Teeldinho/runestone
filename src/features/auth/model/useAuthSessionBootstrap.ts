@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { v4 as createUuid } from "uuid";
 
 import { userQueries } from "@/entities/user";
 
+import { AUTH_BOOTSTRAP_TIMEOUT_MS, AUTH_EVENTS } from "../config";
 import {
 	ensureSessionUuid,
 	getAuthClientStorage,
@@ -19,12 +20,15 @@ type UseAuthSessionBootstrapInput = {
 
 type UseAuthSessionBootstrapResult = {
 	sessionUuid: string | null;
+	handleSessionBootstrapRetry: () => void;
 };
 
 export const useAuthSessionBootstrap = ({
 	sendAuthEvent,
 }: UseAuthSessionBootstrapInput): UseAuthSessionBootstrapResult => {
 	const [sessionUuid, setSessionUuid] = useState<string | null>(null);
+	const [hasSessionBootstrapTimedOut, setHasSessionBootstrapTimedOut] =
+		useState(false);
 
 	useEffect(() => {
 		const storage = getAuthClientStorage();
@@ -36,16 +40,54 @@ export const useAuthSessionBootstrap = ({
 		setSessionUuid(ensureSessionUuid(storage, createUuid));
 	}, []);
 
+	const profileQueryOptions = userQueries.byUuid(sessionUuid ?? "");
 	const profileQuery = useQuery({
-		...userQueries.byUuid(sessionUuid ?? ""),
+		...profileQueryOptions,
 		enabled: Boolean(sessionUuid),
 	});
+
+	useEffect(() => {
+		if (
+			!sessionUuid ||
+			!profileQuery.isPending ||
+			hasSessionBootstrapTimedOut
+		) {
+			if (!sessionUuid || !profileQuery.isPending) {
+				setHasSessionBootstrapTimedOut(false);
+			}
+
+			return;
+		}
+
+		setHasSessionBootstrapTimedOut(false);
+
+		const timeoutId = setTimeout(() => {
+			setHasSessionBootstrapTimedOut(true);
+		}, AUTH_BOOTSTRAP_TIMEOUT_MS);
+
+		return () => {
+			clearTimeout(timeoutId);
+		};
+	}, [hasSessionBootstrapTimedOut, profileQuery.isPending, sessionUuid]);
+
+	const handleSessionBootstrapRetry = useCallback(() => {
+		if (!sessionUuid) {
+			return;
+		}
+
+		setHasSessionBootstrapTimedOut(false);
+		sendAuthEvent({
+			type: AUTH_EVENTS.SESSION_BOOTSTRAP_RETRY_REQUESTED,
+		});
+		void profileQuery.refetch();
+	}, [profileQuery.refetch, sendAuthEvent, sessionUuid]);
 
 	useEffect(() => {
 		const sessionBootstrapFailureEvent = resolveSessionBootstrapFailureEvent({
 			sessionUuid,
 			isProfileQueryPending: profileQuery.isPending,
 			isProfileQueryError: profileQuery.isError,
+			hasSessionBootstrapTimedOut,
 			profile: profileQuery.data,
 			error: profileQuery.error,
 		});
@@ -73,7 +115,8 @@ export const useAuthSessionBootstrap = ({
 		profileQuery.isPending,
 		sendAuthEvent,
 		sessionUuid,
+		hasSessionBootstrapTimedOut,
 	]);
 
-	return { sessionUuid };
+	return { sessionUuid, handleSessionBootstrapRetry };
 };

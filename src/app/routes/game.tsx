@@ -1,8 +1,9 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 
-import { AUTH_ROUTE_PATHS, hasPersistedAuthSession } from "@/features/auth";
 import { APP_CONFIG } from "../../../app.config";
+
+import { requirePersistedAuthSession } from "./-requirePersistedAuthSession";
 
 const GamePage = lazy(() =>
 	import("@/pages/game").then((m) => ({ default: m.GamePage })),
@@ -10,17 +11,7 @@ const GamePage = lazy(() =>
 
 export const Route = createFileRoute("/game")({
 	ssr: APP_CONFIG.SSR,
-	beforeLoad: () => {
-		if (typeof window === "undefined") {
-			return;
-		}
-
-		if (!hasPersistedAuthSession(window.localStorage)) {
-			throw redirect({
-				to: AUTH_ROUTE_PATHS.HOME,
-			});
-		}
-	},
+	beforeLoad: requirePersistedAuthSession,
 	component: LazyGamePage,
 });
 

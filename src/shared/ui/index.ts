@@ -1,4 +1,4 @@
-export { Alert, AlertDescription, AlertTitle } from "./alert";
+export { Alert, AlertAction, AlertDescription, AlertTitle } from "./alert";
 export { Badge } from "./badge";
 export { Button, buttonVariants } from "./button";
 export {
