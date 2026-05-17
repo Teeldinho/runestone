@@ -6,6 +6,7 @@ import type {
 	GamePageAudioSlice,
 	GamePageCanvasSlice,
 	GamePageHudSlice,
+	GamePageInputSlice,
 	GamePageLayoutSlice,
 	GamePageMobileSheetSlice,
 	GamePageTouchSlice,
@@ -42,6 +43,10 @@ const selectGamePageCanvasSlice = (
 	state: GamePageViewModel,
 ): GamePageCanvasSlice => state.canvas;
 
+const selectGamePageInputSlice = (
+	state: GamePageViewModel,
+): GamePageInputSlice => state.input;
+
 const selectGamePageHudSlice = (state: GamePageViewModel): GamePageHudSlice =>
 	state.hud;
 
@@ -66,6 +71,9 @@ export const useGamePageAudioContext = () =>
 
 export const useGamePageCanvasContext = () =>
 	useGamePageSlice(selectGamePageCanvasSlice, "useGamePageCanvasContext");
+
+export const useGamePageInputContext = () =>
+	useGamePageSlice(selectGamePageInputSlice, "useGamePageInputContext");
 
 export const useGamePageHudContext = () =>
 	useGamePageSlice(selectGamePageHudSlice, "useGamePageHudContext");

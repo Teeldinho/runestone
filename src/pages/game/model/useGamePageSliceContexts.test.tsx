@@ -16,6 +16,7 @@ import {
 	useGamePageAudioContext,
 	useGamePageCanvasContext,
 	useGamePageHudContext,
+	useGamePageInputContext,
 	useGamePageLayoutContext,
 	useGamePageMobileSheetContext,
 	useGamePageTouchContext,
@@ -44,6 +45,16 @@ const contextSlices = {
 			hasTreasureKey: false,
 		},
 		handleCameraModeSwitch: vi.fn(),
+	},
+	input: {
+		sendInput: vi.fn(),
+		isDesktopRunHeld: false,
+		isJumpActive: false,
+		isMobileRunToggled: false,
+		touchMovement: {
+			handleMoveVelocity: vi.fn(),
+			handleStopVelocity: vi.fn(),
+		},
 	},
 	hud: {
 		actionButtons: [],
@@ -114,6 +125,12 @@ describe("useGamePageSliceContexts", () => {
 				wrapper,
 			},
 		);
+		const { result: inputResult } = renderHook(
+			() => useGamePageInputContext(),
+			{
+				wrapper,
+			},
+		);
 		const { result: hudResult } = renderHook(() => useGamePageHudContext(), {
 			wrapper,
 		});
@@ -140,6 +157,7 @@ describe("useGamePageSliceContexts", () => {
 
 		expect(audioResult.current).toBe(contextSlices.audio);
 		expect(canvasResult.current).toBe(contextSlices.canvas);
+		expect(inputResult.current).toBe(contextSlices.input);
 		expect(hudResult.current).toBe(contextSlices.hud);
 		expect(layoutResult.current).toBe(contextSlices.layout);
 		expect(mobileSheetResult.current).toBe(contextSlices.mobileSheet);

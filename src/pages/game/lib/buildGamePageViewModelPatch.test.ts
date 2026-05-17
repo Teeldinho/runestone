@@ -10,6 +10,16 @@ const STABLE_CANVAS = {
 		{} as GamePageViewModel["canvas"]["canvasMachineRuntime"],
 	handleCameraModeSwitch: () => {},
 };
+const STABLE_INPUT = {
+	sendInput: () => {},
+	isDesktopRunHeld: false,
+	isJumpActive: false,
+	isMobileRunToggled: false,
+	touchMovement: {
+		handleMoveVelocity: () => {},
+		handleStopVelocity: () => {},
+	},
+};
 const STABLE_HUD = {
 	actionButtons: [] as GamePageViewModel["hud"]["actionButtons"],
 	currentRoomLabel: "Room A",
@@ -50,6 +60,7 @@ const STABLE_VISUALIZER = {
 const BASE_VIEW_MODEL: GamePageViewModel = {
 	audio: STABLE_AUDIO,
 	canvas: STABLE_CANVAS,
+	input: STABLE_INPUT,
 	hud: STABLE_HUD,
 	layout: STABLE_LAYOUT,
 	mobileSheet: STABLE_MOBILE_SHEET,
