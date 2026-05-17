@@ -11,6 +11,7 @@ vi.mock("../model", () => ({
 		handlePointerCancel: vi.fn(),
 		handlePointerDown: vi.fn(),
 		handlePointerMove: vi.fn(),
+		handlePointerLostPointerCapture: vi.fn(),
 		handlePointerUp: vi.fn(),
 		isActive: false,
 		joystickRef: vi.fn(),

@@ -17,7 +17,7 @@ vi.mock("@/pages/game/model", () => ({
 		cameraControlElement: null,
 		cameraControlRef: vi.fn(),
 	}),
-	useGamePageInputOrchestrator: () => ({
+	useGamePageInputContext: () => ({
 		sendInput: vi.fn(),
 		isDesktopRunHeld: false,
 		isJumpActive: false,
@@ -89,23 +89,23 @@ describe("GamePageMobileCanvasStage", () => {
 		mockCameraMode = CAMERA_MODES.FREE_ORBITAL;
 
 		render(<GamePageMobileCanvasStage />);
+		const mobileActionButtonZone = screen.getByTestId(
+			"mobile-action-button-zone",
+		);
+		const actionPanel = screen.getByTestId("game-page-mobile-action-panel");
 
 		expect(screen.getByTestId("game-canvas")).toBeTruthy();
 		expect(screen.getByTestId("camera-control-zone")).toBeTruthy();
 		expect(screen.getByTestId("touch-joystick-zone")).toBeTruthy();
-		expect(screen.getByTestId("mobile-action-button-zone")).toBeTruthy();
-		expect(screen.getByTestId("game-page-mobile-action-panel")).toBeTruthy();
+		expect(mobileActionButtonZone).toBeTruthy();
+		expect(actionPanel).toBeTruthy();
 		expect(screen.getByTestId("game-page-mobile-top-bar")).toBeTruthy();
-		expect(
-			screen
-				.getByTestId("mobile-action-button-zone")
-				.getAttribute("data-run-enabled"),
-		).toBe("false");
-		expect(
-			screen
-				.getByTestId("mobile-action-button-zone")
-				.getAttribute("data-jump-active"),
-		).toBe("false");
+		expect(mobileActionButtonZone.getAttribute("data-run-enabled")).toBe(
+			"false",
+		);
+		expect(mobileActionButtonZone.getAttribute("data-jump-active")).toBe(
+			"false",
+		);
 
 		expect(
 			screen
@@ -113,20 +113,28 @@ describe("GamePageMobileCanvasStage", () => {
 				.closest('[data-testid="camera-control-zone"]'),
 		).toBeNull();
 		expect(
-			screen
-				.getByTestId("mobile-action-button-zone")
-				.closest('[data-testid="camera-control-zone"]'),
+			mobileActionButtonZone.closest('[data-testid="camera-control-zone"]'),
 		).toBeNull();
 		expect(
-			screen
-				.getByTestId("game-page-mobile-action-panel")
-				.closest('[data-testid="camera-control-zone"]'),
+			actionPanel.closest('[data-testid="camera-control-zone"]'),
 		).toBeNull();
 		expect(
 			screen
 				.getByTestId("game-page-mobile-top-bar")
 				.closest('[data-testid="camera-control-zone"]'),
 		).toBeNull();
+		expect(mobileActionButtonZone.parentElement).toBe(
+			actionPanel.parentElement,
+		);
+		expect(
+			mobileActionButtonZone.parentElement?.classList.contains("absolute"),
+		).toBe(true);
+		expect(
+			mobileActionButtonZone.parentElement?.classList.contains("right-4"),
+		).toBe(true);
+		expect(
+			mobileActionButtonZone.parentElement?.classList.contains("bottom-4"),
+		).toBe(true);
 	});
 
 	it("keeps the camera surface mounted in first-person mode", () => {

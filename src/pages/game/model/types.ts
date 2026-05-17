@@ -4,7 +4,7 @@ import type {
 } from "@/features/camera-system";
 import type { Vector3Tuple } from "@/shared/lib";
 import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
-
+import type { useGamePageInputOrchestrator } from "./useGamePageInputOrchestrator";
 import type { useGamePageMachineState } from "./useGamePageMachineState";
 import type { GamePageMobileSheetTabId } from "./useGamePageMobileSheet";
 import type { useGamePageVisualizer } from "./useGamePageVisualizer";
@@ -28,6 +28,8 @@ type GamePageCanvasSlice = {
 	canvasMachineRuntime: CanvasMachineRuntime;
 	handleCameraModeSwitch: (event: CameraMachineEvent) => void;
 };
+
+type GamePageInputSlice = ReturnType<typeof useGamePageInputOrchestrator>;
 
 type GamePageAudioSlice = {
 	handleAudioMuteToggle: () => void;
@@ -65,6 +67,7 @@ type GamePageVisualizerSlice = {
 type GamePageViewModel = {
 	audio: GamePageAudioSlice;
 	canvas: GamePageCanvasSlice;
+	input: GamePageInputSlice;
 	hud: GamePageHudSlice;
 	layout: GamePageLayoutSlice;
 	mobileSheet: GamePageMobileSheetSlice;
@@ -76,6 +79,7 @@ export type {
 	GamePageAudioSlice,
 	GamePageCanvasSlice,
 	GamePageHudSlice,
+	GamePageInputSlice,
 	GamePageLayoutSlice,
 	GamePageMobileSheetSlice,
 	GamePageTouchSlice,

@@ -25,6 +25,7 @@ export {
 	useGamePageAudioContext,
 	useGamePageCanvasContext,
 	useGamePageHudContext,
+	useGamePageInputContext,
 	useGamePageLayoutContext,
 	useGamePageMobileSheetContext,
 	useGamePageTouchContext,

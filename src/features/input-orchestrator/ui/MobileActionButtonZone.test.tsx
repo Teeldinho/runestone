@@ -41,13 +41,14 @@ afterEach(() => {
 describe("MobileActionButtonZone", () => {
 	it("renders equal icon buttons and triggers actions on click", () => {
 		const sendInput = vi.fn();
-		render(
+		const { container } = render(
 			<MobileActionButtonZone
 				isJumpActive={false}
 				isRunEnabled={false}
 				sendInput={sendInput}
 			/>,
 		);
+		const zoneRoot = container.firstElementChild as HTMLElement;
 
 		const runButton = screen.getByRole("button", {
 			name: MOBILE_ACTION_BUTTON_COPY.RUN_DISABLED_ARIA_LABEL,
@@ -61,6 +62,9 @@ describe("MobileActionButtonZone", () => {
 		expect(runButton.className).toBe(jumpButton.className);
 		expect(runButton.className).toBe(
 			MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.BUTTON,
+		);
+		expect(zoneRoot.className).toBe(
+			MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.ROOT,
 		);
 		expect(runButton.getAttribute("aria-pressed")).toBe("false");
 		expect(jumpButton.getAttribute("aria-pressed")).toBe("false");

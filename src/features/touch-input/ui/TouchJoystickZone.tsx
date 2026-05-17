@@ -45,6 +45,7 @@ export function TouchJoystickZone({
 			onPointerMove={joystickInput.handlePointerMove}
 			onPointerUp={joystickInput.handlePointerUp}
 			onPointerCancel={joystickInput.handlePointerCancel}
+			onLostPointerCapture={joystickInput.handlePointerLostPointerCapture}
 		>
 			<div className="absolute inset-4 rounded-full border border-panel-border/70" />
 			<div

@@ -2,7 +2,7 @@ import { MobileActionButtonZone } from "@/features/input-orchestrator";
 import { CameraControlZone, TouchJoystickZone } from "@/features/touch-input";
 import {
 	useGamePageCameraElements,
-	useGamePageInputOrchestrator,
+	useGamePageInputContext,
 	useGamePageMobileCanvasStageModel,
 } from "@/pages/game/model";
 import { GameCanvas } from "@/widgets/game-canvas";
@@ -13,7 +13,7 @@ import { GamePageMobileTopBar } from "./GamePageMobileTopBar";
 export function GamePageMobileCanvasStage() {
 	const cameraElements = useGamePageCameraElements();
 	const viewModel = useGamePageMobileCanvasStageModel();
-	const input = useGamePageInputOrchestrator();
+	const input = useGamePageInputContext();
 
 	return (
 		<section
@@ -46,13 +46,15 @@ export function GamePageMobileCanvasStage() {
 				</div>
 			</div>
 
-			<MobileActionButtonZone
-				isJumpActive={input.isJumpActive}
-				isRunEnabled={input.isMobileRunToggled}
-				sendInput={input.sendInput}
-			/>
+			<div className="pointer-events-none absolute right-4 bottom-4 z-30 flex items-end gap-2">
+				<MobileActionButtonZone
+					isJumpActive={input.isJumpActive}
+					isRunEnabled={input.isMobileRunToggled}
+					sendInput={input.sendInput}
+				/>
 
-			<GamePageMobileActionPanel />
+				<GamePageMobileActionPanel />
+			</div>
 		</section>
 	);
 }

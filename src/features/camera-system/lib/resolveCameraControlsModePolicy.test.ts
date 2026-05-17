@@ -38,6 +38,8 @@ describe("resolveCameraControlsModePolicy", () => {
 				minDistance: 0.01,
 				maxDistance: 0.01,
 				draggingSmoothTime: 0.035,
+				azimuthRotateSpeed: 1.35,
+				polarRotateSpeed: 0.75,
 			}),
 		);
 	});

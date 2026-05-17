@@ -84,6 +84,8 @@ describe("GamePageMobileActionPanel", () => {
 		expect(screen.getByText("Panels")).toBeTruthy();
 		expect(screen.getByText("Settings")).toBeTruthy();
 		expect(panelRoot.classList.contains("pointer-events-auto")).toBe(true);
+		expect(panelRoot.classList.contains("absolute")).toBe(false);
+		expect(panelRoot.className).toContain("w-fit");
 		expect(panelRoot.getAttribute("data-input-blocks-look")).toBe("true");
 
 		expect(

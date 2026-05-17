@@ -18,11 +18,7 @@ describe("getCameraRigTargets", () => {
 			playerPosition: [10, 0.9, -5],
 		});
 
-		expect(result.position).toEqual([
-			10 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[0],
-			0.9 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[1],
-			-5 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[2],
-		]);
+		expect(result.position).toEqual([10, 15.9, -16]);
 		expect(result.lookAt).toEqual([
 			10,
 			0.9 + CAMERA_CONFIG.FREE_ORBITAL.TARGET_OFFSET_Y,

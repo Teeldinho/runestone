@@ -51,6 +51,16 @@ const createGamePageViewModel = (overrides = {}) => {
 			},
 			handleCameraModeSwitch: vi.fn(),
 		},
+		input: {
+			sendInput: vi.fn(),
+			isDesktopRunHeld: false,
+			isJumpActive: false,
+			isMobileRunToggled: false,
+			touchMovement: {
+				handleMoveVelocity: vi.fn(),
+				handleStopVelocity: vi.fn(),
+			},
+		},
 		hud: {
 			actionButtons: [
 				{
@@ -98,6 +108,7 @@ const createGamePageViewModel = (overrides = {}) => {
 	const overrideSlices = overrides as {
 		audio?: Partial<(typeof defaultViewModel)["audio"]>;
 		canvas?: Partial<(typeof defaultViewModel)["canvas"]>;
+		input?: Partial<(typeof defaultViewModel)["input"]>;
 		hud?: Partial<(typeof defaultViewModel)["hud"]>;
 		layout?: Partial<(typeof defaultViewModel)["layout"]>;
 		mobileSheet?: Partial<(typeof defaultViewModel)["mobileSheet"]>;
@@ -114,6 +125,10 @@ const createGamePageViewModel = (overrides = {}) => {
 		canvas: {
 			...defaultViewModel.canvas,
 			...overrideSlices.canvas,
+		},
+		input: {
+			...defaultViewModel.input,
+			...overrideSlices.input,
 		},
 		hud: {
 			...defaultViewModel.hud,
@@ -236,16 +251,11 @@ vi.mock("@/pages/game/model", () => {
 				handleTouchJoystickStop: viewModel.touch.handleTouchJoystickStop,
 			};
 		},
-		useGamePageInputOrchestrator: () => ({
-			sendInput: vi.fn(),
-			isDesktopRunHeld: false,
-			isJumpActive: false,
-			isMobileRunToggled: false,
-			touchMovement: {
-				handleMoveVelocity: vi.fn(),
-				handleStopVelocity: vi.fn(),
-			},
-		}),
+		useGamePageInputContext: () => {
+			const viewModel = useGamePage();
+
+			return viewModel.input;
+		},
 		useGamePageMachineState: () => ({
 			playerActorRef: createMockActorRef(),
 			gameActorRef: createMockActorRef(),

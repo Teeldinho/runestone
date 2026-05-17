@@ -157,7 +157,11 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([10, 16.9, -23]);
+		expect(mockCamera.position.toArray()).toEqual([
+			10 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[0],
+			0.9 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[1],
+			-5 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[2],
+		]);
 		expect(freeOrbitalControls.target.toArray()).toEqual([10, 2.15, -5]);
 	});
 
@@ -194,7 +198,11 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([10, 16.9, -23]);
+		expect(mockCamera.position.toArray()).toEqual([
+			10 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[0],
+			0.9 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[1],
+			-5 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[2],
+		]);
 		expect(freeOrbitalControls.target.toArray()).toEqual([10, 2.15, -5]);
 	});
 
@@ -524,7 +532,11 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([10, 16.9, -18]);
+		expect(mockCamera.position.toArray()).toEqual([
+			10 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[0],
+			0.9 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[1],
+			0 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[2],
+		]);
 		expect(freeOrbitalControls.target.toArray()).toEqual([10, 2.15, 0]);
 	});
 
@@ -564,7 +576,11 @@ describe("useCameraRigViewModel", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		expect(mockCamera.position.toArray()).toEqual([0, 16.9, -18]);
+		expect(mockCamera.position.toArray()).toEqual([
+			0 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[0],
+			0.9 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[1],
+			0 + CAMERA_CONFIG.FREE_ORBITAL.INITIAL_POSITION[2],
+		]);
 		expect(freeOrbitalControls.target.toArray()).toEqual([0, 2.15, 0]);
 		expect(freeOrbitalControls.update).toHaveBeenCalledTimes(1);
 	});
