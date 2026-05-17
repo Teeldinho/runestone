@@ -13,8 +13,10 @@ import {
 describe("touchJoystickRuntime", () => {
 	it("resolves joystick vector from pointer using joystick bounds", () => {
 		const joystickVector = resolveTouchJoystickVectorFromPointer({
-			clientX: 140,
-			clientY: 88,
+			clientX:
+				TOUCH_JOYSTICK_CONFIG.CONTAINER_SIZE_PX / 2 +
+				TOUCH_JOYSTICK_CONFIG.MAX_RADIUS_PX,
+			clientY: TOUCH_JOYSTICK_CONFIG.CONTAINER_SIZE_PX / 2,
 			joystickBounds: {
 				left: 0,
 				top: 0,
