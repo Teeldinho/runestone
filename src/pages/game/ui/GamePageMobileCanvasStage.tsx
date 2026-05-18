@@ -7,6 +7,7 @@ import {
 } from "@/pages/game/model";
 import { GameCanvas } from "@/widgets/game-canvas";
 
+import { preventGameplayContextMenu } from "../lib/preventGameplayContextMenu";
 import { GamePageMobileActionPanel } from "./GamePageMobileActionPanel";
 import { GamePageMobileTopBar } from "./GamePageMobileTopBar";
 
@@ -18,7 +19,8 @@ export function GamePageMobileCanvasStage() {
 	return (
 		<section
 			aria-labelledby="dungeon-canvas-heading"
-			className="relative h-full w-full"
+			className="gameplay-touch-surface relative h-full w-full"
+			onContextMenu={preventGameplayContextMenu}
 		>
 			<h2 id="dungeon-canvas-heading" className="sr-only">
 				Dungeon Canvas
