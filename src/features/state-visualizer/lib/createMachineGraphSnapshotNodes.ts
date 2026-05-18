@@ -112,7 +112,9 @@ export const createMachineGraphNodes = ({
 	activeStateNodeIds,
 }: CreateMachineGraphNodesInput): MachineGraphNode[] => {
 	const directedGraph = toDirectedGraph(machine) as DirectedGraphNodeInput;
-	const machineNodes = collectNodes(directedGraph);
+	const machineNodes = collectNodes(directedGraph).filter(
+		(machineNode) => machineNode.children.length === 0,
+	);
 
 	return machineNodes.map((machineNode) => ({
 		id: machineNode.id,

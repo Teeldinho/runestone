@@ -1,3 +1,4 @@
+import { PlayerRunningIndicator } from "@/entities/player";
 import {
 	type Achievement,
 	AchievementNotification,
@@ -26,6 +27,7 @@ export function GameCanvasOverlays({
 			<AchievementNotification achievement={activeAchievement} />
 			<DamageFlashOverlay />
 			<FirstPersonLockHint cameraMode={cameraMode} />
+			<PlayerRunningIndicator />
 			<GameOverOverlay isGameOver={isGameOver} onRestart={handleGameRestart} />
 		</>
 	);

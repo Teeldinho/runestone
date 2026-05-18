@@ -188,7 +188,8 @@ body {
 	background: rgba(245, 196, 81, 0.1);
 }
 
-.gameplay-touch-surface {
+.gameplay-touch-surface,
+.gameplay-touch-surface * {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	user-select: none;

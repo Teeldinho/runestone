@@ -68,7 +68,13 @@ const formatActiveStateLabel = (stateValue: unknown): string => {
 	}
 
 	return statePaths
-		.map(formatMachineStateLabel)
+		.map((statePath) => {
+			const leafStateLabel = statePath
+				.split(STATE_VISUALIZER_GRAPH_SYNTAX.NODE_PATH_SEPARATOR)
+				.at(-1);
+
+			return formatMachineStateLabel(leafStateLabel ?? statePath);
+		})
 		.join(STATE_VISUALIZER_GRAPH_SYNTAX.STATE_PATH_DELIMITER);
 };
 
