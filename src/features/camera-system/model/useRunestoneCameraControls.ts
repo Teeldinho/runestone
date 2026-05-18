@@ -28,6 +28,7 @@ import {
 	shouldRenderCameraControls,
 } from "../lib";
 import type { CameraStateSnapshot } from "./types";
+import { useFirstPersonPointerLock } from "./useFirstPersonPointerLock";
 
 export type CameraRuntimeSnapshot = CameraStateSnapshot;
 
@@ -71,7 +72,7 @@ export const useRunestoneCameraControls = ({
 	const preservedPolarAngleRef = useRef<number | null>(null);
 	const [controlsKey, setControlsKey] = useState(0);
 
-	const { camera } = useThree();
+	const { camera, gl } = useThree();
 	const { isDesktopLayout } = useResponsiveLayout();
 
 	const shouldRender = shouldRenderCameraControls({
@@ -88,6 +89,13 @@ export const useRunestoneCameraControls = ({
 		() => resolveCameraControlsInputBindings(cameraSnapshot.mode),
 		[cameraSnapshot.mode],
 	);
+
+	useFirstPersonPointerLock({
+		controlsRef,
+		domElement: gl.domElement,
+		isDesktopLayout,
+		mode: cameraSnapshot.mode,
+	});
 
 	useLayoutEffect(() => {
 		const nextUpAxisKey = resolveCameraControlsUpAxisKey(cameraSnapshot.mode);

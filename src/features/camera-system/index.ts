@@ -24,6 +24,7 @@ export {
 	CAMERA_CONTROLS_TOP_DOWN_AZIMUTH,
 	CAMERA_CONTROLS_UP_AXIS_KEYS,
 	CAMERA_MODE_IDS,
+	CAMERA_POINTER_LOCK_DOM_EVENTS,
 	CAMERA_UP_VECTORS,
 } from "./config/cameraControlConfig";
 
@@ -42,6 +43,7 @@ export {
 	resolveCameraControlsUpVector,
 	resolveCameraControlsWorldFacingAzimuth,
 	resolveMovementAzimuthFromCameraControls,
+	shouldEnableFirstPersonPointerLock,
 	shouldRenderCameraControls,
 } from "./lib";
 
@@ -53,6 +55,7 @@ export type {
 	CameraStateSnapshot,
 } from "./model/types";
 export { useCameraMachine } from "./model/useCameraMachine";
+export { useFirstPersonPointerLock } from "./model/useFirstPersonPointerLock";
 export type { CameraRuntimeSnapshot } from "./model/useRunestoneCameraControls";
 export { useRunestoneCameraControls } from "./model/useRunestoneCameraControls";
 

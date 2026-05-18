@@ -49,6 +49,7 @@ export function GameCanvas({
 			<GameCanvasLoadingOverlay isVisible={isSceneLoading} />
 			<GameCanvasOverlays
 				activeAchievement={activeAchievement}
+				cameraMode={cameraStateSnapshot.mode}
 				handleGameRestart={handleGameRestart}
 				isGameOver={isGameOver}
 			/>
