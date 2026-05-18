@@ -7,24 +7,29 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { AudioProvider } from "./AudioProvider";
 import { AUDIO_PROVIDER_UNLOCK_EVENT_LIST } from "./audioProviderEvents";
 
-const { mockStartBackgroundMusicLoop, mockToneStart, mockUseAudio } =
-	vi.hoisted(() => {
-		const audioController = {
-			audioState: "playing",
-			isAudioMuted: false,
-			isAudioPlaying: true,
-			handleAudioMuteToggle: vi.fn(),
-			handleAudioPauseRequest: vi.fn(),
-			handleAudioPlayRequest: vi.fn(),
-			handleAudioStopRequest: vi.fn(),
-		};
+const {
+	mockStartBackgroundMusicLoop,
+	mockToneStart,
+	mockUseAudio,
+	mockAudioController,
+} = vi.hoisted(() => {
+	const audioController = {
+		audioState: "paused",
+		isAudioMuted: false,
+		isAudioPlaying: false,
+		handleAudioMuteToggle: vi.fn(),
+		handleAudioPauseRequest: vi.fn(),
+		handleAudioPlayRequest: vi.fn(),
+		handleAudioStopRequest: vi.fn(),
+	};
 
-		return {
-			mockUseAudio: vi.fn(() => audioController),
-			mockStartBackgroundMusicLoop: vi.fn(() => Promise.resolve()),
-			mockToneStart: vi.fn(() => Promise.resolve()),
-		};
-	});
+	return {
+		mockAudioController: audioController,
+		mockUseAudio: vi.fn(() => audioController),
+		mockStartBackgroundMusicLoop: vi.fn(() => Promise.resolve()),
+		mockToneStart: vi.fn(() => Promise.resolve()),
+	};
+});
 
 vi.mock("tone", () => ({
 	start: mockToneStart,
@@ -41,9 +46,11 @@ vi.mock("@/features/audio-manager", () => ({
 describe("AudioProvider", () => {
 	afterEach(() => {
 		vi.clearAllMocks();
+		mockAudioController.isAudioPlaying = false;
+		mockAudioController.audioState = "paused";
 	});
 
-	it("starts background music loop on first user interaction", async () => {
+	it("unlocks Tone.js on first user interaction without starting music while paused", async () => {
 		render(
 			<AudioProvider>
 				<div>child</div>
@@ -53,6 +60,26 @@ describe("AudioProvider", () => {
 		window.dispatchEvent(new Event(AUDIO_PROVIDER_UNLOCK_EVENT_LIST[0]));
 
 		await waitFor(() => {
+			expect(mockToneStart).toHaveBeenCalledTimes(1);
+		});
+
+		expect(mockStartBackgroundMusicLoop).not.toHaveBeenCalled();
+	});
+
+	it("starts music on first interaction only when the audio controller is already playing", async () => {
+		mockAudioController.isAudioPlaying = true;
+		mockAudioController.audioState = "playing";
+
+		render(
+			<AudioProvider>
+				<div>child</div>
+			</AudioProvider>,
+		);
+
+		window.dispatchEvent(new Event(AUDIO_PROVIDER_UNLOCK_EVENT_LIST[0]));
+
+		await waitFor(() => {
+			expect(mockToneStart).toHaveBeenCalledTimes(1);
 			expect(mockStartBackgroundMusicLoop).toHaveBeenCalledTimes(1);
 		});
 	});
@@ -67,22 +94,10 @@ describe("AudioProvider", () => {
 		window.dispatchEvent(new Event(AUDIO_PROVIDER_UNLOCK_EVENT_LIST[0]));
 
 		await waitFor(() => {
-			expect(mockStartBackgroundMusicLoop).toHaveBeenCalledTimes(1);
+			expect(mockToneStart).toHaveBeenCalledTimes(1);
 		});
 
 		window.dispatchEvent(new Event(AUDIO_PROVIDER_UNLOCK_EVENT_LIST[1]));
-
-		expect(mockStartBackgroundMusicLoop).toHaveBeenCalledTimes(1);
-	});
-
-	it("calls Tone.start() on first user interaction", async () => {
-		render(
-			<AudioProvider>
-				<div>child</div>
-			</AudioProvider>,
-		);
-
-		window.dispatchEvent(new Event(AUDIO_PROVIDER_UNLOCK_EVENT_LIST[0]));
 
 		expect(mockToneStart).toHaveBeenCalledTimes(1);
 	});
