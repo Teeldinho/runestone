@@ -50,15 +50,13 @@ const contextSlices = {
 	input: {
 		inputStateValue: {
 			ready: {
-				actionRegion: INPUT_STATE_KEYS.ACTION_READY,
 				movementRegion: INPUT_STATE_KEYS.MOVEMENT_IDLE,
 				runToggleRegion: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
 			},
 		},
 		sendInput: vi.fn(),
-		isDesktopRunHeld: false,
 		isJumpActive: false,
-		isMobileRunToggled: false,
+		isRunToggled: false,
 		touchMovement: {
 			handleMoveVelocity: vi.fn(),
 			handleStopVelocity: vi.fn(),
@@ -87,8 +85,6 @@ const contextSlices = {
 		mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 	},
 	touch: {
-		handleTouchJoystickMove: vi.fn(),
-		handleTouchJoystickStop: vi.fn(),
 		handleTouchAttack: vi.fn(),
 		handleTouchInteract: vi.fn(),
 		hasTouchAttack: false,

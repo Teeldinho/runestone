@@ -2,13 +2,12 @@ import { useCallback } from "react";
 import type { Vector3Tuple } from "@/shared/lib";
 
 import { INPUT_EVENT_TYPES } from "../config";
-import { resolveRunIntent, resolveTouchVelocityMagnitude } from "../lib";
+import { resolveMovementVelocityMagnitude, resolveRunIntent } from "../lib";
 import type { InputOrchestratorEvent } from "./inputOrchestratorMachine";
 
 type UseTouchMovementInputInput = {
 	readonly sendInput: (event: InputOrchestratorEvent) => void;
-	readonly isDesktopRunHeld: boolean;
-	readonly isMobileRunToggled: boolean;
+	readonly isRunToggled: boolean;
 };
 
 const VECTOR_X_INDEX = 0;
@@ -16,16 +15,11 @@ const VECTOR_Z_INDEX = 2;
 
 export const useTouchMovementInput = ({
 	sendInput,
-	isDesktopRunHeld,
-	isMobileRunToggled,
+	isRunToggled,
 }: UseTouchMovementInputInput) => {
 	const handleMoveVelocity = useCallback(
 		(velocity: Vector3Tuple) => {
-			const magnitude = resolveTouchVelocityMagnitude({ velocity });
-			const wantsRun = resolveRunIntent({
-				isDesktopRunHeld,
-				isMobileRunToggled,
-			});
+			const magnitude = resolveMovementVelocityMagnitude({ velocity });
 
 			sendInput({
 				type: INPUT_EVENT_TYPES.MOVE_CHANGED,
@@ -34,10 +28,10 @@ export const useTouchMovementInput = ({
 					y: velocity[VECTOR_Z_INDEX],
 				},
 				magnitude,
-				wantsRun,
+				wantsRun: resolveRunIntent({ isRunToggled }),
 			});
 		},
-		[isDesktopRunHeld, isMobileRunToggled, sendInput],
+		[isRunToggled, sendInput],
 	);
 
 	const handleStopVelocity = useCallback(() => {

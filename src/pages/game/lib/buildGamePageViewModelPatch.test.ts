@@ -15,15 +15,13 @@ const STABLE_CANVAS = {
 const STABLE_INPUT = {
 	inputStateValue: {
 		ready: {
-			actionRegion: INPUT_STATE_KEYS.ACTION_READY,
 			movementRegion: INPUT_STATE_KEYS.MOVEMENT_IDLE,
 			runToggleRegion: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
 		},
 	},
 	sendInput: () => {},
-	isDesktopRunHeld: false,
 	isJumpActive: false,
-	isMobileRunToggled: false,
+	isRunToggled: false,
 	touchMovement: {
 		handleMoveVelocity: () => {},
 		handleStopVelocity: () => {},
@@ -53,8 +51,6 @@ const STABLE_MOBILE_SHEET = {
 		"map" as GamePageViewModel["mobileSheet"]["mobileSheetTabId"],
 };
 const STABLE_TOUCH = {
-	handleTouchJoystickMove: () => {},
-	handleTouchJoystickStop: () => {},
 	handleTouchAttack: () => {},
 	handleTouchInteract: () => {},
 	hasTouchAttack: false,

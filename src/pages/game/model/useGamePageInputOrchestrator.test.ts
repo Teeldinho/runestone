@@ -10,14 +10,11 @@ const mocks = vi.hoisted(() => {
 		READY: "ready",
 		MOVEMENT_REGION: "movementRegion",
 		MOVEMENT_IDLE: "movementIdle",
-		ACTION_REGION: "actionRegion",
-		ACTION_READY: "actionReady",
 		RUN_TOGGLE_REGION: "runToggleRegion",
 		RUN_TOGGLE_OFF: "runToggleOff",
 	} as const;
 	const inputStateValue = {
 		ready: {
-			actionRegion: inputStateKeys.ACTION_READY,
 			movementRegion: inputStateKeys.MOVEMENT_IDLE,
 			runToggleRegion: inputStateKeys.RUN_TOGGLE_OFF,
 		},
@@ -61,12 +58,12 @@ vi.mock("@/features/input-orchestrator", () => ({
 		expect(interactionRef).toBe(mocks.gameActorRef);
 
 		return {
-			isDesktopRunHeld: false,
 			inputStateValue: mocks.inputStateValue,
-			isMobileRunToggled: false,
+			isRunToggled: false,
 			sendInput: mocks.inputSend,
 		};
 	}),
+	useKeyboardMovementInput: vi.fn(),
 	useKeyboardInputOrchestrator: vi.fn(),
 	useTouchMovementInput: vi.fn(() => ({
 		handleMoveVelocity: vi.fn(),

@@ -4,7 +4,6 @@ import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { DungeonEvent } from "@/entities/dungeon";
-import { PLAYER_EVENTS } from "@/entities/player";
 import {
 	useInteractionCandidates,
 	useInteractionInput,
@@ -33,30 +32,17 @@ vi.mock("@/features/dungeon-navigation", () => ({
 
 describe("useGamePageTouch", () => {
 	it("maps touch handlers to dungeon and player interactions", () => {
-		const sendPlayerMachineEvent = vi.fn();
 		const handleDungeonEventSend = vi.fn();
 
 		const { result } = renderHook(() =>
 			useGamePageTouch({
 				handleDungeonEventSend,
-				sendPlayerMachineEvent,
 			}),
 		);
 
 		act(() => {
-			result.current.handleTouchJoystickMove([0, 1, 0]);
-			result.current.handleTouchJoystickStop();
 			result.current.handleTouchAttack();
 			result.current.handleTouchInteract();
-		});
-
-		expect(sendPlayerMachineEvent).toHaveBeenCalledWith({
-			type: PLAYER_EVENTS.MOVE,
-			velocity: [0, 1, 0],
-			isSprinting: false,
-		});
-		expect(sendPlayerMachineEvent).toHaveBeenCalledWith({
-			type: PLAYER_EVENTS.STOP,
 		});
 		expect(mockHandleAttack).toHaveBeenCalledTimes(1);
 		expect(mockHandleInteract).toHaveBeenCalledTimes(1);

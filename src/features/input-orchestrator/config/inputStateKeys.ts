@@ -5,9 +5,6 @@ export const INPUT_STATE_KEYS = {
 	MOVEMENT_IDLE: "movementIdle",
 	MOVEMENT_ACTIVE: "movementActive",
 
-	ACTION_REGION: "actionRegion",
-	ACTION_READY: "actionReady",
-
 	RUN_TOGGLE_REGION: "runToggleRegion",
 	RUN_TOGGLE_OFF: "runToggleOff",
 	RUN_TOGGLE_ON: "runToggleOn",

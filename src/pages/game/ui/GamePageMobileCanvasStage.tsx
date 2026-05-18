@@ -21,6 +21,7 @@ export function GamePageMobileCanvasStage() {
 			aria-labelledby="dungeon-canvas-heading"
 			className="gameplay-touch-surface relative h-full w-full"
 			onContextMenu={preventGameplayContextMenu}
+			onContextMenuCapture={preventGameplayContextMenu}
 		>
 			<h2 id="dungeon-canvas-heading" className="sr-only">
 				Dungeon Canvas
@@ -51,7 +52,7 @@ export function GamePageMobileCanvasStage() {
 			<div className="pointer-events-none absolute right-4 bottom-4 z-30 flex items-end gap-2">
 				<MobileActionButtonZone
 					isJumpActive={input.isJumpActive}
-					isRunEnabled={input.isMobileRunToggled}
+					isRunEnabled={input.isRunToggled}
 					sendInput={input.sendInput}
 				/>
 

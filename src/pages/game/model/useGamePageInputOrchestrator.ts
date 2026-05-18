@@ -3,6 +3,7 @@ import { useGameMachineActorRef } from "@/features/dungeon-navigation";
 import {
 	useInputOrchestrator,
 	useKeyboardInputOrchestrator,
+	useKeyboardMovementInput,
 	useTouchMovementInput,
 } from "@/features/input-orchestrator";
 
@@ -25,18 +26,21 @@ export const useGamePageInputOrchestrator = () => {
 		sendInput: input.sendInput,
 	});
 
+	useKeyboardMovementInput({
+		sendInput: input.sendInput,
+		isRunToggled: input.isRunToggled,
+	});
+
 	const touchMovement = useTouchMovementInput({
 		sendInput: input.sendInput,
-		isDesktopRunHeld: input.isDesktopRunHeld,
-		isMobileRunToggled: input.isMobileRunToggled,
+		isRunToggled: input.isRunToggled,
 	});
 
 	return {
 		inputStateValue: input.inputStateValue,
 		sendInput: input.sendInput,
-		isDesktopRunHeld: input.isDesktopRunHeld,
 		isJumpActive,
-		isMobileRunToggled: input.isMobileRunToggled,
+		isRunToggled: input.isRunToggled,
 		touchMovement,
 	};
 };

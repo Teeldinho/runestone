@@ -52,14 +52,11 @@ const {
 		READY: "ready",
 		MOVEMENT_REGION: "movementRegion",
 		MOVEMENT_IDLE: "movementIdle",
-		ACTION_REGION: "actionRegion",
-		ACTION_READY: "actionReady",
 		RUN_TOGGLE_REGION: "runToggleRegion",
 		RUN_TOGGLE_OFF: "runToggleOff",
 	} as const,
 	MOCK_INPUT_STATE_VALUE: {
 		ready: {
-			actionRegion: "actionReady",
 			movementRegion: "movementIdle",
 			runToggleRegion: "runToggleOff",
 		},
@@ -115,10 +112,10 @@ vi.mock("@/features/input-orchestrator", () => ({
 			id: "mock",
 		},
 		inputStateValue: MOCK_INPUT_STATE_VALUE,
-		isDesktopRunHeld: false,
-		isMobileRunToggled: false,
+		isRunToggled: false,
 		sendInput: vi.fn(),
 	}),
+	useKeyboardMovementInput: vi.fn(),
 	useKeyboardInputOrchestrator: vi.fn(),
 	useTouchMovementInput: vi.fn(() => ({
 		handleMoveVelocity: vi.fn(),
@@ -303,7 +300,6 @@ describe("useGamePage", () => {
 					[STATE_VISUALIZER_SECTION_IDS.AUDIO]: AUDIO_MACHINE_STATES.PLAYING,
 					[STATE_VISUALIZER_SECTION_IDS.INPUT]: {
 						ready: {
-							actionRegion: INPUT_STATE_KEYS.ACTION_READY,
 							movementRegion: INPUT_STATE_KEYS.MOVEMENT_IDLE,
 							runToggleRegion: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
 						},

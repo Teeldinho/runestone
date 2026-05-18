@@ -6,12 +6,8 @@ import { inputOrchestratorMachine } from "./inputOrchestratorMachine";
 
 type InputOrchestratorSnapshot = SnapshotFrom<typeof inputOrchestratorMachine>;
 
-const selectIsDesktopRunHeld = (snapshot: InputOrchestratorSnapshot): boolean =>
-	snapshot.context.isDesktopRunHeld;
-
-const selectIsMobileRunToggled = (
-	snapshot: InputOrchestratorSnapshot,
-): boolean => snapshot.context.isMobileRunToggled;
+const selectIsRunToggled = (snapshot: InputOrchestratorSnapshot): boolean =>
+	snapshot.context.isRunToggled;
 
 const selectInputStateValue = (
 	snapshot: InputOrchestratorSnapshot,
@@ -22,15 +18,13 @@ export const useInputOrchestrator = (input: InputOrchestratorInput) => {
 		input,
 	});
 
-	const isDesktopRunHeld = useSelector(actorRef, selectIsDesktopRunHeld);
-	const isMobileRunToggled = useSelector(actorRef, selectIsMobileRunToggled);
+	const isRunToggled = useSelector(actorRef, selectIsRunToggled);
 	const inputStateValue = useSelector(actorRef, selectInputStateValue);
 
 	return {
 		actorRef,
 		inputStateValue,
 		sendInput: actorRef.send,
-		isDesktopRunHeld,
-		isMobileRunToggled,
+		isRunToggled,
 	};
 };

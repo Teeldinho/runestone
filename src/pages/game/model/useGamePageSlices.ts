@@ -19,7 +19,6 @@ export const useGamePageSlices = (): GamePageViewModel => {
 
 	const touch = useGamePageTouchSlice({
 		handleDungeonEventSend: gameMachine.navigation.handleDungeonEventSend,
-		sendPlayerMachineEvent: playerMachine.sendPlayerMachineEvent,
 	});
 
 	const mobileSheet = useGamePageMobileSheetSlice({

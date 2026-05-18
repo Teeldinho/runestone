@@ -9,8 +9,6 @@ const INPUT_STATE_KEYS = {
 	READY: "ready",
 	MOVEMENT_REGION: "movementRegion",
 	MOVEMENT_IDLE: "movementIdle",
-	ACTION_REGION: "actionRegion",
-	ACTION_READY: "actionReady",
 	RUN_TOGGLE_REGION: "runToggleRegion",
 	RUN_TOGGLE_OFF: "runToggleOff",
 } as const;
@@ -30,15 +28,13 @@ vi.mock("@/pages/game/model", () => ({
 	useGamePageInputContext: () => ({
 		inputStateValue: {
 			ready: {
-				actionRegion: INPUT_STATE_KEYS.ACTION_READY,
 				movementRegion: INPUT_STATE_KEYS.MOVEMENT_IDLE,
 				runToggleRegion: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
 			},
 		},
 		sendInput: vi.fn(),
-		isDesktopRunHeld: false,
 		isJumpActive: false,
-		isMobileRunToggled: false,
+		isRunToggled: false,
 		touchMovement: {
 			handleMoveVelocity: vi.fn(),
 			handleStopVelocity: vi.fn(),
