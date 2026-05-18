@@ -67,18 +67,7 @@ export type PlayerMachineContext = {
 	velocity: Vector3Tuple;
 	stats: PlayerStats;
 	moveVector: InputVector2;
-	isRunHeld: boolean;
 	wantsJumpImpulse: boolean;
-};
-
-export type PlayerMoveEvent = {
-	type: typeof PLAYER_EVENTS.MOVE;
-	velocity: Vector3Tuple;
-	isSprinting: boolean;
-};
-
-export type PlayerStopEvent = {
-	type: typeof PLAYER_EVENTS.STOP;
 };
 
 export type PlayerTakeDamageEvent = {
@@ -109,11 +98,6 @@ export type PlayerMoveStoppedEvent = {
 	readonly type: typeof PLAYER_EVENT_TYPES.MOVE_STOPPED;
 };
 
-export type PlayerRunHeldChangedEvent = {
-	readonly type: typeof PLAYER_EVENT_TYPES.RUN_HELD_CHANGED;
-	readonly isHeld: boolean;
-};
-
 export type PlayerJumpPressedEvent = {
 	readonly type: typeof PLAYER_EVENT_TYPES.JUMP_PRESSED;
 };
@@ -127,15 +111,12 @@ export type PlayerLeftGroundEvent = {
 };
 
 export type PlayerMachineEvent =
-	| PlayerMoveEvent
-	| PlayerStopEvent
 	| PlayerTakeDamageEvent
 	| PlayerHealEvent
 	| PlayerDieEvent
 	| PlayerRestartEvent
 	| PlayerMoveChangedEvent
 	| PlayerMoveStoppedEvent
-	| PlayerRunHeldChangedEvent
 	| PlayerJumpPressedEvent
 	| PlayerLandedEvent
 	| PlayerLeftGroundEvent;

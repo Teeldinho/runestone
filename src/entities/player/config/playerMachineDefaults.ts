@@ -15,6 +15,5 @@ export const PLAYER_MACHINE_DEFAULTS = {
 		CHAIN_MULTIPLIER: 1,
 	},
 	MOVE_VECTOR: { x: 0, y: 0 },
-	IS_RUN_HELD: false,
 	WANTS_JUMP_IMPULSE: false,
 } as const;

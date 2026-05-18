@@ -26,6 +26,11 @@ export {
 	PLAYER_MOVEMENT_KEYS,
 } from "./playerMovementConfig";
 export { PLAYER_MOVEMENT_RUNTIME_CONFIG } from "./playerMovementRuntimeConfig";
+export {
+	PLAYER_RUNNING_INDICATOR_CLASS_NAMES,
+	PLAYER_RUNNING_INDICATOR_CONFIG,
+	PLAYER_RUNNING_INDICATOR_COPY,
+} from "./playerRunningIndicatorConfig";
 export type { PlayerStateKey } from "./playerStateKeys";
 export { PLAYER_STATE_KEYS } from "./playerStateKeys";
 export type { PlayerHealthState } from "./playerStates";
