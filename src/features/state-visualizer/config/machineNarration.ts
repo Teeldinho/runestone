@@ -38,6 +38,8 @@ export const STATE_VISUALIZER_SECTION_DESCRIPTIONS: Record<
 	camera:
 		"Tracks camera mode changes so traversal and visibility behaviors stay predictable.",
 	audio: "Tracks music playback and mute behavior for the run.",
+	input:
+		"Tracks player input state, including movement, action handling, and run toggles.",
 	player: "Tracks the player lifecycle and movement readiness.",
 };
 
