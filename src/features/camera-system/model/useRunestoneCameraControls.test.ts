@@ -29,6 +29,9 @@ vi.mock("@react-three/fiber", () => ({
 	},
 	useThree: () => ({
 		camera: mockCamera,
+		gl: {
+			domElement: document.createElement("canvas"),
+		},
 	}),
 }));
 

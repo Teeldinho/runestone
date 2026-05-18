@@ -18,6 +18,9 @@ const mockCanvas = vi.fn(({ children }: { children: ReactNode }) => (
 	<div data-testid="canvas">{children}</div>
 ));
 const mockHandleSceneReady = vi.fn();
+const mockUseFirstPersonLockHint = vi.fn(
+	({ mode }: { mode: unknown }) => mode === CAMERA_MODES.FIRST_PERSON,
+);
 const mockUseGameCanvasSceneLoading = vi.fn(() => ({
 	handleSceneReady: mockHandleSceneReady,
 	isSceneLoading: true,
@@ -110,6 +113,8 @@ vi.mock("@/entities/room", () => ({
 vi.mock("../model", () => ({
 	useGameCanvasSceneLoading: () => mockUseGameCanvasSceneLoading(),
 	useGameCanvasViewModel: (value: unknown) => mockUseGameCanvasViewModel(value),
+	useFirstPersonLockHint: (value: { mode: unknown }) =>
+		mockUseFirstPersonLockHint(value),
 }));
 
 vi.mock("./CameraRig", () => ({
@@ -140,6 +145,7 @@ describe("GameCanvas", () => {
 	beforeEach(() => {
 		mockCanvas.mockClear();
 		mockHandleSceneReady.mockClear();
+		mockUseFirstPersonLockHint.mockClear();
 		mockSceneEnvironment.mockClear();
 		mockUseGameCanvasSceneLoading.mockClear();
 		mockUseGameCanvasViewModel.mockClear();
