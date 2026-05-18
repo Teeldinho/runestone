@@ -7,6 +7,21 @@ import { setCameraMode } from "@/shared/lib";
 
 import { PLAYER_ENTITY_CONFIG, PLAYER_STATES } from "../config";
 
+vi.mock("@/shared/lib", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("@/shared/lib")>();
+
+	return {
+		...actual,
+		useResponsiveLayout: vi.fn(() => ({
+			isDesktopLayout: true,
+			isMobileLayout: false,
+			isTabletLayout: false,
+			isLandscape: true,
+			isPortrait: false,
+		})),
+	};
+});
+
 vi.mock("@react-three/fiber", () => ({
 	useFrame: vi.fn(),
 }));
@@ -97,6 +112,34 @@ describe("usePlayerMeshViewModel", () => {
 
 		expect(result.current.meshSettings.auraColor).toBe("#ffb347");
 		expect(result.current.meshSettings.auraEmissiveIntensity).toBe(1.1);
+	});
+
+	it("shows the running indicator on desktop while moving fast", () => {
+		vi.mocked(usePlayerMachineRuntime).mockReturnValueOnce({
+			snapshot: {
+				value: {
+					[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.RUNNING,
+					[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.ALIVE,
+				},
+				context: {
+					position: [0, 0, 0],
+					velocity: [0, 0, 0],
+					stats: {
+						maxHp: 100,
+						hp: 100,
+						score: 0,
+						keyCount: 0,
+						chainMultiplier: 1,
+					},
+				},
+			} as unknown as ReturnType<typeof usePlayerMachineRuntime>["snapshot"],
+			sendPlayerMachineEvent: vi.fn(),
+			playerActorRef: createMockActorRef(),
+		});
+
+		const { result } = renderHook(() => usePlayerMeshViewModel());
+
+		expect(result.current.isRunningIndicatorVisible).toBe(true);
 	});
 
 	it("returns a rigidBodyRef initialised to null", () => {
