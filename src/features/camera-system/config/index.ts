@@ -14,6 +14,7 @@ export {
 	CAMERA_CONTROLS_TOP_DOWN_AZIMUTH,
 	CAMERA_CONTROLS_UP_AXIS_KEYS,
 	CAMERA_MODE_IDS,
+	CAMERA_POINTER_LOCK_DOM_EVENTS,
 	CAMERA_UP_VECTORS,
 } from "./cameraControlConfig";
 export type { CameraEvent, CameraEventObject } from "./cameraEvents";
