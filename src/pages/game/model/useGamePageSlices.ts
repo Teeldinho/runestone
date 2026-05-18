@@ -46,6 +46,7 @@ export const useGamePageSlices = (): GamePageViewModel => {
 		audioState,
 		cameraMode: cameraMachine.mode,
 		currentRoomId: gameMachine.room.currentRoomId as RoomId,
+		inputStateValue: input.inputStateValue,
 		playerStateValue: playerMachine.snapshot.value,
 	});
 

@@ -32,6 +32,7 @@ export const useGamePageInputOrchestrator = () => {
 	});
 
 	return {
+		inputStateValue: input.inputStateValue,
 		sendInput: input.sendInput,
 		isDesktopRunHeld: input.isDesktopRunHeld,
 		isJumpActive,

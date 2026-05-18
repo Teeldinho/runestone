@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { ROOM_IDS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
+import { INPUT_STATE_KEYS } from "@/features/input-orchestrator";
 import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 
 import {
@@ -47,6 +48,13 @@ const contextSlices = {
 		handleCameraModeSwitch: vi.fn(),
 	},
 	input: {
+		inputStateValue: {
+			ready: {
+				actionRegion: INPUT_STATE_KEYS.ACTION_READY,
+				movementRegion: INPUT_STATE_KEYS.MOVEMENT_IDLE,
+				runToggleRegion: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
+			},
+		},
 		sendInput: vi.fn(),
 		isDesktopRunHeld: false,
 		isJumpActive: false,

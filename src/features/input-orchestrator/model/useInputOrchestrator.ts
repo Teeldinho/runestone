@@ -13,6 +13,10 @@ const selectIsMobileRunToggled = (
 	snapshot: InputOrchestratorSnapshot,
 ): boolean => snapshot.context.isMobileRunToggled;
 
+const selectInputStateValue = (
+	snapshot: InputOrchestratorSnapshot,
+): InputOrchestratorSnapshot["value"] => snapshot.value;
+
 export const useInputOrchestrator = (input: InputOrchestratorInput) => {
 	const actorRef = useActorRef(inputOrchestratorMachine, {
 		input,
@@ -20,9 +24,11 @@ export const useInputOrchestrator = (input: InputOrchestratorInput) => {
 
 	const isDesktopRunHeld = useSelector(actorRef, selectIsDesktopRunHeld);
 	const isMobileRunToggled = useSelector(actorRef, selectIsMobileRunToggled);
+	const inputStateValue = useSelector(actorRef, selectInputStateValue);
 
 	return {
 		actorRef,
+		inputStateValue,
 		sendInput: actorRef.send,
 		isDesktopRunHeld,
 		isMobileRunToggled,
