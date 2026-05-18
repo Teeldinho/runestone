@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { INPUT_STATE_KEYS } from "@/features/input-orchestrator";
+
 import type { GamePageViewModel } from "../model/types";
 import { buildGamePageViewModelPatch } from "./buildGamePageViewModelPatch";
 
@@ -11,6 +13,13 @@ const STABLE_CANVAS = {
 	handleCameraModeSwitch: () => {},
 };
 const STABLE_INPUT = {
+	inputStateValue: {
+		ready: {
+			actionRegion: INPUT_STATE_KEYS.ACTION_READY,
+			movementRegion: INPUT_STATE_KEYS.MOVEMENT_IDLE,
+			runToggleRegion: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
+		},
+	},
 	sendInput: () => {},
 	isDesktopRunHeld: false,
 	isJumpActive: false,

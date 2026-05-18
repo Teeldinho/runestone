@@ -15,6 +15,7 @@ import {
 	useInteractionCandidates,
 	useInteractionInput,
 } from "@/features/dungeon-navigation";
+import { INPUT_STATE_KEYS } from "@/features/input-orchestrator";
 import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import {
 	STATE_VISUALIZER_SECTION_IDS,
@@ -27,6 +28,8 @@ import { useGamePage } from "./useGamePage";
 const {
 	MOCK_AUDIO_MACHINE_STATES,
 	MOCK_CAMERA_MODES,
+	MOCK_INPUT_STATE_KEYS,
+	MOCK_INPUT_STATE_VALUE,
 	MOCK_STATE_VISUALIZER_SECTION_IDS,
 } = vi.hoisted(() => ({
 	MOCK_AUDIO_MACHINE_STATES: {
@@ -42,8 +45,25 @@ const {
 		DUNGEON: "dungeon",
 		CAMERA: "camera",
 		AUDIO: "audio",
+		INPUT: "input",
 		PLAYER: "player",
 	} as const,
+	MOCK_INPUT_STATE_KEYS: {
+		READY: "ready",
+		MOVEMENT_REGION: "movementRegion",
+		MOVEMENT_IDLE: "movementIdle",
+		ACTION_REGION: "actionRegion",
+		ACTION_READY: "actionReady",
+		RUN_TOGGLE_REGION: "runToggleRegion",
+		RUN_TOGGLE_OFF: "runToggleOff",
+	} as const,
+	MOCK_INPUT_STATE_VALUE: {
+		ready: {
+			actionRegion: "actionReady",
+			movementRegion: "movementIdle",
+			runToggleRegion: "runToggleOff",
+		},
+	},
 }));
 
 vi.mock("@/features/audio-manager", () => {
@@ -53,6 +73,7 @@ vi.mock("@/features/audio-manager", () => {
 		useAudioController: vi.fn().mockReturnValue({
 			audioState: MOCK_AUDIO_MACHINE_STATES.PLAYING,
 			handleAudioPlayRequest: vi.fn(),
+			handleAudioStopRequest: vi.fn(),
 			handleAudioMuteToggle: vi.fn(),
 			isAudioMuted: false,
 		}),
@@ -60,6 +81,7 @@ vi.mock("@/features/audio-manager", () => {
 });
 
 vi.mock("@/features/dungeon-navigation", () => ({
+	createGameMachine: vi.fn(() => ({})),
 	useGameMachine: vi.fn(),
 	useGameMachineActorRef: vi.fn().mockReturnValue({
 		send: vi.fn(),
@@ -80,6 +102,28 @@ vi.mock("@/features/dungeon-navigation", () => ({
 		handleAttack: vi.fn(),
 		handleInteract: vi.fn(),
 	}),
+}));
+
+vi.mock("@/features/input-orchestrator", () => ({
+	INPUT_STATE_KEYS: MOCK_INPUT_STATE_KEYS,
+	inputOrchestratorMachine: {},
+	useInputOrchestrator: vi.fn().mockReturnValue({
+		actorRef: {
+			send: vi.fn(),
+			getSnapshot: vi.fn(),
+			sessionId: "mock",
+			id: "mock",
+		},
+		inputStateValue: MOCK_INPUT_STATE_VALUE,
+		isDesktopRunHeld: false,
+		isMobileRunToggled: false,
+		sendInput: vi.fn(),
+	}),
+	useKeyboardInputOrchestrator: vi.fn(),
+	useTouchMovementInput: vi.fn(() => ({
+		handleMoveVelocity: vi.fn(),
+		handleStopVelocity: vi.fn(),
+	})),
 }));
 
 vi.mock("@/features/camera-system", () => {
@@ -250,12 +294,20 @@ describe("useGamePage", () => {
 					[STATE_VISUALIZER_SECTION_IDS.AUDIO]: {},
 					[STATE_VISUALIZER_SECTION_IDS.CAMERA]: {},
 					[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: {},
+					[STATE_VISUALIZER_SECTION_IDS.INPUT]: {},
 					[STATE_VISUALIZER_SECTION_IDS.PLAYER]: {},
 				},
 				stateValuesBySectionId: {
 					[STATE_VISUALIZER_SECTION_IDS.DUNGEON]: ROOM_IDS.ENTRANCE,
 					[STATE_VISUALIZER_SECTION_IDS.CAMERA]: CAMERA_MODES.FREE_ORBITAL,
 					[STATE_VISUALIZER_SECTION_IDS.AUDIO]: AUDIO_MACHINE_STATES.PLAYING,
+					[STATE_VISUALIZER_SECTION_IDS.INPUT]: {
+						ready: {
+							actionRegion: INPUT_STATE_KEYS.ACTION_READY,
+							movementRegion: INPUT_STATE_KEYS.MOVEMENT_IDLE,
+							runToggleRegion: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
+						},
+					},
 					[STATE_VISUALIZER_SECTION_IDS.PLAYER]: {
 						health: PLAYER_STATES.HEALTH.ALIVE,
 						movement: PLAYER_STATES.MOVEMENT.IDLE,
