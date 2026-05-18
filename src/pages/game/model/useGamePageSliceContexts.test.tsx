@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { ROOM_IDS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
+import { INPUT_STATE_KEYS } from "@/features/input-orchestrator";
 import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 
 import {
@@ -47,10 +48,15 @@ const contextSlices = {
 		handleCameraModeSwitch: vi.fn(),
 	},
 	input: {
+		inputStateValue: {
+			ready: {
+				movementRegion: INPUT_STATE_KEYS.MOVEMENT_IDLE,
+				runToggleRegion: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
+			},
+		},
 		sendInput: vi.fn(),
-		isDesktopRunHeld: false,
 		isJumpActive: false,
-		isMobileRunToggled: false,
+		isRunToggled: false,
 		touchMovement: {
 			handleMoveVelocity: vi.fn(),
 			handleStopVelocity: vi.fn(),
@@ -79,8 +85,6 @@ const contextSlices = {
 		mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 	},
 	touch: {
-		handleTouchJoystickMove: vi.fn(),
-		handleTouchJoystickStop: vi.fn(),
 		handleTouchAttack: vi.fn(),
 		handleTouchInteract: vi.fn(),
 		hasTouchAttack: false,

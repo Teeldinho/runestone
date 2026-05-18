@@ -11,4 +11,5 @@ export * from "./resolveCameraControlsTransitionAngles";
 export * from "./resolveCameraControlsUpAxis";
 export * from "./resolveCameraControlsWorldFacingAzimuth";
 export * from "./resolveMovementAzimuthFromCameraControls";
+export * from "./shouldEnableFirstPersonPointerLock";
 export * from "./shouldRenderCameraControls";

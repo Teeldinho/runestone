@@ -14,13 +14,18 @@ export const useGamePageAudio = (): GamePageAudioViewModel => {
 	const {
 		audioState,
 		handleAudioPlayRequest,
+		handleAudioStopRequest,
 		handleAudioMuteToggle,
 		isAudioMuted,
 	} = useAudioController();
 
 	useEffect(() => {
 		handleAudioPlayRequest();
-	}, [handleAudioPlayRequest]);
+
+		return () => {
+			handleAudioStopRequest();
+		};
+	}, [handleAudioPlayRequest, handleAudioStopRequest]);
 
 	return {
 		audioState,

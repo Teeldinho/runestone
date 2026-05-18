@@ -98,7 +98,7 @@ describe("inputOrchestratorMachine", () => {
 				wantsRun: true,
 			},
 		]);
-		expect(actor.getSnapshot().context.isMobileRunToggled).toBe(true);
+		expect(actor.getSnapshot().context.isRunToggled).toBe(true);
 	});
 
 	it("only toggles mobile run when run is pressed without movement", () => {
@@ -115,7 +115,7 @@ describe("inputOrchestratorMachine", () => {
 		actor.send({ type: INPUT_EVENT_TYPES.RUN_TOGGLED });
 
 		expect(playerRef.getSnapshot().context).toEqual([]);
-		expect(actor.getSnapshot().context.isMobileRunToggled).toBe(true);
+		expect(actor.getSnapshot().context.isRunToggled).toBe(true);
 	});
 
 	it("sends player move with wantsRun false when run toggles off while moving", () => {
@@ -155,6 +155,6 @@ describe("inputOrchestratorMachine", () => {
 				wantsRun: false,
 			},
 		]);
-		expect(actor.getSnapshot().context.isMobileRunToggled).toBe(false);
+		expect(actor.getSnapshot().context.isRunToggled).toBe(false);
 	});
 });

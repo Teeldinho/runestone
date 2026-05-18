@@ -45,9 +45,4 @@ export {
 } from "./interactionCooldownMachineContext";
 export { resolveInteractionCandidates } from "./interactionResolver";
 export { getNavigationActionDisabled } from "./navigationActionAvailability";
-export {
-	computeVelocity,
-	getMovementKey,
-	isMovementKey,
-} from "./playerInputHelpers";
 export { resolveDoorwayEntrySide } from "./resolveDoorwayEntrySide";

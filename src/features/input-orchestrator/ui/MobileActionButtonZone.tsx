@@ -46,7 +46,7 @@ export function MobileActionButtonZone({
 				variant={viewModel.runButtonVariant}
 				aria-label={viewModel.runAriaLabel}
 				aria-pressed={viewModel.runButtonPressed}
-				onPointerDown={viewModel.handleButtonPointerDown}
+				onPointerDown={viewModel.handleRunPointerDown}
 				onClick={viewModel.handleRunClick}
 			>
 				<Footprints
@@ -62,7 +62,7 @@ export function MobileActionButtonZone({
 				variant={viewModel.jumpButtonVariant}
 				aria-label={viewModel.jumpAriaLabel}
 				aria-pressed={viewModel.jumpButtonPressed}
-				onPointerDown={viewModel.handleButtonPointerDown}
+				onPointerDown={viewModel.handleJumpPointerDown}
 				onClick={viewModel.handleJumpClick}
 			>
 				<ChevronsUp

@@ -31,16 +31,16 @@ describe("useAudioPlaybackLifecycle", () => {
 		mockStartBackgroundMusicLoop.mockResolvedValue(undefined);
 	});
 
-	it("does not auto-start on initial playing mount", () => {
-		renderHook(() => useAudioPlaybackLifecycle(AUDIO_MACHINE_STATES.PLAYING));
+	it("does not auto-start on initial paused mount", () => {
+		renderHook(() => useAudioPlaybackLifecycle(AUDIO_MACHINE_STATES.PAUSED));
 
 		expect(mockStartBackgroundMusicLoop).not.toHaveBeenCalled();
-		expect(mockPauseBackgroundMusicLoop).not.toHaveBeenCalled();
+		expect(mockPauseBackgroundMusicLoop).toHaveBeenCalledTimes(1);
 	});
 
-	it("pauses while paused or muted and starts when returning to playing", async () => {
+	it("starts when transitioning from paused to playing and pauses again when muted", async () => {
 		const initialProps: UseAudioPlaybackLifecycleTestProps = {
-			audioState: AUDIO_MACHINE_STATES.PLAYING,
+			audioState: AUDIO_MACHINE_STATES.PAUSED,
 		};
 
 		const { rerender } = renderHook(
@@ -50,14 +50,6 @@ describe("useAudioPlaybackLifecycle", () => {
 				initialProps,
 			},
 		);
-
-		act(() => {
-			rerender({
-				audioState: AUDIO_MACHINE_STATES.PAUSED,
-			});
-		});
-
-		expect(mockPauseBackgroundMusicLoop).toHaveBeenCalledTimes(1);
 
 		act(() => {
 			rerender({

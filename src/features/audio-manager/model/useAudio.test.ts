@@ -65,10 +65,10 @@ describe("useAudio", () => {
 		mockToneDestination.volume.value = 0;
 	});
 
-	it("initializes in playing state without auto-starting on mount", () => {
+	it("initializes in paused state without auto-starting music on mount", () => {
 		const { result } = renderHook(() => useAudio());
 
-		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PLAYING);
+		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PAUSED);
 		expect(mockStartBackgroundMusicLoop).not.toHaveBeenCalled();
 	});
 
@@ -95,14 +95,8 @@ describe("useAudio", () => {
 		});
 	});
 
-	it("starts background music when transitioning back to playing", async () => {
+	it("starts background music when transitioning from paused to playing", async () => {
 		const { result } = renderHook(() => useAudio());
-
-		act(() => {
-			result.current.handleAudioPauseRequest();
-		});
-
-		expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PAUSED);
 
 		act(() => {
 			result.current.handleAudioPlayRequest();
@@ -124,8 +118,12 @@ describe("useAudio", () => {
 		expect(mockPauseBackgroundMusicLoop).toHaveBeenCalled();
 	});
 
-	it("unmutes back to previous audible state", async () => {
+	it("unmutes back to the previous audible playing state", async () => {
 		const { result } = renderHook(() => useAudio());
+
+		act(() => {
+			result.current.handleAudioPlayRequest();
+		});
 
 		act(() => {
 			result.current.handleAudioMuteToggle();
@@ -139,7 +137,7 @@ describe("useAudio", () => {
 
 		await waitFor(() => {
 			expect(result.current.audioState).toBe(AUDIO_MACHINE_STATES.PLAYING);
-			expect(mockStartBackgroundMusicLoop).toHaveBeenCalledTimes(1);
+			expect(mockStartBackgroundMusicLoop).toHaveBeenCalledTimes(2);
 		});
 	});
 });

@@ -1,6 +1,6 @@
 export const PLAYER_GUARD_KEYS = {
-	WANTS_RUN: "player.guard.wantsRun",
-	CAN_JUMP: "player.guard.canJump",
+	CAN_MOVE_RUNNING: "player.guard.canMoveRunning",
+	CAN_MOVE_WALKING: "player.guard.canMoveWalking",
 } as const;
 
 export type PlayerGuardKey =

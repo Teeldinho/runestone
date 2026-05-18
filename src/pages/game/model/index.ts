@@ -15,7 +15,6 @@ export type {
 } from "./useGamePageMobileActionPanelModel";
 export { useGamePageMobileActionPanelModel } from "./useGamePageMobileActionPanelModel";
 export { useGamePageMobileCanvasStageModel } from "./useGamePageMobileCanvasStageModel";
-export { useGamePageMobileJoystickModel } from "./useGamePageMobileJoystickModel";
 export { useGamePageMobileLayoutShellModel } from "./useGamePageMobileLayoutShellModel";
 export { useGamePageMobileSheetContentModel } from "./useGamePageMobileSheetContentModel";
 export { useGamePageMobileSheetState } from "./useGamePageMobileSheetState";

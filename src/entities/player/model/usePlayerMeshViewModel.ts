@@ -2,11 +2,20 @@ import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
 import type { Vector3Tuple } from "@/shared/lib";
+import { useResponsiveLayout } from "@/shared/lib";
 import { useCameraModeValue } from "@/shared/model";
 import { PLAYER_STATES } from "../config";
-import { resolvePlayerAvatarVisibility, selectPlayerAnimation } from "../lib";
+import {
+	resolvePlayerAvatarVisibility,
+	resolvePlayerRunningIndicatorVisibility,
+	selectPlayerAnimation,
+} from "../lib";
 import { usePlayerMachineRuntime } from "./playerMachineRuntime";
-import type { PlayerHealthState, PlayerMeshSettings } from "./types";
+import type {
+	PlayerHealthState,
+	PlayerMeshSettings,
+	PlayerMovementState,
+} from "./types";
 import { usePlayerJumpPhysics } from "./usePlayerJumpPhysics";
 import { usePlayerMesh } from "./usePlayerMesh";
 import { usePlayerPhysics } from "./usePlayerPhysics";
@@ -18,6 +27,7 @@ type UsePlayerMeshViewModelInput = {
 type UsePlayerMeshViewModelResult = {
 	isAuraVisible: boolean;
 	isAvatarVisible: boolean;
+	isRunningIndicatorVisible: boolean;
 	meshSettings: PlayerMeshSettings;
 	rigidBodyRef: RefObject<RapierRigidBody | null>;
 	animationName: string;
@@ -31,10 +41,14 @@ export const usePlayerMeshViewModel = ({
 		initialPositionRef.current = initialPosition;
 	}
 
+	const { isDesktopLayout } = useResponsiveLayout();
 	const { snapshot, sendPlayerMachineEvent } = usePlayerMachineRuntime();
 	const healthState = snapshot.value[
 		PLAYER_STATES.REGIONS.HEALTH
 	] as PlayerHealthState;
+	const movementState = snapshot.value[
+		PLAYER_STATES.REGIONS.MOVEMENT
+	] as PlayerMovementState;
 	const meshSettings = usePlayerMesh({
 		healthState,
 		position: initialPositionRef.current,
@@ -54,6 +68,11 @@ export const usePlayerMeshViewModel = ({
 	const { isAuraVisible, isAvatarVisible } = resolvePlayerAvatarVisibility({
 		cameraMode,
 	});
+	const isRunningIndicatorVisible = resolvePlayerRunningIndicatorVisibility({
+		isAvatarVisible,
+		isDesktopLayout,
+		movementState,
+	});
 	const animationName = selectPlayerAnimation(
 		snapshot.context.velocity,
 		snapshot.context.isSprinting,
@@ -62,6 +81,7 @@ export const usePlayerMeshViewModel = ({
 	return {
 		isAuraVisible,
 		isAvatarVisible,
+		isRunningIndicatorVisible,
 		meshSettings,
 		rigidBodyRef,
 		animationName,

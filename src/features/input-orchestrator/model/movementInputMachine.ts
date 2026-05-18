@@ -2,8 +2,8 @@ import { assign, setup } from "xstate";
 
 import {
 	INPUT_ACTION_KEYS,
+	INPUT_ACTOR_IDS,
 	INPUT_EVENT_TYPES,
-	INPUT_MACHINE_IDS,
 	INPUT_STATE_KEYS,
 } from "../config";
 import type { InputVector2 } from "./inputOrchestratorMachine";
@@ -56,7 +56,7 @@ export const movementInputMachine = setup({
 		}),
 	},
 }).createMachine({
-	id: INPUT_MACHINE_IDS.MOVEMENT_INPUT,
+	id: INPUT_ACTOR_IDS.MOVEMENT_INPUT,
 	context: {
 		vector: ZERO_VECTOR,
 		magnitude: 0,

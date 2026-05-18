@@ -44,6 +44,19 @@ const TEST_AUDIO_MACHINE = {
 	},
 } as const;
 
+const TEST_INPUT_MACHINE = {
+	ID: STATE_VISUALIZER_SECTION_IDS.INPUT,
+	STATES: {
+		READY: "ready",
+		MOVEMENT_REGION: "movementRegion",
+		MOVEMENT_IDLE: "movementIdle",
+		MOVEMENT_ACTIVE: "movementActive",
+		RUN_TOGGLE_REGION: "runToggleRegion",
+		RUN_TOGGLE_OFF: "runToggleOff",
+		RUN_TOGGLE_ON: "runToggleOn",
+	},
+} as const;
+
 const TEST_MACHINES_BY_SECTION_ID: Record<
 	StateVisualizerSectionId,
 	ReturnType<typeof createMachine>
@@ -84,6 +97,31 @@ const TEST_MACHINES_BY_SECTION_ID: Record<
 				},
 			},
 			[TEST_AUDIO_MACHINE.STATES.PAUSED]: {},
+		},
+	}),
+	[STATE_VISUALIZER_SECTION_IDS.INPUT]: createMachine({
+		id: TEST_INPUT_MACHINE.ID,
+		initial: TEST_INPUT_MACHINE.STATES.READY,
+		states: {
+			[TEST_INPUT_MACHINE.STATES.READY]: {
+				type: "parallel",
+				states: {
+					[TEST_INPUT_MACHINE.STATES.MOVEMENT_REGION]: {
+						initial: TEST_INPUT_MACHINE.STATES.MOVEMENT_IDLE,
+						states: {
+							[TEST_INPUT_MACHINE.STATES.MOVEMENT_IDLE]: {},
+							[TEST_INPUT_MACHINE.STATES.MOVEMENT_ACTIVE]: {},
+						},
+					},
+					[TEST_INPUT_MACHINE.STATES.RUN_TOGGLE_REGION]: {
+						initial: TEST_INPUT_MACHINE.STATES.RUN_TOGGLE_OFF,
+						states: {
+							[TEST_INPUT_MACHINE.STATES.RUN_TOGGLE_OFF]: {},
+							[TEST_INPUT_MACHINE.STATES.RUN_TOGGLE_ON]: {},
+						},
+					},
+				},
+			},
 		},
 	}),
 	[STATE_VISUALIZER_SECTION_IDS.PLAYER]: createMachine({
@@ -140,9 +178,7 @@ describe("stateVisualizerSections", () => {
 				health: "alive",
 				movement: "idle",
 			}),
-		).toBe(
-			`Health Alive${STATE_VISUALIZER_GRAPH_SYNTAX.STATE_PATH_DELIMITER}Movement Idle`,
-		);
+		).toBe(`Alive${STATE_VISUALIZER_GRAPH_SYNTAX.STATE_PATH_DELIMITER}Idle`);
 	});
 
 	it("creates section nodes using responsive graph direction", () => {
@@ -151,6 +187,14 @@ describe("stateVisualizerSections", () => {
 			[STATE_VISUALIZER_SECTION_IDS.CAMERA]:
 				TEST_CAMERA_MACHINE.MODES.FREE_ORBITAL,
 			[STATE_VISUALIZER_SECTION_IDS.AUDIO]: TEST_AUDIO_MACHINE.STATES.PLAYING,
+			[STATE_VISUALIZER_SECTION_IDS.INPUT]: {
+				[TEST_INPUT_MACHINE.STATES.READY]: {
+					[TEST_INPUT_MACHINE.STATES.MOVEMENT_REGION]:
+						TEST_INPUT_MACHINE.STATES.MOVEMENT_IDLE,
+					[TEST_INPUT_MACHINE.STATES.RUN_TOGGLE_REGION]:
+						TEST_INPUT_MACHINE.STATES.RUN_TOGGLE_OFF,
+				},
+			},
 			[STATE_VISUALIZER_SECTION_IDS.PLAYER]: {
 				[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.ALIVE,
 				[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,

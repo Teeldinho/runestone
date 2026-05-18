@@ -29,4 +29,3 @@ export { useGameMachine } from "./useGameMachine";
 export type { InteractionCandidatesViewModel } from "./useInteractionCandidates";
 export { useInteractionCandidates } from "./useInteractionCandidates";
 export { useInteractionInput } from "./useInteractionInput";
-export { usePlayerInput } from "./usePlayerInput";

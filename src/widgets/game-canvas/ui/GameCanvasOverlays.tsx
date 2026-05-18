@@ -1,18 +1,24 @@
+import { PlayerRunningIndicator } from "@/entities/player";
 import {
 	type Achievement,
 	AchievementNotification,
 } from "@/features/achievements";
+import type { CameraMode } from "@/features/camera-system";
+
 import { DamageFlashOverlay } from "./DamageFlashOverlay";
+import { FirstPersonLockHint } from "./FirstPersonLockHint";
 import { GameOverOverlay } from "./GameOverOverlay";
 
 type GameCanvasOverlaysProps = {
 	activeAchievement: Achievement | null;
+	cameraMode: CameraMode;
 	handleGameRestart: () => void;
 	isGameOver: boolean;
 };
 
 export function GameCanvasOverlays({
 	activeAchievement,
+	cameraMode,
 	handleGameRestart,
 	isGameOver,
 }: GameCanvasOverlaysProps) {
@@ -20,6 +26,8 @@ export function GameCanvasOverlays({
 		<>
 			<AchievementNotification achievement={activeAchievement} />
 			<DamageFlashOverlay />
+			<FirstPersonLockHint cameraMode={cameraMode} />
+			<PlayerRunningIndicator />
 			<GameOverOverlay isGameOver={isGameOver} onRestart={handleGameRestart} />
 		</>
 	);

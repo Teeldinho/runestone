@@ -27,6 +27,14 @@ const TEST_NAVIGATION_ACTION_LABELS = {
 	[DUNGEON_EVENTS.ENTER_LIBRARY]: "Enter Library",
 } as const;
 
+const INPUT_STATE_KEYS = {
+	READY: "ready",
+	MOVEMENT_REGION: "movementRegion",
+	MOVEMENT_IDLE: "movementIdle",
+	RUN_TOGGLE_REGION: "runToggleRegion",
+	RUN_TOGGLE_OFF: "runToggleOff",
+} as const;
+
 const createGamePageViewModel = (overrides = {}) => {
 	const defaultViewModel = {
 		audio: {
@@ -52,10 +60,15 @@ const createGamePageViewModel = (overrides = {}) => {
 			handleCameraModeSwitch: vi.fn(),
 		},
 		input: {
+			inputStateValue: {
+				ready: {
+					movementRegion: INPUT_STATE_KEYS.MOVEMENT_IDLE,
+					runToggleRegion: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
+				},
+			},
 			sendInput: vi.fn(),
-			isDesktopRunHeld: false,
 			isJumpActive: false,
-			isMobileRunToggled: false,
+			isRunToggled: false,
 			touchMovement: {
 				handleMoveVelocity: vi.fn(),
 				handleStopVelocity: vi.fn(),
@@ -93,8 +106,6 @@ const createGamePageViewModel = (overrides = {}) => {
 		touch: {
 			handleTouchAttack: vi.fn(),
 			handleTouchInteract: vi.fn(),
-			handleTouchJoystickMove: vi.fn(),
-			handleTouchJoystickStop: vi.fn(),
 			hasTouchAttack: false,
 			hasTouchInteract: false,
 			touchAttackPrompt: null,
@@ -243,14 +254,6 @@ vi.mock("@/pages/game/model", () => {
 				playerMaxHp: viewModel.hud.playerMaxHp,
 			};
 		},
-		useGamePageMobileJoystickModel: () => {
-			const viewModel = useGamePage();
-
-			return {
-				handleTouchJoystickMove: viewModel.touch.handleTouchJoystickMove,
-				handleTouchJoystickStop: viewModel.touch.handleTouchJoystickStop,
-			};
-		},
 		useGamePageInputContext: () => {
 			const viewModel = useGamePage();
 
@@ -338,10 +341,16 @@ vi.mock("@/features/touch-input", () => ({
 vi.mock("@/features/input-orchestrator", () => ({
 	MobileActionButtonZone: () => <div data-testid="mobile-action-button-zone" />,
 	useInputOrchestrator: () => ({
+		inputStateValue: {
+			ready: {
+				movementRegion: INPUT_STATE_KEYS.MOVEMENT_IDLE,
+				runToggleRegion: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
+			},
+		},
 		sendInput: vi.fn(),
-		isDesktopRunHeld: false,
-		isMobileRunToggled: false,
+		isRunToggled: false,
 	}),
+	useKeyboardMovementInput: vi.fn(),
 	useKeyboardInputOrchestrator: vi.fn(),
 	useTouchMovementInput: () => ({
 		handleMoveVelocity: vi.fn(),

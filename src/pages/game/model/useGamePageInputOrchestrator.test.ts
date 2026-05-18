@@ -6,12 +6,26 @@ import { describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => {
 	const gameActorRef = { send: vi.fn() };
 	const inputSend = vi.fn();
+	const inputStateKeys = {
+		READY: "ready",
+		MOVEMENT_REGION: "movementRegion",
+		MOVEMENT_IDLE: "movementIdle",
+		RUN_TOGGLE_REGION: "runToggleRegion",
+		RUN_TOGGLE_OFF: "runToggleOff",
+	} as const;
+	const inputStateValue = {
+		ready: {
+			movementRegion: inputStateKeys.MOVEMENT_IDLE,
+			runToggleRegion: inputStateKeys.RUN_TOGGLE_OFF,
+		},
+	};
 	const playerActorRef = { send: vi.fn() };
 	const useGamePageCanvasContext = vi.fn();
 
 	return {
 		gameActorRef,
 		inputSend,
+		inputStateValue,
 		playerActorRef,
 		useGamePageCanvasContext,
 	};
@@ -44,11 +58,12 @@ vi.mock("@/features/input-orchestrator", () => ({
 		expect(interactionRef).toBe(mocks.gameActorRef);
 
 		return {
-			isDesktopRunHeld: false,
-			isMobileRunToggled: false,
+			inputStateValue: mocks.inputStateValue,
+			isRunToggled: false,
 			sendInput: mocks.inputSend,
 		};
 	}),
+	useKeyboardMovementInput: vi.fn(),
 	useKeyboardInputOrchestrator: vi.fn(),
 	useTouchMovementInput: vi.fn(() => ({
 		handleMoveVelocity: vi.fn(),
@@ -68,6 +83,7 @@ describe("useGamePageInputOrchestrator", () => {
 
 		expect(mocks.useGamePageCanvasContext).not.toHaveBeenCalled();
 		expect(result.current.isJumpActive).toBe(false);
+		expect(result.current.inputStateValue).toBe(mocks.inputStateValue);
 		expect(result.current.sendInput).toBe(mocks.inputSend);
 		expect(result.current.touchMovement.handleMoveVelocity).toBeDefined();
 	});

@@ -5,7 +5,6 @@ export const INPUT_EVENT_TYPES = {
 	MOVE_CHANGED: "input.move.changed",
 	MOVE_STOPPED: "input.move.stopped",
 
-	RUN_HELD_CHANGED: "input.run.held.changed",
 	RUN_TOGGLED: "input.run.toggled",
 
 	JUMP_PRESSED: "input.jump.pressed",

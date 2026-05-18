@@ -39,7 +39,7 @@ afterEach(() => {
 });
 
 describe("MobileActionButtonZone", () => {
-	it("renders equal icon buttons and triggers actions on click", () => {
+	it("renders equal icon buttons and triggers actions on pointer down", () => {
 		const sendInput = vi.fn();
 		const { container } = render(
 			<MobileActionButtonZone
@@ -70,18 +70,15 @@ describe("MobileActionButtonZone", () => {
 		expect(jumpButton.getAttribute("aria-pressed")).toBe("false");
 
 		fireEvent.pointerDown(runButton);
-		expect(sendInput).not.toHaveBeenCalled();
-		fireEvent.click(runButton);
 		expect(sendInput).toHaveBeenCalledWith({
 			type: INPUT_EVENT_TYPES.RUN_TOGGLED,
 		});
 
 		fireEvent.pointerDown(jumpButton);
-		expect(sendInput).toHaveBeenCalledTimes(1);
-		fireEvent.click(jumpButton);
-		expect(sendInput).toHaveBeenCalledWith({
+		expect(sendInput).toHaveBeenNthCalledWith(2, {
 			type: INPUT_EVENT_TYPES.JUMP_PRESSED,
 		});
+		expect(sendInput).toHaveBeenCalledTimes(2);
 	});
 
 	it("reflects the enabled state in the run aria label and pressed state", () => {

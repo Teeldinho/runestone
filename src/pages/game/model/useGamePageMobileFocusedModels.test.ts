@@ -80,8 +80,6 @@ const createGamePageContextSlices = () => ({
 		mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 	},
 	touch: {
-		handleTouchJoystickMove: vi.fn(),
-		handleTouchJoystickStop: vi.fn(),
 		handleTouchAttack: vi.fn(),
 		handleTouchInteract: vi.fn(),
 		hasTouchAttack: true,

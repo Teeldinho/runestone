@@ -18,6 +18,9 @@ const mockCanvas = vi.fn(({ children }: { children: ReactNode }) => (
 	<div data-testid="canvas">{children}</div>
 ));
 const mockHandleSceneReady = vi.fn();
+const mockUseFirstPersonLockHint = vi.fn(
+	({ mode }: { mode: unknown }) => mode === CAMERA_MODES.FIRST_PERSON,
+);
 const mockUseGameCanvasSceneLoading = vi.fn(() => ({
 	handleSceneReady: mockHandleSceneReady,
 	isSceneLoading: true,
@@ -60,6 +63,16 @@ vi.mock("@react-three/fiber", () => ({
 	Canvas: (props: { children: ReactNode }) => mockCanvas(props),
 }));
 
+vi.mock("@/features/responsive-layout", () => ({
+	useResponsiveGameLayout: () => ({
+		isDesktopLayout: true,
+		isMobileLayout: false,
+		isTabletLayout: false,
+		isLandscape: true,
+		isPortrait: false,
+	}),
+}));
+
 vi.mock("@react-three/postprocessing", () => ({
 	Bloom: () => null,
 	EffectComposer: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -85,6 +98,7 @@ vi.mock("@/entities/enemy", () => ({
 
 vi.mock("@/entities/player", () => ({
 	PlayerMesh: () => null,
+	PlayerRunningIndicator: () => null,
 	usePlayerDamageFlash: () => false,
 }));
 
@@ -100,6 +114,8 @@ vi.mock("@/entities/room", () => ({
 vi.mock("../model", () => ({
 	useGameCanvasSceneLoading: () => mockUseGameCanvasSceneLoading(),
 	useGameCanvasViewModel: (value: unknown) => mockUseGameCanvasViewModel(value),
+	useFirstPersonLockHint: (value: { mode: unknown }) =>
+		mockUseFirstPersonLockHint(value),
 }));
 
 vi.mock("./CameraRig", () => ({
@@ -130,6 +146,7 @@ describe("GameCanvas", () => {
 	beforeEach(() => {
 		mockCanvas.mockClear();
 		mockHandleSceneReady.mockClear();
+		mockUseFirstPersonLockHint.mockClear();
 		mockSceneEnvironment.mockClear();
 		mockUseGameCanvasSceneLoading.mockClear();
 		mockUseGameCanvasViewModel.mockClear();
@@ -203,5 +220,34 @@ describe("GameCanvas", () => {
 			machineRuntime,
 			postprocessingEnabled: false,
 		});
+	});
+
+	it("renders the first-person pointer lock hint when in desktop first-person mode", () => {
+		const cameraStateSnapshot = {
+			fov: 58,
+			mode: CAMERA_MODES.FIRST_PERSON,
+			position: [0, 16, -18] as [number, number, number],
+			target: [0, 0, 0] as [number, number, number],
+			zoom: 1,
+			yaw: 0,
+			pitch: 0,
+			distance: 6,
+		};
+
+		const machineRuntime = {
+			currentRoomId: ROOM_IDS.ENTRANCE,
+			enemiesRemaining: 1,
+			hasTreasureKey: false,
+		};
+
+		render(
+			<GameCanvas
+				cameraStateSnapshot={cameraStateSnapshot}
+				machineRuntime={machineRuntime}
+				postprocessingEnabled={false}
+			/>,
+		);
+
+		expect(screen.getByText("Click to enter first-person")).toBeTruthy();
 	});
 });

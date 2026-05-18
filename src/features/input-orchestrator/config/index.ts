@@ -6,4 +6,5 @@ export * from "./inputGuardKeys";
 export * from "./inputMachineIds";
 export * from "./inputStateKeys";
 export * from "./mobileActionButtonCopy";
+export * from "./mobileActionButtonInputConfig";
 export * from "./mobileActionButtonLayoutConfig";
