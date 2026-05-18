@@ -33,13 +33,11 @@ describe("useInputOrchestrator", () => {
 
 		expect(result.current.inputStateValue).toEqual({
 			[INPUT_STATE_KEYS.READY]: {
-				[INPUT_STATE_KEYS.ACTION_REGION]: INPUT_STATE_KEYS.ACTION_READY,
 				[INPUT_STATE_KEYS.MOVEMENT_REGION]: INPUT_STATE_KEYS.MOVEMENT_IDLE,
 				[INPUT_STATE_KEYS.RUN_TOGGLE_REGION]: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
 			},
 		});
-		expect(result.current.isDesktopRunHeld).toBe(false);
-		expect(result.current.isMobileRunToggled).toBe(false);
+		expect(result.current.isRunToggled).toBe(false);
 	});
 
 	it("updates the exposed input state when the run toggle changes", async () => {
@@ -57,13 +55,12 @@ describe("useInputOrchestrator", () => {
 		await waitFor(() => {
 			expect(result.current.inputStateValue).toEqual({
 				[INPUT_STATE_KEYS.READY]: {
-					[INPUT_STATE_KEYS.ACTION_REGION]: INPUT_STATE_KEYS.ACTION_READY,
 					[INPUT_STATE_KEYS.MOVEMENT_REGION]: INPUT_STATE_KEYS.MOVEMENT_IDLE,
 					[INPUT_STATE_KEYS.RUN_TOGGLE_REGION]: INPUT_STATE_KEYS.RUN_TOGGLE_ON,
 				},
 			});
 		});
 
-		expect(result.current.isMobileRunToggled).toBe(true);
+		expect(result.current.isRunToggled).toBe(true);
 	});
 });

@@ -11,8 +11,7 @@ describe("useTouchMovementInput", () => {
 		const sendInput = vi.fn();
 		const { result } = renderHook(() =>
 			useTouchMovementInput({
-				isDesktopRunHeld: false,
-				isMobileRunToggled: false,
+				isRunToggled: false,
 				sendInput,
 			}),
 		);
@@ -31,8 +30,7 @@ describe("useTouchMovementInput", () => {
 		const sendInput = vi.fn();
 		const { result } = renderHook(() =>
 			useTouchMovementInput({
-				isDesktopRunHeld: false,
-				isMobileRunToggled: true,
+				isRunToggled: true,
 				sendInput,
 			}),
 		);

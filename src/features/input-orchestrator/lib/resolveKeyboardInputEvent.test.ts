@@ -4,39 +4,34 @@ import { INPUT_EVENT_TYPES } from "../config";
 import { resolveKeyboardInputEvent } from "./resolveKeyboardInputEvent";
 
 describe("resolveKeyboardInputEvent", () => {
-	it("returns RUN_HELD_CHANGED true for ShiftLeft down", () => {
+	it("returns RUN_TOGGLED for ShiftLeft down", () => {
 		const result = resolveKeyboardInputEvent({
 			code: "ShiftLeft",
 			phase: INPUT_EVENT_TYPES.KEY_DOWN,
 		});
 
 		expect(result).toEqual({
-			type: INPUT_EVENT_TYPES.RUN_HELD_CHANGED,
-			isHeld: true,
+			type: INPUT_EVENT_TYPES.RUN_TOGGLED,
 		});
 	});
 
-	it("returns RUN_HELD_CHANGED false for ShiftLeft up", () => {
+	it("returns undefined for ShiftLeft up", () => {
 		const result = resolveKeyboardInputEvent({
 			code: "ShiftLeft",
 			phase: INPUT_EVENT_TYPES.KEY_UP,
 		});
 
-		expect(result).toEqual({
-			type: INPUT_EVENT_TYPES.RUN_HELD_CHANGED,
-			isHeld: false,
-		});
+		expect(result).toBeUndefined();
 	});
 
-	it("returns RUN_HELD_CHANGED true for ShiftRight down", () => {
+	it("returns RUN_TOGGLED for ShiftRight down", () => {
 		const result = resolveKeyboardInputEvent({
 			code: "ShiftRight",
 			phase: INPUT_EVENT_TYPES.KEY_DOWN,
 		});
 
 		expect(result).toEqual({
-			type: INPUT_EVENT_TYPES.RUN_HELD_CHANGED,
-			isHeld: true,
+			type: INPUT_EVENT_TYPES.RUN_TOGGLED,
 		});
 	});
 

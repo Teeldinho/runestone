@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import { renderHook } from "@testing-library/react";
-import type { PointerEvent } from "react";
+import type { MouseEvent, PointerEvent } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { INPUT_EVENT_TYPES, MOBILE_ACTION_BUTTON_VARIANTS } from "../config";
@@ -12,6 +12,13 @@ const createPointerEvent = () =>
 		preventDefault: vi.fn(),
 		stopPropagation: vi.fn(),
 	}) as unknown as PointerEvent<HTMLButtonElement>;
+
+const createMouseEvent = () =>
+	({
+		detail: 0,
+		preventDefault: vi.fn(),
+		stopPropagation: vi.fn(),
+	}) as unknown as MouseEvent<HTMLButtonElement>;
 
 describe("useMobileActionButtonZoneModel", () => {
 	it("sends run toggle from click and exposes the disabled aria label", () => {
@@ -25,8 +32,8 @@ describe("useMobileActionButtonZoneModel", () => {
 		);
 		const event = createPointerEvent();
 
-		result.current.handleButtonPointerDown(event);
-		result.current.handleRunClick();
+		result.current.handleRunPointerDown(event);
+		result.current.handleRunClick(createMouseEvent());
 
 		expect(event.stopPropagation).toHaveBeenCalledTimes(1);
 		expect(sendInput).toHaveBeenCalledWith({
@@ -55,8 +62,8 @@ describe("useMobileActionButtonZoneModel", () => {
 		);
 		const event = createPointerEvent();
 
-		result.current.handleButtonPointerDown(event);
-		result.current.handleJumpClick();
+		result.current.handleJumpPointerDown(event);
+		result.current.handleJumpClick(createMouseEvent());
 
 		expect(event.stopPropagation).toHaveBeenCalledTimes(1);
 		expect(sendInput).toHaveBeenCalledWith({
