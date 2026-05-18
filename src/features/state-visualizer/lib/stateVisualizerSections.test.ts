@@ -51,8 +51,6 @@ const TEST_INPUT_MACHINE = {
 		MOVEMENT_REGION: "movementRegion",
 		MOVEMENT_IDLE: "movementIdle",
 		MOVEMENT_ACTIVE: "movementActive",
-		ACTION_REGION: "actionRegion",
-		ACTION_READY: "actionReady",
 		RUN_TOGGLE_REGION: "runToggleRegion",
 		RUN_TOGGLE_OFF: "runToggleOff",
 		RUN_TOGGLE_ON: "runToggleOn",
@@ -113,12 +111,6 @@ const TEST_MACHINES_BY_SECTION_ID: Record<
 						states: {
 							[TEST_INPUT_MACHINE.STATES.MOVEMENT_IDLE]: {},
 							[TEST_INPUT_MACHINE.STATES.MOVEMENT_ACTIVE]: {},
-						},
-					},
-					[TEST_INPUT_MACHINE.STATES.ACTION_REGION]: {
-						initial: TEST_INPUT_MACHINE.STATES.ACTION_READY,
-						states: {
-							[TEST_INPUT_MACHINE.STATES.ACTION_READY]: {},
 						},
 					},
 					[TEST_INPUT_MACHINE.STATES.RUN_TOGGLE_REGION]: {
@@ -186,9 +178,7 @@ describe("stateVisualizerSections", () => {
 				health: "alive",
 				movement: "idle",
 			}),
-		).toBe(
-			`Health Alive${STATE_VISUALIZER_GRAPH_SYNTAX.STATE_PATH_DELIMITER}Movement Idle`,
-		);
+		).toBe(`Alive${STATE_VISUALIZER_GRAPH_SYNTAX.STATE_PATH_DELIMITER}Idle`);
 	});
 
 	it("creates section nodes using responsive graph direction", () => {
@@ -201,8 +191,6 @@ describe("stateVisualizerSections", () => {
 				[TEST_INPUT_MACHINE.STATES.READY]: {
 					[TEST_INPUT_MACHINE.STATES.MOVEMENT_REGION]:
 						TEST_INPUT_MACHINE.STATES.MOVEMENT_IDLE,
-					[TEST_INPUT_MACHINE.STATES.ACTION_REGION]:
-						TEST_INPUT_MACHINE.STATES.ACTION_READY,
 					[TEST_INPUT_MACHINE.STATES.RUN_TOGGLE_REGION]:
 						TEST_INPUT_MACHINE.STATES.RUN_TOGGLE_OFF,
 				},
