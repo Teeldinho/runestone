@@ -1,5 +1,6 @@
 import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import { useGamePageMobileSheetContentModel } from "@/pages/game/model";
+import { cn } from "@/shared/lib";
 import {
 	DrawerContent,
 	DrawerDescription,
@@ -21,7 +22,12 @@ export function GamePageMobileSheetContent() {
 			className="h-[90dvh] max-w-full overflow-hidden border-panel-border/60 bg-panel/95"
 			aria-label="Game bottom sheet panels"
 		>
-			<DrawerHeader>
+			<DrawerHeader
+				className={cn(
+					!viewModel.isTabletLayout &&
+						"flex flex-row items-center justify-between gap-4 text-left",
+				)}
+			>
 				<DrawerTitle>{GAME_PAGE_MOBILE_SHEET.TITLE}</DrawerTitle>
 				<DrawerDescription>
 					{GAME_PAGE_MOBILE_SHEET.DESCRIPTION}

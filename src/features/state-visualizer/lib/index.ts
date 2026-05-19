@@ -9,6 +9,7 @@ export {
 	getMachineGraphNodeLabel,
 	getMachineGraphTransitionEventLabel,
 } from "./machineGraphSelectors";
+export { resolveStateVisualizerGraphDirection } from "./resolveStateVisualizerGraphDirection";
 export {
 	type CreateStateVisualizerSectionsInput,
 	collectStatePaths,

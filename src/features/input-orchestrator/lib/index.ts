@@ -4,5 +4,6 @@ export * from "./hasActiveInputMovement";
 export * from "./isPointerOwnedByRole";
 export * from "./resolveKeyboardInputEvent";
 export * from "./resolveKeyboardMovementVelocity";
+export * from "./resolveMobileActionButtonZoneViewState";
 export * from "./resolveMovementVelocityMagnitude";
 export * from "./resolveRunIntent";
