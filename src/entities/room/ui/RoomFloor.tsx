@@ -1,6 +1,6 @@
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import type { Object3D } from "three";
-
+import { PHYSICS_COLLIDER_NAMES } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
 
 import {
@@ -50,8 +50,13 @@ export function RoomFloor({
 				/>
 			))}
 
-			<RigidBody type="fixed" colliders={false}>
+			<RigidBody
+				name={PHYSICS_COLLIDER_NAMES.WALKABLE_GROUND}
+				type="fixed"
+				colliders={false}
+			>
 				<CuboidCollider
+					name={PHYSICS_COLLIDER_NAMES.WALKABLE_GROUND}
 					args={[
 						ROOM_GEOMETRY.HALF_WIDTH,
 						ROOM_FLOOR_COLLIDER.HALF_HEIGHT,

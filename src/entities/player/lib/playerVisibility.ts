@@ -10,13 +10,11 @@ export const resolvePlayerAvatarVisibility = ({
 }: ResolvePlayerAvatarVisibilityInput): PlayerAvatarVisibility => {
 	if (cameraMode === CAMERA_MODES.FIRST_PERSON) {
 		return {
-			isAuraVisible: false,
 			isAvatarVisible: false,
 		};
 	}
 
 	return {
-		isAuraVisible: true,
 		isAvatarVisible: true,
 	};
 };

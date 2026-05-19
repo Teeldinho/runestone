@@ -38,7 +38,9 @@ export type {
 export {
 	createPlayerMachine,
 	PlayerMachineProvider,
+	usePlayerCameraFollowPositionSync,
 	usePlayerDamageFlash,
+	usePlayerGroundingRuntime,
 	usePlayerMachineRuntime,
 	usePlayerMesh,
 	usePlayerPhysics,

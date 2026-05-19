@@ -11,6 +11,6 @@ export const PLAYER_RUNNING_INDICATOR_CONFIG = {
 export const PLAYER_RUNNING_INDICATOR_CLASS_NAMES = {
 	ROOT: "pointer-events-none absolute right-4 bottom-4 z-30",
 	BADGE:
-		"border-dungeon-gold bg-[color-mix(in_srgb,var(--dungeon-gold)_12%,transparent)] px-2 py-0.5 text-[0.56rem] font-semibold tracking-[0.24em] text-dungeon-gold shadow-[0_0_10px_var(--dungeon-gold)]",
+		"border-dungeon-gold bg-[color-mix(in_srgb,var(--dungeon-gold)_12%,transparent)] px-2 py-0.5 text-[0.56rem] font-semibold tracking-[0.24em] text-dungeon-gold",
 	ICON: "size-3",
 } as const;

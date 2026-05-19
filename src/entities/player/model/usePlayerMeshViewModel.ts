@@ -12,10 +12,12 @@ import {
 } from "../lib";
 import { usePlayerMachineRuntime } from "./playerMachineRuntime";
 import type {
+	PlayerGroundSensorColliderProps,
 	PlayerHealthState,
 	PlayerMeshSettings,
 	PlayerMovementState,
 } from "./types";
+import { usePlayerGroundingRuntime } from "./usePlayerGroundingRuntime";
 import { usePlayerJumpPhysics } from "./usePlayerJumpPhysics";
 import { usePlayerMesh } from "./usePlayerMesh";
 import { usePlayerPhysics } from "./usePlayerPhysics";
@@ -25,8 +27,8 @@ type UsePlayerMeshViewModelInput = {
 };
 
 type UsePlayerMeshViewModelResult = {
-	isAuraVisible: boolean;
 	isAvatarVisible: boolean;
+	groundSensorColliderProps: PlayerGroundSensorColliderProps;
 	isRunningIndicatorVisible: boolean;
 	meshSettings: PlayerMeshSettings;
 	rigidBodyRef: RefObject<RapierRigidBody | null>;
@@ -50,22 +52,23 @@ export const usePlayerMeshViewModel = ({
 		PLAYER_STATES.REGIONS.MOVEMENT
 	] as PlayerMovementState;
 	const meshSettings = usePlayerMesh({
-		healthState,
 		position: initialPositionRef.current,
 	});
-	const { rigidBodyRef, isGrounded } = usePlayerPhysics({
+	const { rigidBodyRef } = usePlayerPhysics({
 		velocity: snapshot.context.velocity,
 		isSprinting: snapshot.context.isSprinting,
+	});
+	const { groundSensorColliderProps, isGrounded } = usePlayerGroundingRuntime({
+		sendPlayerMachineEvent,
 	});
 
 	usePlayerJumpPhysics({
 		rigidBodyRef,
 		wantsJumpImpulse: snapshot.context.wantsJumpImpulse,
 		isGrounded,
-		sendPlayer: sendPlayerMachineEvent,
 	});
 	const cameraMode = useCameraModeValue();
-	const { isAuraVisible, isAvatarVisible } = resolvePlayerAvatarVisibility({
+	const { isAvatarVisible } = resolvePlayerAvatarVisibility({
 		cameraMode,
 	});
 	const isRunningIndicatorVisible = resolvePlayerRunningIndicatorVisibility({
@@ -79,8 +82,8 @@ export const usePlayerMeshViewModel = ({
 		healthState,
 	);
 	return {
-		isAuraVisible,
 		isAvatarVisible,
+		groundSensorColliderProps,
 		isRunningIndicatorVisible,
 		meshSettings,
 		rigidBodyRef,

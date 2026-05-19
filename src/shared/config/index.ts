@@ -22,6 +22,7 @@ export {
 	DUNGEON_THEME_COLORS,
 } from "./dungeonThemeColors";
 export { EASING_COEFFICIENTS } from "./easingConfig";
+export { GAME_FRAME_PRIORITIES } from "./frameLoopConfig";
 export type {
 	CameraConfig,
 	DagreDirection,
@@ -40,6 +41,7 @@ export {
 	TOP_DOWN_CAMERA_POLAR_ANGLE,
 } from "./gameConfig";
 export { GRAPH_LAYOUT_DEFAULTS } from "./graphLayoutConfig";
+export { PHYSICS_COLLIDER_NAMES } from "./physicsColliderConfig";
 export type { PointerRole } from "./pointerInteractionConfig";
 export {
 	INPUT_POINTER_DATA_ATTRIBUTE_VALUES,

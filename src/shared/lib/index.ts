@@ -23,6 +23,13 @@ export type {
 } from "./graphLayout";
 export { getGraphLayout } from "./graphLayout";
 export {
+	getPlayerCameraFollowPosition,
+	getPlayerCameraFollowPositionSnapshot,
+	hasPlayerCameraFollowPosition,
+	setPlayerCameraFollowPosition,
+	subscribeToPlayerCameraFollowPosition,
+} from "./playerCameraFollowPositionStore";
+export {
 	consumePlayerTeleportTarget,
 	getPlayerPosition,
 	getPlayerPositionSnapshot,

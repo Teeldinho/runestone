@@ -1,7 +1,8 @@
 import { useFrame } from "@react-three/fiber";
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { GAME_FRAME_PRIORITIES } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
 import {
 	consumePlayerTeleportTarget,
@@ -10,7 +11,6 @@ import {
 	setPlayerPosition,
 } from "@/shared/lib";
 
-import { PLAYER_GROUNDING_CONFIG } from "../config";
 import {
 	createSmoothedPlayerPhysicsRotation,
 	resolvePlayerPhysicsLinearVelocity,
@@ -25,7 +25,6 @@ type UsePlayerPhysicsInput = {
 
 type UsePlayerPhysicsResult = {
 	rigidBodyRef: RefObject<RapierRigidBody | null>;
-	isGrounded: boolean;
 };
 
 export const usePlayerPhysics = ({
@@ -33,15 +32,13 @@ export const usePlayerPhysics = ({
 	isSprinting,
 }: UsePlayerPhysicsInput): UsePlayerPhysicsResult => {
 	const rigidBodyRef = useRef<RapierRigidBody>(null);
-	const groundedFrameCountRef = useRef<number>(
-		PLAYER_GROUNDING_CONFIG.GROUND_STABILITY_FRAME_COUNT,
-	);
-	const isGroundedRef = useRef(true);
-	const [isGrounded, setIsGrounded] = useState(true);
 
 	useFrame((_, delta) => {
 		const body = rigidBodyRef.current;
-		if (!body) return;
+
+		if (!body) {
+			return;
+		}
 
 		const teleportTarget = consumePlayerTeleportTarget();
 		if (teleportTarget) {
@@ -52,32 +49,7 @@ export const usePlayerPhysics = ({
 			body.setLinvel({ x: 0, y: 0, z: 0 }, true);
 		}
 
-		const current = body.translation();
-		setPlayerPosition(current.x, current.y, current.z);
-
 		const currentLinvel = body.linvel();
-		const isGroundedCandidate =
-			Math.abs(currentLinvel.y) <
-			PLAYER_GROUNDING_CONFIG.VERTICAL_VELOCITY_EPSILON;
-
-		if (isGroundedCandidate) {
-			groundedFrameCountRef.current += 1;
-		} else {
-			groundedFrameCountRef.current = 0;
-		}
-
-		const nextIsGrounded =
-			isGroundedCandidate &&
-			(isGroundedRef.current ||
-				groundedFrameCountRef.current >=
-					PLAYER_GROUNDING_CONFIG.GROUND_STABILITY_FRAME_COUNT);
-
-		isGroundedRef.current = nextIsGrounded;
-		setIsGrounded((previousIsGrounded) =>
-			previousIsGrounded === nextIsGrounded
-				? previousIsGrounded
-				: nextIsGrounded,
-		);
 
 		const { horizontalVelocity, isMoving, rotationTarget } =
 			resolvePlayerPhysicsLinearVelocity({
@@ -113,7 +85,18 @@ export const usePlayerPhysics = ({
 		}
 
 		body.setLinvel({ x: 0, y: nextVerticalVelocity, z: 0 }, true);
-	});
+	}, GAME_FRAME_PRIORITIES.PLAYER_PRE_PHYSICS_MOTION);
 
-	return { rigidBodyRef, isGrounded };
+	useFrame(() => {
+		const body = rigidBodyRef.current;
+
+		if (!body) {
+			return;
+		}
+
+		const current = body.translation();
+		setPlayerPosition(current.x, current.y, current.z);
+	}, GAME_FRAME_PRIORITIES.PLAYER_POST_PHYSICS_SNAPSHOT);
+
+	return { rigidBodyRef };
 };
