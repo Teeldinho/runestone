@@ -1,6 +1,7 @@
 import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
 import { Physics } from "@react-three/rapier";
 import { Suspense } from "react";
+import { GAME_FRAME_PRIORITIES } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
 import type {
 	CanvasEnvironmentSettings,
@@ -53,7 +54,7 @@ export function GameCanvasSceneContent({
 					/>
 				</EffectComposer>
 			)}
-			<Physics>
+			<Physics updatePriority={GAME_FRAME_PRIORITIES.PHYSICS_STEP}>
 				<SceneEnvironment
 					environment={environment}
 					playerSpawnPosition={playerSpawnPosition}

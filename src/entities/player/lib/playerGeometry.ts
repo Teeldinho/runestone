@@ -15,14 +15,9 @@ export const getPlayerSpawnPosition = ({
 };
 
 export const createPlayerMeshSettings = ({
-	healthState,
 	origin,
 }: PlayerMeshInput): PlayerMeshSettings => {
-	const auraStyle = PLAYER_ENTITY_CONFIG.AURA_STYLES_BY_HEALTH[healthState];
-
 	return {
-		auraColor: auraStyle.color,
-		auraEmissiveIntensity: auraStyle.emissiveIntensity,
 		position: getPlayerSpawnPosition({
 			heightOffset: PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
 			origin,

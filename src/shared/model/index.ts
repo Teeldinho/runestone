@@ -18,6 +18,13 @@ export {
 	useEnemyPositionsValue,
 } from "./enemyPositionStore";
 export {
+	getPlayerCameraFollowPosition,
+	getPlayerCameraFollowPositionSnapshot,
+	hasPlayerCameraFollowPosition,
+	setPlayerCameraFollowPosition,
+	subscribeToPlayerCameraFollowPosition,
+} from "./playerCameraFollowPositionStore";
+export {
 	consumePlayerTeleportTarget,
 	getPlayerPosition,
 	getPlayerPositionSnapshot,

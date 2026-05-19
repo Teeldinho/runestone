@@ -1,4 +1,4 @@
-import { PLAYER_STATES, usePlayerMachineRuntime } from "@/entities/player";
+import { usePlayerMachineRuntime } from "@/entities/player";
 import { useGameMachineActorRef } from "@/features/dungeon-navigation";
 import {
 	useInputOrchestrator,
@@ -8,14 +8,8 @@ import {
 } from "@/features/input-orchestrator";
 
 export const useGamePageInputOrchestrator = () => {
-	const { snapshot, playerActorRef } = usePlayerMachineRuntime();
+	const { playerActorRef } = usePlayerMachineRuntime();
 	const gameActorRef = useGameMachineActorRef();
-
-	const airborneState =
-		snapshot.value[PLAYER_STATES.REGIONS.AIRBORNE] ??
-		PLAYER_STATES.AIRBORNE.GROUNDED;
-
-	const isJumpActive = airborneState !== PLAYER_STATES.AIRBORNE.GROUNDED;
 
 	const input = useInputOrchestrator({
 		playerRef: playerActorRef,
@@ -39,7 +33,6 @@ export const useGamePageInputOrchestrator = () => {
 	return {
 		inputStateValue: input.inputStateValue,
 		sendInput: input.sendInput,
-		isJumpActive,
 		isRunToggled: input.isRunToggled,
 		touchMovement,
 	};

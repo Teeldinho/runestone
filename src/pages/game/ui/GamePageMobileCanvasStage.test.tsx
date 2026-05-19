@@ -33,7 +33,6 @@ vi.mock("@/pages/game/model", () => ({
 			},
 		},
 		sendInput: vi.fn(),
-		isJumpActive: false,
 		isRunToggled: false,
 		touchMovement: {
 			handleMoveVelocity: vi.fn(),
@@ -61,16 +60,9 @@ vi.mock("@/pages/game/model", () => ({
 }));
 
 vi.mock("@/features/input-orchestrator", () => ({
-	MobileActionButtonZone: ({
-		isJumpActive,
-		isRunEnabled,
-	}: {
-		isJumpActive: boolean;
-		isRunEnabled: boolean;
-	}) => (
+	MobileActionButtonZone: ({ isRunEnabled }: { isRunEnabled: boolean }) => (
 		<div
 			data-testid="mobile-action-button-zone"
-			data-jump-active={String(isJumpActive)}
 			data-run-enabled={String(isRunEnabled)}
 		/>
 	),
@@ -114,9 +106,6 @@ describe("GamePageMobileCanvasStage", () => {
 		expect(actionPanel).toBeTruthy();
 		expect(screen.getByTestId("game-page-mobile-top-bar")).toBeTruthy();
 		expect(mobileActionButtonZone.getAttribute("data-run-enabled")).toBe(
-			"false",
-		);
-		expect(mobileActionButtonZone.getAttribute("data-jump-active")).toBe(
 			"false",
 		);
 

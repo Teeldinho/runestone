@@ -1,29 +1,7 @@
 import { DUNGEON_THEME_COLORS } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
 
-import type { PlayerHealthState } from "./playerStates";
 import { PLAYER_STATES } from "./playerStates";
-
-const PLAYER_AURA_STYLES_BY_HEALTH: Record<
-	PlayerHealthState,
-	{
-		color: string;
-		emissiveIntensity: number;
-	}
-> = {
-	[PLAYER_STATES.HEALTH.ALIVE]: {
-		color: DUNGEON_THEME_COLORS.RUNE_ACTIVE,
-		emissiveIntensity: 2.0,
-	},
-	[PLAYER_STATES.HEALTH.DAMAGED]: {
-		color: DUNGEON_THEME_COLORS.TORCH_FLAME,
-		emissiveIntensity: 1.1,
-	},
-	[PLAYER_STATES.HEALTH.DEAD]: {
-		color: DUNGEON_THEME_COLORS.FOG_BASE,
-		emissiveIntensity: 0.15,
-	},
-};
 
 const PLAYER_ORIGIN: Vector3Tuple = [0, 0, 0];
 
@@ -33,15 +11,6 @@ const PLAYER_CAPSULE_CONFIG = {
 } as const;
 
 const PLAYER_SPAWN_HEIGHT_OFFSET = 0.9;
-
-const PLAYER_AURA_CONFIG = {
-	MATERIAL_OPACITY: 0.85,
-	RADIAL_SEGMENTS: 20,
-	RADIUS: 0.55,
-	ROTATION_X_RAD: Math.PI / 2,
-	TUBULAR_SEGMENTS: 32,
-	TUBE_RADIUS: 0.08,
-} as const;
 
 const PLAYER_DAMAGE_FLASH_DURATION_MS = 400;
 
@@ -78,10 +47,5 @@ export const PLAYER_ENTITY_CONFIG = {
 		RADIUS: 0.26,
 		WIDTH_SEGMENTS: 16,
 	},
-	AURA: {
-		...PLAYER_AURA_CONFIG,
-		OFFSET_Y: -0.82,
-	},
-	AURA_STYLES_BY_HEALTH: PLAYER_AURA_STYLES_BY_HEALTH,
 	DAMAGE_FLASH_DURATION_MS: PLAYER_DAMAGE_FLASH_DURATION_MS,
 } as const;

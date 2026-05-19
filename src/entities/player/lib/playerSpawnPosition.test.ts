@@ -101,14 +101,6 @@ describe("updated config values", () => {
 		);
 	});
 
-	it("keeps the player aura ring grounded near the floor", () => {
-		expect(PLAYER_ENTITY_CONFIG.AURA.OFFSET_Y).toBeCloseTo(
-			-PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET +
-				PLAYER_ENTITY_CONFIG.AURA.TUBE_RADIUS,
-			3,
-		);
-	});
-
 	it("documents room/floor config", () => {
 		expect(ROOM_CONFIG.HEIGHT).toBe(6);
 		expect(ROOM_CONFIG.WIDTH).toBe(12);

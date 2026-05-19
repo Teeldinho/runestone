@@ -67,7 +67,6 @@ const createGamePageViewModel = (overrides = {}) => {
 				},
 			},
 			sendInput: vi.fn(),
-			isJumpActive: false,
 			isRunToggled: false,
 			touchMovement: {
 				handleMoveVelocity: vi.fn(),
@@ -313,6 +312,7 @@ vi.mock("@/pages/game/model", () => {
 				handleCameraModeSwitch: viewModel.canvas.handleCameraModeSwitch,
 				handleMobileSheetTabChange:
 					viewModel.mobileSheet.handleMobileSheetTabChange,
+				isTabletLayout: viewModel.layout.isTabletLayout,
 				mobileSheetTabId: viewModel.mobileSheet.mobileSheetTabId,
 			};
 		},

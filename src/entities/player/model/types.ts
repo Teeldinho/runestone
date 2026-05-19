@@ -1,3 +1,9 @@
+import type {
+	IntersectionEnterHandler,
+	IntersectionEnterPayload,
+	IntersectionExitHandler,
+	IntersectionExitPayload,
+} from "@react-three/rapier";
 import type { CameraMode } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
 import type { PLAYER_EVENTS } from "../config/playerEvents";
@@ -32,23 +38,31 @@ export type PlayerSnapshot = {
 };
 
 export type PlayerMeshInput = {
-	healthState: PlayerHealthState;
 	origin: Vector3Tuple;
 };
 
 export type PlayerMeshSettings = {
-	auraColor: string;
-	auraEmissiveIntensity: number;
 	position: Vector3Tuple;
 };
 
+export type PlayerGroundSensorColliderProps = {
+	readonly args: [number, number, number];
+	readonly mass: number;
+	readonly onIntersectionEnter: IntersectionEnterHandler;
+	readonly onIntersectionExit: IntersectionExitHandler;
+	readonly position: [number, number, number];
+	readonly sensor: true;
+};
+
+export type PlayerGroundSensorIntersectionPayload =
+	| IntersectionEnterPayload
+	| IntersectionExitPayload;
+
 export type UsePlayerMeshInput = {
-	healthState?: PlayerHealthState;
 	position?: Vector3Tuple;
 };
 
 export type PlayerAvatarVisibility = {
-	isAuraVisible: boolean;
 	isAvatarVisible: boolean;
 };
 

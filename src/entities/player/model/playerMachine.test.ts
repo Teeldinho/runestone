@@ -322,4 +322,66 @@ describe("createPlayerMachine", () => {
 		});
 		expect(actor.getSnapshot().context.stats.hp).toBe(0);
 	});
+
+	it("transitions to jumping on JUMP_PRESSED and clears the jump request on LANDED", () => {
+		const actor = createActor(createPlayerMachine()).start();
+
+		actor.send({
+			type: PLAYER_EVENT_TYPES.JUMP_PRESSED,
+		});
+
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.AIRBORNE]: PLAYER_STATES.AIRBORNE.JUMPING,
+		});
+		expect(actor.getSnapshot().context.wantsJumpImpulse).toBe(true);
+
+		actor.send({
+			type: PLAYER_EVENT_TYPES.LANDED,
+		});
+
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.AIRBORNE]: PLAYER_STATES.AIRBORNE.GROUNDED,
+		});
+		expect(actor.getSnapshot().context.wantsJumpImpulse).toBe(false);
+	});
+
+	it("transitions from grounded to falling on LEFT_GROUND and returns to grounded on LANDED", () => {
+		const actor = createActor(createPlayerMachine()).start();
+
+		actor.send({
+			type: PLAYER_EVENT_TYPES.LEFT_GROUND,
+		});
+
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.AIRBORNE]: PLAYER_STATES.AIRBORNE.FALLING,
+		});
+
+		actor.send({
+			type: PLAYER_EVENT_TYPES.LANDED,
+		});
+
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.AIRBORNE]: PLAYER_STATES.AIRBORNE.GROUNDED,
+		});
+		expect(actor.getSnapshot().context.wantsJumpImpulse).toBe(false);
+	});
+
+	it("ignores repeated JUMP_PRESSED events while already airborne", () => {
+		const actor = createActor(createPlayerMachine()).start();
+
+		actor.send({
+			type: PLAYER_EVENT_TYPES.JUMP_PRESSED,
+		});
+		actor.send({
+			type: PLAYER_EVENT_TYPES.JUMP_PRESSED,
+		});
+		actor.send({
+			type: PLAYER_EVENT_TYPES.JUMP_PRESSED,
+		});
+
+		expect(actor.getSnapshot().value).toMatchObject({
+			[PLAYER_STATES.REGIONS.AIRBORNE]: PLAYER_STATES.AIRBORNE.JUMPING,
+		});
+		expect(actor.getSnapshot().context.wantsJumpImpulse).toBe(true);
+	});
 });

@@ -3,6 +3,12 @@ export {
 	getPlayerSpawnPosition,
 } from "./playerGeometry";
 export {
+	addPlayerGroundContactHandle,
+	removePlayerGroundContactHandle,
+	resolvePlayerGroundContactKey,
+	resolvePlayerGroundingMachineEvent,
+} from "./playerGrounding";
+export {
 	applyDamage,
 	applyDeath,
 	applyHeal,

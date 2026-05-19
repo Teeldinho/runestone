@@ -22,7 +22,9 @@ export type {
 	ResolvePlayerAvatarVisibilityInput,
 	UsePlayerMeshInput,
 } from "./types";
+export { usePlayerCameraFollowPositionSync } from "./usePlayerCameraFollowPositionSync";
 export { usePlayerDamageFlash } from "./usePlayerDamageFlash";
+export { usePlayerGroundingRuntime } from "./usePlayerGroundingRuntime";
 export { usePlayerJumpPhysics } from "./usePlayerJumpPhysics";
 export { usePlayerMesh } from "./usePlayerMesh";
 export { usePlayerMeshViewModel } from "./usePlayerMeshViewModel";

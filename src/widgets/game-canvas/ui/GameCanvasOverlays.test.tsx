@@ -27,10 +27,16 @@ vi.mock("@/entities/player", async (importOriginal) => {
 	return {
 		...actual,
 		PlayerRunningIndicator: () => (
-			<div className={PLAYER_RUNNING_INDICATOR_CLASS_NAMES.ROOT}>
-				<span className={PLAYER_RUNNING_INDICATOR_CLASS_NAMES.BADGE}>
-					<svg aria-hidden="true" />
-					<span>{PLAYER_RUNNING_INDICATOR_COPY.LABEL}</span>
+			<div className={actual.PLAYER_RUNNING_INDICATOR_CLASS_NAMES.ROOT}>
+				<span
+					data-slot="badge"
+					className={actual.PLAYER_RUNNING_INDICATOR_CLASS_NAMES.BADGE}
+				>
+					<svg
+						aria-hidden="true"
+						className={actual.PLAYER_RUNNING_INDICATOR_CLASS_NAMES.ICON}
+					/>
+					<span>{actual.PLAYER_RUNNING_INDICATOR_COPY.LABEL}</span>
 				</span>
 			</div>
 		),
@@ -90,12 +96,22 @@ describe("GameCanvasOverlays", () => {
 		);
 
 		const runningLabel = screen.getByText(PLAYER_RUNNING_INDICATOR_COPY.LABEL);
+		const runningBadge = runningLabel.closest(
+			'[data-slot="badge"]',
+		) as HTMLElement;
 		const runningRoot = runningLabel.closest("div") as HTMLElement;
+		const runningIcon = container.querySelector("svg");
 
 		expect(runningLabel).toBeTruthy();
+		expect(runningBadge.className).toContain(
+			PLAYER_RUNNING_INDICATOR_CLASS_NAMES.BADGE,
+		);
+		expect(runningBadge.className).not.toContain("shadow-");
+		expect(runningBadge.className).toContain("px-2");
+		expect(runningBadge.className).toContain("py-0.5");
 		expect(runningRoot.className).toContain("absolute");
 		expect(runningRoot.className).toContain("right-4");
 		expect(runningRoot.className).toContain("bottom-4");
-		expect(container.querySelector("svg")).toBeTruthy();
+		expect(runningIcon?.getAttribute("class")).toContain("size-3");
 	});
 });

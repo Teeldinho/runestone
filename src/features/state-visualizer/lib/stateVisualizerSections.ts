@@ -3,7 +3,6 @@ import type { AnyStateMachine } from "xstate";
 import { getGraphLayout } from "@/shared/lib";
 
 import {
-	GRAPH_DIRECTION,
 	MACHINE_GRAPH_LAYOUT,
 	STATE_VISUALIZER_DETAILS_COPY,
 	STATE_VISUALIZER_GRAPH_SYNTAX,
@@ -16,6 +15,7 @@ import type {
 } from "../model/types";
 import { createMachineGraphSnapshot } from "./createMachineGraphSnapshot";
 import { formatMachineStateLabel } from "./machineGraphSelectors";
+import { resolveStateVisualizerGraphDirection } from "./resolveStateVisualizerGraphDirection";
 
 type CreateStateVisualizerSectionsInput = {
 	machinesBySectionId: Record<StateVisualizerSectionId, AnyStateMachine>;
@@ -80,11 +80,13 @@ const formatActiveStateLabel = (stateValue: unknown): string => {
 
 const createPositionedMachineGraphNodes = (
 	sectionSnapshot: ReturnType<typeof createMachineGraphSnapshot>,
+	sectionId: StateVisualizerSectionId,
 	isDesktopLayout: boolean,
 ): PositionedMachineGraphNode[] => {
-	const layoutDirection = isDesktopLayout
-		? GRAPH_DIRECTION.VERTICAL
-		: GRAPH_DIRECTION.HORIZONTAL;
+	const layoutDirection = resolveStateVisualizerGraphDirection({
+		sectionId,
+		isDesktopLayout,
+	});
 	const layout = getGraphLayout({
 		nodes: sectionSnapshot.nodes.map((node) => ({
 			id: node.id,
@@ -132,6 +134,7 @@ export const createStateVisualizerSections = ({
 			edges: graphSnapshot.edges,
 			positionedNodes: createPositionedMachineGraphNodes(
 				graphSnapshot,
+				section.id,
 				isDesktopLayout,
 			),
 		};

@@ -55,7 +55,6 @@ const contextSlices = {
 			},
 		},
 		sendInput: vi.fn(),
-		isJumpActive: false,
 		isRunToggled: false,
 		touchMovement: {
 			handleMoveVelocity: vi.fn(),

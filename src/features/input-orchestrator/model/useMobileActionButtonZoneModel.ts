@@ -2,27 +2,27 @@ import type {
 	MouseEvent as ReactMouseEvent,
 	PointerEvent as ReactPointerEvent,
 } from "react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import {
 	INPUT_EVENT_TYPES,
 	MOBILE_ACTION_BUTTON_COPY,
 	MOBILE_ACTION_BUTTON_INPUT_CONFIG,
-	MOBILE_ACTION_BUTTON_VARIANTS,
 } from "../config";
+import { resolveMobileActionButtonZoneViewState } from "../lib";
 import type { InputOrchestratorEvent } from "./inputOrchestratorMachine";
 
 type UseMobileActionButtonZoneModelInput = {
-	readonly isJumpActive: boolean;
 	readonly isRunEnabled: boolean;
 	readonly sendInput: (event: InputOrchestratorEvent) => void;
 };
 
 export const useMobileActionButtonZoneModel = ({
-	isJumpActive,
 	isRunEnabled,
 	sendInput,
 }: UseMobileActionButtonZoneModelInput) => {
+	const [isJumpPressed, setIsJumpPressed] = useState(false);
+
 	const handleRunPointerDown = useCallback(
 		(event: ReactPointerEvent<HTMLButtonElement>) => {
 			event.preventDefault();
@@ -40,12 +40,30 @@ export const useMobileActionButtonZoneModel = ({
 			event.preventDefault();
 			event.stopPropagation();
 
+			if (typeof event.currentTarget.setPointerCapture === "function") {
+				event.currentTarget.setPointerCapture(event.pointerId);
+			}
+
+			setIsJumpPressed(true);
+
 			sendInput({
 				type: INPUT_EVENT_TYPES.JUMP_PRESSED,
 			});
 		},
 		[sendInput],
 	);
+
+	const handleJumpPointerUp = useCallback(() => {
+		setIsJumpPressed(false);
+	}, []);
+
+	const handleJumpPointerCancel = useCallback(() => {
+		setIsJumpPressed(false);
+	}, []);
+
+	const handleJumpLostPointerCapture = useCallback(() => {
+		setIsJumpPressed(false);
+	}, []);
 
 	const handleRunClick = useCallback(
 		(event: ReactMouseEvent<HTMLButtonElement>) => {
@@ -79,20 +97,24 @@ export const useMobileActionButtonZoneModel = ({
 		[sendInput],
 	);
 
+	const viewState = resolveMobileActionButtonZoneViewState({
+		isJumpPressed,
+		isRunEnabled,
+	});
+
 	return {
 		handleJumpClick,
 		handleJumpPointerDown,
+		handleJumpLostPointerCapture,
+		handleJumpPointerCancel,
+		handleJumpPointerUp,
 		handleRunClick,
 		handleRunPointerDown,
-		jumpButtonPressed: isJumpActive,
-		jumpButtonVariant: isJumpActive
-			? MOBILE_ACTION_BUTTON_VARIANTS.ACTIVE
-			: MOBILE_ACTION_BUTTON_VARIANTS.INACTIVE,
+		jumpButtonPressed: viewState.jumpButtonPressed,
+		jumpButtonVariant: viewState.jumpButtonVariant,
 		jumpAriaLabel: MOBILE_ACTION_BUTTON_COPY.JUMP_ARIA_LABEL,
-		runButtonPressed: isRunEnabled,
-		runButtonVariant: isRunEnabled
-			? MOBILE_ACTION_BUTTON_VARIANTS.ACTIVE
-			: MOBILE_ACTION_BUTTON_VARIANTS.INACTIVE,
+		runButtonPressed: viewState.runButtonPressed,
+		runButtonVariant: viewState.runButtonVariant,
 		runAriaLabel: isRunEnabled
 			? MOBILE_ACTION_BUTTON_COPY.RUN_ENABLED_ARIA_LABEL
 			: MOBILE_ACTION_BUTTON_COPY.RUN_DISABLED_ARIA_LABEL,

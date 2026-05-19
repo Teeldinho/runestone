@@ -1,5 +1,6 @@
 import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import { useGamePageMobileSheetContentModel } from "@/pages/game/model";
+import { cn } from "@/shared/lib";
 import { Card, CardContent, ScrollArea, TabsContent } from "@/shared/ui";
 import {
 	XStateInspectorDetailsPanel,
@@ -17,13 +18,27 @@ export function GamePageMobileStatechartTab() {
 			<ScrollArea className="h-full w-full">
 				<div className="min-w-0 space-y-2 overflow-x-hidden px-1 py-2">
 					<Card className="min-w-0 bg-panel/80 py-0 ring-panel-border/45">
-						<CardContent className="h-[27.5rem] min-h-[22.5rem] p-2">
+						<CardContent
+							className={cn(
+								"p-2",
+								viewModel.isTabletLayout
+									? "h-[27.5rem] min-h-[22.5rem]"
+									: "h-[30rem] min-h-[24rem]",
+							)}
+						>
 							<XStateInspectorPanel sections={viewModel.graphSections} />
 						</CardContent>
 					</Card>
 
 					<Card className="min-w-0 bg-panel/80 py-0 ring-panel-border/45">
-						<CardContent className="h-[20rem] min-h-[15rem] p-2">
+						<CardContent
+							className={cn(
+								"p-2",
+								viewModel.isTabletLayout
+									? "h-[20rem] min-h-[15rem]"
+									: "h-[22rem] min-h-[16rem]",
+							)}
+						>
 							<XStateInspectorDetailsPanel sections={viewModel.graphSections} />
 						</CardContent>
 					</Card>

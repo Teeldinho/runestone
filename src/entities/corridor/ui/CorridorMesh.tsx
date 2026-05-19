@@ -1,7 +1,7 @@
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import { useMemo } from "react";
 
-import { CORRIDOR_CONFIG } from "@/shared/config";
+import { CORRIDOR_CONFIG, PHYSICS_COLLIDER_NAMES } from "@/shared/config";
 
 import {
 	CORRIDOR_ENTITY_CONFIG,
@@ -64,8 +64,13 @@ export function CorridorMesh({ settings }: CorridorMeshProps) {
 			))}
 
 			{/* Floor — physics collider */}
-			<RigidBody type="fixed" colliders={false}>
+			<RigidBody
+				name={PHYSICS_COLLIDER_NAMES.WALKABLE_GROUND}
+				type="fixed"
+				colliders={false}
+			>
 				<CuboidCollider
+					name={PHYSICS_COLLIDER_NAMES.WALKABLE_GROUND}
 					args={[
 						CORRIDOR_CONFIG.WIDTH / 2,
 						CORRIDOR_FLOOR_COLLIDER.HALF_HEIGHT,

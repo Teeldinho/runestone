@@ -28,6 +28,7 @@ export function RunestoneCameraControls({
 			key={cameraControls.controlsKey}
 			ref={cameraControls.controlsRef}
 			makeDefault
+			regress
 			domElement={cameraControls.domElement}
 			minDistance={cameraControls.minDistance}
 			maxDistance={cameraControls.maxDistance}

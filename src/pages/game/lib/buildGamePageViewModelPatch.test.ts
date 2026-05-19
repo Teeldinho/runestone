@@ -20,7 +20,6 @@ const STABLE_INPUT = {
 		},
 	},
 	sendInput: () => {},
-	isJumpActive: false,
 	isRunToggled: false,
 	touchMovement: {
 		handleMoveVelocity: () => {},
