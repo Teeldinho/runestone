@@ -38,12 +38,6 @@ vi.mock("@/entities/player", async (importOriginal) => {
 		...actual,
 		usePlayerMachineRuntime: () => ({
 			playerActorRef: mocks.playerActorRef,
-			snapshot: {
-				value: {
-					[actual.PLAYER_STATES.REGIONS.AIRBORNE]:
-						actual.PLAYER_STATES.AIRBORNE.GROUNDED,
-				},
-			},
 		}),
 	};
 });
@@ -82,7 +76,6 @@ describe("useGamePageInputOrchestrator", () => {
 		const { result } = renderHook(() => useGamePageInputOrchestrator());
 
 		expect(mocks.useGamePageCanvasContext).not.toHaveBeenCalled();
-		expect(result.current.isJumpActive).toBe(false);
 		expect(result.current.inputStateValue).toBe(mocks.inputStateValue);
 		expect(result.current.sendInput).toBe(mocks.inputSend);
 		expect(result.current.touchMovement.handleMoveVelocity).toBeDefined();

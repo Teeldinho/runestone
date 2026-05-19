@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ROOM_IDS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
+import { GAME_FRAME_PRIORITIES } from "@/shared/config";
 
 import { GameCanvas } from "./GameCanvas";
 
@@ -13,6 +14,9 @@ const mockSceneEnvironment = vi.fn((_props: unknown) => (
 ));
 const mockWorldInteractionRuntime = vi.fn(() => (
 	<div data-testid="world-interaction-runtime" />
+));
+const mockPhysics = vi.fn(({ children }: { children: ReactNode }) => (
+	<>{children}</>
 ));
 const mockCanvas = vi.fn(({ children }: { children: ReactNode }) => (
 	<div data-testid="canvas">{children}</div>
@@ -80,7 +84,7 @@ vi.mock("@react-three/postprocessing", () => ({
 }));
 
 vi.mock("@react-three/rapier", () => ({
-	Physics: ({ children }: { children: ReactNode }) => <>{children}</>,
+	Physics: (props: { children: ReactNode }) => mockPhysics(props),
 }));
 
 vi.mock("@/features/achievements", () => ({
@@ -151,6 +155,7 @@ describe("GameCanvas", () => {
 		mockUseGameCanvasSceneLoading.mockClear();
 		mockUseGameCanvasViewModel.mockClear();
 		mockWorldInteractionRuntime.mockClear();
+		mockPhysics.mockClear();
 	});
 
 	it("shows a loading overlay until the 3D scene reports ready", () => {
@@ -220,6 +225,11 @@ describe("GameCanvas", () => {
 			machineRuntime,
 			postprocessingEnabled: false,
 		});
+		expect(mockPhysics).toHaveBeenCalledWith(
+			expect.objectContaining({
+				updatePriority: GAME_FRAME_PRIORITIES.PHYSICS_STEP,
+			}),
+		);
 	});
 
 	it("renders the first-person pointer lock hint when in desktop first-person mode", () => {
