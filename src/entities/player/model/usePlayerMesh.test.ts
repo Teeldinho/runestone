@@ -8,22 +8,21 @@ import { PLAYER_ENTITY_CONFIG } from "../config";
 import { usePlayerMesh } from "./usePlayerMesh";
 
 describe("usePlayerMesh", () => {
-	it("returns alive player mesh settings by default", () => {
+	it("returns player mesh settings by default", () => {
 		const { result } = renderHook(() => usePlayerMesh());
 
 		expect(result.current).toEqual({
-			auraColor: "#00d7ff",
-			auraEmissiveIntensity: 2.0,
 			position: [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0],
 		});
 	});
 
-	it("returns damaged aura style when health state is overridden", () => {
+	it("returns the provided position when overridden", () => {
 		const { result } = renderHook(() =>
-			usePlayerMesh({ healthState: "damaged" }),
+			usePlayerMesh({
+				position: [4, 5, 6],
+			}),
 		);
 
-		expect(result.current.auraColor).toBe("#ffb347");
-		expect(result.current.auraEmissiveIntensity).toBe(1.1);
+		expect(result.current.position).toEqual([4, 5, 6]);
 	});
 });

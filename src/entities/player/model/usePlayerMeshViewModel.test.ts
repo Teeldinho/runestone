@@ -72,46 +72,21 @@ describe("usePlayerMeshViewModel", () => {
 		const { result } = renderHook(() => usePlayerMeshViewModel());
 
 		expect(result.current.isAvatarVisible).toBe(false);
-		expect(result.current.isAuraVisible).toBe(false);
+		expect(result.current.meshSettings.position).toEqual([
+			0,
+			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+			0,
+		]);
 	});
 
-	it("returns mesh settings reflecting alive health state", () => {
+	it("returns mesh settings at the spawn position by default", () => {
 		const { result } = renderHook(() => usePlayerMeshViewModel());
 
-		expect(result.current.meshSettings).toEqual({
-			auraColor: "#00d7ff",
-			auraEmissiveIntensity: 2.0,
-			position: [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0],
-		});
-	});
-
-	it("returns mesh settings reflecting damaged health state", () => {
-		vi.mocked(usePlayerMachineRuntime).mockReturnValueOnce({
-			snapshot: {
-				value: {
-					[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
-					[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.DAMAGED,
-				},
-				context: {
-					position: [0, 0, 0],
-					velocity: [0, 0, 0],
-					stats: {
-						maxHp: 100,
-						hp: 90,
-						score: 0,
-						keyCount: 0,
-						chainMultiplier: 1,
-					},
-				},
-			} as unknown as ReturnType<typeof usePlayerMachineRuntime>["snapshot"],
-			sendPlayerMachineEvent: vi.fn(),
-			playerActorRef: createMockActorRef(),
-		});
-
-		const { result } = renderHook(() => usePlayerMeshViewModel());
-
-		expect(result.current.meshSettings.auraColor).toBe("#ffb347");
-		expect(result.current.meshSettings.auraEmissiveIntensity).toBe(1.1);
+		expect(result.current.meshSettings.position).toEqual([
+			0,
+			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+			0,
+		]);
 	});
 
 	it("shows the running indicator on desktop while moving fast", () => {
@@ -159,7 +134,6 @@ describe("usePlayerMeshViewModel", () => {
 		});
 
 		expect(result.current.isAvatarVisible).toBe(false);
-		expect(result.current.isAuraVisible).toBe(false);
 	});
 
 	it("keeps the initial spawn position stable after mount", () => {

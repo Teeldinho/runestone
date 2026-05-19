@@ -3,10 +3,10 @@
 import { act, renderHook } from "@testing-library/react";
 import * as THREE from "three";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { CAMERA_MODES } from "@/shared/config";
+import { CAMERA_MODES, GAME_FRAME_PRIORITIES } from "@/shared/config";
 
 const frameCallbacks: Array<(...args: unknown[]) => void> = [];
+const framePriorities: Array<number | undefined> = [];
 const mockGetCameraMode = vi.fn();
 const mockGetCameraAzimuth = vi.fn();
 const mockConsumePlayerTeleportTarget = vi.fn();
@@ -16,8 +16,9 @@ const mockResolvePlayerPhysicsLinearVelocity = vi.fn();
 const mockCreateSmoothedPlayerPhysicsRotation = vi.fn();
 
 vi.mock("@react-three/fiber", () => ({
-	useFrame: (callback: (...args: unknown[]) => void) => {
+	useFrame: (callback: (...args: unknown[]) => void, priority?: number) => {
 		frameCallbacks.push(callback);
+		framePriorities.push(priority);
 	},
 }));
 
@@ -77,8 +78,19 @@ const createFakeBody = (): FakeBody => {
 };
 
 describe("usePlayerPhysics", () => {
+	const runFrame = (priority: number, delta = 0.016) => {
+		const index = framePriorities.indexOf(priority);
+
+		if (index === -1) {
+			throw new Error(`Missing frame callback for priority ${priority}`);
+		}
+
+		frameCallbacks[index]?.({}, delta);
+	};
+
 	beforeEach(() => {
 		frameCallbacks.length = 0;
+		framePriorities.length = 0;
 		vi.clearAllMocks();
 		mockGetCameraMode.mockReturnValue(CAMERA_MODES.FREE_ORBITAL);
 		mockGetCameraAzimuth.mockReturnValue(Math.PI / 2);
@@ -130,8 +142,14 @@ describe("usePlayerPhysics", () => {
 
 		act(() => {
 			mockConsumePlayerTeleportTarget.mockReturnValue([2, 1, -3]);
-			frameCallbacks.at(-1)?.({}, 0.016);
+			runFrame(GAME_FRAME_PRIORITIES.PLAYER_PRE_PHYSICS_MOTION);
+			runFrame(GAME_FRAME_PRIORITIES.PLAYER_POST_PHYSICS_SNAPSHOT);
 		});
+
+		expect(framePriorities).toEqual([
+			GAME_FRAME_PRIORITIES.PLAYER_PRE_PHYSICS_MOTION,
+			GAME_FRAME_PRIORITIES.PLAYER_POST_PHYSICS_SNAPSHOT,
+		]);
 
 		expect(mockResolvePlayerPhysicsTeleportTranslation).toHaveBeenCalledWith([
 			2, 1, -3,
@@ -187,7 +205,8 @@ describe("usePlayerPhysics", () => {
 		result.current.rigidBodyRef.current = body as never;
 
 		act(() => {
-			frameCallbacks.at(-1)?.({}, 0.016);
+			runFrame(GAME_FRAME_PRIORITIES.PLAYER_PRE_PHYSICS_MOTION);
+			runFrame(GAME_FRAME_PRIORITIES.PLAYER_POST_PHYSICS_SNAPSHOT);
 		});
 
 		expect(mockResolvePlayerPhysicsLinearVelocity).toHaveBeenCalledWith({
@@ -222,7 +241,8 @@ describe("usePlayerPhysics", () => {
 		result.current.rigidBodyRef.current = body as never;
 
 		act(() => {
-			frameCallbacks.at(-1)?.({}, 0.016);
+			runFrame(GAME_FRAME_PRIORITIES.PLAYER_PRE_PHYSICS_MOTION);
+			runFrame(GAME_FRAME_PRIORITIES.PLAYER_POST_PHYSICS_SNAPSHOT);
 		});
 
 		expect(mockCreateSmoothedPlayerPhysicsRotation).toHaveBeenCalledWith(
@@ -248,7 +268,8 @@ describe("usePlayerPhysics", () => {
 		result.current.rigidBodyRef.current = body as never;
 
 		act(() => {
-			frameCallbacks.at(-1)?.({}, 0.016);
+			runFrame(GAME_FRAME_PRIORITIES.PLAYER_PRE_PHYSICS_MOTION);
+			runFrame(GAME_FRAME_PRIORITIES.PLAYER_POST_PHYSICS_SNAPSHOT);
 		});
 
 		expect(mockResolvePlayerPhysicsLinearVelocity).toHaveBeenCalledWith({
@@ -262,33 +283,10 @@ describe("usePlayerPhysics", () => {
 		expect(mockCreateSmoothedPlayerPhysicsRotation).not.toHaveBeenCalled();
 	});
 
-	it("requires sustained grounded frames before reporting grounded", () => {
+	it("returns a rigidBodyRef initialised to null", () => {
 		const { result } = renderHook(() =>
 			usePlayerPhysics({ velocity: [0, 0, 0], isSprinting: false }),
 		);
-		const body = createFakeBody();
-
-		result.current.rigidBodyRef.current = body as never;
-
-		act(() => {
-			body.setCurrentLinvel({ x: 0, y: 1, z: 0 });
-			frameCallbacks.at(-1)?.({}, 0.016);
-		});
-
-		expect(result.current.isGrounded).toBe(false);
-
-		act(() => {
-			body.setCurrentLinvel({ x: 0, y: 0.04, z: 0 });
-			frameCallbacks.at(-1)?.({}, 0.016);
-		});
-
-		expect(result.current.isGrounded).toBe(false);
-
-		act(() => {
-			body.setCurrentLinvel({ x: 0, y: 0.04, z: 0 });
-			frameCallbacks.at(-1)?.({}, 0.016);
-		});
-
-		expect(result.current.isGrounded).toBe(true);
+		expect(result.current.rigidBodyRef.current).toBeNull();
 	});
 });
