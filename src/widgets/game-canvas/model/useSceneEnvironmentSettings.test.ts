@@ -79,7 +79,6 @@ describe("useSceneEnvironmentSettings", () => {
 	it("passes the gathered inputs to the scene-environment builder", () => {
 		const { result } = renderHook(() => useSceneEnvironmentSettings());
 		const defaultPlayerMeshSettings = createPlayerMeshSettings({
-			healthState: PLAYER_ENTITY_CONFIG.DEFAULTS.HEALTH_STATE,
 			origin: PLAYER_ENTITY_CONFIG.ORIGIN,
 		});
 		const floorLayout = createDungeonFloorLayout(createFloorOneMachine());

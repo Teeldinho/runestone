@@ -1,8 +1,8 @@
 # Runestone
 
-Runestone is a 3D exploration of **manifest logic**: a dungeon crawler that turns Finite State Machines into a navigable, inspectable world. Rooms represent states, corridors represent explicit transitions, and progression is governed by guards, context, and actor-driven behavior rather than hidden control flow.
+Runestone is a 3D exploration of **manifest logic**: a conceptual sandbox that transforms Finite State Machines (FSMs) into a navigable, interactive world. Rooms represent discrete states, corridors represent explicit transitions, and progression is governed by guards, context, and actor-driven loops rather than hidden control flow.
 
-The project is intentionally both **playable** and **architectural**. It explores how event-driven systems, state machines, physics, agent-native engineering practices, and real-time 3D interaction can work together without collapsing into ad hoc runtime logic. The result is a small game world that doubles as a visual argument for deliberate software design.
+The project is intentionally both **playable** and **architectural**. It demonstrates how event-driven systems, statecharts, physics layers, autonomous-grade quality gates, and real-time 3D interaction can collaborate cleanly. The result is a spatial canvas that doubles as a visual argument for deliberate, deterministic software design.
 
 **[🏰 Enter the Dungeon - Play Now!](https://runestone.teeldinho.com)**
 
@@ -10,366 +10,323 @@ The project is intentionally both **playable** and **architectural**. It explore
 
 ---
 
-## Methodology
+## Executable Logic as Physical Space
 
-The development of Runestone is guided by a formal lifecycle focused on systemic reliability. We prioritize architectural correctness over rapid prototyping and use controlled engineering loops so that requirements, implementation, verification, and handoff context remain auditable.
+Runestone maps formal statechart components directly to spatial game structures. By treating the physical geography as the authoritative representation of code logic, the application removes the layer of abstraction between system states and user perception:
+
+| Statechart Construct | Spatial / Interactive Manifestation |
+| :--- | :--- |
+| **System State** | Discrete architectural chambers (Entrance, Library, Guard Room, Treasury, Exit) |
+| **Transition Edge** | Physical corridors and locked door thresholds connecting chambers |
+| **Transition Guard** | Runes, keys, and spatial requirements (e.g., clearing chamber guardians) |
+| **Machine Context** | Dynamic coordinate registries, inventory payloads, and telemetry logs |
+| **Entry Action** | Spatial audio cues, haptic impulses, and camera perspective transformations |
+| **Concurrent Actor** | Autonomous guardian statecharts operating on independent event loops |
+| **Final State** | The terminal chamber triggering systemic completion |
+
+---
+
+## Timeless Paradigms: Why Formal Statecharts Matter
+
+In modern software development, representing complex state transitions through scattered booleans, flags, and nested conditionals inevitably leads to unpredictable race conditions and unmaintainable code structures. Statecharts solve this by formalizing transitions, exhaustively defining boundaries, and guaranteeing determinism. 
+
+While Runestone explores these paradigms inside a 3D interface, identical event-driven actor loops govern the industry's most critical systems:
+
+### Aerospace Avionics and Mission Control
+In mission-critical environments under strict physical and temporal constraints, subsystem failure is not an option. Aerospace control systems utilize formal statecharts to catalog every possible transition under normal and anomalous operations. This exhaustiveness guarantees that autonomous fault detection, isolation, and recovery systems can return flight hardware to a stable operational branch without manual intervention.
+
+### Edge Computing and Isolated Actors
+Synchronizing distributed collaborative states without database locking bottlenecks is a major scale challenge. Modern serverless platforms resolve this by modeling edge instances as isolated, message-passing actors that process transitions sequentially. Since each actor governs its own state transitions deterministically, race conditions are mathematically eliminated at the network edge.
+
+### Distributed Consensus Protocols
+Fault-tolerant consensus engines rely on strict Finite State Machines to coordinate states across a clusters of nodes. Nodes transition between leader, follower, and candidate roles dynamically based on heartbeat durations and election timeouts, ensuring data integrity and split-brain prevention without centralized coordinate authority.
+
+### Transactional Saga Orchestration
+When business processes span multiple isolated databases or microservices, failure is an expected state. Transactional sagas utilize centralized statechart orchestrators to coordinate multi-stage tasks. If any microservice fails, the orchestrator triggers explicit compensating transitions to roll back previous actions and return the entire distributed ecosystem to a consistent state.
+
+### Low-Latency Network Socket Lifecycles
+Bidirectional client-server protocols (such as WebSockets or Server-Sent Events) demand high connection hygiene. Modeling the channel lifecycle (connecting, authenticating, active, backing-off, and terminating) within a statechart ensures that the interface and the network sockets remain in exact synchronization, eliminating socket leaks, zombie connections, and infinite retry loops.
+
+### Collaborative Interactive Canvases
+Vector design tools and collaborative editors treat user actions (clicks, drags, keyboard overrides) as advice-driven events routed to localized statechart controllers. This guarantees that complex behaviors, such as multi-pointer manipulation or nested state components, remain stable across multiple concurrent user sessions.
+
+---
+
+## The Concurrent Actor Loop Engine
+
+Runestone is architected around the Actor Model. Every independent subsystem operates as a self-contained, event-driven loop that communicates solely through structured messages. This prevents concurrent subsystems from causing side effects in adjacent domains.
+
+```mermaid
+graph TD
+    Input[Input Orchestrator Actor] -->|Locomotion &<br/>Action Inputs| Player[Player Actor]
+    Input -->|View Toggles &<br/>Camera Orbits| Camera[Camera Actor]
+    Input -->|Interaction Keys &<br/>Collision Cues| Dungeon[Dungeon Actor]
+    
+    Player -->|Locomotion state<br/>transitions| ShareStore[Shared Coordinate Store]
+    ShareStore -->|Position &<br/>spring target| Camera
+    ShareStore -->|Coordinate sync &<br/>sensor bounds| Dungeon
+    
+    Dungeon -->|Room entries &<br/>ambient sound| Audio[Audio Actor]
+    Player -->|Footstep sound &<br/>haptic triggers| Audio
+```
+
+### Spatial Layout: The Dungeon Actor
+Governs the active configuration of the spatial layout. It controls room visibility boundaries, manages spatial transitions, and keeps door colliders active until all necessary transition guards (such as collecting room runes or defeating hostile actors) are satisfied.
+
+<p align="center">
+  <img src="./public/screenshots/xstate-dungeon-graph.png" alt="Dungeon State Machine Visualization" width="70%" />
+</p>
+
+### Perspective Control: The Camera Actor
+Manages the camera viewpoints—spanning Third-Person, Top-Down, First-Person, and Free Orbital views:
+* **Discrete Transitions**: The camera FSM processes events to trigger perspective swaps and lock viewpoint boundaries.
+* **Decoupled Continuous Sync**: High-frequency movements are managed by a custom orbit and follow-position utility layer that updates coordinates without feeding high-frequency camera controls back into the main state machine, preserving statechart determinism.
+* **Angle Continuity**: Transitioning between perspectives preserves the active orientation vector of the camera, preventing disorientation during mode shifts.
+
+<p align="center">
+  <img src="./public/screenshots/xstate-camera-graph.png" alt="Camera State Machine Visualization" width="70%" />
+</p>
+
+### Locomotion & Physiology: The Player Actor
+Tracks locomotion mechanics (Idle, Walking, Running) and physical transitions (Grounded, Jumping, Falling) by reading spatial rigid-body colliders paired with ground sensors.
+
+<p align="center">
+  <img src="./public/screenshots/xstate-player-graph.png" alt="Player State Machine Visualization" width="70%" />
+</p>
+
+### Unified Input Orchestration
+Aggregates hardware keyboard events, pointer movement, and touch vectors into a single event-driven flow, converting raw hardware inputs into high-level events routed to adjacent actors.
+
+<p align="center">
+  <img src="./public/screenshots/xstate-input-graph.png" alt="Input State Machine Visualization" width="70%" />
+</p>
+
+### Environmental Sound: The Audio Actor
+Tracks the lifecycle of the audio environment through playing, paused, and muted transitions, serving as a single point for managing spatial volume transitions and persistence.
+
+<p align="center">
+  <img src="./public/screenshots/xstate-audio-graph.png" alt="Audio State Machine Visualization" width="70%" />
+</p>
+
+---
+
+## Spatial Debugging Interface & Visual Assets Tour
+
+### 1. The Desktop Inspector Pane
+The desktop layout features a responsive split-pane interface optimized for real-time analysis:
+* **Left Pane**: Dynamic statechart graph renderer utilizing a custom orientation solver that lays out tree nodes vertically on desktop to fit narrow sidebar layouts perfectly.
+* **Center Pane**: 3D WebGL viewport containing active rigid-body simulations, light fixtures, and chamber environments.
+* **Right Pane**: State snapshot inspector showing active context variables, pending guards, and transition history logs.
+
+<table>
+  <tr>
+    <td><img src="./public/screenshots/desktop-left-pane-statechart.png" alt="Desktop left pane statechart visualizer" /></td>
+    <td><img src="./public/screenshots/desktop-center-canvas-details.png" alt="Desktop center canvas and active room details" /></td>
+    <td><img src="./public/screenshots/desktop-right-pane-machine-snapshot.png" alt="Desktop right pane machine details" /></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Visualizer: Live graph transitions</em></td>
+    <td align="center"><em>Viewport: 3D canvas rendering</em></td>
+    <td align="center"><em>Inspector: Active context parameters</em></td>
+  </tr>
+</table>
+
+### 2. Camera Viewpoint Matrix
+Viewpoint modes are governed by statechart transitions, combining direct look targets and clean orbital limits:
+
+<table>
+  <tr>
+    <td>
+      <h5>Third Person View:</h5>
+      <img src="./public/screenshots/camera-third-person.png" alt="Third-person perspective" />
+    </td>
+    <td>
+      <h5>Top Down View:</h5>
+      <img src="./public/screenshots/camera-top-down.png" alt="Top-down perspective" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h5>First Person View:</h5>
+      <img src="./public/screenshots/camera-first-person.png" alt="First-person perspective" />
+    </td>
+    <td>
+      <h5>Free Orbital View:</h5>
+      <img src="./public/screenshots/camera-free-orbital.png" alt="Free orbital perspective" />
+    </td>
+  </tr>
+</table>
+
+### 3. Adaptive Mobile Layout
+The interface optimizes touch boundaries for landscape devices:
+* **Touch Locomotion**: A virtual joystick handles continuous movement vectors.
+* **Action Toggles**: Dedicated controls manage run overrides and jump impulses.
+* **Dynamic Re-orientation**: The left-hand statechart automatically shifts to a horizontal layout inside mobile bottom sheets, maximizing available vertical room.
+
+<table>
+  <tr>
+    <td><img src="./public/screenshots/mobile-landscape-hud.png" alt="Mobile landscape HUD view" /></td>
+    <td><img src="./public/screenshots/mobile-vitality-tab.png" alt="Mobile landscape bottom sheet tab" /></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Mobile HUD: Joystick and run overrides</em></td>
+    <td align="center"><em>Mobile Sheet: Isolated vitality status tabs</em></td>
+  </tr>
+</table>
+
+### 4. Interactive Combat & Deterministic Transitions
+Interaction states model complex transitions based on environment events:
+
+<table>
+  <tr>
+    <td><img src="./public/screenshots/mobile-tablet-combat.png" alt="Combat overlay" /></td>
+    <td><img src="./public/screenshots/mobile-unlocked-door.png" alt="Dungeon gate unlocked state" /></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Combat Loop: Hostile collision (Key dropped)</em></td>
+    <td align="center"><em>Guard Met: Dynamic corridor door unlock</em></td>
+  </tr>
+</table>
+
+When player vitality (HP) is reduced to `0`, the locomotion machine transitions to a terminal state, triggering a full-screen death vignette and a statechart-driven reset routine.
+
+<p align="center">
+  <img src="./public/screenshots/combat-death-screen.png" alt="Death screen layout" width="70%" />
+</p>
+
+---
+
+## Strict Quality Gates & AI-Native Engineering Discipline
+
+Runestone is developed inside an AI-native engineering loop, where automated boundaries block regressions, preserve architecture layers, and enforce structural conventions. Both autonomous agent commits and developer contributions must pass through these quality gates before code integration can occur.
+
+### The Two-Tier Verification Pipeline
+Our quality validation operates across two layers: real-time in-editor diagnostics and blocking pre-commit git checks:
+
+```mermaid
+graph TD
+    Start[Code Edit /<br/>Agent Contribution] --> LSP{Real-Time<br/>IDE LSP}
+    LSP -->|Violations<br/>detected| Diagnostics[In-Editor<br/>Highlights & Typings]
+    Diagnostics -->|Fix issues<br/>locally| Start
+    LSP -->|Clean<br/>compilation| Commit[Autonomous<br/>Agent Commit]
+    
+    Commit --> Lefthook{Lefthook<br/>Pre-Commit Hook}
+    Lefthook --> Biome[Biome<br/>Lint & Format]
+    Lefthook --> Steiger[Steiger<br/>FSD Bounds]
+    Lefthook --> Purity[Segment<br/>Purity Checks]
+    Lefthook --> Vitest[Vitest<br/>Coverage Suite]
+    
+    Biome & Steiger & Purity & Vitest --> Results{All Checks<br/>Passed?}
+    
+    Results -->|Yes| Push[Push to<br/>Feature Branch]
+    Results -->|No| Block[Block Commit<br/>& Report]
+    
+    Block -->|Fix issues &<br/>re-commit| Start
+```
+
+### 1. Real-Time IDE Feedback (Language Server Protocol)
+By running active Language Server Protocol (LSP) connections for TypeScript and Biome in the background of the editor, syntax warnings, formatting issues, type-mismatches, and Steiger Feature-Sliced Design boundary violations are instantly highlighted *during the editing process*. This shortens the feedback loop, allowing code issues to be corrected before a commit is even initiated.
+
+### 2. Blocking Git Gates (Lefthook Orchestrator)
+Once a commit is triggered, the Lefthook orchestrator executes four mandatory checkers:
+* **Biome Static Analysis**: Audits and formats code in milliseconds to enforce strict formatting guidelines and prevent styling anti-patterns.
+* **Steiger FSD Architectural Bounds**: Validates Feature-Sliced Design layers (`app -> pages -> widgets -> features -> entities -> shared`), blocking illegal circular dependencies and ensuring clean vertical slice separation.
+* **Segment Purity Validator**: Enforces a strict separation of concerns, ensuring static data remain isolated in `config/` folders while functional utilities are placed exclusively in `lib/` modules.
+* **Vitest Coverage Suite**: Automatically runs our 900+ unit and integration tests on every integration attempt to prevent structural regressions.
 
 ### Spec-Driven Development (SDD)
+Before any subsystem is implemented, a comprehensive technical blueprint is created. This specification details exact scope boundaries, architectural constraints, edge cases, and expected acceptance metrics, guiding implementing agents and maintaining code integrity.
 
-**Spec-Driven Development** is the engineering practice of formalizing a feature's blueprint before implementation begins.
-
-- **The Concept**: A discipline of articulating constraints, risks, edge cases, and success criteria as a prerequisite for implementation.
-- **The Practice in Runestone**: We keep implementation-loop artifacts in a local, non-committed hidden workspace that persists between agent sessions. These artifacts capture feature specs, acceptance criteria, decision trails, review findings, implementation notes, and verification outcomes without polluting source control.
-- **Why This Matters**: Persistent loop artifacts help preserve context across long-running agent workflows, reduce avoidable rediscovery, protect limited context windows, and give both humans and agents a stable source of truth during iterative refinement.
-- **The Inspiration**: This approach is influenced by recursive agent-loop thinking often discussed through the **Ralph Wiggum loop** shorthand, but Runestone applies that idea with stronger engineering controls: explicit specifications, deliberate review points, local verification, and clear stopping conditions.
-- **The Outcome**: Systems that are more likely to converge cleanly, with less logic drift, fewer repeated mistakes, and a clearer audit trail for why a solution exists.
-
-![Implementation plan](./public/screenshots/implementation-sdd.png)
+<p align="center">
+  <img src="./public/screenshots/sdd.png" alt="SDD Spec-Driven Development blueprint" width="80%" />
+</p>
 
 ### Test-Driven Development (TDD)
-
-**Test-Driven Development** is a verification-first cycle where functional contracts are drafted through tests before implementation logic is authored.
-
-- **The Concept**: Defining a component's behavioral contract through failing tests using the Red-Green-Refactor cycle.
-- **Technical Justification**: Writing tests first forces the design of cleaner, decoupled APIs. It ensures that our model hooks are built for testability and that business logic is never implicitly coupled to the UI layer.
-- **The Outcome**: Produces a self-documenting test suite that proves the engine's correctness at every commit, transforming "working code" from an assumption into a verified standard.
-
-![Vitest suite execution showing passing tests and test files](./public/screenshots/vitest-full-suite-pass.png)
-
-### Local CI and Reversible Delivery
-
-Runestone treats “ready for review” as a locally proven state. Work is scoped in the agent-native loop, implemented in small reversible commits, and checked against the repository’s quality gates before it is handed off.
-
-That means we use local validation to catch formatting, architecture, type, and test regressions at the branch level, while the loop artifacts keep the implementation intent, verification notes, and outstanding decisions auditable between sessions.
-
-We prefer this over a post-hoc scramble because it keeps review focused on design and correctness instead of avoidable validation misses.
-
----
-
-## Finite State Machines
-
-A **Finite State Machine (FSM)** models a system as a finite set of states with explicit transitions between them. At any moment, the system is in exactly one state.
-
-This is useful because behavior becomes auditable instead of implicit. You can answer: where am I, why did I transition, and what must be true before the next transition.
-
----
-
-## Why XState Here
-
-Runestone uses XState to make behavior explicit, inspectable, and testable in-game, and the same model applies cleanly to many production software domains. Here are a few use cases:
-
-### Game Entity AI
-
-Game artificial intelligence (AI) becomes easier to reason about when every behavior is an explicit state. Instead of ad hoc logic spread across updates, states such as idle, patrol, detect, chase, attack, and dead become a visible contract, with transitions that are intentional and debuggable. In Runestone, each enemy can run as its own actor, which keeps behavior deterministic as the game scales.
-
-### Workflow Automation
-
-Multi-step workflows like onboarding, approvals, and internal review chains often become hard to maintain when built with scattered booleans and nested conditionals. A state machine models each step as a state and each user/system event as a transition, so adding or reordering steps is a structural change rather than risky logic surgery across multiple files.
-
-### Media Processing Pipelines
-
-Media systems naturally move through discrete phases: upload, queue, process, transcode, generate thumbnails, publish, or fail. Each phase has different rules, data, and recovery paths, which makes implicit flow logic fragile over time. XState makes these phases explicit and provides a clear place for retries, timeouts, and fallback behavior.
-
-### IoT and Hardware Communication
-
-Hardware integrations are inherently stateful: scanning, connecting, connected, reconnecting, and failed all require different behavior. Without a formal state model, reconnect loops and edge cases become difficult to test and reproduce. XState provides an explicit lifecycle that improves reliability and simplifies diagnosing real-world device and network instability.
-
-### Distributed Transaction Orchestration (Sagas)
-
-When a business operation spans services (for example inventory, payment, and shipment), partial failure is expected and must be handled deliberately. State machines model both forward steps and compensation paths, making rollback behavior explicit instead of buried in exception branches. This is especially useful when consistency and auditability matter across service boundaries.
-
-### Real-Time Connections
-
-Real-time channels such as WebSocket and Server-Sent Events (SSE) require precise lifecycle handling: connecting, connected, reconnecting, backoff, and terminal failure. XState centralizes that lifecycle into one contract so transport behavior and user interface (UI) feedback stay in sync. The result is more predictable reconnect behavior, clearer observability, and less duplicated retry logic.
-
----
-
-## How Runestone Maps to XState
-
-| XState Concept | Runestone Equivalent |
-| --- | --- |
-| State | Room (`Entrance`, `Library`, `Guard Room`, `Treasury`, `Exit`) |
-| Transition | Doorway/corridor between rooms |
-| Guard | Rune lock (`hasKey`, `enemiesDefeated`) |
-| Context | Inventory, health points (HP), score, discovered rooms |
-| Entry Action | Audio cue, haptic pulse, scene updates |
-| Invoked Actor | Enemy AI machine |
-| Final State | Exit chamber (floor complete) |
-
----
-
-## The Actor Model Engine: Core State Machines
-
-Runestone behavior is grounded in the **actor model**, where every major system operates as a self-contained, auditable event loop. By literalizing these logic units into finite state machines, we ensure that every transition in the dungeon, the player’s behavior, or the camera mode is a deliberate structural shift rather than a cascading side effect.
-
-### Spatial Logic: The Dungeon Machine
-
-Manages the physical state of the dungeon. It tracks which rooms are "active," handles the logic of moving between areas, and acts as a gatekeeper for progress—locking doorways until specific criteria, such as defeating guards or collecting keys, are met.
-
-![Dungeon State Machine Visualization](./public/screenshots/xstate-dungeon-graph.png)
-
-### Perspectives: The Camera Machine
-
-Defines which view mode is active — **First-Person (1P)**, **Third-Person (3P)**, **Top-Down (TD)**, or **Free Orbital (FO)** — and keeps those transitions explicit, inspectable, and testable through XState.
-
-Continuous camera motion is handled by Drei `CameraControls`, which owns live rotation, zoom, follow behavior, and smooth target updates without feeding transient runtime telemetry back into the machine. This keeps the camera state model simple while avoiding control loops between player movement and camera interaction.
-
-Mode switches preserve the player’s world-facing look direction where the destination camera mode allows it, so changing perspective does not unexpectedly reset orientation.
-
-![Camera State Machine Visualization](./public/screenshots/xstate-camera-graph.png)
-
-### Input Orchestration: Movement, Actions, and Touch Semantics
-
-Runestone routes gameplay intent through a dedicated input orchestration layer before it reaches the player or dungeon systems. Keyboard and touch input converge through the same event-driven flow, which standardizes:
-
-- movement vectors,
-- desktop run hold and mobile Run toggle behavior,
-- Jump events,
-- contextual Attack / Interact actions,
-- pointer ownership around mobile controls.
-
-This keeps UI surfaces lightweight while ensuring that player and interaction machines receive consistent domain events regardless of device.
-
-### Atmosphere: The Audio Machine
-
-Handles the global sound environment using the actor model to track the audio lifecycle through **Paused**, **Playing**, and **Muted** states. This provides a centralized point for managing volume transitions and ensuring audio persistence across scene loads.
-
-![Audio State Machine Visualization](./public/screenshots/xstate-audio-graph.png)
-
-### Vitality & Movement: The Player Machine
-
-Orchestrates the explorer’s runtime through parallel behavioral concerns. It manages locomotion states such as **Idle**, **Walking**, and **Running**, tracks vitality through **Healthy**, **Damaged**, and **Dead**, and models grounded versus airborne behavior to support Jump and landing flow without burying those rules in UI code.
-
-![Player State Machine Visualization](./public/screenshots/xstate-player-graph.png)
-
---- 
-
-## Interface Tour
-
-### Desktop (three-pane workflow)
-
-When you see the left pane, bottom pane, and right pane together with no joystick or `PANELS` trigger, that is the desktop layout.
+We aim that no logic is added to `model/` or `lib/` segments without a corresponding failing test introduced beforehand. This forces the creation of highly decoupled modules and ensures that core business logic remains independent of UI rendering layers:
 
 <table>
   <tr>
-    <td><img src="./public/screenshots/desktop-left-pane-statechart.png" alt="Desktop left pane showing statechart visualizer" /></td>
-    <td><img src="./public/screenshots/desktop-right-pane-machine-snapshot.png" alt="Desktop right pane showing machine snapshot and actions" /></td>
+    <td><img src="./public/screenshots/tdd-tests.png" alt="TDD failing tests" /></td>
+    <td><img src="./public/screenshots/tdd-commits.png" alt="TDD commits" /></td>
   </tr>
   <tr>
-    <td align="center"><em>Left pane: statechart visualizer and guard legend</em></td>
-    <td align="center"><em>Right pane: machine snapshot, discovered rooms, actions</em></td>
-  </tr>
-</table>
-
-![Desktop bottom pane with state details](./public/screenshots/desktop-bottom-pane-state-details.png)
-
-### Mobile and Tablet Interaction
-
-Runestone strictly enforces a landscape gameplay environment for optimal 3D spatial control. The interface scales between compact mobile handsets and larger tablet displays while preserving a consistent interaction model:
-
-- **Left-side joystick** for player movement
-- **Scene-wide look surface** for camera rotation outside interactive overlays
-- **Run** and **Jump** action buttons for mobile play
-- **Contextual Attack / Interact** actions when the player is near relevant dungeon entities
-- **Mobile HUD** controls optimized for reachability and viewport visibility
-- **Tablet HUD** treatments that use additional space for clearer labels and action affordances
-
-Pointer ownership and layered input boundaries prevent the joystick, action buttons, and camera surface from competing for the same touch gesture. This keeps simultaneous **Move + Look** interaction stable and predictable on mobile/tablet devices.
-
-![Mobile landscape gameplay with compact HUD](./public/screenshots/mobile-landscape-hud.png)
-<p align="center"><em>Compact mobile gameplay with joystick movement, camera look space, and action controls</em></p>
-
-![Tablet landscape HUD with optimized scaling](./public/screenshots/tablet-landscape-hud.png)
-<p align="center"><em>Tablet gameplay layout with expanded controls and clearer tactical affordances</em></p>
-
-### Combat and Resilience
-
-The player actor handles interaction prompts and resilience feedback through explicit state changes, showcased here in the expanded tablet perspective:
-
-<table>
-  <tr>
-    <td><img src="./public/screenshots/tablet-landscape-combat.png" alt="In-game interaction prompts" /></td>
-    <td><img src="./public/screenshots/tablet-landscape-damage.png" alt="Damage feedback vignette" /></td>
-  </tr>
-  <tr>
-    <td align="center"><em>Contextual interaction prompts (Attack/Pick Up Key)</em></td>
-    <td align="center"><em>Visual damage feedback vignette</em></td>
-  </tr>
-</table>
-
-![Termination state death modal](./public/screenshots/tablet-landscape-death.png)
-<p align="center"><em>The 'YOU DIED' termination state with restart loop (Tablet view)</em></p>
-
-### Camera Mode Showcase
-
-Perspective switching is driven by the camera mode state machine, while live camera motion is handled through Drei `CameraControls`. This separation preserves inspectable mode transitions without sacrificing stable runtime behavior during movement, look input, zoom, or camera-mode changes.
-
-#### Camera Modes
-
-| Mode | Hotkey | Description |
-| --- | --- | --- |
-| **Third-Person (3P)** | `1` | Offset follow view with constrained orbit |
-| **Top-Down (TD)** | `2` | Fixed overhead perspective with controlled zoom |
-| **First-Person (1P)** | `3` | Head-level view with direct look control |
-| **Free Orbital (FO)** | `4` | Pan, rotate, and zoom exploration camera |
-
-Mode changes preserve the player’s world-facing look direction where the destination camera constraints allow it. Switching from one perspective to another should feel like changing vantage point, not losing orientation.
-
-#### Perspectives
-
-<table>
-  <tr>
-    <td>
-      <h5>Third Person (3P):</h5>
-      <img src="./public/screenshots/tablet-camera-3p.png" alt="Third-person perspective" />
-    </td>
-    <td>
-      <h5>Top Down (TD):</h5>
-      <img src="./public/screenshots/tablet-camera-td.png" alt="Top-down perspective" />
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <h5>First Person (1P):</h5>
-      <img src="./public/screenshots/tablet-camera-1p.png" alt="First-person perspective" />
-    </td>
-    <td>
-      <h5>Free Orbital (FO):</h5>
-      <img src="./public/screenshots/tablet-camera-fo.png" alt="Free orbital perspective" />
-    </td>
+    <td align="center"><em>TDD Suite: Testing isolated logical boundaries</em></td>
+    <td align="center"><em>Commit Isolation: RED failing test commits precede GREEN implementation commits</em></td>
   </tr>
 </table>
 
 ---
 
-## Phase 1 Scope
+## Persistent Telemetry & Real-Time Sync
 
-Single-floor dungeon progression:
+A self-hosted Convex node drives persistent telemetry log captures, real-time leaderboards, and user profiles:
+* **End-to-End Type Safety**: Server schemas, mutations, and client queries share a single TypeScript compiler, preventing schema-mismatch bugs.
+* **Real-Time Subscription Sync**: Telemetry logs and scoreboards update reactively via live subscriptions.
 
-```text
-Entrance -> Library -> Guard Room -> Treasury -> Exit
-```
-
-Implemented systems:
-
-- 3D dungeon scene with KayKit assets and atmospheric fog
-- Four camera modes (third-person, top-down, first-person, free-orbital)
-- CameraControls-based camera runtime that decouples follow movement from live camera interaction
-- Look-direction continuity across camera-mode switches
-- Mobile/tablet control model with joystick movement, scene-wide look interaction, Run, Jump, and contextual action buttons
-- Machine-authoritative room traversal with doorway-relative arrival
-- Live XState inspector (React Flow + dagre)
-- Player movement, collision physics (Rapier), airborne/grounded behavior, health points (HP), death, and restart loop
-- Guard-room enemy behavior and treasury key progression
-- Convex-backed auth and leaderboard flow
-- Audio (Tone.js, Howler) and Web Haptics integration
+<table>
+  <tr>
+    <td><img src="./public/screenshots/convex-live-leaderboard.png" alt="Convex live leaderboard view" /></td>
+    <td><img src="./public/screenshots/settings-drawer.png" alt="Settings drawer layout" /></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Convex Sync: Real-time high-score updates</em></td>
+    <td align="center"><em>Drawer Control: Interactive runtime settings</em></td>
+  </tr>
+</table>
 
 ---
 
-## Architecture
+## Technical Stack & Infrastructure
 
-Runestone follows **Feature-Sliced Design (FSD)** to keep imports and responsibilities explicit.
-
-| Layer | Responsibility |
-| --- | --- |
-| `app/` | Providers, router, root wiring |
-| `pages/` | Route composition |
-| `widgets/` | Game canvas, heads-up display (HUD), inspector panel |
-| `features/` | Camera, input orchestration, auth, audio, haptics, traversal |
-| `entities/` | Player, enemy, room, dungeon, score |
-| `shared/` | Reusable UI, config, types, infrastructure |
-
-Slice flow:
-
-```text
-ui/ -> model/ -> lib/ -> config/
-```
-
-### Runtime Ownership Boundaries
-
-Runestone uses state machines where explicit transitions and event contracts improve clarity, while leaving highly continuous runtime concerns to specialized libraries built for them.
-
-| Concern | Primary Owner |
-| --- | --- |
-| Camera mode semantics | XState camera machine |
-| Continuous camera rotation, zoom, and follow behavior | Drei `CameraControls` |
-| Movement, Run, Jump, and action routing | Input orchestrator |
-| Player locomotion and airborne state | Player machine + physics hooks |
-| Contextual dungeon interactions | Dungeon/navigation machine |
-
----
-
-## Technical Stack
-
-| Component | Technology |
-| --- | --- |
-| Framework | TanStack Start + React 19 |
-| 3D Engine | React Three Fiber + Drei CameraControls + Rapier |
-| State Management | XState v5 actor model for gameplay modes, orchestration, and inspectable transitions |
-| Backend | Convex (real-time) |
-| Audio | Tone.js + Howler |
-| Haptics | Web Haptics API |
-| Visualizer | React Flow + dagre |
-| Styling | Tailwind CSS v4 + Class Variance Authority (CVA) |
-
----
-
-## The Backend: Self-Hosted Convex
-
-Our persistent data, state synchronization, and live leaderboards are powered by [Convex](https://convex.dev/). While Convex provides an excellent managed cloud service, we deliberately **self-hosted** our Convex backend.
-
-**Why self-host?**
-- **Infrastructure Autonomy**: By running it ourselves, we validate that the application logic does not implicitly depend on a proprietary cloud black-box. We own our data, our deployment pipeline, and our runtime environment entirely.
-- **Type-Safe Velocity**: Leveraging Convex allows us to write backend mutations and queries in the exact same TypeScript ecosystem as our frontend. With end-to-end type safety, deploying real-time systems (like our live leaderboard) requires significantly less boilerplate compared to traditional REST or GraphQL architectures.
-
----
-
-## Outstanding Features
-
-Runestone is an expanding foundation. The architecture supports rapid iteration, and our roadmap includes the following ambitious milestones:
-
-- **Procedural Dungeon Generation**: Leveraging our explicit XState room nodes to generate randomized, yet resolvable, floor layouts.
-- **Deeper Enemy State Trees**: Introducing complex "Patrol" and "Heal/Flee" states to adversaries, pushing the limits of actor-driven logic.
-- **Inventory & Loot Persistence**: Securely stashing obtained gear within the Convex backend to load seamlessly when crossing new dungeon borders.
+| Category | Technology | Architectural Purpose |
+| :--- | :--- | :--- |
+| **Orchestrator** | TanStack Start (React 19 + Vite) | Full-stack server routing and streaming hydration |
+| **State Engine** | XState v5 | Authoritative statecharts, guard checks, and message queues |
+| **3D & Physics** | React Three Fiber + Rapier | WebGL context, physics parameters, and collider sensors |
+| **Visualizer** | `@xyflow/react` + `@dagrejs/dagre` | Interactive state chart node generation and layout routing |
+| **Sync Database**| Convex (Self-Hosted) | Real-time scoreboards and persistent user profile storage |
+| **Audio Pipeline**| Tone.js + Howler + Web Haptics | Contextual environmental sound synthesis and haptic cues |
+| **Design System**| Tailwind CSS v4 | High-performance styling and responsive grid layouts |
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
+* Node.js `>=22.12.0` (Verify using `nvm use` or `node -v`)
+* A running Convex local deployment
 
-- Node.js >= 22.12.0 (`nvm use`)
-- Convex account (free tier is enough)
-
-### Install and Run
-
+### Installation
 ```bash
 npm install
 npx convex dev --once
 npm run dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000). On first visit, enter a username to start.
+Open [http://localhost:3000](http://localhost:3000) to launch the sandbox.
 
 ---
 
-## Scripts
+## Developer Scripts
 
 ```bash
-npm run dev           # Start dev server
-npm run build         # Production build
-npm run typecheck     # TypeScript validation
-npm run lint          # Biome check
-npm run lint:fix      # Biome auto-fix
-npm run lint:fsd      # FSD architecture validation
-npm run test          # Vitest test suite
-npm run ci:local      # Full local CI check
+npm run dev           # Start local WebGL development server
+npm run build         # Compile production bundles
+npm run typecheck     # Validate TypeScript static analysis
+npm run lint          # Run Biome code quality audit
+npm run lint:fix      # Automatically fix Biome formatting and lint issues
+npm run lint:fsd      # Verify Feature-Sliced Design bounds (Steiger)
+npm run lint:purity   # Validate segment logical boundaries
+npm run test          # Execute Vitest suite
+npm run ci:local      # Execute full local CI quality gates
 ```
 
 ---
 
-## Final Note
+## Conceptual Intent & Core Purpose
 
-Runestone is an engineering experiment with production-grade guardrails.
+Runestone is not a commercial gaming product, nor is it designed to compete with standard 3D action-adventure titles. Rather, it is a deliberate, highly visible **software engineering sandbox**. 
 
-The goal is not to ship a commercial game; it is to explore what software feels like when the state machine is visible, inspectable, and deliberately scoped — central where behavior benefits from explicit transitions, and restrained where specialized runtime systems should lead.
+Its purpose is to serve as an interactive model for testing structural architecture paradigms in modern web engineering:
+* **Demystifying Statecharts**: Proving that complex logic structures (like concurrent actors and nested state transition trees) can be made completely clear and auditable through spatial UI visualizations.
+* **Validating Async Syncing**: Providing a live canvas to test fast client-server synchronization, offline state recovery, and distributed data engines like Convex.
+* **Demonstrating AI-Native Pipelines**: Showcasing how strict automated testing (TDD), precise coding specifications (SDD), and automated linting/architecture gates can allow autonomous coding agents and human developers to collaborate safely without introducing regressions.

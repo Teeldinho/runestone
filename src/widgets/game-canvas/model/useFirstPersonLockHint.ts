@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 
-import { CAMERA_MODES } from "@/features/camera-system";
+import {
+	CAMERA_MODES,
+	CAMERA_POINTER_LOCK_DOM_EVENTS,
+	type CameraMode,
+} from "@/features/camera-system";
 import { useResponsiveGameLayout } from "@/features/responsive-layout";
 
 type UseFirstPersonLockHintInput = {
-	mode: string | undefined;
+	mode: CameraMode | undefined;
 };
 
 const getPointerLockActive = (): boolean => {
@@ -28,11 +32,14 @@ export const useFirstPersonLockHint = ({
 		};
 
 		handlePointerLockChange();
-		document.addEventListener("pointerlockchange", handlePointerLockChange);
+		document.addEventListener(
+			CAMERA_POINTER_LOCK_DOM_EVENTS.POINTER_LOCK_CHANGE,
+			handlePointerLockChange,
+		);
 
 		return () => {
 			document.removeEventListener(
-				"pointerlockchange",
+				CAMERA_POINTER_LOCK_DOM_EVENTS.POINTER_LOCK_CHANGE,
 				handlePointerLockChange,
 			);
 		};

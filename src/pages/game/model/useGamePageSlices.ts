@@ -19,7 +19,6 @@ export const useGamePageSlices = (): GamePageViewModel => {
 
 	const touch = useGamePageTouchSlice({
 		handleDungeonEventSend: gameMachine.navigation.handleDungeonEventSend,
-		sendPlayerMachineEvent: playerMachine.sendPlayerMachineEvent,
 	});
 
 	const mobileSheet = useGamePageMobileSheetSlice({
@@ -46,6 +45,7 @@ export const useGamePageSlices = (): GamePageViewModel => {
 		audioState,
 		cameraMode: cameraMachine.mode,
 		currentRoomId: gameMachine.room.currentRoomId as RoomId,
+		inputStateValue: input.inputStateValue,
 		playerStateValue: playerMachine.snapshot.value,
 	});
 

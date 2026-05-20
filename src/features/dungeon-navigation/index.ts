@@ -39,7 +39,6 @@ export {
 	useGameMachineSelector,
 	useInteractionCandidates,
 	useInteractionInput,
-	usePlayerInput,
 	useSendDungeonMachineEvent,
 } from "./model";
 export type {

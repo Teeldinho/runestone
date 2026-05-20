@@ -7,6 +7,21 @@ import { setCameraMode } from "@/shared/lib";
 
 import { PLAYER_ENTITY_CONFIG, PLAYER_STATES } from "../config";
 
+vi.mock("@/shared/lib", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("@/shared/lib")>();
+
+	return {
+		...actual,
+		useResponsiveLayout: vi.fn(() => ({
+			isDesktopLayout: true,
+			isMobileLayout: false,
+			isTabletLayout: false,
+			isLandscape: true,
+			isPortrait: false,
+		})),
+	};
+});
+
 vi.mock("@react-three/fiber", () => ({
 	useFrame: vi.fn(),
 }));
@@ -57,32 +72,36 @@ describe("usePlayerMeshViewModel", () => {
 		const { result } = renderHook(() => usePlayerMeshViewModel());
 
 		expect(result.current.isAvatarVisible).toBe(false);
-		expect(result.current.isAuraVisible).toBe(false);
+		expect(result.current.meshSettings.position).toEqual([
+			0,
+			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+			0,
+		]);
 	});
 
-	it("returns mesh settings reflecting alive health state", () => {
+	it("returns mesh settings at the spawn position by default", () => {
 		const { result } = renderHook(() => usePlayerMeshViewModel());
 
-		expect(result.current.meshSettings).toEqual({
-			auraColor: "#00d7ff",
-			auraEmissiveIntensity: 2.0,
-			position: [0, PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET, 0],
-		});
+		expect(result.current.meshSettings.position).toEqual([
+			0,
+			PLAYER_ENTITY_CONFIG.TRANSFORM.SPAWN_HEIGHT_OFFSET,
+			0,
+		]);
 	});
 
-	it("returns mesh settings reflecting damaged health state", () => {
+	it("shows the running indicator on desktop while moving fast", () => {
 		vi.mocked(usePlayerMachineRuntime).mockReturnValueOnce({
 			snapshot: {
 				value: {
-					[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.IDLE,
-					[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.DAMAGED,
+					[PLAYER_STATES.REGIONS.MOVEMENT]: PLAYER_STATES.MOVEMENT.RUNNING,
+					[PLAYER_STATES.REGIONS.HEALTH]: PLAYER_STATES.HEALTH.ALIVE,
 				},
 				context: {
 					position: [0, 0, 0],
 					velocity: [0, 0, 0],
 					stats: {
 						maxHp: 100,
-						hp: 90,
+						hp: 100,
 						score: 0,
 						keyCount: 0,
 						chainMultiplier: 1,
@@ -95,8 +114,7 @@ describe("usePlayerMeshViewModel", () => {
 
 		const { result } = renderHook(() => usePlayerMeshViewModel());
 
-		expect(result.current.meshSettings.auraColor).toBe("#ffb347");
-		expect(result.current.meshSettings.auraEmissiveIntensity).toBe(1.1);
+		expect(result.current.isRunningIndicatorVisible).toBe(true);
 	});
 
 	it("returns a rigidBodyRef initialised to null", () => {
@@ -116,7 +134,6 @@ describe("usePlayerMeshViewModel", () => {
 		});
 
 		expect(result.current.isAvatarVisible).toBe(false);
-		expect(result.current.isAuraVisible).toBe(false);
 	});
 
 	it("keeps the initial spawn position stable after mount", () => {

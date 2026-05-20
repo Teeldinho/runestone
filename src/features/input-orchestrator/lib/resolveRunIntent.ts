@@ -1,9 +1,7 @@
 type ResolveRunIntentInput = {
-	readonly isDesktopRunHeld: boolean;
-	readonly isMobileRunToggled: boolean;
+	readonly isRunToggled: boolean;
 };
 
 export const resolveRunIntent = ({
-	isDesktopRunHeld,
-	isMobileRunToggled,
-}: ResolveRunIntentInput): boolean => isDesktopRunHeld || isMobileRunToggled;
+	isRunToggled,
+}: ResolveRunIntentInput): boolean => isRunToggled;

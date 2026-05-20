@@ -2,11 +2,22 @@ import type { RapierRigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
 import type { Vector3Tuple } from "@/shared/lib";
+import { useResponsiveLayout } from "@/shared/lib";
 import { useCameraModeValue } from "@/shared/model";
 import { PLAYER_STATES } from "../config";
-import { resolvePlayerAvatarVisibility, selectPlayerAnimation } from "../lib";
+import {
+	resolvePlayerAvatarVisibility,
+	resolvePlayerRunningIndicatorVisibility,
+	selectPlayerAnimation,
+} from "../lib";
 import { usePlayerMachineRuntime } from "./playerMachineRuntime";
-import type { PlayerHealthState, PlayerMeshSettings } from "./types";
+import type {
+	PlayerGroundSensorColliderProps,
+	PlayerHealthState,
+	PlayerMeshSettings,
+	PlayerMovementState,
+} from "./types";
+import { usePlayerGroundingRuntime } from "./usePlayerGroundingRuntime";
 import { usePlayerJumpPhysics } from "./usePlayerJumpPhysics";
 import { usePlayerMesh } from "./usePlayerMesh";
 import { usePlayerPhysics } from "./usePlayerPhysics";
@@ -16,8 +27,9 @@ type UsePlayerMeshViewModelInput = {
 };
 
 type UsePlayerMeshViewModelResult = {
-	isAuraVisible: boolean;
 	isAvatarVisible: boolean;
+	groundSensorColliderProps: PlayerGroundSensorColliderProps;
+	isRunningIndicatorVisible: boolean;
 	meshSettings: PlayerMeshSettings;
 	rigidBodyRef: RefObject<RapierRigidBody | null>;
 	animationName: string;
@@ -31,28 +43,38 @@ export const usePlayerMeshViewModel = ({
 		initialPositionRef.current = initialPosition;
 	}
 
+	const { isDesktopLayout } = useResponsiveLayout();
 	const { snapshot, sendPlayerMachineEvent } = usePlayerMachineRuntime();
 	const healthState = snapshot.value[
 		PLAYER_STATES.REGIONS.HEALTH
 	] as PlayerHealthState;
+	const movementState = snapshot.value[
+		PLAYER_STATES.REGIONS.MOVEMENT
+	] as PlayerMovementState;
 	const meshSettings = usePlayerMesh({
-		healthState,
 		position: initialPositionRef.current,
 	});
-	const { rigidBodyRef, isGrounded } = usePlayerPhysics({
+	const { rigidBodyRef } = usePlayerPhysics({
 		velocity: snapshot.context.velocity,
 		isSprinting: snapshot.context.isSprinting,
+	});
+	const { groundSensorColliderProps, isGrounded } = usePlayerGroundingRuntime({
+		sendPlayerMachineEvent,
 	});
 
 	usePlayerJumpPhysics({
 		rigidBodyRef,
 		wantsJumpImpulse: snapshot.context.wantsJumpImpulse,
 		isGrounded,
-		sendPlayer: sendPlayerMachineEvent,
 	});
 	const cameraMode = useCameraModeValue();
-	const { isAuraVisible, isAvatarVisible } = resolvePlayerAvatarVisibility({
+	const { isAvatarVisible } = resolvePlayerAvatarVisibility({
 		cameraMode,
+	});
+	const isRunningIndicatorVisible = resolvePlayerRunningIndicatorVisibility({
+		isAvatarVisible,
+		isDesktopLayout,
+		movementState,
 	});
 	const animationName = selectPlayerAnimation(
 		snapshot.context.velocity,
@@ -60,8 +82,9 @@ export const usePlayerMeshViewModel = ({
 		healthState,
 	);
 	return {
-		isAuraVisible,
 		isAvatarVisible,
+		groundSensorColliderProps,
+		isRunningIndicatorVisible,
 		meshSettings,
 		rigidBodyRef,
 		animationName,

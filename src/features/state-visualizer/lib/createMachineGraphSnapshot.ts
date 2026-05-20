@@ -1,4 +1,5 @@
 import type { AnyStateMachine } from "xstate";
+import { STATE_VISUALIZER_GRAPH_SYNTAX } from "../config";
 import type {
 	MachineGraphEdge,
 	MachineGraphNode,
@@ -29,12 +30,26 @@ export const createMachineGraphSnapshot = ({
 		sectionId,
 		activeStateNodeIds,
 	});
-	const { edges, guardKeys } = createMachineGraphEdges({ machine });
+	const visibleNodeIds = new Set(nodes.map((node) => node.id));
+	const { edges } = createMachineGraphEdges({ machine });
+	const visibleEdges = edges.filter(
+		(edge) =>
+			visibleNodeIds.has(edge.source) && visibleNodeIds.has(edge.target),
+	);
+	const visibleGuardKeys = [
+		...new Set(
+			visibleEdges.flatMap((edge) =>
+				edge.guard
+					? edge.guard.split(STATE_VISUALIZER_GRAPH_SYNTAX.GUARD_DELIMITER)
+					: [],
+			),
+		),
+	];
 
 	return {
 		nodes,
-		edges,
-		guardKeys,
+		edges: visibleEdges,
+		guardKeys: visibleGuardKeys,
 	};
 };
 

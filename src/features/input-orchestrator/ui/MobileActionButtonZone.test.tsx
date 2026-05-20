@@ -39,14 +39,10 @@ afterEach(() => {
 });
 
 describe("MobileActionButtonZone", () => {
-	it("renders equal icon buttons and triggers actions on click", () => {
+	it("renders equal icon buttons and triggers actions on pointer down", () => {
 		const sendInput = vi.fn();
 		const { container } = render(
-			<MobileActionButtonZone
-				isJumpActive={false}
-				isRunEnabled={false}
-				sendInput={sendInput}
-			/>,
+			<MobileActionButtonZone isRunEnabled={false} sendInput={sendInput} />,
 		);
 		const zoneRoot = container.firstElementChild as HTMLElement;
 
@@ -67,31 +63,27 @@ describe("MobileActionButtonZone", () => {
 			MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.ROOT,
 		);
 		expect(runButton.getAttribute("aria-pressed")).toBe("false");
-		expect(jumpButton.getAttribute("aria-pressed")).toBe("false");
+		expect(jumpButton.getAttribute("aria-pressed")).toBeNull();
+		expect(jumpButton.getAttribute("variant")).toBe("dungeon-outline");
 
 		fireEvent.pointerDown(runButton);
-		expect(sendInput).not.toHaveBeenCalled();
-		fireEvent.click(runButton);
 		expect(sendInput).toHaveBeenCalledWith({
 			type: INPUT_EVENT_TYPES.RUN_TOGGLED,
 		});
 
 		fireEvent.pointerDown(jumpButton);
-		expect(sendInput).toHaveBeenCalledTimes(1);
-		fireEvent.click(jumpButton);
-		expect(sendInput).toHaveBeenCalledWith({
+		expect(jumpButton.getAttribute("variant")).toBe("dungeon-gold");
+		expect(sendInput).toHaveBeenNthCalledWith(2, {
 			type: INPUT_EVENT_TYPES.JUMP_PRESSED,
 		});
+
+		fireEvent.pointerUp(jumpButton);
+		expect(jumpButton.getAttribute("variant")).toBe("dungeon-outline");
+		expect(sendInput).toHaveBeenCalledTimes(2);
 	});
 
 	it("reflects the enabled state in the run aria label and pressed state", () => {
-		render(
-			<MobileActionButtonZone
-				isJumpActive={true}
-				isRunEnabled={true}
-				sendInput={vi.fn()}
-			/>,
-		);
+		render(<MobileActionButtonZone isRunEnabled={true} sendInput={vi.fn()} />);
 
 		const runButton = screen.getByRole("button", {
 			name: MOBILE_ACTION_BUTTON_COPY.RUN_ENABLED_ARIA_LABEL,
@@ -101,6 +93,7 @@ describe("MobileActionButtonZone", () => {
 		});
 
 		expect(runButton.getAttribute("aria-pressed")).toBe("true");
-		expect(jumpButton.getAttribute("aria-pressed")).toBe("true");
+		expect(jumpButton.getAttribute("aria-pressed")).toBeNull();
+		expect(jumpButton.getAttribute("variant")).toBe("dungeon-outline");
 	});
 });

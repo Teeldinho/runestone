@@ -1,20 +1,15 @@
-import { PLAYER_STATES, usePlayerMachineRuntime } from "@/entities/player";
+import { usePlayerMachineRuntime } from "@/entities/player";
 import { useGameMachineActorRef } from "@/features/dungeon-navigation";
 import {
 	useInputOrchestrator,
 	useKeyboardInputOrchestrator,
+	useKeyboardMovementInput,
 	useTouchMovementInput,
 } from "@/features/input-orchestrator";
 
 export const useGamePageInputOrchestrator = () => {
-	const { snapshot, playerActorRef } = usePlayerMachineRuntime();
+	const { playerActorRef } = usePlayerMachineRuntime();
 	const gameActorRef = useGameMachineActorRef();
-
-	const airborneState =
-		snapshot.value[PLAYER_STATES.REGIONS.AIRBORNE] ??
-		PLAYER_STATES.AIRBORNE.GROUNDED;
-
-	const isJumpActive = airborneState !== PLAYER_STATES.AIRBORNE.GROUNDED;
 
 	const input = useInputOrchestrator({
 		playerRef: playerActorRef,
@@ -25,17 +20,20 @@ export const useGamePageInputOrchestrator = () => {
 		sendInput: input.sendInput,
 	});
 
+	useKeyboardMovementInput({
+		sendInput: input.sendInput,
+		isRunToggled: input.isRunToggled,
+	});
+
 	const touchMovement = useTouchMovementInput({
 		sendInput: input.sendInput,
-		isDesktopRunHeld: input.isDesktopRunHeld,
-		isMobileRunToggled: input.isMobileRunToggled,
+		isRunToggled: input.isRunToggled,
 	});
 
 	return {
+		inputStateValue: input.inputStateValue,
 		sendInput: input.sendInput,
-		isDesktopRunHeld: input.isDesktopRunHeld,
-		isJumpActive,
-		isMobileRunToggled: input.isMobileRunToggled,
+		isRunToggled: input.isRunToggled,
 		touchMovement,
 	};
 };

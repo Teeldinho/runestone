@@ -20,8 +20,14 @@ export const STATE_VISUALIZER_SECTION_IDS = {
 	DUNGEON: "dungeon",
 	CAMERA: "camera",
 	AUDIO: "audio",
+	INPUT: "input",
 	PLAYER: "player",
 } as const;
+
+export const STATE_VISUALIZER_COMPACT_DESKTOP_ORIENTATION_SECTION_IDS = [
+	STATE_VISUALIZER_SECTION_IDS.INPUT,
+	STATE_VISUALIZER_SECTION_IDS.PLAYER,
+] as const;
 
 export const STATE_VISUALIZER_GRAPH_SYNTAX = {
 	GUARD_DELIMITER: " & ",
@@ -51,6 +57,7 @@ export const STATE_VISUALIZER_SECTIONS: Array<{
 	{ id: STATE_VISUALIZER_SECTION_IDS.DUNGEON, label: "Dungeon" },
 	{ id: STATE_VISUALIZER_SECTION_IDS.CAMERA, label: "Camera" },
 	{ id: STATE_VISUALIZER_SECTION_IDS.AUDIO, label: "Audio" },
+	{ id: STATE_VISUALIZER_SECTION_IDS.INPUT, label: "Input" },
 	{ id: STATE_VISUALIZER_SECTION_IDS.PLAYER, label: "Player" },
 ] as const;
 

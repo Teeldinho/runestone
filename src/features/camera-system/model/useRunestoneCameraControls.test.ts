@@ -4,7 +4,11 @@ import { act, renderHook } from "@testing-library/react";
 import type CameraControlsImpl from "camera-controls";
 import * as THREE from "three";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { CAMERA_CONFIG, PLAYER_EYE_HEIGHT } from "@/shared/config";
+import {
+	CAMERA_CONFIG,
+	GAME_FRAME_PRIORITIES,
+	PLAYER_EYE_HEIGHT,
+} from "@/shared/config";
 import {
 	CAMERA_CONTROLS_TOP_DOWN_AZIMUTH,
 	CAMERA_MODES,
@@ -16,7 +20,11 @@ import {
 } from "./useRunestoneCameraControls";
 
 const frameCallbacks: Array<(delta?: number) => void> = [];
+const framePriorities: Array<number | undefined> = [];
 const mockGetPlayerPosition = vi.fn();
+const mockGetPlayerCameraFollowPosition = vi.fn();
+const mockGetPlayerCameraFollowPositionSnapshot = vi.fn();
+const mockHasPlayerCameraFollowPosition = vi.fn();
 const mockIsDesktopLayout = vi.fn();
 const mockSetCameraAzimuth = vi.fn();
 
@@ -24,11 +32,15 @@ const mockCamera = new THREE.PerspectiveCamera();
 mockCamera.fov = 60;
 
 vi.mock("@react-three/fiber", () => ({
-	useFrame: (callback: (delta?: number) => void) => {
+	useFrame: (callback: (delta?: number) => void, priority?: number) => {
 		frameCallbacks.push(callback);
+		framePriorities.push(priority);
 	},
 	useThree: () => ({
 		camera: mockCamera,
+		gl: {
+			domElement: document.createElement("canvas"),
+		},
 	}),
 }));
 
@@ -38,6 +50,10 @@ vi.mock("@/shared/lib", async (importOriginal) => {
 	return {
 		...original,
 		getPlayerPosition: () => mockGetPlayerPosition(),
+		getPlayerCameraFollowPosition: () => mockGetPlayerCameraFollowPosition(),
+		getPlayerCameraFollowPositionSnapshot: () =>
+			mockGetPlayerCameraFollowPositionSnapshot(),
+		hasPlayerCameraFollowPosition: () => mockHasPlayerCameraFollowPosition(),
 		setCameraAzimuth: (...args: unknown[]) => mockSetCameraAzimuth(...args),
 		useResponsiveLayout: () => ({
 			isDesktopLayout: mockIsDesktopLayout(),
@@ -93,10 +109,14 @@ describe("useRunestoneCameraControls", () => {
 
 	beforeEach(() => {
 		frameCallbacks.length = 0;
+		framePriorities.length = 0;
 		vi.clearAllMocks();
 		mockCamera.fov = 60;
 		mockCamera.up.set(0, 1, 0);
 		mockGetPlayerPosition.mockReturnValue([0, 0, 0]);
+		mockGetPlayerCameraFollowPosition.mockReturnValue([0, 0, 0]);
+		mockGetPlayerCameraFollowPositionSnapshot.mockReturnValue([0, 0, 0]);
+		mockHasPlayerCameraFollowPosition.mockReturnValue(false);
 		mockIsDesktopLayout.mockReturnValue(true);
 	});
 
@@ -110,6 +130,10 @@ describe("useRunestoneCameraControls", () => {
 					[0, PLAYER_EYE_HEIGHT, 0],
 				),
 			}),
+		);
+
+		expect(framePriorities.at(-1)).toBe(
+			GAME_FRAME_PRIORITIES.CAMERA_FOLLOW_SYNC,
 		);
 
 		const controls = createControls(0.45);
@@ -283,7 +307,9 @@ describe("useRunestoneCameraControls", () => {
 			frameCallbacks.at(-1)?.();
 		});
 
-		mockGetPlayerPosition.mockReturnValue([4, 0, -2]);
+		mockHasPlayerCameraFollowPosition.mockReturnValue(true);
+		mockGetPlayerCameraFollowPosition.mockReturnValue([4, 0, -2]);
+		mockGetPlayerCameraFollowPositionSnapshot.mockReturnValue([4, 0, -2]);
 
 		act(() => {
 			frameCallbacks.at(-1)?.();

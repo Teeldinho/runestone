@@ -3,6 +3,12 @@ export {
 	getPlayerSpawnPosition,
 } from "./playerGeometry";
 export {
+	addPlayerGroundContactHandle,
+	removePlayerGroundContactHandle,
+	resolvePlayerGroundContactKey,
+	resolvePlayerGroundingMachineEvent,
+} from "./playerGrounding";
+export {
 	applyDamage,
 	applyDeath,
 	applyHeal,
@@ -18,5 +24,6 @@ export {
 	resolvePlayerPhysicsTeleportTranslation,
 } from "./playerPhysics";
 export { resolvePlayerAvatarVisibility } from "./playerVisibility";
+export { resolvePlayerRunningIndicatorVisibility } from "./resolvePlayerRunningIndicatorVisibility";
 export { resolvePlayerVerticalVelocity } from "./resolvePlayerVerticalVelocity";
 export { selectPlayerAnimation } from "./selectPlayerAnimation";

@@ -14,18 +14,15 @@ import {
 } from "../model";
 
 type MobileActionButtonZoneProps = {
-	readonly isJumpActive: boolean;
 	readonly isRunEnabled: boolean;
 	readonly sendInput: (event: InputOrchestratorEvent) => void;
 };
 
 export function MobileActionButtonZone({
-	isJumpActive,
 	isRunEnabled,
 	sendInput,
 }: MobileActionButtonZoneProps) {
 	const viewModel = useMobileActionButtonZoneModel({
-		isJumpActive,
 		isRunEnabled,
 		sendInput,
 	});
@@ -46,7 +43,7 @@ export function MobileActionButtonZone({
 				variant={viewModel.runButtonVariant}
 				aria-label={viewModel.runAriaLabel}
 				aria-pressed={viewModel.runButtonPressed}
-				onPointerDown={viewModel.handleButtonPointerDown}
+				onPointerDown={viewModel.handleRunPointerDown}
 				onClick={viewModel.handleRunClick}
 			>
 				<Footprints
@@ -61,8 +58,10 @@ export function MobileActionButtonZone({
 				size="icon"
 				variant={viewModel.jumpButtonVariant}
 				aria-label={viewModel.jumpAriaLabel}
-				aria-pressed={viewModel.jumpButtonPressed}
-				onPointerDown={viewModel.handleButtonPointerDown}
+				onPointerDown={viewModel.handleJumpPointerDown}
+				onPointerUp={viewModel.handleJumpPointerUp}
+				onPointerCancel={viewModel.handleJumpPointerCancel}
+				onLostPointerCapture={viewModel.handleJumpLostPointerCapture}
 				onClick={viewModel.handleJumpClick}
 			>
 				<ChevronsUp

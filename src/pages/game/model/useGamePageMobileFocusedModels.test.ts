@@ -80,8 +80,6 @@ const createGamePageContextSlices = () => ({
 		mobileSheetTabId: GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 	},
 	touch: {
-		handleTouchJoystickMove: vi.fn(),
-		handleTouchJoystickStop: vi.fn(),
 		handleTouchAttack: vi.fn(),
 		handleTouchInteract: vi.fn(),
 		hasTouchAttack: true,
@@ -174,6 +172,7 @@ describe("game page mobile focused models", () => {
 		expect(result.current.mobileSheetTabId).toBe(
 			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 		);
+		expect(result.current.isTabletLayout).toBe(true);
 		expect(result.current.graphSections).toBe(
 			contextSlices.visualizer.graphSections,
 		);

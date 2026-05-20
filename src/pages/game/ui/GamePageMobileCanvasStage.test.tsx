@@ -1,9 +1,17 @@
 // @vitest-environment happy-dom
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { CAMERA_MODES } from "@/features/camera-system";
+
+const INPUT_STATE_KEYS = {
+	READY: "ready",
+	MOVEMENT_REGION: "movementRegion",
+	MOVEMENT_IDLE: "movementIdle",
+	RUN_TOGGLE_REGION: "runToggleRegion",
+	RUN_TOGGLE_OFF: "runToggleOff",
+} as const;
 
 let mockCameraMode: (typeof CAMERA_MODES)[keyof typeof CAMERA_MODES] =
 	CAMERA_MODES.FREE_ORBITAL;
@@ -18,10 +26,14 @@ vi.mock("@/pages/game/model", () => ({
 		cameraControlRef: vi.fn(),
 	}),
 	useGamePageInputContext: () => ({
+		inputStateValue: {
+			ready: {
+				movementRegion: INPUT_STATE_KEYS.MOVEMENT_IDLE,
+				runToggleRegion: INPUT_STATE_KEYS.RUN_TOGGLE_OFF,
+			},
+		},
 		sendInput: vi.fn(),
-		isDesktopRunHeld: false,
-		isJumpActive: false,
-		isMobileRunToggled: false,
+		isRunToggled: false,
 		touchMovement: {
 			handleMoveVelocity: vi.fn(),
 			handleStopVelocity: vi.fn(),
@@ -48,16 +60,9 @@ vi.mock("@/pages/game/model", () => ({
 }));
 
 vi.mock("@/features/input-orchestrator", () => ({
-	MobileActionButtonZone: ({
-		isJumpActive,
-		isRunEnabled,
-	}: {
-		isJumpActive: boolean;
-		isRunEnabled: boolean;
-	}) => (
+	MobileActionButtonZone: ({ isRunEnabled }: { isRunEnabled: boolean }) => (
 		<div
 			data-testid="mobile-action-button-zone"
-			data-jump-active={String(isJumpActive)}
 			data-run-enabled={String(isRunEnabled)}
 		/>
 	),
@@ -103,9 +108,6 @@ describe("GamePageMobileCanvasStage", () => {
 		expect(mobileActionButtonZone.getAttribute("data-run-enabled")).toBe(
 			"false",
 		);
-		expect(mobileActionButtonZone.getAttribute("data-jump-active")).toBe(
-			"false",
-		);
 
 		expect(
 			screen
@@ -143,5 +145,15 @@ describe("GamePageMobileCanvasStage", () => {
 		render(<GamePageMobileCanvasStage />);
 
 		expect(screen.getByTestId("camera-control-zone")).toBeTruthy();
+	});
+
+	it("suppresses the mobile gameplay context menu", () => {
+		render(<GamePageMobileCanvasStage />);
+
+		const section = screen.getByText("Dungeon Canvas").closest("section");
+
+		expect(section).not.toBeNull();
+		expect(section?.classList.contains("gameplay-touch-surface")).toBe(true);
+		expect(fireEvent.contextMenu(section as HTMLElement)).toBe(false);
 	});
 });

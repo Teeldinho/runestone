@@ -1,6 +1,10 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import type { RapierRigidBody } from "@react-three/rapier";
-import { CapsuleCollider, RigidBody } from "@react-three/rapier";
+import {
+	CapsuleCollider,
+	CuboidCollider,
+	RigidBody,
+} from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import type * as THREE from "three";
@@ -12,6 +16,7 @@ import {
 	PLAYER_ENTITY_CONFIG,
 	PLAYER_GLTF_CONFIG,
 } from "../config";
+import { usePlayerCameraFollowPositionSync } from "../model/usePlayerCameraFollowPositionSync";
 import { usePlayerMeshViewModel } from "../model/usePlayerMeshViewModel";
 
 useGLTF.preload(PLAYER_GLTF_CONFIG.CHARACTER.PATH);
@@ -24,14 +29,19 @@ type PlayerMeshProps = {
 
 export function PlayerMesh({ initialPosition }: PlayerMeshProps) {
 	const {
-		isAuraVisible,
 		isAvatarVisible,
+		groundSensorColliderProps,
 		meshSettings,
 		rigidBodyRef,
 		animationName,
 	} = usePlayerMeshViewModel({ initialPosition });
 
 	const groupRef = useRef<THREE.Group>(null);
+
+	usePlayerCameraFollowPositionSync({
+		groupRef,
+	});
+
 	const { scene } = useGLTF(PLAYER_GLTF_CONFIG.CHARACTER.PATH);
 	const { animations: moveAnims } = useGLTF(
 		PLAYER_ANIMATION_PATHS.MOVEMENT_BASIC,
@@ -71,6 +81,7 @@ export function PlayerMesh({ initialPosition }: PlayerMeshProps) {
 					PLAYER_ENTITY_CONFIG.CAPSULE.RADIUS,
 				]}
 			/>
+			<CuboidCollider {...groundSensorColliderProps} />
 			<group ref={groupRef}>
 				{isAvatarVisible && (
 					<primitive
@@ -79,28 +90,6 @@ export function PlayerMesh({ initialPosition }: PlayerMeshProps) {
 						position={[0, PLAYER_GLTF_CONFIG.CHARACTER.POSITION_Y, 0]}
 						scale={PLAYER_GLTF_CONFIG.CHARACTER.SCALE}
 					/>
-				)}
-				{isAuraVisible && (
-					<mesh
-						position={[0, PLAYER_ENTITY_CONFIG.AURA.OFFSET_Y, 0]}
-						rotation={[PLAYER_ENTITY_CONFIG.AURA.ROTATION_X_RAD, 0, 0]}
-					>
-						<torusGeometry
-							args={[
-								PLAYER_ENTITY_CONFIG.AURA.RADIUS,
-								PLAYER_ENTITY_CONFIG.AURA.TUBE_RADIUS,
-								PLAYER_ENTITY_CONFIG.AURA.RADIAL_SEGMENTS,
-								PLAYER_ENTITY_CONFIG.AURA.TUBULAR_SEGMENTS,
-							]}
-						/>
-						<meshStandardMaterial
-							color={meshSettings.auraColor}
-							emissive={meshSettings.auraColor}
-							emissiveIntensity={meshSettings.auraEmissiveIntensity}
-							opacity={PLAYER_ENTITY_CONFIG.AURA.MATERIAL_OPACITY}
-							transparent
-						/>
-					</mesh>
 				)}
 			</group>
 		</RigidBody>

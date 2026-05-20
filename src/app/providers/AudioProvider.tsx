@@ -20,7 +20,10 @@ export function AudioProvider({ children }: AudioProviderProps) {
 	useEffect(() => {
 		const handleFirstInteraction = () => {
 			void Tone.start();
-			void startBackgroundMusicLoop();
+
+			if (audioController.isAudioPlaying) {
+				void startBackgroundMusicLoop();
+			}
 
 			for (const eventName of AUDIO_PROVIDER_UNLOCK_EVENT_LIST) {
 				window.removeEventListener(eventName, handleFirstInteraction);
@@ -36,7 +39,7 @@ export function AudioProvider({ children }: AudioProviderProps) {
 				window.removeEventListener(eventName, handleFirstInteraction);
 			}
 		};
-	}, []);
+	}, [audioController.isAudioPlaying]);
 
 	return (
 		<AudioContext.Provider value={audioController}>

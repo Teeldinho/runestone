@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ROOM_IDS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
+import { GAME_FRAME_PRIORITIES } from "@/shared/config";
 
 import { GameCanvas } from "./GameCanvas";
 
@@ -14,10 +15,16 @@ const mockSceneEnvironment = vi.fn((_props: unknown) => (
 const mockWorldInteractionRuntime = vi.fn(() => (
 	<div data-testid="world-interaction-runtime" />
 ));
+const mockPhysics = vi.fn(({ children }: { children: ReactNode }) => (
+	<>{children}</>
+));
 const mockCanvas = vi.fn(({ children }: { children: ReactNode }) => (
 	<div data-testid="canvas">{children}</div>
 ));
 const mockHandleSceneReady = vi.fn();
+const mockUseFirstPersonLockHint = vi.fn(
+	({ mode }: { mode: unknown }) => mode === CAMERA_MODES.FIRST_PERSON,
+);
 const mockUseGameCanvasSceneLoading = vi.fn(() => ({
 	handleSceneReady: mockHandleSceneReady,
 	isSceneLoading: true,
@@ -60,6 +67,16 @@ vi.mock("@react-three/fiber", () => ({
 	Canvas: (props: { children: ReactNode }) => mockCanvas(props),
 }));
 
+vi.mock("@/features/responsive-layout", () => ({
+	useResponsiveGameLayout: () => ({
+		isDesktopLayout: true,
+		isMobileLayout: false,
+		isTabletLayout: false,
+		isLandscape: true,
+		isPortrait: false,
+	}),
+}));
+
 vi.mock("@react-three/postprocessing", () => ({
 	Bloom: () => null,
 	EffectComposer: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -67,7 +84,7 @@ vi.mock("@react-three/postprocessing", () => ({
 }));
 
 vi.mock("@react-three/rapier", () => ({
-	Physics: ({ children }: { children: ReactNode }) => <>{children}</>,
+	Physics: (props: { children: ReactNode }) => mockPhysics(props),
 }));
 
 vi.mock("@/features/achievements", () => ({
@@ -85,6 +102,7 @@ vi.mock("@/entities/enemy", () => ({
 
 vi.mock("@/entities/player", () => ({
 	PlayerMesh: () => null,
+	PlayerRunningIndicator: () => null,
 	usePlayerDamageFlash: () => false,
 }));
 
@@ -100,6 +118,8 @@ vi.mock("@/entities/room", () => ({
 vi.mock("../model", () => ({
 	useGameCanvasSceneLoading: () => mockUseGameCanvasSceneLoading(),
 	useGameCanvasViewModel: (value: unknown) => mockUseGameCanvasViewModel(value),
+	useFirstPersonLockHint: (value: { mode: unknown }) =>
+		mockUseFirstPersonLockHint(value),
 }));
 
 vi.mock("./CameraRig", () => ({
@@ -130,10 +150,12 @@ describe("GameCanvas", () => {
 	beforeEach(() => {
 		mockCanvas.mockClear();
 		mockHandleSceneReady.mockClear();
+		mockUseFirstPersonLockHint.mockClear();
 		mockSceneEnvironment.mockClear();
 		mockUseGameCanvasSceneLoading.mockClear();
 		mockUseGameCanvasViewModel.mockClear();
 		mockWorldInteractionRuntime.mockClear();
+		mockPhysics.mockClear();
 	});
 
 	it("shows a loading overlay until the 3D scene reports ready", () => {
@@ -203,5 +225,39 @@ describe("GameCanvas", () => {
 			machineRuntime,
 			postprocessingEnabled: false,
 		});
+		expect(mockPhysics).toHaveBeenCalledWith(
+			expect.objectContaining({
+				updatePriority: GAME_FRAME_PRIORITIES.PHYSICS_STEP,
+			}),
+		);
+	});
+
+	it("renders the first-person pointer lock hint when in desktop first-person mode", () => {
+		const cameraStateSnapshot = {
+			fov: 58,
+			mode: CAMERA_MODES.FIRST_PERSON,
+			position: [0, 16, -18] as [number, number, number],
+			target: [0, 0, 0] as [number, number, number],
+			zoom: 1,
+			yaw: 0,
+			pitch: 0,
+			distance: 6,
+		};
+
+		const machineRuntime = {
+			currentRoomId: ROOM_IDS.ENTRANCE,
+			enemiesRemaining: 1,
+			hasTreasureKey: false,
+		};
+
+		render(
+			<GameCanvas
+				cameraStateSnapshot={cameraStateSnapshot}
+				machineRuntime={machineRuntime}
+				postprocessingEnabled={false}
+			/>,
+		);
+
+		expect(screen.getByText("Click to enter first-person")).toBeTruthy();
 	});
 });

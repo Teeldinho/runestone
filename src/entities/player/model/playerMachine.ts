@@ -26,12 +26,12 @@ import type {
 	PlayerMachineContext,
 	PlayerMachineEvent,
 	PlayerMoveChangedEvent,
-	PlayerMoveEvent,
-	PlayerRunHeldChangedEvent,
 	PlayerTakeDamageEvent,
 } from "./types";
 
-const ZERO_VECTOR = { x: 0, y: 0 };
+const ZERO_VECTOR_2D = { x: 0, y: 0 };
+
+const ZERO_VECTOR_3D = [0, 0, 0] as unknown as Vector3Tuple;
 
 export const createPlayerMachine = () =>
 	setup({
@@ -45,21 +45,19 @@ export const createPlayerMachine = () =>
 					context.stats.hp,
 					(event as PlayerTakeDamageEvent).amount,
 				),
-			[PLAYER_GUARDS.IS_PLAYER_ALIVE]: ({ context }) =>
-				checkPlayerAlive(context.stats.hp),
-			[PLAYER_GUARD_KEYS.WANTS_RUN]: ({ event }) =>
+			[PLAYER_GUARD_KEYS.CAN_MOVE_RUNNING]: ({ context, event }) =>
+				checkPlayerAlive(context.stats.hp) &&
 				(event as PlayerMoveChangedEvent).wantsRun,
+			[PLAYER_GUARD_KEYS.CAN_MOVE_WALKING]: ({ context, event }) =>
+				checkPlayerAlive(context.stats.hp) &&
+				!(event as PlayerMoveChangedEvent).wantsRun,
 		},
 		actions: {
 			[PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR]: assign({
-				moveVector: ({ context, event }) =>
+				[PLAYER_CONTEXT_KEYS.MOVE_VECTOR]: ({ context, event }) =>
 					event.type === PLAYER_EVENT_TYPES.MOVE_CHANGED
 						? (event as PlayerMoveChangedEvent).vector
 						: context.moveVector,
-				isRunHeld: ({ context, event }) =>
-					event.type === PLAYER_EVENT_TYPES.MOVE_CHANGED
-						? (event as PlayerMoveChangedEvent).wantsRun
-						: context.isRunHeld,
 				[PLAYER_CONTEXT_KEYS.VELOCITY]: ({ context, event }) =>
 					event.type === PLAYER_EVENT_TYPES.MOVE_CHANGED
 						? ([
@@ -75,18 +73,9 @@ export const createPlayerMachine = () =>
 			}),
 
 			[PLAYER_ACTION_KEYS.CLEAR_MOVE_VECTOR]: assign({
-				moveVector: () => ZERO_VECTOR,
-				isRunHeld: () => false,
-				[PLAYER_CONTEXT_KEYS.VELOCITY]: () =>
-					[...PLAYER_MACHINE_DEFAULTS.VELOCITY] as unknown as Vector3Tuple,
+				[PLAYER_CONTEXT_KEYS.MOVE_VECTOR]: () => ZERO_VECTOR_2D,
+				[PLAYER_CONTEXT_KEYS.VELOCITY]: () => ZERO_VECTOR_3D,
 				[PLAYER_CONTEXT_KEYS.IS_SPRINTING]: () => false,
-			}),
-
-			[PLAYER_ACTION_KEYS.ASSIGN_RUN_HELD]: assign({
-				isRunHeld: ({ context, event }) =>
-					event.type === PLAYER_EVENT_TYPES.RUN_HELD_CHANGED
-						? (event as PlayerRunHeldChangedEvent).isHeld
-						: context.isRunHeld,
 			}),
 
 			[PLAYER_ACTION_KEYS.REQUEST_JUMP_IMPULSE]: assign({
@@ -116,7 +105,6 @@ export const createPlayerMachine = () =>
 				chainMultiplier: PLAYER_MACHINE_DEFAULTS.STATS.CHAIN_MULTIPLIER,
 			},
 			[PLAYER_CONTEXT_KEYS.MOVE_VECTOR]: PLAYER_MACHINE_DEFAULTS.MOVE_VECTOR,
-			[PLAYER_CONTEXT_KEYS.IS_RUN_HELD]: PLAYER_MACHINE_DEFAULTS.IS_RUN_HELD,
 			[PLAYER_CONTEXT_KEYS.WANTS_JUMP_IMPULSE]:
 				PLAYER_MACHINE_DEFAULTS.WANTS_JUMP_IMPULSE,
 		},
@@ -126,55 +114,31 @@ export const createPlayerMachine = () =>
 				states: {
 					[PLAYER_STATES.MOVEMENT.IDLE]: {
 						on: {
-							[PLAYER_EVENTS.MOVE]: {
-								guard: PLAYER_GUARDS.IS_PLAYER_ALIVE,
-								target: PLAYER_STATES.MOVEMENT.WALKING,
-								actions: assign(({ event }) => ({
-									[PLAYER_CONTEXT_KEYS.VELOCITY]: (event as PlayerMoveEvent)
-										.velocity,
-									[PLAYER_CONTEXT_KEYS.IS_SPRINTING]: (event as PlayerMoveEvent)
-										.isSprinting,
-								})),
-							},
 							[PLAYER_EVENT_TYPES.MOVE_CHANGED]: [
 								{
-									guard: PLAYER_GUARD_KEYS.WANTS_RUN,
+									guard: PLAYER_GUARD_KEYS.CAN_MOVE_RUNNING,
 									target: PLAYER_STATES.MOVEMENT.RUNNING,
 									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
 								},
 								{
+									guard: PLAYER_GUARD_KEYS.CAN_MOVE_WALKING,
 									target: PLAYER_STATES.MOVEMENT.WALKING,
 									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
 								},
 							],
 						},
 					},
+
 					[PLAYER_STATES.MOVEMENT.WALKING]: {
 						on: {
-							[PLAYER_EVENTS.MOVE]: {
-								guard: PLAYER_GUARDS.IS_PLAYER_ALIVE,
-								actions: assign(({ event }) => ({
-									[PLAYER_CONTEXT_KEYS.VELOCITY]: (event as PlayerMoveEvent)
-										.velocity,
-									[PLAYER_CONTEXT_KEYS.IS_SPRINTING]: (event as PlayerMoveEvent)
-										.isSprinting,
-								})),
-							},
-							[PLAYER_EVENTS.STOP]: {
-								target: PLAYER_STATES.MOVEMENT.IDLE,
-								actions: assign(() => ({
-									[PLAYER_CONTEXT_KEYS.VELOCITY]: [
-										0, 0, 0,
-									] as unknown as Vector3Tuple,
-								})),
-							},
 							[PLAYER_EVENT_TYPES.MOVE_CHANGED]: [
 								{
-									guard: PLAYER_GUARD_KEYS.WANTS_RUN,
+									guard: PLAYER_GUARD_KEYS.CAN_MOVE_RUNNING,
 									target: PLAYER_STATES.MOVEMENT.RUNNING,
 									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
 								},
 								{
+									guard: PLAYER_GUARD_KEYS.CAN_MOVE_WALKING,
 									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
 								},
 							],
@@ -182,19 +146,18 @@ export const createPlayerMachine = () =>
 								target: PLAYER_STATES.MOVEMENT.IDLE,
 								actions: [PLAYER_ACTION_KEYS.CLEAR_MOVE_VECTOR],
 							},
-							[PLAYER_EVENT_TYPES.RUN_HELD_CHANGED]: {
-								actions: [PLAYER_ACTION_KEYS.ASSIGN_RUN_HELD],
-							},
 						},
 					},
+
 					[PLAYER_STATES.MOVEMENT.RUNNING]: {
 						on: {
 							[PLAYER_EVENT_TYPES.MOVE_CHANGED]: [
 								{
-									guard: PLAYER_GUARD_KEYS.WANTS_RUN,
+									guard: PLAYER_GUARD_KEYS.CAN_MOVE_RUNNING,
 									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
 								},
 								{
+									guard: PLAYER_GUARD_KEYS.CAN_MOVE_WALKING,
 									target: PLAYER_STATES.MOVEMENT.WALKING,
 									actions: [PLAYER_ACTION_KEYS.ASSIGN_MOVE_VECTOR],
 								},
@@ -202,9 +165,6 @@ export const createPlayerMachine = () =>
 							[PLAYER_EVENT_TYPES.MOVE_STOPPED]: {
 								target: PLAYER_STATES.MOVEMENT.IDLE,
 								actions: [PLAYER_ACTION_KEYS.CLEAR_MOVE_VECTOR],
-							},
-							[PLAYER_EVENT_TYPES.RUN_HELD_CHANGED]: {
-								actions: [PLAYER_ACTION_KEYS.ASSIGN_RUN_HELD],
 							},
 						},
 					},
@@ -253,9 +213,7 @@ export const createPlayerMachine = () =>
 									target: PLAYER_STATES.HEALTH.DEAD,
 									actions: assign(({ context }) => ({
 										[PLAYER_CONTEXT_KEYS.STATS]: applyDeath(context.stats),
-										[PLAYER_CONTEXT_KEYS.VELOCITY]: [
-											0, 0, 0,
-										] as unknown as Vector3Tuple,
+										[PLAYER_CONTEXT_KEYS.VELOCITY]: ZERO_VECTOR_3D,
 									})),
 								},
 								{
@@ -272,9 +230,7 @@ export const createPlayerMachine = () =>
 								target: PLAYER_STATES.HEALTH.DEAD,
 								actions: assign(({ context }) => ({
 									[PLAYER_CONTEXT_KEYS.STATS]: applyDeath(context.stats),
-									[PLAYER_CONTEXT_KEYS.VELOCITY]: [
-										0, 0, 0,
-									] as unknown as Vector3Tuple,
+									[PLAYER_CONTEXT_KEYS.VELOCITY]: ZERO_VECTOR_3D,
 								})),
 							},
 						},
@@ -287,9 +243,7 @@ export const createPlayerMachine = () =>
 									target: PLAYER_STATES.HEALTH.DEAD,
 									actions: assign(({ context }) => ({
 										[PLAYER_CONTEXT_KEYS.STATS]: applyDeath(context.stats),
-										[PLAYER_CONTEXT_KEYS.VELOCITY]: [
-											0, 0, 0,
-										] as unknown as Vector3Tuple,
+										[PLAYER_CONTEXT_KEYS.VELOCITY]: ZERO_VECTOR_3D,
 									})),
 								},
 								{
@@ -315,9 +269,7 @@ export const createPlayerMachine = () =>
 								target: PLAYER_STATES.HEALTH.DEAD,
 								actions: assign(({ context }) => ({
 									[PLAYER_CONTEXT_KEYS.STATS]: applyDeath(context.stats),
-									[PLAYER_CONTEXT_KEYS.VELOCITY]: [
-										0, 0, 0,
-									] as unknown as Vector3Tuple,
+									[PLAYER_CONTEXT_KEYS.VELOCITY]: ZERO_VECTOR_3D,
 								})),
 							},
 						},
@@ -331,9 +283,7 @@ export const createPlayerMachine = () =>
 										...context.stats,
 										hp: context.stats.maxHp,
 									},
-									[PLAYER_CONTEXT_KEYS.VELOCITY]: [
-										0, 0, 0,
-									] as unknown as Vector3Tuple,
+									[PLAYER_CONTEXT_KEYS.VELOCITY]: ZERO_VECTOR_3D,
 								})),
 							},
 						},

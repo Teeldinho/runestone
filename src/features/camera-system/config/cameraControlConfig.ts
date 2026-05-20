@@ -26,6 +26,11 @@ export const CAMERA_CONTROLS_CONSTANTS = {
 	DEFAULT_WORLD_FACING_AZIMUTH: 0,
 } as const;
 
+export const CAMERA_POINTER_LOCK_DOM_EVENTS = {
+	POINTER_DOWN: "pointerdown",
+	POINTER_LOCK_CHANGE: "pointerlockchange",
+} as const;
+
 export const CAMERA_CONTROLS_UP_AXIS_KEYS = {
 	UPRIGHT: "upright",
 	TOP_DOWN: "topDown",

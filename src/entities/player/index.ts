@@ -8,6 +8,9 @@ export {
 	PLAYER_MOVEMENT_DIRECTIONS,
 	PLAYER_MOVEMENT_KEY_ALIASES,
 	PLAYER_MOVEMENT_KEYS,
+	PLAYER_RUNNING_INDICATOR_CLASS_NAMES,
+	PLAYER_RUNNING_INDICATOR_CONFIG,
+	PLAYER_RUNNING_INDICATOR_COPY,
 	PLAYER_STATES,
 } from "./config";
 export {
@@ -25,21 +28,21 @@ export type {
 	PlayerMachineSnapshot,
 	PlayerMeshInput,
 	PlayerMeshSettings,
-	PlayerMoveEvent,
 	PlayerMovementState,
 	PlayerRestartEvent,
 	PlayerSnapshot,
 	PlayerStats,
-	PlayerStopEvent,
 	PlayerTakeDamageEvent,
 	UsePlayerMeshInput,
 } from "./model";
 export {
 	createPlayerMachine,
 	PlayerMachineProvider,
+	usePlayerCameraFollowPositionSync,
 	usePlayerDamageFlash,
+	usePlayerGroundingRuntime,
 	usePlayerMachineRuntime,
 	usePlayerMesh,
 	usePlayerPhysics,
 } from "./model";
-export { PlayerMesh } from "./ui";
+export { PlayerMesh, PlayerRunningIndicator } from "./ui";

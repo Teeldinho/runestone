@@ -2,7 +2,6 @@ import type {
 	CameraMachineEvent,
 	CameraStateSnapshot,
 } from "@/features/camera-system";
-import type { Vector3Tuple } from "@/shared/lib";
 import type { CanvasMachineRuntime } from "@/widgets/game-canvas";
 import type { useGamePageInputOrchestrator } from "./useGamePageInputOrchestrator";
 import type { useGamePageMachineState } from "./useGamePageMachineState";
@@ -50,8 +49,6 @@ type GamePageMobileSheetSlice = {
 };
 
 type GamePageTouchSlice = {
-	handleTouchJoystickMove: (velocity: Vector3Tuple) => void;
-	handleTouchJoystickStop: () => void;
 	handleTouchAttack: () => void;
 	handleTouchInteract: () => void;
 	hasTouchAttack: boolean;

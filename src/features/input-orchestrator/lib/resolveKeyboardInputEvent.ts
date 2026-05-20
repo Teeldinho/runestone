@@ -11,8 +11,7 @@ type ResolveKeyboardInputEventInput = {
 
 export type ResolvedKeyboardInputEvent =
 	| {
-			readonly type: typeof INPUT_EVENT_TYPES.RUN_HELD_CHANGED;
-			readonly isHeld: boolean;
+			readonly type: typeof INPUT_EVENT_TYPES.RUN_TOGGLED;
 	  }
 	| { readonly type: typeof INPUT_EVENT_TYPES.JUMP_PRESSED }
 	| { readonly type: typeof INPUT_EVENT_TYPES.INTERACT_PRESSED }
@@ -29,10 +28,7 @@ export const resolveKeyboardInputEvent = ({
 		code === INPUT_KEYBOARD_CODES.SHIFT_LEFT ||
 		code === INPUT_KEYBOARD_CODES.SHIFT_RIGHT
 	) {
-		return {
-			type: INPUT_EVENT_TYPES.RUN_HELD_CHANGED,
-			isHeld: isKeyDown,
-		};
+		return isKeyDown ? { type: INPUT_EVENT_TYPES.RUN_TOGGLED } : undefined;
 	}
 
 	if (!isKeyDown) {

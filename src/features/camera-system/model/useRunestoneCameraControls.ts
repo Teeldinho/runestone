@@ -3,9 +3,12 @@ import type CameraControlsImpl from "camera-controls";
 import type { RefObject } from "react";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+import { GAME_FRAME_PRIORITIES } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
 import {
+	getPlayerCameraFollowPositionSnapshot,
 	getPlayerPosition,
+	hasPlayerCameraFollowPosition,
 	setCameraAzimuth,
 	useResponsiveLayout,
 } from "@/shared/lib";
@@ -28,6 +31,7 @@ import {
 	shouldRenderCameraControls,
 } from "../lib";
 import type { CameraStateSnapshot } from "./types";
+import { useFirstPersonPointerLock } from "./useFirstPersonPointerLock";
 
 export type CameraRuntimeSnapshot = CameraStateSnapshot;
 
@@ -71,7 +75,7 @@ export const useRunestoneCameraControls = ({
 	const preservedPolarAngleRef = useRef<number | null>(null);
 	const [controlsKey, setControlsKey] = useState(0);
 
-	const { camera } = useThree();
+	const { camera, gl } = useThree();
 	const { isDesktopLayout } = useResponsiveLayout();
 
 	const shouldRender = shouldRenderCameraControls({
@@ -88,6 +92,13 @@ export const useRunestoneCameraControls = ({
 		() => resolveCameraControlsInputBindings(cameraSnapshot.mode),
 		[cameraSnapshot.mode],
 	);
+
+	useFirstPersonPointerLock({
+		controlsRef,
+		domElement: gl.domElement,
+		isDesktopLayout,
+		mode: cameraSnapshot.mode,
+	});
 
 	useLayoutEffect(() => {
 		const nextUpAxisKey = resolveCameraControlsUpAxisKey(cameraSnapshot.mode);
@@ -129,7 +140,9 @@ export const useRunestoneCameraControls = ({
 			return;
 		}
 
-		const playerPosition = getPlayerPosition();
+		const playerPosition = hasPlayerCameraFollowPosition()
+			? getPlayerCameraFollowPositionSnapshot()
+			: getPlayerPosition();
 		const followTarget = resolveCameraControlsFollowTarget({
 			mode: cameraSnapshot.mode,
 			playerPosition,
@@ -211,7 +224,7 @@ export const useRunestoneCameraControls = ({
 				azimuthAngle: controls.azimuthAngle,
 			}),
 		);
-	}, -2);
+	}, GAME_FRAME_PRIORITIES.CAMERA_FOLLOW_SYNC);
 
 	return {
 		controlsKey,

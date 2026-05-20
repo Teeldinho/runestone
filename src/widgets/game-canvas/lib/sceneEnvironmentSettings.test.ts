@@ -18,7 +18,6 @@ describe("createSceneEnvironmentSettingsViewModel", () => {
 	it("assembles room, corridor, enemy, and player settings from the floor layout and runtime state", () => {
 		const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
 		const defaultPlayerMeshSettings = createPlayerMeshSettings({
-			healthState: PLAYER_ENTITY_CONFIG.DEFAULTS.HEALTH_STATE,
 			origin: PLAYER_ENTITY_CONFIG.ORIGIN,
 		});
 
@@ -66,7 +65,6 @@ describe("createSceneEnvironmentSettingsViewModel", () => {
 	it("unlocks the guard room and treasury after key pickup and enemy clear", () => {
 		const floorLayout = createDungeonFloorLayout(createFloorOneMachine());
 		const defaultPlayerMeshSettings = createPlayerMeshSettings({
-			healthState: PLAYER_ENTITY_CONFIG.DEFAULTS.HEALTH_STATE,
 			origin: PLAYER_ENTITY_CONFIG.ORIGIN,
 		});
 
@@ -97,7 +95,6 @@ describe("createSceneEnvironmentSettingsViewModel", () => {
 
 	it("falls back to the default player position when the floor has no initial room", () => {
 		const defaultPlayerMeshSettings = createPlayerMeshSettings({
-			healthState: PLAYER_ENTITY_CONFIG.DEFAULTS.HEALTH_STATE,
 			origin: PLAYER_ENTITY_CONFIG.ORIGIN,
 		});
 

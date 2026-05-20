@@ -53,6 +53,24 @@ describe("createMachineGraphSnapshotNodes", () => {
 		);
 	});
 
+	it("omits wrapper nodes and keeps only leaf states", () => {
+		const nodes = createMachineGraphNodes({
+			machine: createNestedFinalStateMachine(),
+			sectionId: STATE_VISUALIZER_SECTION_IDS.CAMERA,
+			activeStateNodeIds: new Set(["test.parent.child"]),
+		});
+
+		expect(nodes).toHaveLength(3);
+		expect(nodes.map((node) => node.id)).toEqual(
+			expect.arrayContaining([
+				"test.other",
+				"test.parent.child",
+				"test.parent.sibling",
+			]),
+		);
+		expect(nodes.map((node) => node.id)).not.toContain("test.parent");
+	});
+
 	it("creates nodes with active state metadata and labels", () => {
 		const nodes = createMachineGraphNodes({
 			machine: createFloorOneMachine(),
