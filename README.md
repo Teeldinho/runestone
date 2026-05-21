@@ -56,19 +56,12 @@ Vector design tools and collaborative editors treat user actions (clicks, drags,
 
 Runestone is architected around the Actor Model. Every independent subsystem operates as a self-contained, event-driven loop that communicates solely through structured messages. This prevents concurrent subsystems from causing side effects in adjacent domains.
 
-```mermaid
-graph TD
-    Input[Input Orchestrator Actor] -->|Locomotion &<br/>Action Inputs| Player[Player Actor]
-    Input -->|View Toggles &<br/>Camera Orbits| Camera[Camera Actor]
-    Input -->|Interaction Keys &<br/>Collision Cues| Dungeon[Dungeon Actor]
-    
-    Player -->|Locomotion state<br/>transitions| ShareStore[Shared Coordinate Store]
-    ShareStore -->|Position &<br/>spring target| Camera
-    ShareStore -->|Coordinate sync &<br/>sensor bounds| Dungeon
-    
-    Dungeon -->|Room entries &<br/>ambient sound| Audio[Audio Actor]
-    Player -->|Footstep sound &<br/>haptic triggers| Audio
-```
+<div align="center">
+  <figure>
+    <img src="./public/screenshots/concurrent-actor-loop-engine.png" alt="The Concurrent Actor Loop Engine diagram" width="100%" />
+    <figcaption>The Concurrent Actor Loop Engine</figcaption>
+  </figure>
+</div>
 
 ### Spatial Layout: The Dungeon Actor
 Governs the active configuration of the spatial layout. It controls room visibility boundaries, manages spatial transitions, and keeps door colliders active until all necessary transition guards (such as collecting room runes or defeating hostile actors) are satisfied.
@@ -203,26 +196,12 @@ Runestone is developed inside an AI-native engineering loop, where automated bou
 ### The Two-Tier Verification Pipeline
 Our quality validation operates across two layers: real-time in-editor diagnostics and blocking pre-commit git checks:
 
-```mermaid
-graph TD
-    Start[Code Edit /<br/>Agent Contribution] --> LSP{Real-Time<br/>IDE LSP}
-    LSP -->|Violations<br/>detected| Diagnostics[In-Editor<br/>Highlights & Typings]
-    Diagnostics -->|Fix issues<br/>locally| Start
-    LSP -->|Clean<br/>compilation| Commit[Autonomous<br/>Agent Commit]
-    
-    Commit --> Lefthook{Lefthook<br/>Pre-Commit Hook}
-    Lefthook --> Biome[Biome<br/>Lint & Format]
-    Lefthook --> Steiger[Steiger<br/>FSD Bounds]
-    Lefthook --> Purity[Segment<br/>Purity Checks]
-    Lefthook --> Vitest[Vitest<br/>Coverage Suite]
-    
-    Biome & Steiger & Purity & Vitest --> Results{All Checks<br/>Passed?}
-    
-    Results -->|Yes| Push[Push to<br/>Feature Branch]
-    Results -->|No| Block[Block Commit<br/>& Report]
-    
-    Block -->|Fix issues &<br/>re-commit| Start
-```
+<div align="center">
+  <figure>
+    <img src="./public/screenshots/two-tier-verification-pipeline.png" alt="The Two-Tier Verification Pipeline diagram" width="100%" />
+    <figcaption>The Two-Tier Verification Pipeline</figcaption>
+  </figure>
+</div>
 
 ### 1. Real-Time IDE Feedback (Language Server Protocol)
 By running active Language Server Protocol (LSP) connections for TypeScript and Biome in the background of the editor, syntax warnings, formatting issues, type-mismatches, and Steiger Feature-Sliced Design boundary violations are instantly highlighted *during the editing process*. This shortens the feedback loop, allowing code issues to be corrected before a commit is even initiated.
