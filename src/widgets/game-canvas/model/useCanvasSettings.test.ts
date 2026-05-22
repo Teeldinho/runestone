@@ -81,13 +81,13 @@ describe("useCanvasSettings", () => {
 		);
 	});
 
-	it("returns a fresh view model on rerender while preserving derived values", () => {
+	it("memoizes the static view model across rerenders", () => {
 		const { result, rerender } = renderHook(() => useCanvasSettings());
 		const firstResult = result.current;
 
 		rerender();
 
-		expect(result.current).not.toBe(firstResult);
+		expect(result.current).toBe(firstResult);
 		expect(result.current.camera.fov).toBe(firstResult.camera.fov);
 		expect(result.current.environment.rune.activeColor).toBe(
 			firstResult.environment.rune.activeColor,

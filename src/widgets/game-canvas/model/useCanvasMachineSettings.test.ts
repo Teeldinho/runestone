@@ -239,4 +239,17 @@ describe("useCanvasMachineSettings", () => {
 
 		expect(result.current.isPostprocessingEnabled).toBe(true);
 	});
+
+	it("memoizes machine settings across rerenders when inputs are stable", () => {
+		const machineRuntime = createMachineRuntime();
+
+		const { result, rerender } = renderHook(() =>
+			useCanvasMachineSettings(machineRuntime),
+		);
+		const firstResult = result.current;
+
+		rerender();
+
+		expect(result.current).toBe(firstResult);
+	});
 });
