@@ -149,7 +149,7 @@ describe("authSessionOrchestration", () => {
 		const createUser = vi.fn().mockResolvedValue(TEST_USER_PROFILE);
 		const storage = createMemoryStorage();
 
-		await submitAuthUsername({
+		const profile = await submitAuthUsername({
 			username: "  runestone_hero  ",
 			sessionUuid: "uuid-1",
 			createUser,
@@ -170,13 +170,14 @@ describe("authSessionOrchestration", () => {
 			profile: TEST_USER_PROFILE,
 		});
 		expect(readPersistedUsername(storage)).toBe("runestone_hero");
+		expect(profile).toBe(TEST_USER_PROFILE);
 	});
 
 	it("dispatches failure event when create-user mutation rejects", async () => {
 		const sendAuthEvent = vi.fn();
 		const createUser = vi.fn().mockRejectedValue(new Error("Create failed"));
 
-		await submitAuthUsername({
+		const profile = await submitAuthUsername({
 			username: "runestone_hero",
 			sessionUuid: "uuid-1",
 			createUser,
@@ -192,13 +193,14 @@ describe("authSessionOrchestration", () => {
 			type: AUTH_EVENTS.USERNAME_SUBMIT_FAILED,
 			errorMessage: "Create failed",
 		});
+		expect(profile).toBeNull();
 	});
 
 	it("no-ops username submit when session uuid is not available", async () => {
 		const sendAuthEvent = vi.fn();
 		const createUser = vi.fn();
 
-		await submitAuthUsername({
+		const profile = await submitAuthUsername({
 			username: "runestone_hero",
 			sessionUuid: null,
 			createUser,
@@ -208,6 +210,7 @@ describe("authSessionOrchestration", () => {
 
 		expect(createUser).not.toHaveBeenCalled();
 		expect(sendAuthEvent).not.toHaveBeenCalled();
+		expect(profile).toBeNull();
 	});
 
 	it("resolves auth submit fallback error message", () => {

@@ -9,6 +9,21 @@ import { AUTH_COPY } from "../config";
 import { useUsernameForm } from "./useUsernameForm";
 
 describe("useUsernameForm", () => {
+	it("prefills the username field from the suggested username", () => {
+		const { result } = renderHook(() =>
+			useUsernameForm({
+				errorMessage: null,
+				initialUsername: "Rune_AshBearAAAA",
+				isSubmitting: false,
+				onSubmit: vi.fn(),
+			}),
+		);
+
+		expect(result.current.usernameForm.state.values.username).toBe(
+			"Rune_AshBearAAAA",
+		);
+	});
+
 	it("returns submit label from submitting state", () => {
 		const { result, rerender } = renderHook(
 			({ isSubmitting }) =>
