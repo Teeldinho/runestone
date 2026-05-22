@@ -15,7 +15,7 @@ const createMockMediaQueryList = (matches: boolean) => ({
 
 describe("useResponsiveGameLayout", () => {
 	beforeEach(() => {
-		vi.clearAllMocks();
+		vi.restoreAllMocks();
 	});
 
 	it("returns desktop layout for fine-pointer desktop viewport", () => {
@@ -87,5 +87,43 @@ describe("useResponsiveGameLayout", () => {
 		expect(result.current.isMobileLayout).toBe(true);
 		expect(result.current.isLandscape).toBe(false);
 		expect(result.current.isPortrait).toBe(true);
+	});
+
+	it("removes media query listeners when unmounted", () => {
+		const mediaQueries = {
+			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.DESKTOP_MIN_WIDTH]: false,
+			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_STANDARD_WIDTH]: false,
+			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_COARSE_WIDTH]: false,
+			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.MOBILE_MAX_WIDTH]: true,
+			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.LANDSCAPE]: false,
+			[RESPONSIVE_LAYOUT_MEDIA_QUERIES.PORTRAIT]: true,
+		};
+
+		const mediaQueryLists = new Map<
+			string,
+			ReturnType<typeof createMockMediaQueryList>
+		>();
+
+		vi.spyOn(window, "matchMedia").mockImplementation((query) => {
+			const matches = Boolean(mediaQueries[query as keyof typeof mediaQueries]);
+			const mediaQueryList = createMockMediaQueryList(matches);
+
+			mediaQueryLists.set(query, mediaQueryList);
+
+			return mediaQueryList as unknown as MediaQueryList;
+		});
+
+		const { unmount } = renderHook(() => useResponsiveGameLayout());
+
+		unmount();
+
+		for (const mediaQueryList of mediaQueryLists.values()) {
+			const listener = mediaQueryList.addEventListener.mock.calls[0]?.[1];
+
+			expect(mediaQueryList.removeEventListener).toHaveBeenCalledWith(
+				"change",
+				listener,
+			);
+		}
 	});
 });

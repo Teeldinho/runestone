@@ -47,7 +47,10 @@ export function useResponsiveGameLayout(): ResponsiveGameLayout {
 			},
 		];
 
-		const listeners: MediaQueryList[] = [];
+		const listeners: Array<{
+			mediaQuery: MediaQueryList;
+			listener: (event: MediaQueryListEvent) => void;
+		}> = [];
 
 		queries.forEach(({ query, setter }) => {
 			const mediaQuery = window.matchMedia(query);
@@ -58,12 +61,12 @@ export function useResponsiveGameLayout(): ResponsiveGameLayout {
 			};
 
 			mediaQuery.addEventListener("change", listener);
-			listeners.push(mediaQuery);
+			listeners.push({ mediaQuery, listener });
 		});
 
 		return () => {
-			listeners.forEach((mediaQuery) => {
-				mediaQuery.removeEventListener("change", () => {});
+			listeners.forEach(({ mediaQuery, listener }) => {
+				mediaQuery.removeEventListener("change", listener);
 			});
 		};
 	}, []);

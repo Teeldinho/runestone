@@ -173,6 +173,7 @@ describe("game page mobile focused models", () => {
 			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 		);
 		expect(result.current.isTabletLayout).toBe(true);
+		expect(result.current.drawerContentHeightClassName).toBe("h-[90dvh]");
 		expect(result.current.graphSections).toBe(
 			contextSlices.visualizer.graphSections,
 		);

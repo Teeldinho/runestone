@@ -43,6 +43,7 @@ describe("GamePageMobileSheetContent", () => {
 				yaw: 0,
 				zoom: 1,
 			},
+			drawerContentHeightClassName: "h-[90dvh]",
 			graphSections: [],
 			handleCameraModeSwitch: vi.fn(),
 			handleMobileSheetTabChange: vi.fn(),
@@ -59,7 +60,13 @@ describe("GamePageMobileSheetContent", () => {
 		const header = screen
 			.getByText(GAME_PAGE_MOBILE_SHEET.TITLE)
 			.closest('[data-slot="drawer-header"]') as HTMLElement;
+		const drawerContent = screen
+			.getByText(GAME_PAGE_MOBILE_SHEET.TITLE)
+			.closest('[data-slot="drawer-content"]') as HTMLElement;
 
+		expect(drawerContent.className).toContain(
+			`h-[${GAME_PAGE_MOBILE_SHEET.HEIGHT_DVH}dvh]`,
+		);
 		expect(header.className).toContain("flex");
 		expect(header.className).toContain("justify-between");
 		expect(header.className).not.toContain("grid");
@@ -79,6 +86,7 @@ describe("GamePageMobileSheetContent", () => {
 				yaw: 0,
 				zoom: 1,
 			},
+			drawerContentHeightClassName: "h-[90dvh]",
 			graphSections: [],
 			handleCameraModeSwitch: vi.fn(),
 			handleMobileSheetTabChange: vi.fn(),
