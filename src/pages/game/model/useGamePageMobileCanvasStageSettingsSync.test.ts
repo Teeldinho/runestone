@@ -8,10 +8,14 @@ import { CAMERA_MODES } from "@/features/camera-system";
 import { useSettingsForm } from "@/features/settings";
 
 import { useGamePageMobileCanvasStageModel } from "./useGamePageMobileCanvasStageModel";
-import { useGamePageCanvasContext } from "./useGamePageSliceContexts";
+import {
+	useGamePageCanvasContext,
+	useGamePageLayoutContext,
+} from "./useGamePageSliceContexts";
 
 vi.mock("./useGamePageSliceContexts", () => ({
 	useGamePageCanvasContext: vi.fn(),
+	useGamePageLayoutContext: vi.fn(),
 }));
 
 const mockCanvasContext = {
@@ -31,6 +35,13 @@ const mockCanvasContext = {
 		hasTreasureKey: false,
 	},
 	handleCameraModeSwitch: vi.fn(),
+};
+
+const mockLayoutContext = {
+	isDesktopLayout: false,
+	isMobileTabletLandscape: false,
+	isPortraitLayout: false,
+	isTabletLayout: false,
 };
 
 type MemoryStorage = Pick<
@@ -65,6 +76,7 @@ describe("useGamePageMobileCanvasStageModel settings sync", () => {
 		vi.clearAllMocks();
 
 		vi.mocked(useGamePageCanvasContext).mockReturnValue(mockCanvasContext);
+		vi.mocked(useGamePageLayoutContext).mockReturnValue(mockLayoutContext);
 	});
 
 	it("reflects graphics settings changes live", () => {
