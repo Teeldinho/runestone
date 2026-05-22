@@ -15,9 +15,12 @@ const INPUT_STATE_KEYS = {
 
 let mockCameraMode: (typeof CAMERA_MODES)[keyof typeof CAMERA_MODES] =
 	CAMERA_MODES.FREE_ORBITAL;
+let mockIsInputBlocked = false;
 
 afterEach(() => {
 	cleanup();
+	mockCameraMode = CAMERA_MODES.FREE_ORBITAL;
+	mockIsInputBlocked = false;
 });
 
 vi.mock("@/pages/game/model", () => ({
@@ -55,6 +58,7 @@ vi.mock("@/pages/game/model", () => ({
 			enemiesRemaining: 2,
 			hasTreasureKey: false,
 		},
+		isInputBlocked: mockIsInputBlocked,
 		postprocessingEnabled: true,
 	}),
 }));
@@ -145,6 +149,19 @@ describe("GamePageMobileCanvasStage", () => {
 		render(<GamePageMobileCanvasStage />);
 
 		expect(screen.getByTestId("camera-control-zone")).toBeTruthy();
+	});
+
+	it("hides the mobile gameplay controls in portrait mode", () => {
+		mockIsInputBlocked = true;
+
+		render(<GamePageMobileCanvasStage />);
+
+		expect(screen.getByTestId("game-canvas")).toBeTruthy();
+		expect(screen.queryByTestId("camera-control-zone")).toBeNull();
+		expect(screen.queryByTestId("touch-joystick-zone")).toBeNull();
+		expect(screen.queryByTestId("mobile-action-button-zone")).toBeNull();
+		expect(screen.queryByTestId("game-page-mobile-action-panel")).toBeNull();
+		expect(screen.queryByTestId("game-page-mobile-top-bar")).toBeNull();
 	});
 
 	it("suppresses the mobile gameplay context menu", () => {

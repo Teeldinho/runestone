@@ -36,27 +36,31 @@ export function GamePageMobileCanvasStage() {
 				/>
 			</div>
 
-			<GamePageMobileTopBar />
+			{!viewModel.isInputBlocked ? (
+				<>
+					<GamePageMobileTopBar />
 
-			<CameraControlZone zoneRef={cameraElements.cameraControlRef} />
+					<CameraControlZone zoneRef={cameraElements.cameraControlRef} />
 
-			<div className="pointer-events-none absolute bottom-4 left-4 z-30">
-				<div className="pointer-events-auto">
-					<TouchJoystickZone
-						onMoveVelocity={input.touchMovement.handleMoveVelocity}
-						onStopVelocity={input.touchMovement.handleStopVelocity}
-					/>
-				</div>
-			</div>
+					<div className="pointer-events-none absolute bottom-4 left-4 z-30">
+						<div className="pointer-events-auto">
+							<TouchJoystickZone
+								onMoveVelocity={input.touchMovement.handleMoveVelocity}
+								onStopVelocity={input.touchMovement.handleStopVelocity}
+							/>
+						</div>
+					</div>
 
-			<div className="pointer-events-none absolute right-4 bottom-4 z-30 flex items-end gap-2">
-				<MobileActionButtonZone
-					isRunEnabled={input.isRunToggled}
-					sendInput={input.sendInput}
-				/>
+					<div className="pointer-events-none absolute right-4 bottom-4 z-30 flex items-end gap-2">
+						<MobileActionButtonZone
+							isRunEnabled={input.isRunToggled}
+							sendInput={input.sendInput}
+						/>
 
-				<GamePageMobileActionPanel />
-			</div>
+						<GamePageMobileActionPanel />
+					</div>
+				</>
+			) : null}
 		</section>
 	);
 }

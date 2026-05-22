@@ -1,3 +1,4 @@
+import { GAME_PAGE_PORTRAIT_GATE } from "@/pages/game/config";
 import {
 	Card,
 	CardContent,
@@ -6,7 +7,15 @@ import {
 	CardTitle,
 } from "@/shared/ui";
 
-export function GamePagePortraitGate() {
+type GamePagePortraitGateProps = {
+	isVisible: boolean;
+};
+
+export function GamePagePortraitGate({ isVisible }: GamePagePortraitGateProps) {
+	if (!isVisible) {
+		return null;
+	}
+
 	return (
 		<section
 			aria-labelledby="game-portrait-gate-heading"
@@ -18,15 +27,15 @@ export function GamePagePortraitGate() {
 						id="game-portrait-gate-heading"
 						className="rune-text text-base text-panel-title"
 					>
-						Rotate Device
+						{GAME_PAGE_PORTRAIT_GATE.TITLE}
 					</CardTitle>
 					<CardDescription className="text-sm">
-						Landscape mode is required on mobile and tablet.
+						{GAME_PAGE_PORTRAIT_GATE.DESCRIPTION}
 					</CardDescription>
 				</CardHeader>
 
 				<CardContent className="pb-5 text-center text-xs text-muted-foreground">
-					Rotate your device to landscape to continue playing.
+					{GAME_PAGE_PORTRAIT_GATE.BODY}
 				</CardContent>
 			</Card>
 		</section>

@@ -6,11 +6,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createActor, fromTransition } from "xstate";
 import { DUNGEON_EVENTS, ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
-import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import {
 	GAME_PAGE_CONTROLS,
 	GAME_PAGE_COPY,
 	GAME_PAGE_MOBILE_SHEET,
+	GAME_PAGE_PORTRAIT_GATE,
 } from "@/pages/game/config";
 import { useGamePage } from "@/pages/game/model";
 
@@ -95,6 +95,7 @@ const createGamePageViewModel = (overrides = {}) => {
 		layout: {
 			isDesktopLayout: true,
 			isMobileTabletLandscape: false,
+			isPortraitLayout: false,
 			isTabletLayout: false,
 		},
 		mobileSheet: {
@@ -223,15 +224,21 @@ vi.mock("@/pages/game/model", () => {
 			return {
 				isDesktopLayout: viewModel.layout.isDesktopLayout,
 				isMobileTabletLandscape: viewModel.layout.isMobileTabletLandscape,
+				isPortraitLayout: viewModel.layout.isPortraitLayout,
 			};
 		},
 		useGamePageMobileLayoutShellModel: () => {
 			const viewModel = useGamePage();
 
 			return {
-				handleMobileSheetOpenChange:
+				drawerOpen: viewModel.layout.isPortraitLayout
+					? false
+					: viewModel.mobileSheet.isMobileSheetOpen,
+				handleDrawerOpenChange:
 					viewModel.mobileSheet.handleMobileSheetOpenChange,
-				isMobileSheetOpen: viewModel.mobileSheet.isMobileSheetOpen,
+				isInputBlocked: viewModel.layout.isPortraitLayout,
+				isPortraitGateVisible: viewModel.layout.isPortraitLayout,
+				shouldRenderSheetContent: !viewModel.layout.isPortraitLayout,
 			};
 		},
 		useGamePageMobileCanvasStageModel: () => {
@@ -240,6 +247,7 @@ vi.mock("@/pages/game/model", () => {
 			return {
 				cameraStateSnapshot: viewModel.canvas.cameraStateSnapshot,
 				canvasMachineRuntime: viewModel.canvas.canvasMachineRuntime,
+				isInputBlocked: viewModel.layout.isPortraitLayout,
 				postprocessingEnabled: true,
 			};
 		},
@@ -268,6 +276,7 @@ vi.mock("@/pages/game/model", () => {
 			layout: {
 				isDesktopLayout: false,
 				isMobileTabletLandscape: false,
+				isPortraitLayout: false,
 				isTabletLayout: false,
 			},
 		}),
@@ -320,10 +329,6 @@ vi.mock("@/pages/game/model", () => {
 		},
 	};
 });
-
-vi.mock("@/features/responsive-layout", () => ({
-	useResponsiveGameLayout: vi.fn(),
-}));
 
 vi.mock("@/features/settings", () => ({
 	useSettingsForm: vi.fn(() => ({
@@ -417,13 +422,6 @@ afterEach(() => {
 describe("GamePage", () => {
 	beforeEach(() => {
 		vi.mocked(useGamePage).mockReturnValue(createGamePageViewModel());
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
-			isDesktopLayout: true,
-			isLandscape: true,
-			isMobileLayout: false,
-			isPortrait: false,
-			isTabletLayout: false,
-		});
 	});
 
 	it("renders the HUD widget composition", () => {
@@ -464,6 +462,7 @@ describe("GamePage", () => {
 				layout: {
 					isDesktopLayout: false,
 					isMobileTabletLandscape: true,
+					isPortraitLayout: false,
 					isTabletLayout: true,
 				},
 				touch: {
@@ -513,16 +512,11 @@ describe("GamePage", () => {
 				layout: {
 					isDesktopLayout: false,
 					isMobileTabletLandscape: false,
+					isPortraitLayout: true,
+					isTabletLayout: false,
 				},
 			}),
 		);
-		vi.mocked(useResponsiveGameLayout).mockReturnValue({
-			isDesktopLayout: false,
-			isLandscape: false,
-			isMobileLayout: true,
-			isPortrait: true,
-			isTabletLayout: false,
-		});
 
 		render(
 			<TooltipProvider>
@@ -530,8 +524,18 @@ describe("GamePage", () => {
 			</TooltipProvider>,
 		);
 
-		expect(screen.getByText("Rotate Device")).not.toBeNull();
+		expect(screen.getByText(GAME_PAGE_PORTRAIT_GATE.TITLE)).not.toBeNull();
 		expect(screen.getByTestId("game-canvas-widget")).not.toBeNull();
+		expect(screen.queryByTestId("mobile-camera-switcher-widget")).toBeNull();
+		expect(
+			screen.queryByRole("button", {
+				name: "Restart Run",
+			}),
+		).toBeNull();
+		expect(screen.queryByTestId("touch-joystick-widget")).toBeNull();
+		expect(screen.queryByTestId("camera-control-zone-widget")).toBeNull();
+		expect(screen.queryByTestId("mobile-action-button-zone")).toBeNull();
+		expect(screen.queryByText(GAME_PAGE_MOBILE_SHEET.TITLE)).toBeNull();
 		expect(
 			screen.queryByRole("button", {
 				name: `Open ${GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}`,
