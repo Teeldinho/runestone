@@ -26,15 +26,15 @@ export const AUTH_ERROR_MESSAGES = {
 export const AUTH_BOOTSTRAP_TIMEOUT_MS = 10_000;
 
 export const AUTH_COPY = {
-	MODAL_TITLE: "Choose your name",
+	MODAL_TITLE: "Enter the dungeon",
 	MODAL_DESCRIPTION:
-		"Pick a name to save your progress and show on the leaderboard.",
+		"Use the suggested name or edit it before saving your progress and leaderboard entry.",
 	USERNAME_LABEL: "Name",
 	USERNAME_PLACEHOLDER: "Your name",
-	USERNAME_SUBMIT_LABEL: "Save and enter",
-	USERNAME_SUBMITTING_LABEL: "Saving your name...",
+	USERNAME_SUBMIT_LABEL: "Enter the dungeon",
+	USERNAME_SUBMITTING_LABEL: "Opening the gate...",
 	USERNAME_HELP_TEXT:
-		"3-20 characters. Letters, numbers, and underscores only.",
+		"A suggested name is ready. 3-20 letters, numbers, or underscores.",
 	USERNAME_VALIDATION_ERROR: "Use 3-20 letters, numbers, or underscores.",
 	READY_STATUS_PREFIX: "Signed in as",
 } as const;
