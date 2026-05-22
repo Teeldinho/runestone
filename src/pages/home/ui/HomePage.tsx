@@ -21,6 +21,7 @@ export function HomePage() {
 		isUsernameModalOpen,
 		isUsernameSubmitting,
 		readyStatusLabel,
+		suggestedUsername,
 	} = useAuthContext();
 
 	return (
@@ -128,6 +129,7 @@ export function HomePage() {
 				errorMessage={errorMessage}
 				isOpen={isUsernameModalOpen}
 				isSubmitting={isUsernameSubmitting}
+				suggestedUsername={suggestedUsername}
 				onSubmit={handleUsernameFormSubmit}
 			/>
 		</>

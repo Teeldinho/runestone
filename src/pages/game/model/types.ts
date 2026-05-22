@@ -38,6 +38,7 @@ type GamePageAudioSlice = {
 type GamePageLayoutSlice = {
 	isDesktopLayout: boolean;
 	isMobileTabletLandscape: boolean;
+	isPortraitLayout: boolean;
 	isTabletLayout: boolean;
 };
 

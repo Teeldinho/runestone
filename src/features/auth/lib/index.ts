@@ -23,6 +23,10 @@ export {
 	isUsernameValid,
 	normalizeUsernameInput,
 } from "./discriminator";
+export {
+	createSuggestedUsername,
+	type GuestUsernameRandomIntegerFactory,
+} from "./guestUsername";
 export type { SessionUuidFactory, StorageAdapter } from "./sessionStorage";
 export {
 	clearPersistedUsername,

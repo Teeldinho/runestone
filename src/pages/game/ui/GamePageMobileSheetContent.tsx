@@ -19,7 +19,10 @@ export function GamePageMobileSheetContent() {
 
 	return (
 		<DrawerContent
-			className="h-[90dvh] max-w-full overflow-hidden border-panel-border/60 bg-panel/95"
+			className={cn(
+				viewModel.drawerContentHeightClassName,
+				"max-w-full overflow-hidden border-panel-border/60 bg-panel/95",
+			)}
 			aria-label="Game bottom sheet panels"
 		>
 			<DrawerHeader

@@ -1,7 +1,7 @@
 import { useMachine } from "@xstate/react";
 import { useMemo } from "react";
 
-import { createAuthContextValue } from "../lib";
+import { createAuthContextValue, createSuggestedUsername } from "../lib";
 
 import { authMachine } from "./authMachine";
 import type { AuthContextValue } from "./types";
@@ -10,6 +10,7 @@ import { useAuthUsernameSubmission } from "./useAuthUsernameSubmission";
 
 export const useAuth = (): AuthContextValue => {
 	const [snapshot, sendAuthEvent] = useMachine(authMachine);
+	const suggestedUsername = useMemo(() => createSuggestedUsername(), []);
 	const { handleSessionBootstrapRetry, sessionUuid } = useAuthSessionBootstrap({
 		sendAuthEvent,
 	});
@@ -22,9 +23,15 @@ export const useAuth = (): AuthContextValue => {
 		() =>
 			createAuthContextValue({
 				snapshot,
+				suggestedUsername,
 				handleSessionBootstrapRetry,
 				handleUsernameFormSubmit,
 			}),
-		[snapshot, handleSessionBootstrapRetry, handleUsernameFormSubmit],
+		[
+			snapshot,
+			suggestedUsername,
+			handleSessionBootstrapRetry,
+			handleUsernameFormSubmit,
+		],
 	);
 };

@@ -1,6 +1,8 @@
+import { useRouter } from "@tanstack/react-router";
 import { useCallback } from "react";
 
 import { useCreateUser } from "../api";
+import { AUTH_ROUTE_PATHS } from "../config";
 import { getAuthClientStorage, submitAuthUsername } from "../lib";
 
 import type { AuthMachineEvent, UsernameFormInput } from "./types";
@@ -19,18 +21,30 @@ export const useAuthUsernameSubmission = ({
 	sessionUuid,
 }: UseAuthUsernameSubmissionInput): UseAuthUsernameSubmissionResult => {
 	const createUserMutation = useCreateUser();
+	const router = useRouter();
 
 	const handleUsernameFormSubmit = useCallback(
 		async ({ username }: UsernameFormInput) => {
-			await submitAuthUsername({
+			const profile = await submitAuthUsername({
 				username,
 				sessionUuid,
 				createUser: createUserMutation.mutateAsync,
 				storage: getAuthClientStorage(),
 				sendAuthEvent,
 			});
+
+			if (!profile) {
+				return;
+			}
+
+			await router.preloadRoute({
+				to: AUTH_ROUTE_PATHS.GAME,
+			});
+			await router.navigate({
+				to: AUTH_ROUTE_PATHS.GAME,
+			});
 		},
-		[createUserMutation, sendAuthEvent, sessionUuid],
+		[createUserMutation, router, sendAuthEvent, sessionUuid],
 	);
 
 	return { handleUsernameFormSubmit };
