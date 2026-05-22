@@ -54,6 +54,7 @@ export type AuthContextValue = {
 	isUsernameModalOpen: boolean;
 	isUsernameSubmitting: boolean;
 	readyStatusLabel: string | null;
+	suggestedUsername: string;
 	handleSessionBootstrapRetry: () => void;
 	handleUsernameFormSubmit: (input: UsernameFormInput) => Promise<void>;
 };
