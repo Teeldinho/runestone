@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createActor, fromTransition } from "xstate";
 import { DUNGEON_EVENTS, ROOM_IDS, ROOM_LABELS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
+import { useResponsiveGameLayout } from "@/features/responsive-layout";
 import {
 	GAME_PAGE_CONTROLS,
 	GAME_PAGE_COPY,
@@ -308,6 +309,7 @@ vi.mock("@/pages/game/model", () => {
 
 			return {
 				cameraStateSnapshot: viewModel.canvas.cameraStateSnapshot,
+				drawerContentHeightClassName: "h-[90dvh]",
 				graphSections: viewModel.visualizer.graphSections,
 				handleCameraModeSwitch: viewModel.canvas.handleCameraModeSwitch,
 				handleMobileSheetTabChange:
@@ -318,6 +320,10 @@ vi.mock("@/pages/game/model", () => {
 		},
 	};
 });
+
+vi.mock("@/features/responsive-layout", () => ({
+	useResponsiveGameLayout: vi.fn(),
+}));
 
 vi.mock("@/features/settings", () => ({
 	useSettingsForm: vi.fn(() => ({
@@ -411,6 +417,13 @@ afterEach(() => {
 describe("GamePage", () => {
 	beforeEach(() => {
 		vi.mocked(useGamePage).mockReturnValue(createGamePageViewModel());
+		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+			isDesktopLayout: true,
+			isLandscape: true,
+			isMobileLayout: false,
+			isPortrait: false,
+			isTabletLayout: false,
+		});
 	});
 
 	it("renders the HUD widget composition", () => {
@@ -503,6 +516,13 @@ describe("GamePage", () => {
 				},
 			}),
 		);
+		vi.mocked(useResponsiveGameLayout).mockReturnValue({
+			isDesktopLayout: false,
+			isLandscape: false,
+			isMobileLayout: true,
+			isPortrait: true,
+			isTabletLayout: false,
+		});
 
 		render(
 			<TooltipProvider>
@@ -511,6 +531,7 @@ describe("GamePage", () => {
 		);
 
 		expect(screen.getByText("Rotate Device")).not.toBeNull();
+		expect(screen.getByTestId("game-canvas-widget")).not.toBeNull();
 		expect(
 			screen.queryByRole("button", {
 				name: `Open ${GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}`,
