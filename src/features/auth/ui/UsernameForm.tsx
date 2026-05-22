@@ -13,12 +13,14 @@ import { type UsernameFormInput, useUsernameForm } from "../model";
 type UsernameFormProps = {
 	errorMessage: string | null;
 	isSubmitting: boolean;
+	suggestedUsername: string;
 	onSubmit: (input: UsernameFormInput) => Promise<void>;
 };
 
 export function UsernameForm({
 	errorMessage,
 	isSubmitting,
+	suggestedUsername,
 	onSubmit,
 }: UsernameFormProps) {
 	const {
@@ -29,6 +31,7 @@ export function UsernameForm({
 		usernameForm,
 	} = useUsernameForm({
 		errorMessage,
+		initialUsername: suggestedUsername,
 		isSubmitting,
 		onSubmit,
 	});

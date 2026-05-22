@@ -62,6 +62,7 @@ describe("TutorialPage", () => {
 			isUsernameModalOpen: false,
 			isUsernameSubmitting: false,
 			readyStatusLabel: null,
+			suggestedUsername: "Rune_AshBearAAAA",
 		});
 
 		render(<TutorialPage />);
@@ -110,6 +111,7 @@ describe("TutorialPage", () => {
 			isUsernameModalOpen: false,
 			isUsernameSubmitting: false,
 			readyStatusLabel: "rune-scribe#0420",
+			suggestedUsername: "Rune_AshBearAAAA",
 		});
 
 		render(<TutorialPage />);

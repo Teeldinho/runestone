@@ -14,6 +14,7 @@ type UsernameModalProps = {
 	errorMessage: string | null;
 	isOpen: boolean;
 	isSubmitting: boolean;
+	suggestedUsername: string;
 	onSubmit: (input: UsernameFormInput) => Promise<void>;
 };
 
@@ -21,6 +22,7 @@ export function UsernameModal({
 	errorMessage,
 	isOpen,
 	isSubmitting,
+	suggestedUsername,
 	onSubmit,
 }: UsernameModalProps) {
 	return (
@@ -38,6 +40,7 @@ export function UsernameModal({
 				<UsernameForm
 					errorMessage={errorMessage}
 					isSubmitting={isSubmitting}
+					suggestedUsername={suggestedUsername}
 					onSubmit={onSubmit}
 				/>
 			</DialogContent>

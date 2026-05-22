@@ -72,6 +72,7 @@ describe("HomePage", () => {
 			isUsernameModalOpen: false,
 			isUsernameSubmitting: false,
 			readyStatusLabel: null,
+			suggestedUsername: "Rune_AshBearAAAA",
 		});
 
 		render(<HomePage />);
@@ -116,6 +117,7 @@ describe("HomePage", () => {
 			isUsernameModalOpen: false,
 			isUsernameSubmitting: false,
 			readyStatusLabel: "rune-scribe#42",
+			suggestedUsername: "Rune_AshBearAAAA",
 		});
 
 		render(<HomePage />);
@@ -158,6 +160,7 @@ describe("HomePage", () => {
 			isUsernameModalOpen: false,
 			isUsernameSubmitting: false,
 			readyStatusLabel: null,
+			suggestedUsername: "Rune_AshBearAAAA",
 		});
 
 		render(<HomePage />);
