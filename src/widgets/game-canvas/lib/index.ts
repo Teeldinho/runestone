@@ -30,6 +30,7 @@ export {
 } from "./cameraRigTargets";
 export { createCanvasMachineSettingsViewModel } from "./createCanvasMachineSettingsViewModel";
 export { createCanvasSettingsViewModel } from "./createCanvasSettingsViewModel";
+export { createFloorOneDungeonRooms } from "./createFloorOneDungeonRooms";
 export { createRoomTorchPositions } from "./createRoomTorchPositions";
 export { createTorchSettings } from "./createTorchSettings";
 export { shouldSubmitFloorScore } from "./floorCompletion";

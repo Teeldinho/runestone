@@ -7,11 +7,17 @@ type UseGamePageLayoutSliceInput = {
 export const useGamePageLayoutSlice = ({
 	layout,
 }: UseGamePageLayoutSliceInput) => {
-	const { isDesktopLayout, isMobileTabletLandscape, isTabletLayout } = layout;
+	const {
+		isDesktopLayout,
+		isMobileTabletLandscape,
+		isPortraitLayout,
+		isTabletLayout,
+	} = layout;
 
 	return {
 		isDesktopLayout,
 		isMobileTabletLandscape,
+		isPortraitLayout,
 		isTabletLayout,
 	};
 };

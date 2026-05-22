@@ -47,6 +47,7 @@ describe("createAuthContextValue", () => {
 
 		const authContextValue = createAuthContextValue({
 			snapshot,
+			suggestedUsername: "Rune_AshBearAAAA",
 			handleUsernameFormSubmit,
 			handleSessionBootstrapRetry,
 		});
@@ -58,6 +59,7 @@ describe("createAuthContextValue", () => {
 		expect(authContextValue.isUsernameSubmitting).toBe(false);
 		expect(authContextValue.isUsernameModalOpen).toBe(false);
 		expect(authContextValue.readyStatusLabel).toBe("runestone_hero0001");
+		expect(authContextValue.suggestedUsername).toBe("Rune_AshBearAAAA");
 		expect(authContextValue.handleUsernameFormSubmit).toBe(
 			handleUsernameFormSubmit,
 		);
@@ -74,6 +76,7 @@ describe("createAuthContextValue", () => {
 				errorMessage: "Missing username",
 				matchedStates: [AUTH_STATUS.REQUIRES_USERNAME],
 			}),
+			suggestedUsername: "Rune_AshBearAAAA",
 			handleUsernameFormSubmit: vi.fn(),
 			handleSessionBootstrapRetry: vi.fn(),
 		});
@@ -89,6 +92,7 @@ describe("createAuthContextValue", () => {
 				errorMessage: null,
 				matchedStates: [AUTH_STATUS.SUBMITTING_USERNAME],
 			}),
+			suggestedUsername: "Rune_AshBearAAAA",
 			handleUsernameFormSubmit: vi.fn(),
 			handleSessionBootstrapRetry: vi.fn(),
 		});

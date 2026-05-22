@@ -8,6 +8,7 @@ import { useSettingsValues } from "@/features/settings";
 import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import { useGamePageMobileActionPanelModel } from "./useGamePageMobileActionPanelModel";
 import { useGamePageMobileCanvasStageModel } from "./useGamePageMobileCanvasStageModel";
+import { useGamePageMobileLayoutShellModel } from "./useGamePageMobileLayoutShellModel";
 import { useGamePageMobileSheetContentModel } from "./useGamePageMobileSheetContentModel";
 import { useGamePageMobileTopBarModel } from "./useGamePageMobileTopBarModel";
 import {
@@ -71,6 +72,7 @@ const createGamePageContextSlices = () => ({
 	layout: {
 		isDesktopLayout: false,
 		isMobileTabletLandscape: true,
+		isPortraitLayout: false,
 		isTabletLayout: true,
 	},
 	mobileSheet: {
@@ -120,7 +122,50 @@ describe("game page mobile focused models", () => {
 		expect(result.current.canvasMachineRuntime.currentRoomId).toBe(
 			ROOM_IDS.ENTRANCE,
 		);
+		expect(result.current.isInputBlocked).toBe(false);
 		expect(result.current.postprocessingEnabled).toBe(true);
+	});
+
+	it("builds mobile layout shell model", () => {
+		const contextSlices = createGamePageContextSlices();
+		mockGamePageContextSlices(contextSlices);
+
+		const { result } = renderHook(() => useGamePageMobileLayoutShellModel());
+
+		expect(result.current.drawerOpen).toBe(true);
+		expect(result.current.isInputBlocked).toBe(false);
+		expect(result.current.isPortraitGateVisible).toBe(false);
+		expect(result.current.shouldRenderSheetContent).toBe(true);
+
+		result.current.handleDrawerOpenChange(false);
+
+		expect(
+			contextSlices.mobileSheet.handleMobileSheetOpenChange,
+		).toHaveBeenCalledWith(false);
+	});
+
+	it("blocks the mobile layout shell in portrait mode", () => {
+		const contextSlices = createGamePageContextSlices();
+
+		mockGamePageContextSlices({
+			...contextSlices,
+			layout: {
+				...contextSlices.layout,
+				isPortraitLayout: true,
+			},
+		});
+
+		const { result } = renderHook(() => useGamePageMobileLayoutShellModel());
+
+		result.current.handleDrawerOpenChange(true);
+
+		expect(result.current.drawerOpen).toBe(false);
+		expect(result.current.isInputBlocked).toBe(true);
+		expect(result.current.isPortraitGateVisible).toBe(true);
+		expect(result.current.shouldRenderSheetContent).toBe(false);
+		expect(
+			contextSlices.mobileSheet.handleMobileSheetOpenChange,
+		).not.toHaveBeenCalled();
 	});
 
 	it("builds top bar model", () => {
@@ -173,6 +218,7 @@ describe("game page mobile focused models", () => {
 			GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART,
 		);
 		expect(result.current.isTabletLayout).toBe(true);
+		expect(result.current.drawerContentHeightClassName).toBe("h-[90dvh]");
 		expect(result.current.graphSections).toBe(
 			contextSlices.visualizer.graphSections,
 		);

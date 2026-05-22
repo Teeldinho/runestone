@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 
 import { RESPONSIVE_LAYOUT_MEDIA_QUERIES } from "../config";
+import {
+	createResponsiveGameLayoutSnapshot,
+	createResponsiveMediaQuerySubscriptions,
+	type ResponsiveGameLayoutSnapshot,
+	removeResponsiveMediaQuerySubscriptions,
+} from "../lib";
 
-export interface ResponsiveGameLayout {
-	isDesktopLayout: boolean;
-	isMobileLayout: boolean;
-	isTabletLayout: boolean;
-	isLandscape: boolean;
-	isPortrait: boolean;
-}
+export type ResponsiveGameLayout = ResponsiveGameLayoutSnapshot;
 
 export function useResponsiveGameLayout(): ResponsiveGameLayout {
 	const [isDesktopWidth, setIsDesktopWidth] = useState(false);
@@ -20,62 +20,44 @@ export function useResponsiveGameLayout(): ResponsiveGameLayout {
 	const [isPortrait, setIsPortrait] = useState(false);
 
 	useEffect(() => {
-		const queries = [
+		const subscriptions = createResponsiveMediaQuerySubscriptions([
 			{
 				query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.DESKTOP_MIN_WIDTH,
-				setter: setIsDesktopWidth,
+				setMatches: setIsDesktopWidth,
 			},
 			{
 				query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_STANDARD_WIDTH,
-				setter: setIsTabletWidth,
+				setMatches: setIsTabletWidth,
 			},
 			{
 				query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_COARSE_WIDTH,
-				setter: setIsCoarsePointerTabletWidth,
+				setMatches: setIsCoarsePointerTabletWidth,
 			},
 			{
 				query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.MOBILE_MAX_WIDTH,
-				setter: setIsMobile,
+				setMatches: setIsMobile,
 			},
 			{
 				query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.LANDSCAPE,
-				setter: setIsLandscape,
+				setMatches: setIsLandscape,
 			},
 			{
 				query: RESPONSIVE_LAYOUT_MEDIA_QUERIES.PORTRAIT,
-				setter: setIsPortrait,
+				setMatches: setIsPortrait,
 			},
-		];
-
-		const listeners: MediaQueryList[] = [];
-
-		queries.forEach(({ query, setter }) => {
-			const mediaQuery = window.matchMedia(query);
-			setter(mediaQuery.matches);
-
-			const listener = (event: MediaQueryListEvent) => {
-				setter(event.matches);
-			};
-
-			mediaQuery.addEventListener("change", listener);
-			listeners.push(mediaQuery);
-		});
+		]);
 
 		return () => {
-			listeners.forEach((mediaQuery) => {
-				mediaQuery.removeEventListener("change", () => {});
-			});
+			removeResponsiveMediaQuerySubscriptions(subscriptions);
 		};
 	}, []);
 
-	const isTablet = isTabletWidth || isCoarsePointerTabletWidth;
-	const isDesktop = isDesktopWidth && !isCoarsePointerTabletWidth;
-
-	return {
-		isDesktopLayout: isDesktop,
-		isMobileLayout: isMobile,
-		isTabletLayout: isTablet,
+	return createResponsiveGameLayoutSnapshot({
+		isCoarsePointerTabletWidth,
+		isDesktopWidth,
 		isLandscape,
+		isMobile,
 		isPortrait,
-	};
+		isTabletWidth,
+	});
 }

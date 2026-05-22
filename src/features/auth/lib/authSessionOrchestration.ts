@@ -122,9 +122,9 @@ const submitAuthUsername = async ({
 	createUser,
 	storage,
 	sendAuthEvent,
-}: SubmitAuthUsernameInput): Promise<void> => {
+}: SubmitAuthUsernameInput): Promise<UserProfile | null> => {
 	if (!sessionUuid) {
-		return;
+		return null;
 	}
 
 	const normalizedUsername = normalizeUsernameInput(username);
@@ -148,11 +148,15 @@ const submitAuthUsername = async ({
 			type: AUTH_EVENTS.USERNAME_SUBMIT_SUCCEEDED,
 			profile,
 		});
+
+		return profile;
 	} catch (error) {
 		sendAuthEvent({
 			type: AUTH_EVENTS.USERNAME_SUBMIT_FAILED,
 			errorMessage: resolveAuthSubmitErrorMessage(error),
 		});
+
+		return null;
 	}
 };
 

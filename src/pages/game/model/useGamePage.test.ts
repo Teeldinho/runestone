@@ -325,6 +325,7 @@ describe("useGamePage", () => {
 		);
 		expect(result.current.audio.isAudioMuted).toBe(false);
 		expect(result.current.layout.isDesktopLayout).toBe(true);
+		expect(result.current.layout.isPortraitLayout).toBe(false);
 		expect(result.current.canvas.cameraStateSnapshot.mode).toBe(
 			CAMERA_MODES.FREE_ORBITAL,
 		);

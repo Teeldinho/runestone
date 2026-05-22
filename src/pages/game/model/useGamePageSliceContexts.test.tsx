@@ -75,6 +75,7 @@ const contextSlices = {
 	layout: {
 		isDesktopLayout: true,
 		isMobileTabletLandscape: false,
+		isPortraitLayout: false,
 		isTabletLayout: false,
 	},
 	mobileSheet: {

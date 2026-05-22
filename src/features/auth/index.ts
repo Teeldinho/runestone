@@ -6,10 +6,12 @@ export {
 	AUTH_ROUTE_PATHS,
 	AUTH_STATUS,
 	AUTH_STORAGE_KEYS,
+	GUEST_USERNAME_CONFIG,
 	USERNAME_RULES,
 } from "./config";
 export {
 	clearPersistedUsername,
+	createSuggestedUsername,
 	ensureSessionUuid,
 	formatUserDisplayTag,
 	getAuthClientStorage,

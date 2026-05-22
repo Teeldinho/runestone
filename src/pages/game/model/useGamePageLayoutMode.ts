@@ -6,5 +6,6 @@ export const useGamePageLayoutMode = () => {
 	return {
 		isDesktopLayout: layout.isDesktopLayout,
 		isMobileTabletLandscape: layout.isMobileTabletLandscape,
+		isPortraitLayout: layout.isPortraitLayout,
 	};
 };

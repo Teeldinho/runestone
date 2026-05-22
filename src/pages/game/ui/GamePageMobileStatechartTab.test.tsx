@@ -55,6 +55,7 @@ afterEach(() => {
 describe("GamePageMobileStatechartTab", () => {
 	it("uses taller cards on phones", () => {
 		mockUseGamePageMobileSheetContentModel.mockReturnValue({
+			drawerContentHeightClassName: "h-[90dvh]",
 			graphSections: [],
 			isTabletLayout: false,
 		});
@@ -71,6 +72,7 @@ describe("GamePageMobileStatechartTab", () => {
 
 	it("keeps the tablet card heights", () => {
 		mockUseGamePageMobileSheetContentModel.mockReturnValue({
+			drawerContentHeightClassName: "h-[90dvh]",
 			graphSections: [],
 			isTabletLayout: true,
 		});

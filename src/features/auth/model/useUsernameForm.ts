@@ -8,6 +8,7 @@ import type { UsernameFormInput } from "./types";
 
 type UseUsernameFormParams = {
 	errorMessage: string | null;
+	initialUsername?: string;
 	isSubmitting: boolean;
 	onSubmit: (input: UsernameFormInput) => Promise<void>;
 };
@@ -41,6 +42,7 @@ const getUsernameFieldErrorMessage = (errors: unknown[]): string | null => {
 
 export const useUsernameForm = ({
 	errorMessage,
+	initialUsername = "",
 	isSubmitting,
 	onSubmit,
 }: UseUsernameFormParams) => {
@@ -50,7 +52,7 @@ export const useUsernameForm = ({
 
 	const usernameForm = useForm({
 		defaultValues: {
-			username: "",
+			username: initialUsername,
 		},
 		validationLogic: revalidateLogic({
 			mode: "change",

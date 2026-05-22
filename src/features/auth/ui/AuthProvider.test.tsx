@@ -32,6 +32,7 @@ describe("AuthProvider", () => {
 			isUsernameModalOpen: false,
 			isUsernameSubmitting: false,
 			readyStatusLabel: "Signed in",
+			suggestedUsername: "Rune_AshBearAAAA",
 		});
 
 		render(

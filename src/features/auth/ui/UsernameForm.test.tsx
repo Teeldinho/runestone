@@ -15,6 +15,7 @@ describe("UsernameForm", () => {
 			<UsernameForm
 				errorMessage={null}
 				isSubmitting={false}
+				suggestedUsername="Rune_AshBearAAAA"
 				onSubmit={vi.fn()}
 			/>,
 		);
@@ -27,6 +28,7 @@ describe("UsernameForm", () => {
 		expect(usernameInput.getAttribute("placeholder")).toBe(
 			AUTH_COPY.USERNAME_PLACEHOLDER,
 		);
+		expect((usernameInput as HTMLInputElement).value).toBe("Rune_AshBearAAAA");
 
 		fireEvent.change(screen.getByLabelText(AUTH_COPY.USERNAME_LABEL), {
 			target: { value: "ab" },
@@ -56,6 +58,7 @@ describe("UsernameForm", () => {
 			<UsernameForm
 				errorMessage="Unable to create profile"
 				isSubmitting={false}
+				suggestedUsername="Rune_AshBearAAAA"
 				onSubmit={vi.fn()}
 			/>,
 		);

@@ -4,6 +4,7 @@ import { Drawer } from "@/shared/ui";
 
 import { GamePageMobileCanvasStage } from "./GamePageMobileCanvasStage";
 import { GamePageMobileSheetContent } from "./GamePageMobileSheetContent";
+import { GamePagePortraitGate } from "./GamePagePortraitGate";
 
 export function GamePageMobileLayout() {
 	const viewModel = useGamePageMobileLayoutShellModel();
@@ -15,13 +16,17 @@ export function GamePageMobileLayout() {
 		>
 			<StateVisualizerWorkspaceProvider>
 				<Drawer
-					open={viewModel.isMobileSheetOpen}
-					onOpenChange={viewModel.handleMobileSheetOpenChange}
+					open={viewModel.drawerOpen}
+					onOpenChange={viewModel.handleDrawerOpenChange}
 				>
 					<GamePageMobileCanvasStage />
-					<GamePageMobileSheetContent />
+					{viewModel.shouldRenderSheetContent ? (
+						<GamePageMobileSheetContent />
+					) : null}
 				</Drawer>
 			</StateVisualizerWorkspaceProvider>
+
+			<GamePagePortraitGate isVisible={viewModel.isPortraitGateVisible} />
 		</main>
 	);
 }
