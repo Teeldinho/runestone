@@ -22,6 +22,12 @@ export const GAME_PAGE_MOBILE_SHEET = {
 	},
 } as const;
 
+export const GAME_PAGE_PORTRAIT_GATE = {
+	TITLE: "Rotate Device",
+	DESCRIPTION: "Landscape mode is required on mobile and tablet.",
+	BODY: "Rotate your device to landscape to continue playing.",
+} as const;
+
 export const GAME_PAGE_SCROLL_LOCK = {
 	OVERFLOW_LOCKED: "hidden",
 	OVERSCROLL_BEHAVIOR_LOCKED: "none",

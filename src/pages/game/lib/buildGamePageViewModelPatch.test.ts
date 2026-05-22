@@ -40,6 +40,7 @@ const STABLE_HUD = {
 const STABLE_LAYOUT = {
 	isDesktopLayout: true,
 	isMobileTabletLandscape: false,
+	isPortraitLayout: false,
 	isTabletLayout: false,
 };
 const STABLE_MOBILE_SHEET = {
@@ -110,6 +111,7 @@ describe("buildGamePageViewModelPatch", () => {
 		const newLayout = {
 			isDesktopLayout: false,
 			isMobileTabletLandscape: true,
+			isPortraitLayout: false,
 			isTabletLayout: false,
 		};
 		const prev: GamePageViewModel = { ...BASE_VIEW_MODEL };

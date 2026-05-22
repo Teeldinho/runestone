@@ -130,5 +130,6 @@ describe("useGamePageMachineState", () => {
 			handleCameraModeSwitch,
 		);
 		expect(result.current.layout.isMobileTabletLandscape).toBe(true);
+		expect(result.current.layout.isPortraitLayout).toBe(false);
 	});
 });

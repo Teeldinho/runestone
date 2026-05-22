@@ -21,6 +21,7 @@ type GamePageMachineState = {
 	layout: {
 		isDesktopLayout: boolean;
 		isMobileTabletLandscape: boolean;
+		isPortraitLayout: boolean;
 		isTabletLayout: boolean;
 	};
 	playerActorRef: ReturnType<typeof usePlayerMachineRuntime>["playerActorRef"];
@@ -35,7 +36,7 @@ export const useGamePageMachineState = (): GamePageMachineState => {
 		useCameraMachine();
 	const gameActorRef = useGameMachineActorRef();
 
-	const { isDesktopLayout, isLandscape, isTabletLayout } =
+	const { isDesktopLayout, isLandscape, isPortrait, isTabletLayout } =
 		useResponsiveGameLayout();
 
 	return {
@@ -51,6 +52,7 @@ export const useGamePageMachineState = (): GamePageMachineState => {
 				isDesktopLayout,
 				isLandscape,
 			),
+			isPortraitLayout: !isDesktopLayout && isPortrait,
 			isTabletLayout,
 		},
 		playerMachine: {
