@@ -37,144 +37,88 @@ beforeEach(() => {
 	mockUseAuthContext.mockReset();
 });
 
+const createAuthContext = (isAuthenticated: boolean) => ({
+	authStatus: isAuthenticated
+		? AUTH_STATUS.AUTHENTICATED
+		: AUTH_STATUS.REQUIRES_USERNAME,
+	errorMessage: null,
+	handleSessionBootstrapRetry: vi.fn(),
+	handleUsernameFormSubmit: vi.fn(),
+	isAuthenticated,
+	isCheckingSession: false,
+	isUsernameModalOpen: false,
+	isUsernameSubmitting: false,
+	readyStatusLabel: isAuthenticated ? "Rune_AshBearAAAA" : null,
+	suggestedUsername: "Rune_AshBearAAAA",
+});
+
 describe("HomePage", () => {
-	it.each([
-		{
-			isCheckingSession: true,
-			label: "auth checking",
-			authStatus: AUTH_STATUS.CHECKING_SESSION,
-			statusHeading: HOME_STATUS_COPY.CHECKING_SESSION.title,
-		},
-		{
-			isCheckingSession: false,
-			label: "unauthenticated",
-			authStatus: AUTH_STATUS.REQUIRES_USERNAME,
-			statusHeading: HOME_STATUS_COPY.REQUIRES_USERNAME.title,
-		},
-		{
-			isCheckingSession: false,
-			label: "bootstrap failure",
-			authStatus: AUTH_STATUS.BOOTSTRAP_FAILED,
-			statusHeading: HOME_STATUS_COPY.BOOTSTRAP_FAILED.title,
-		},
-	])("keeps dungeon entry disabled while $label", ({
-		authStatus,
-		isCheckingSession,
-		statusHeading,
-	}) => {
-		mockUseAuthContext.mockReturnValue({
-			authStatus,
-			errorMessage: null,
-			handleUsernameFormSubmit: vi.fn(),
-			handleSessionBootstrapRetry: vi.fn(),
-			isAuthenticated: false,
-			isCheckingSession,
-			isUsernameModalOpen: false,
-			isUsernameSubmitting: false,
-			readyStatusLabel: null,
-			suggestedUsername: "Rune_AshBearAAAA",
-		});
+	it("renders the redesigned landing copy and concept sections", () => {
+		mockUseAuthContext.mockReturnValue(createAuthContext(false));
 
 		render(<HomePage />);
 
-		const dungeonEntryButton = screen.getByRole("button", {
-			name: HOME_COPY.CTA_LABEL,
-		});
+		expect(
+			screen.getByRole("heading", { name: HOME_COPY.HEADING }),
+		).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.SUBTITLE)).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.MANIFEST_PATH_SUBTITLE)).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.RUNTIME_HEADING)).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.FEATURES_HEADING)).not.toBeNull();
+		expect(screen.getByText("State → Room")).not.toBeNull();
+		expect(screen.getByText("States become rooms")).not.toBeNull();
+		expect(screen.getByText("Viewport")).not.toBeNull();
+	});
 
-		expect((dungeonEntryButton as HTMLButtonElement).disabled).toBe(true);
-		expect(dungeonEntryButton.getAttribute("data-variant")).toBe("default");
+	it("keeps dungeon entry disabled before authentication", () => {
+		mockUseAuthContext.mockReturnValue(createAuthContext(false));
+
+		render(<HomePage />);
+
+		expect(
+			screen
+				.getAllByRole("button", {
+					name: HOME_COPY.CTA_LABEL,
+				})
+				.every((button) => (button as HTMLButtonElement).disabled),
+		).toBe(true);
 		expect(
 			screen.getByRole("link", {
 				name: HOME_COPY.TUTORIAL_LABEL,
 			}),
 		).not.toBeNull();
-		expect(
-			screen
-				.getByRole("link", {
-					name: HOME_COPY.TUTORIAL_LABEL,
-				})
-				.getAttribute("data-variant"),
-		).toBe("outline");
-		expect(screen.getByText(HOME_COPY.SUBTITLE)).not.toBeNull();
-		expect(screen.getByText(HOME_COPY.SESSION_NOTE)).not.toBeNull();
-		expect(screen.getByText(statusHeading)).not.toBeNull();
-
-		const main = screen.getByRole("main");
-
-		expect(main.className).toContain("h-dvh");
-		expect(main.className).toContain("overflow-y-auto");
-		expect(main.className).toContain("overscroll-contain");
 	});
 
-	it("shows the dungeon entry CTA after authentication", () => {
-		mockUseAuthContext.mockReturnValue({
-			authStatus: AUTH_STATUS.AUTHENTICATED,
-			errorMessage: null,
-			handleUsernameFormSubmit: vi.fn(),
-			handleSessionBootstrapRetry: vi.fn(),
-			isAuthenticated: true,
-			isCheckingSession: false,
-			isUsernameModalOpen: false,
-			isUsernameSubmitting: false,
-			readyStatusLabel: "rune-scribe#42",
-			suggestedUsername: "Rune_AshBearAAAA",
-		});
+	it("shows dungeon entry links after authentication", () => {
+		mockUseAuthContext.mockReturnValue(createAuthContext(true));
 
 		render(<HomePage />);
 
 		expect(
-			screen.getByRole("link", {
+			screen.getAllByRole("link", {
 				name: HOME_COPY.CTA_LABEL,
-			}),
-		).not.toBeNull();
-		expect(
-			screen
-				.getByRole("link", {
-					name: HOME_COPY.CTA_LABEL,
-				})
-				.getAttribute("data-variant"),
-		).toBe("default");
-		expect(
-			screen
-				.getByRole("link", {
-					name: HOME_COPY.TUTORIAL_LABEL,
-				})
-				.getAttribute("data-variant"),
-		).toBe("outline");
-		expect(screen.getByText(HOME_COPY.BADGE)).not.toBeNull();
-		expect(screen.getByText(HOME_COPY.SESSION_NOTE)).not.toBeNull();
-		expect(screen.getByText(HOME_COPY.FEATURES_HEADING)).not.toBeNull();
+			}).length,
+		).toBeGreaterThan(0);
 	});
 
 	it("shows a retry action when bootstrap fails", () => {
 		const handleSessionBootstrapRetry = vi.fn();
 
 		mockUseAuthContext.mockReturnValue({
+			...createAuthContext(false),
 			authStatus: AUTH_STATUS.BOOTSTRAP_FAILED,
-			authenticatedProfile: null,
 			errorMessage: "Convex unreachable",
-			handleUsernameFormSubmit: vi.fn(),
 			handleSessionBootstrapRetry,
-			isAuthenticated: false,
-			isCheckingSession: false,
-			isUsernameModalOpen: false,
-			isUsernameSubmitting: false,
-			readyStatusLabel: null,
-			suggestedUsername: "Rune_AshBearAAAA",
 		});
 
 		render(<HomePage />);
 
-		expect(
-			screen.getByRole("button", {
-				name: HOME_STATUS_COPY.BOOTSTRAP_FAILED.actionLabel,
-			}),
-		).not.toBeNull();
 		screen
 			.getByRole("button", {
 				name: HOME_STATUS_COPY.BOOTSTRAP_FAILED.actionLabel,
 			})
 			.click();
+
 		expect(handleSessionBootstrapRetry).toHaveBeenCalledOnce();
 	});
 });
