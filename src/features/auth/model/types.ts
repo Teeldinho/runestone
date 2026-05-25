@@ -9,6 +9,8 @@ export type AuthMachineContext = {
 	profile: UserProfile | null;
 	pendingUsername: string | null;
 	errorMessage: string | null;
+	isUsernameEntryRequested: boolean;
+	isUsernameEntryDeferred: boolean;
 };
 
 export type AuthMachineEvent =
@@ -38,6 +40,12 @@ export type AuthMachineEvent =
 			errorMessage: string;
 	  }
 	| {
+			type: (typeof AUTH_EVENTS)["USERNAME_ENTRY_REQUESTED"];
+	  }
+	| {
+			type: (typeof AUTH_EVENTS)["USERNAME_ENTRY_DEFERRED"];
+	  }
+	| {
 			type: (typeof AUTH_EVENTS)["SIGN_OUT_REQUESTED"];
 	  };
 
@@ -55,6 +63,8 @@ export type AuthContextValue = {
 	isUsernameSubmitting: boolean;
 	readyStatusLabel: string | null;
 	suggestedUsername: string;
+	handleUsernameEntryRequest: () => void;
+	handleUsernameEntryDismiss: () => void;
 	handleSessionBootstrapRetry: () => void;
 	handleUsernameFormSubmit: (input: UsernameFormInput) => Promise<void>;
 };

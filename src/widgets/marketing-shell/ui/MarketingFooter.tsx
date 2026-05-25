@@ -1,6 +1,12 @@
 import { Link } from "@tanstack/react-router";
 
-import { MARKETING_SHELL_COPY } from "../config";
+import { cn } from "@/shared/lib";
+
+import {
+	MARKETING_LAYOUT_CLASS_NAMES,
+	MARKETING_ROUTES,
+	MARKETING_SHELL_COPY,
+} from "../config";
 import type { MarketingNavigationViewModel } from "../lib";
 
 type MarketingFooterProps = {
@@ -10,10 +16,29 @@ type MarketingFooterProps = {
 export function MarketingFooter({ viewModel }: MarketingFooterProps) {
 	return (
 		<footer className="border-panel-border/70 border-t bg-background/80">
-			<div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-5 py-6 text-sm text-muted-foreground sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-12">
-				<p>{MARKETING_SHELL_COPY.FOOTER_COPYRIGHT}</p>
+			<div
+				className={cn(
+					"mx-auto grid w-full justify-items-center gap-4 px-4 py-6 text-center text-sm text-muted-foreground sm:px-6 lg:grid-cols-[auto_1fr_auto] lg:items-center lg:px-8 lg:justify-items-stretch lg:text-left",
+					MARKETING_LAYOUT_CLASS_NAMES.CONTENT_WIDTH,
+				)}
+			>
+				<Link
+					to={MARKETING_ROUTES.HOME}
+					className="inline-flex items-center text-xs font-bold tracking-[0.28em] justify-self-center lg:justify-self-start"
+					aria-label={MARKETING_SHELL_COPY.BRAND_NAME}
+				>
+					<span className="text-primary">
+						{MARKETING_SHELL_COPY.BRAND_RUNE_SEGMENT}
+					</span>
+					<span className="text-accent">
+						{MARKETING_SHELL_COPY.BRAND_STONE_SEGMENT}
+					</span>
+				</Link>
 
-				<nav aria-label="Footer navigation" className="flex flex-wrap gap-3">
+				<nav
+					aria-label="Footer navigation"
+					className="flex flex-wrap justify-center gap-3 lg:justify-center"
+				>
 					{viewModel.footerLinks.map((link) =>
 						link.type === "external" ? (
 							<a
@@ -37,7 +62,8 @@ export function MarketingFooter({ viewModel }: MarketingFooterProps) {
 					)}
 				</nav>
 
-				<p className="text-dungeon-gold">
+				<p className="text-balance justify-self-center text-xs text-panel-body lg:justify-self-end lg:text-right lg:text-sm">
+					{MARKETING_SHELL_COPY.FOOTER_COPYRIGHT}.{" "}
 					{MARKETING_SHELL_COPY.FOOTER_TAGLINE}
 				</p>
 			</div>

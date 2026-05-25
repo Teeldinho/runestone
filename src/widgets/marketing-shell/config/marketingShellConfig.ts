@@ -21,10 +21,12 @@ export const MARKETING_SHELL_COPY = {
 	COMPACT_BRAND_RUNE_SEGMENT: "R",
 	COMPACT_BRAND_STONE_SEGMENT: "S",
 	ENTER_DUNGEON_LABEL: "Enter Dungeon",
-	DRAWER_TITLE: "Runestone",
-	DRAWER_DESCRIPTION: "Navigate the playable architecture guide.",
+	NAVIGATION_SHEET_TITLE: "Runestone",
+	NAVIGATION_SHEET_DESCRIPTION: "Navigate the playable architecture guide.",
 	FOOTER_COPYRIGHT: "© 2026 Runestone",
 	FOOTER_TAGLINE: "Playable architecture",
+	GITHUB_LABEL: "GitHub",
+	OPEN_NAVIGATION_LABEL: "Open navigation",
 } as const;
 
 export const MARKETING_NAVIGATION_ITEMS = [

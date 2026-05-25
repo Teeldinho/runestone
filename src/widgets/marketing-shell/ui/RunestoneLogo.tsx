@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-
+import runestoneMarkUrl from "../assets/runestone-mark.png";
 import { MARKETING_ROUTES, MARKETING_SHELL_COPY } from "../config";
 
 type RunestoneLogoProps = {
@@ -7,52 +7,51 @@ type RunestoneLogoProps = {
 };
 
 export function RunestoneLogo({ variant }: RunestoneLogoProps) {
-	if (variant === "desktop") {
-		return (
-			<Link
-				to={MARKETING_ROUTES.HOME}
-				className="inline-flex items-center gap-2 text-sm font-bold tracking-[0.28em]"
-				aria-label={MARKETING_SHELL_COPY.BRAND_NAME}
-			>
-				<span
-					aria-hidden="true"
-					className="relative flex size-7 items-center justify-center rounded-lg border border-primary/40 bg-primary/10"
-				>
-					<span className="absolute size-3 rounded-sm border border-dungeon-gold/70 rotate-45" />
-					<span className="size-1.5 rounded-full bg-primary" />
-				</span>
-				<span>
-					<span className="text-primary">
-						{MARKETING_SHELL_COPY.BRAND_RUNE_SEGMENT}
-					</span>
-					<span className="text-accent">
-						{MARKETING_SHELL_COPY.BRAND_STONE_SEGMENT}
-					</span>
-				</span>
-			</Link>
-		);
-	}
+	const isDesktop = variant === "desktop";
 
 	return (
 		<Link
 			to={MARKETING_ROUTES.HOME}
-			className="inline-flex items-center gap-2 text-sm font-bold tracking-[0.26em]"
+			className="inline-flex items-center gap-2.5"
 			aria-label={MARKETING_SHELL_COPY.BRAND_NAME}
 		>
 			<span
 				aria-hidden="true"
-				className="relative flex size-7 items-center justify-center rounded-lg border border-primary/40 bg-primary/10"
+				className="flex size-8 shrink-0 items-center justify-center"
 			>
-				<span className="absolute size-3 rounded-sm border border-dungeon-gold/70 rotate-45" />
-				<span className="size-1.5 rounded-full bg-primary" />
+				<img
+					alt=""
+					aria-hidden="true"
+					className="size-full object-contain"
+					src={runestoneMarkUrl}
+				/>
 			</span>
-			<span>
-				<span className="text-primary">
-					{MARKETING_SHELL_COPY.COMPACT_BRAND_RUNE_SEGMENT}
-				</span>
-				<span className="text-accent">
-					{MARKETING_SHELL_COPY.COMPACT_BRAND_STONE_SEGMENT}
-				</span>
+			<span
+				className={
+					isDesktop
+						? "text-base font-bold tracking-[0.28em] sm:text-lg"
+						: "text-base font-bold tracking-[0.2em]"
+				}
+			>
+				{isDesktop ? (
+					<>
+						<span className="text-primary">
+							{MARKETING_SHELL_COPY.BRAND_RUNE_SEGMENT}
+						</span>
+						<span className="text-accent">
+							{MARKETING_SHELL_COPY.BRAND_STONE_SEGMENT}
+						</span>
+					</>
+				) : (
+					<>
+						<span className="text-primary">
+							{MARKETING_SHELL_COPY.COMPACT_BRAND_RUNE_SEGMENT}
+						</span>
+						<span className="text-accent">
+							{MARKETING_SHELL_COPY.COMPACT_BRAND_STONE_SEGMENT}
+						</span>
+					</>
+				)}
 			</span>
 		</Link>
 	);

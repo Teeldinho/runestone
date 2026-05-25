@@ -22,6 +22,18 @@ export const authMachine = setup({
 	initial: AUTH_STATUS.CHECKING_SESSION,
 	context: AUTH_INITIAL_CONTEXT as AuthMachineContext,
 	on: {
+		[AUTH_EVENTS.USERNAME_ENTRY_REQUESTED]: {
+			actions: assign(() => ({
+				[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_REQUESTED]: true,
+				[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_DEFERRED]: false,
+			})),
+		},
+		[AUTH_EVENTS.USERNAME_ENTRY_DEFERRED]: {
+			actions: assign(() => ({
+				[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_REQUESTED]: false,
+				[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_DEFERRED]: true,
+			})),
+		},
 		[AUTH_EVENTS.SESSION_BOOTSTRAPPED]: [
 			{
 				target: `.${AUTH_STATUS.AUTHENTICATED}`,
@@ -31,6 +43,8 @@ export const authMachine = setup({
 					[AUTH_CONTEXT_KEYS.PROFILE]: event.profile,
 					[AUTH_CONTEXT_KEYS.PENDING_USERNAME]: null,
 					[AUTH_CONTEXT_KEYS.ERROR_MESSAGE]: null,
+					[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_REQUESTED]: false,
+					[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_DEFERRED]: false,
 				})),
 			},
 			{
@@ -40,6 +54,8 @@ export const authMachine = setup({
 					[AUTH_CONTEXT_KEYS.PROFILE]: null,
 					[AUTH_CONTEXT_KEYS.PENDING_USERNAME]: null,
 					[AUTH_CONTEXT_KEYS.ERROR_MESSAGE]: null,
+					[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_REQUESTED]: false,
+					[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_DEFERRED]: false,
 				})),
 			},
 		],
@@ -50,6 +66,7 @@ export const authMachine = setup({
 				[AUTH_CONTEXT_KEYS.PROFILE]: null,
 				[AUTH_CONTEXT_KEYS.PENDING_USERNAME]: null,
 				[AUTH_CONTEXT_KEYS.ERROR_MESSAGE]: event.errorMessage,
+				[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_REQUESTED]: false,
 			})),
 		},
 		[AUTH_EVENTS.SESSION_BOOTSTRAP_RETRY_REQUESTED]: {
@@ -59,6 +76,7 @@ export const authMachine = setup({
 				[AUTH_CONTEXT_KEYS.PROFILE]: null,
 				[AUTH_CONTEXT_KEYS.PENDING_USERNAME]: null,
 				[AUTH_CONTEXT_KEYS.ERROR_MESSAGE]: null,
+				[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_REQUESTED]: false,
 			})),
 		},
 	},
@@ -72,6 +90,8 @@ export const authMachine = setup({
 					actions: assign(({ event }) => ({
 						[AUTH_CONTEXT_KEYS.PENDING_USERNAME]: event.username,
 						[AUTH_CONTEXT_KEYS.ERROR_MESSAGE]: null,
+						[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_REQUESTED]: false,
+						[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_DEFERRED]: false,
 					})),
 				},
 			},
@@ -84,6 +104,8 @@ export const authMachine = setup({
 						[AUTH_CONTEXT_KEYS.PROFILE]: event.profile,
 						[AUTH_CONTEXT_KEYS.PENDING_USERNAME]: null,
 						[AUTH_CONTEXT_KEYS.ERROR_MESSAGE]: null,
+						[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_REQUESTED]: false,
+						[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_DEFERRED]: false,
 					})),
 				},
 				[AUTH_EVENTS.USERNAME_SUBMIT_FAILED]: {
@@ -91,6 +113,8 @@ export const authMachine = setup({
 					actions: assign(({ event }) => ({
 						[AUTH_CONTEXT_KEYS.PENDING_USERNAME]: null,
 						[AUTH_CONTEXT_KEYS.ERROR_MESSAGE]: event.errorMessage,
+						[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_REQUESTED]: false,
+						[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_DEFERRED]: false,
 					})),
 				},
 			},
@@ -103,6 +127,7 @@ export const authMachine = setup({
 						[AUTH_CONTEXT_KEYS.PROFILE]: null,
 						[AUTH_CONTEXT_KEYS.PENDING_USERNAME]: null,
 						[AUTH_CONTEXT_KEYS.ERROR_MESSAGE]: null,
+						[AUTH_CONTEXT_KEYS.IS_USERNAME_ENTRY_REQUESTED]: false,
 					})),
 				},
 			},

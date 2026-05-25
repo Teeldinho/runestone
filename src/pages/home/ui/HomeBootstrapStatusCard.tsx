@@ -37,14 +37,14 @@ export function HomeBootstrapStatusCard({
 			<section
 				aria-label="Session status"
 				aria-live="polite"
-				className="w-full rounded-xl bg-background/15 px-4 py-4 sm:px-5"
+				className="mx-auto w-full max-w-xl rounded-xl bg-background/15 px-4 py-4 text-center sm:px-5"
 			>
-				<div className="flex items-start gap-3">
+				<div className="flex flex-col items-center gap-3">
 					<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-dungeon-gold/10 text-dungeon-gold">
 						<LoaderCircle className="size-4 animate-spin" />
 					</div>
 					<div className="min-w-0 space-y-1.5">
-						<div className="flex flex-wrap items-center gap-2">
+						<div className="flex flex-wrap items-center justify-center gap-2">
 							<Badge
 								variant="outline"
 								className="border-dungeon-gold/30 text-dungeon-gold"
@@ -107,14 +107,14 @@ export function HomeBootstrapStatusCard({
 			<section
 				aria-label="Session status"
 				aria-live="polite"
-				className="w-full rounded-xl bg-background/15 px-4 py-4 sm:px-5"
+				className="mx-auto w-full max-w-xl rounded-xl bg-background/15 px-4 py-4 text-center sm:px-5"
 			>
-				<div className="flex items-start gap-3">
+				<div className="flex flex-col items-center gap-3">
 					<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-dungeon-gold/10 text-dungeon-gold">
 						<ShieldCheck className="size-4" />
 					</div>
 					<div className="min-w-0 space-y-1.5">
-						<div className="flex flex-wrap items-center gap-2">
+						<div className="flex flex-wrap items-center justify-center gap-2">
 							<Badge
 								variant="outline"
 								className="border-dungeon-gold/30 text-dungeon-gold"
@@ -149,9 +149,9 @@ export function HomeBootstrapStatusCard({
 		<section
 			aria-label="Session status"
 			aria-live="polite"
-			className="w-full rounded-xl bg-background/15 px-4 py-4 sm:px-5"
+			className="mx-auto w-full max-w-xl rounded-xl bg-background/15 px-4 py-4 text-center sm:px-5"
 		>
-			<div className="flex items-start gap-3">
+			<div className="flex flex-col items-center gap-3">
 				<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-dungeon-gold/10 text-dungeon-gold">
 					{isSubmittingUsername ? (
 						<LoaderCircle className="size-4 animate-spin" />
@@ -160,7 +160,7 @@ export function HomeBootstrapStatusCard({
 					)}
 				</div>
 				<div className="min-w-0 space-y-1.5">
-					<div className="flex flex-wrap items-center gap-2">
+					<div className="flex flex-wrap items-center justify-center gap-2">
 						<Badge
 							variant="outline"
 							className="border-dungeon-gold/30 text-dungeon-gold"

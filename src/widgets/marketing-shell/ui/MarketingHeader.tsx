@@ -4,23 +4,34 @@ import { DoorOpen } from "lucide-react";
 import { cn } from "@/shared/lib";
 import { Button } from "@/shared/ui";
 
-import { MARKETING_ROUTES, MARKETING_SHELL_COPY } from "../config";
+import {
+	MARKETING_LAYOUT_CLASS_NAMES,
+	MARKETING_ROUTES,
+	MARKETING_SHELL_COPY,
+} from "../config";
 import type { MarketingNavigationViewModel } from "../lib";
-import { MarketingNavigationDrawer } from "./MarketingNavigationDrawer";
+import { MarketingNavigationSheet } from "./MarketingNavigationSheet";
 import { RunestoneLogo } from "./RunestoneLogo";
 
 type MarketingHeaderProps = {
 	isAuthenticated: boolean;
+	onEntryRequest: () => void;
 	viewModel: MarketingNavigationViewModel;
 };
 
 export function MarketingHeader({
 	isAuthenticated,
+	onEntryRequest,
 	viewModel,
 }: MarketingHeaderProps) {
 	return (
 		<header className="sticky top-0 z-40 border-panel-border/70 border-b bg-background/80 backdrop-blur-xl">
-			<div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-12">
+			<div
+				className={cn(
+					"mx-auto flex h-16 w-full items-center justify-between gap-4 px-4 sm:px-6 lg:px-8",
+					MARKETING_LAYOUT_CLASS_NAMES.CONTENT_WIDTH,
+				)}
+			>
 				<div className="hidden lg:block">
 					<RunestoneLogo variant="desktop" />
 				</div>
@@ -36,10 +47,11 @@ export function MarketingHeader({
 						<Link
 							key={item.id}
 							to={item.to}
+							aria-current={item.isActive ? "page" : undefined}
 							className={cn(
 								"rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
 								item.isActive
-									? "bg-primary/10 text-primary"
+									? "bg-dungeon-gold/10 text-dungeon-gold"
 									: "text-panel-body hover:bg-muted/60 hover:text-panel-title",
 							)}
 						>
@@ -48,7 +60,7 @@ export function MarketingHeader({
 					))}
 				</nav>
 
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-2 sm:gap-3">
 					{isAuthenticated ? (
 						<Button asChild size="lg" className="hidden sm:inline-flex">
 							<Link to={MARKETING_ROUTES.GAME}>
@@ -57,7 +69,12 @@ export function MarketingHeader({
 							</Link>
 						</Button>
 					) : (
-						<Button disabled size="lg" className="hidden sm:inline-flex">
+						<Button
+							type="button"
+							size="lg"
+							className="hidden sm:inline-flex"
+							onClick={onEntryRequest}
+						>
 							<DoorOpen className="size-4" />
 							{MARKETING_SHELL_COPY.ENTER_DUNGEON_LABEL}
 						</Button>
@@ -74,17 +91,19 @@ export function MarketingHeader({
 						</Button>
 					) : (
 						<Button
-							disabled
+							type="button"
 							size="icon"
 							className="sm:hidden"
 							aria-label={MARKETING_SHELL_COPY.ENTER_DUNGEON_LABEL}
+							onClick={onEntryRequest}
 						>
 							<DoorOpen className="size-4" />
 						</Button>
 					)}
 
-					<MarketingNavigationDrawer
+					<MarketingNavigationSheet
 						isAuthenticated={isAuthenticated}
+						onEntryRequest={onEntryRequest}
 						viewModel={viewModel}
 					/>
 				</div>
