@@ -1,0 +1,1 @@
+export { useMarketingNavigation } from "./useMarketingNavigation";
