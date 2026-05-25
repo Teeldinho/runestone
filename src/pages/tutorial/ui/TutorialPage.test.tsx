@@ -1,12 +1,15 @@
 // @vitest-environment happy-dom
 
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+	within,
+} from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-import { AUTH_STATUS } from "@/features/auth";
-
-import { TUTORIAL_CONTROLS, TUTORIAL_COPY } from "../config";
 
 import { TutorialPage } from "./TutorialPage";
 
@@ -33,113 +36,85 @@ vi.mock("@tanstack/react-router", () => ({
 afterEach(cleanup);
 
 beforeEach(() => {
-	mockUseAuthContext.mockReset();
+	mockUseAuthContext.mockReturnValue({
+		isAuthenticated: true,
+	});
 });
 
-describe("TutorialPage", () => {
-	it.each([
-		{
-			authStatus: AUTH_STATUS.CHECKING_SESSION,
-			isCheckingSession: true,
-			label: "auth checking",
-		},
-		{
-			authStatus: AUTH_STATUS.BOOTSTRAP_FAILED,
-			isCheckingSession: false,
-			label: "bootstrap failure",
-		},
-	])("keeps the dungeon entry CTA disabled while $label", ({
-		authStatus,
-		isCheckingSession,
-	}) => {
-		mockUseAuthContext.mockReturnValue({
-			authenticatedProfile: null,
-			authStatus,
-			errorMessage: null,
-			handleUsernameFormSubmit: vi.fn(),
-			isAuthenticated: false,
-			isCheckingSession,
-			isUsernameModalOpen: false,
-			isUsernameSubmitting: false,
-			readyStatusLabel: null,
-			suggestedUsername: "Rune_AshBearAAAA",
-		});
+const activateTab = (name: string) => {
+	const tab = screen.getByRole("tab", { name });
 
+	fireEvent.pointerDown(tab);
+	fireEvent.mouseDown(tab);
+	fireEvent.click(tab);
+};
+
+describe("TutorialPage", () => {
+	it("renders the guide with stable tabs", () => {
 		render(<TutorialPage />);
 
-		const dungeonEntryButton = screen.getByRole("button", {
-			name: TUTORIAL_COPY.CTA_LABEL,
-		});
-
-		expect((dungeonEntryButton as HTMLButtonElement).disabled).toBe(true);
-		expect(dungeonEntryButton.getAttribute("data-variant")).toBe("default");
-		expect(
-			screen.getByRole("link", {
-				name: TUTORIAL_COPY.HOME_LABEL,
-			}),
-		).not.toBeNull();
-		expect(
-			screen
-				.getByRole("link", {
-					name: TUTORIAL_COPY.HOME_LABEL,
-				})
-				.getAttribute("data-variant"),
-		).toBe("outline");
-		expect(screen.getByText(TUTORIAL_CONTROLS[0].detail)).not.toBeNull();
-		expect(screen.getByText(TUTORIAL_CONTROLS[1].detail)).not.toBeNull();
-		expect(screen.getByText(TUTORIAL_CONTROLS[2].detail)).not.toBeNull();
-		expect(screen.getByText(TUTORIAL_CONTROLS[3].detail)).not.toBeNull();
-
-		const main = screen.getByRole("main");
-
-		expect(main.className).toContain("h-dvh");
-		expect(main.className).toContain("overflow-y-auto");
-		expect(main.className).toContain("overscroll-contain");
+		expect(screen.getByText("Play the system.")).not.toBeNull();
+		expect(screen.getByRole("tab", { name: "Controls" })).not.toBeNull();
+		expect(screen.getByRole("tab", { name: "First Run" })).not.toBeNull();
+		expect(screen.getByRole("tab", { name: "Concepts" })).not.toBeNull();
 	});
 
-	it("keeps the dungeon entry CTA in the hero when authenticated", () => {
+	it("renders accurate desktop controls", () => {
+		render(<TutorialPage />);
+
+		expect(screen.getByText("WASD / Arrows — Move")).not.toBeNull();
+		expect(screen.getByText("Shift — Run toggle")).not.toBeNull();
+		expect(screen.getByText("Space — Jump")).not.toBeNull();
+		expect(screen.getByText("E — Interact")).not.toBeNull();
+		expect(screen.getByText("F — Attack")).not.toBeNull();
+		expect(screen.getByText("4 / FO — Free Orbital")).not.toBeNull();
+	});
+
+	it("renders first run content without developer setup copy", async () => {
+		render(<TutorialPage />);
+
+		activateTab("First Run");
+
+		await waitFor(() =>
+			expect(screen.getByText("First run path")).not.toBeNull(),
+		);
+		expect(screen.getByText("Enter the initial state")).not.toBeNull();
+		expect(screen.queryByText(/git clone/i)).toBeNull();
+		expect(screen.queryByText(/pnpm/i)).toBeNull();
+		expect(screen.queryByText(/deployment/i)).toBeNull();
+	});
+
+	it("renders concept mapping content", async () => {
+		render(<TutorialPage />);
+
+		activateTab("Concepts");
+
+		await waitFor(() =>
+			expect(screen.getByText("Concepts in play")).not.toBeNull(),
+		);
+		expect(screen.getByText("State → Room")).not.toBeNull();
+		expect(
+			screen.getByText("Actor → Camera, player, input, audio"),
+		).not.toBeNull();
+	});
+
+	it("keeps the entry CTA disabled when unauthenticated", () => {
 		mockUseAuthContext.mockReturnValue({
-			authenticatedProfile: {
-				discriminator: "0420",
-				username: "rune-scribe",
-			},
-			authStatus: AUTH_STATUS.AUTHENTICATED,
-			errorMessage: null,
-			handleUsernameFormSubmit: vi.fn(),
-			isAuthenticated: true,
-			isCheckingSession: false,
-			isUsernameModalOpen: false,
-			isUsernameSubmitting: false,
-			readyStatusLabel: "rune-scribe#0420",
-			suggestedUsername: "Rune_AshBearAAAA",
+			isAuthenticated: false,
 		});
 
 		render(<TutorialPage />);
 
 		const hero = screen
-			.getByRole("heading", { name: TUTORIAL_COPY.HEADING })
+			.getByRole("heading", { name: "Play the system." })
 			.closest("header");
 
 		expect(hero).not.toBeNull();
-		expect(
-			within(hero as HTMLElement).getByRole("link", {
-				name: TUTORIAL_COPY.CTA_LABEL,
-			}),
-		).not.toBeNull();
-		expect(
-			within(hero as HTMLElement)
-				.getByRole("link", {
-					name: TUTORIAL_COPY.CTA_LABEL,
-				})
-				.getAttribute("data-variant"),
-		).toBe("default");
-		expect(
-			within(hero as HTMLElement)
-				.getByRole("link", {
-					name: TUTORIAL_COPY.HOME_LABEL,
-				})
-				.getAttribute("data-variant"),
-		).toBe("outline");
-		expect(screen.getByText(TUTORIAL_COPY.SUBTITLE)).not.toBeNull();
+		const entryButton = within(hero as HTMLElement).getByRole("button", {
+			name: "Enter Dungeon",
+		});
+
+		expect(entryButton).not.toBeNull();
+		expect((entryButton as HTMLButtonElement).disabled).toBe(true);
 	});
 });
