@@ -6,6 +6,7 @@ import {
 	TUTORIAL_CONTROLS_COPY,
 	TUTORIAL_FIRST_RUN_COPY,
 	TUTORIAL_FIRST_RUN_STEPS,
+	type TutorialControlTone,
 } from "../config";
 
 import { resolveTutorialIcon } from "./resolveTutorialIcon";
@@ -25,7 +26,7 @@ export type TutorialControlRowViewModel = {
 export type TutorialControlGroupViewModel = {
 	heading: string;
 	rows: readonly TutorialControlRowViewModel[];
-	tone: "accent" | "primary";
+	tone: TutorialControlTone;
 };
 
 type TutorialPageViewModel = {

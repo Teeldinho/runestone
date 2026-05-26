@@ -8,6 +8,7 @@ import {
 	MARKETING_LAYOUT_CLASS_NAMES,
 	MARKETING_ROUTES,
 	MARKETING_SHELL_COPY,
+	RUNESTONE_LOGO_VARIANTS,
 } from "../config";
 import type { MarketingNavigationViewModel } from "../lib";
 import { MarketingNavigationSheet } from "./MarketingNavigationSheet";
@@ -33,10 +34,10 @@ export function MarketingHeader({
 				)}
 			>
 				<div className="hidden lg:block">
-					<RunestoneLogo variant="desktop" />
+					<RunestoneLogo variant={RUNESTONE_LOGO_VARIANTS.DESKTOP} />
 				</div>
 				<div className="lg:hidden">
-					<RunestoneLogo variant="compact" />
+					<RunestoneLogo variant={RUNESTONE_LOGO_VARIANTS.COMPACT} />
 				</div>
 
 				<nav

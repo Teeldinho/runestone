@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
 
+import { CONCEPTS_SECTION_IDS } from "../config";
+
 import { createConceptsPageViewModel } from "./createConceptsPageViewModel";
 
 describe("createConceptsPageViewModel", () => {
@@ -21,6 +23,9 @@ describe("createConceptsPageViewModel", () => {
 
 		expect(viewModel.ctaProps.isAuthenticated).toBe(true);
 		expect(viewModel.ctaProps.onEntryRequest).toBe(handleUsernameEntryRequest);
+		expect(viewModel.mappingSectionProps.sections[0]?.id).toBe(
+			CONCEPTS_SECTION_IDS.STATE,
+		);
 		expect(viewModel.mappingSectionProps.sections[0]?.icon).toBe(DoorOpen);
 		expect(viewModel.mappingSectionProps.sections[1]?.icon).toBe(
 			ArrowRightLeft,
@@ -33,6 +38,9 @@ describe("createConceptsPageViewModel", () => {
 		expect(viewModel.mappingSectionProps.sections[5]?.icon).toBe(Workflow);
 		expect(viewModel.mappingSectionProps.sections[3]?.titleClassName).toBe(
 			"text-dungeon-rune-sealed",
+		);
+		expect(viewModel.mappingSectionProps.sections[3]?.id).toBe(
+			CONCEPTS_SECTION_IDS.GUARD,
 		);
 	});
 });

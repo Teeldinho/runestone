@@ -48,7 +48,9 @@ describe("ConceptsPage", () => {
 		expect(screen.getByText("Independent loop")).not.toBeNull();
 		expect(screen.getByText("Ready to inspect the dungeon?")).not.toBeNull();
 		expect(
-			screen.getByText("Drop your configuration into the engine."),
+			screen.getByText(
+				"Use the guide as a map, then inspect the concepts in motion.",
+			),
 		).not.toBeNull();
 		expect(
 			screen.getByText(

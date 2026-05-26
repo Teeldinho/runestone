@@ -53,7 +53,7 @@ export const createConceptsPageViewModel = ({
 				detail: section.detail,
 				icon: resolveConceptsIcon(section.iconKey),
 				iconClassName: CONCEPTS_MAPPING_TONE_CLASS_NAMES[section.tone],
-				id: `${section.source}-${section.target}`,
+				id: section.id,
 				isSealed: section.tone === CONCEPTS_MAPPING_TONES.SEALED,
 				title: section.target,
 				titleClassName: CONCEPTS_TITLE_TONE_CLASS_NAMES[section.tone],

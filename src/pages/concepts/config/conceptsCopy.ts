@@ -8,7 +8,16 @@ export const CONCEPTS_COPY = {
 	HERO_SUBTITLE:
 		"Runestone maps statechart ideas to dungeon objects so software behavior can be explored spatially.",
 	CTA_HEADING: "Ready to inspect the dungeon?",
-	CTA_SUBTITLE: "Drop your configuration into the engine.",
+	CTA_SUBTITLE: "Use the guide as a map, then inspect the concepts in motion.",
+} as const;
+
+export const CONCEPTS_SECTION_IDS = {
+	ACTOR: "actor-independent-loop",
+	CONTEXT: "context-inventory-hp-current-room",
+	EVENT: "event-input-prompt",
+	GUARD: "guard-locked-door",
+	STATE: "state-room",
+	TRANSITION: "transition-corridor",
 } as const;
 
 export const CONCEPTS_MAPPING_TONES = {
@@ -40,6 +49,7 @@ export const CONCEPTS_SECTIONS = [
 		detail:
 			"A state marks the current room or mode, holding the system in one place until conditions change.",
 		iconKey: CONCEPTS_SECTION_ICON_KEYS.STATE,
+		id: CONCEPTS_SECTION_IDS.STATE,
 		source: "State",
 		target: "Room",
 		tone: CONCEPTS_MAPPING_TONES.ACTIVE,
@@ -48,6 +58,7 @@ export const CONCEPTS_SECTIONS = [
 		detail:
 			"A transition carries the run from one room to the next when an event resolves successfully.",
 		iconKey: CONCEPTS_SECTION_ICON_KEYS.TRANSITION,
+		id: CONCEPTS_SECTION_IDS.TRANSITION,
 		source: "Transition",
 		target: "Corridor",
 		tone: CONCEPTS_MAPPING_TONES.AVAILABLE,
@@ -56,6 +67,7 @@ export const CONCEPTS_SECTIONS = [
 		detail:
 			"Inputs and prompts trigger evaluation, which can open movement paths or advance other systems.",
 		iconKey: CONCEPTS_SECTION_ICON_KEYS.EVENT,
+		id: CONCEPTS_SECTION_IDS.EVENT,
 		source: "Event",
 		target: "Input or prompt",
 		tone: CONCEPTS_MAPPING_TONES.AVAILABLE,
@@ -64,6 +76,7 @@ export const CONCEPTS_SECTIONS = [
 		detail:
 			"A guard blocks traversal until the required state, key, or condition is satisfied.",
 		iconKey: CONCEPTS_SECTION_ICON_KEYS.GUARD,
+		id: CONCEPTS_SECTION_IDS.GUARD,
 		source: "Guard",
 		target: "Locked door",
 		tone: CONCEPTS_MAPPING_TONES.SEALED,
@@ -72,6 +85,7 @@ export const CONCEPTS_SECTIONS = [
 		detail:
 			"Context keeps the values a run depends on, such as inventory, HP, and current room state.",
 		iconKey: CONCEPTS_SECTION_ICON_KEYS.CONTEXT,
+		id: CONCEPTS_SECTION_IDS.CONTEXT,
 		source: "Context",
 		target: "Inventory, HP, current room",
 		tone: CONCEPTS_MAPPING_TONES.AVAILABLE,
@@ -80,6 +94,7 @@ export const CONCEPTS_SECTIONS = [
 		detail:
 			"Actors run in isolated loops so camera, player, or audio behavior can respond independently.",
 		iconKey: CONCEPTS_SECTION_ICON_KEYS.ACTOR,
+		id: CONCEPTS_SECTION_IDS.ACTOR,
 		source: "Actor",
 		target: "Independent loop",
 		tone: CONCEPTS_MAPPING_TONES.ACTIVE,

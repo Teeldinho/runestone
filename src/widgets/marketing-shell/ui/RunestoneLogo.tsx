@@ -1,19 +1,22 @@
 import { Link } from "@tanstack/react-router";
+import { cn } from "@/shared/lib";
+
 import runestoneMarkUrl from "../assets/runestone-mark.png";
-import { MARKETING_ROUTES, MARKETING_SHELL_COPY } from "../config";
+import { MARKETING_ROUTES, type RunestoneLogoVariant } from "../config";
+import { useRunestoneLogo } from "../model";
 
 type RunestoneLogoProps = {
-	variant: "desktop" | "compact";
+	variant: RunestoneLogoVariant;
 };
 
 export function RunestoneLogo({ variant }: RunestoneLogoProps) {
-	const isDesktop = variant === "desktop";
+	const { ariaLabel, segments, wordmarkClassName } = useRunestoneLogo(variant);
 
 	return (
 		<Link
 			to={MARKETING_ROUTES.HOME}
 			className="inline-flex items-center gap-2.5"
-			aria-label={MARKETING_SHELL_COPY.BRAND_NAME}
+			aria-label={ariaLabel}
 		>
 			<span
 				aria-hidden="true"
@@ -26,32 +29,12 @@ export function RunestoneLogo({ variant }: RunestoneLogoProps) {
 					src={runestoneMarkUrl}
 				/>
 			</span>
-			<span
-				className={
-					isDesktop
-						? "text-base font-bold tracking-[0.28em] sm:text-lg"
-						: "text-base font-bold tracking-[0.2em]"
-				}
-			>
-				{isDesktop ? (
-					<>
-						<span className="text-primary">
-							{MARKETING_SHELL_COPY.BRAND_RUNE_SEGMENT}
-						</span>
-						<span className="text-accent">
-							{MARKETING_SHELL_COPY.BRAND_STONE_SEGMENT}
-						</span>
-					</>
-				) : (
-					<>
-						<span className="text-primary">
-							{MARKETING_SHELL_COPY.COMPACT_BRAND_RUNE_SEGMENT}
-						</span>
-						<span className="text-accent">
-							{MARKETING_SHELL_COPY.COMPACT_BRAND_STONE_SEGMENT}
-						</span>
-					</>
-				)}
+			<span className={cn(wordmarkClassName)}>
+				{segments.map((segment) => (
+					<span key={segment.id} className={segment.className}>
+						{segment.label}
+					</span>
+				))}
 			</span>
 		</Link>
 	);

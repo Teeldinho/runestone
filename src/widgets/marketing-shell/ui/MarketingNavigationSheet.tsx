@@ -15,7 +15,11 @@ import {
 	SheetTrigger,
 } from "@/shared/ui";
 
-import { MARKETING_ROUTES, MARKETING_SHELL_COPY } from "../config";
+import {
+	MARKETING_ROUTES,
+	MARKETING_SHELL_COPY,
+	RUNESTONE_LOGO_VARIANTS,
+} from "../config";
 import type { MarketingNavigationViewModel } from "../lib";
 import { RunestoneLogo } from "./RunestoneLogo";
 
@@ -50,7 +54,7 @@ export function MarketingNavigationSheet({
 			>
 				<div className="mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col px-4 py-4 sm:px-6">
 					<div className="flex items-start justify-between gap-4">
-						<RunestoneLogo variant="compact" />
+						<RunestoneLogo variant={RUNESTONE_LOGO_VARIANTS.COMPACT} />
 					</div>
 
 					<SheetHeader className="p-0 pt-6 text-left">
