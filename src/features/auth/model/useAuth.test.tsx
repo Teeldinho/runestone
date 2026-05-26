@@ -3,7 +3,7 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { AUTH_STATUS } from "../config";
+import { AUTH_EVENTS, AUTH_STATUS } from "../config";
 
 const mockUseMachine = vi.hoisted(() => vi.fn());
 const mockUseAuthSessionBootstrap = vi.hoisted(() => vi.fn());
@@ -49,6 +49,8 @@ describe("useAuth", () => {
 			context: {
 				profile: null,
 				errorMessage: null,
+				isUsernameEntryRequested: false,
+				isUsernameEntryDeferred: false,
 			},
 			matches: (status: string) => status === AUTH_STATUS.REQUIRES_USERNAME,
 		};
@@ -87,11 +89,61 @@ describe("useAuth", () => {
 				suggestedUsername: "Rune_AshBearAAAA",
 				handleSessionBootstrapRetry,
 				handleUsernameFormSubmit,
+				handleUsernameEntryRequest: expect.any(Function),
+				handleUsernameEntryDismiss: expect.any(Function),
 			}),
 		);
 
 		rerender();
 
 		expect(mockCreateSuggestedUsername).toHaveBeenCalledTimes(1);
+	});
+
+	it("exposes handlers for reopening and deferring username entry", () => {
+		const sendAuthEvent = vi.fn();
+		const snapshot = {
+			value: AUTH_STATUS.REQUIRES_USERNAME,
+			context: {
+				profile: null,
+				errorMessage: null,
+				isUsernameEntryRequested: false,
+				isUsernameEntryDeferred: true,
+			},
+			matches: (status: string) => status === AUTH_STATUS.REQUIRES_USERNAME,
+		};
+
+		mockUseMachine.mockReturnValue([snapshot, sendAuthEvent]);
+		mockUseAuthSessionBootstrap.mockReturnValue({
+			handleSessionBootstrapRetry: vi.fn(),
+			sessionUuid: "session-uuid",
+		});
+		mockUseAuthUsernameSubmission.mockReturnValue({
+			handleUsernameFormSubmit: vi.fn(),
+		});
+		mockCreateSuggestedUsername.mockReturnValue("Rune_AshBearAAAA");
+		mockCreateAuthContextValue.mockImplementation((input) => ({
+			...input,
+			authStatus: AUTH_STATUS.REQUIRES_USERNAME,
+			authenticatedProfile: null,
+			errorMessage: null,
+			isCheckingSession: false,
+			isAuthenticated: false,
+			isUsernameModalOpen: false,
+			isUsernameSubmitting: false,
+			readyStatusLabel: null,
+			suggestedUsername: input.suggestedUsername,
+		}));
+
+		const { result } = renderHook(() => useAuth());
+
+		result.current.handleUsernameEntryRequest();
+		result.current.handleUsernameEntryDismiss();
+
+		expect(sendAuthEvent).toHaveBeenCalledWith({
+			type: AUTH_EVENTS.USERNAME_ENTRY_REQUESTED,
+		});
+		expect(sendAuthEvent).toHaveBeenCalledWith({
+			type: AUTH_EVENTS.USERNAME_ENTRY_DEFERRED,
+		});
 	});
 });

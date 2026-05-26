@@ -1,1 +1,1 @@
-export {};
+export { useTutorialPage } from "./useTutorialPage";

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="104" viewBox="0 0 120 104" fill="none">
+  <defs>
+    <pattern id="hexA" width="60" height="52" patternUnits="userSpaceOnUse">
+      <path
+        d="M30 3L54 17V39L30 53L6 39V17Z"
+        fill="none"
+        stroke="#1e2d3d"
+        stroke-opacity="0.85"
+        stroke-width="1"
+        stroke-linejoin="round"
+      />
+    </pattern>
+    <pattern id="hexB" width="60" height="52" patternUnits="userSpaceOnUse" patternTransform="translate(30 26)">
+      <path
+        d="M30 3L54 17V39L30 53L6 39V17Z"
+        fill="none"
+        stroke="#1e2d3d"
+        stroke-opacity="0.45"
+        stroke-width="1"
+        stroke-linejoin="round"
+      />
+    </pattern>
+  </defs>
+  <rect width="120" height="104" fill="url(#hexA)" />
+  <rect width="120" height="104" fill="url(#hexB)" />
+</svg>

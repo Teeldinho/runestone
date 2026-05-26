@@ -1,30 +1,20 @@
 export const HOME_COPY = {
-	BADGE: "Dungeon briefing",
+	BADGE: "Playable architecture",
 	CTA_LABEL: "Enter Dungeon",
-	FEATURES_HEADING: "What you’ll learn",
-	HEADING: "Runestone",
-	SUBTITLE: "A living dungeon where rooms change as you move through them.",
-	TUTORIAL_LABEL: "How to Play",
-	SESSION_NOTE:
-		"We’re getting your game ready. You can keep reading the guide while we sign you in.",
+	FEATURES_HEADING: "What the dungeon teaches",
+	HEADING: "Walk through executable logic.",
+	MANIFEST_PATH_HEADING: "Manifest Map",
+	MANIFEST_PATH_SUBTITLE:
+		"Watch the current run resolve into rooms, corridors, guards, and context.",
+	MOBILE_ORIENTATION_NOTICE:
+		"Landscape mode is recommended for gameplay and full logic visualization.",
+	RUNTIME_HEADING: "Read the system while you play.",
+	RUNTIME_SUBTITLE:
+		"Gameplay, state, and context are shown together so the dungeon can be read as a running statechart.",
+	SUBTITLE:
+		"Runestone turns statecharts into a 3D dungeon: rooms are states, corridors are transitions, and every action is driven by explicit events.",
+	TUTORIAL_LABEL: "Read the Guide",
 } as const;
-
-export const HOME_FEATURES = [
-	{
-		detail: "Rooms and doors react as you move forward.",
-		title: "The dungeon shifts as you progress.",
-	},
-	{
-		detail:
-			"Switch between third-person, top-down, first-person, and free-orbital views.",
-		title: "Pick the view that feels easiest to play.",
-	},
-	{
-		detail:
-			"The guide covers movement, interaction, attack, and camera controls.",
-		title: "Learn the basics before you descend.",
-	},
-] as const;
 
 export const HOME_STATUS_COPY = {
 	CHECKING_SESSION: {

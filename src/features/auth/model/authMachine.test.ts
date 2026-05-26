@@ -132,4 +132,48 @@ describe("authMachine", () => {
 			"unable to create user",
 		);
 	});
+
+	it("defers and reopens the username entry without authenticating", () => {
+		const actor = createActor(authMachine).start();
+
+		actor.send({
+			type: AUTH_EVENTS.SESSION_BOOTSTRAPPED,
+			uuid: "session-uuid",
+			profile: null,
+		});
+		actor.send({
+			type: AUTH_EVENTS.USERNAME_ENTRY_DEFERRED,
+		});
+
+		expect(actor.getSnapshot().value).toBe(AUTH_STATUS.REQUIRES_USERNAME);
+		expect(actor.getSnapshot().context.profile).toBeNull();
+		expect(actor.getSnapshot().context.isUsernameEntryDeferred).toBe(true);
+
+		actor.send({
+			type: AUTH_EVENTS.USERNAME_ENTRY_REQUESTED,
+		});
+
+		expect(actor.getSnapshot().value).toBe(AUTH_STATUS.REQUIRES_USERNAME);
+		expect(actor.getSnapshot().context.isUsernameEntryDeferred).toBe(false);
+	});
+
+	it("can request username entry while session bootstrap is still checking", () => {
+		const actor = createActor(authMachine).start();
+
+		actor.send({
+			type: AUTH_EVENTS.USERNAME_ENTRY_REQUESTED,
+		});
+
+		expect(actor.getSnapshot().value).toBe(AUTH_STATUS.CHECKING_SESSION);
+		expect(actor.getSnapshot().context.isUsernameEntryRequested).toBe(true);
+		expect(actor.getSnapshot().context.isUsernameEntryDeferred).toBe(false);
+
+		actor.send({
+			type: AUTH_EVENTS.USERNAME_ENTRY_DEFERRED,
+		});
+
+		expect(actor.getSnapshot().value).toBe(AUTH_STATUS.CHECKING_SESSION);
+		expect(actor.getSnapshot().context.isUsernameEntryRequested).toBe(false);
+		expect(actor.getSnapshot().context.isUsernameEntryDeferred).toBe(true);
+	});
 });

@@ -1,6 +1,7 @@
 import { useMachine } from "@xstate/react";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
+import { AUTH_EVENTS } from "../config";
 import { createAuthContextValue, createSuggestedUsername } from "../lib";
 
 import { authMachine } from "./authMachine";
@@ -18,6 +19,16 @@ export const useAuth = (): AuthContextValue => {
 		sendAuthEvent,
 		sessionUuid,
 	});
+	const handleUsernameEntryRequest = useCallback(() => {
+		sendAuthEvent({
+			type: AUTH_EVENTS.USERNAME_ENTRY_REQUESTED,
+		});
+	}, [sendAuthEvent]);
+	const handleUsernameEntryDismiss = useCallback(() => {
+		sendAuthEvent({
+			type: AUTH_EVENTS.USERNAME_ENTRY_DEFERRED,
+		});
+	}, [sendAuthEvent]);
 
 	return useMemo(
 		() =>
@@ -26,12 +37,16 @@ export const useAuth = (): AuthContextValue => {
 				suggestedUsername,
 				handleSessionBootstrapRetry,
 				handleUsernameFormSubmit,
+				handleUsernameEntryRequest,
+				handleUsernameEntryDismiss,
 			}),
 		[
 			snapshot,
 			suggestedUsername,
 			handleSessionBootstrapRetry,
 			handleUsernameFormSubmit,
+			handleUsernameEntryRequest,
+			handleUsernameEntryDismiss,
 		],
 	);
 };

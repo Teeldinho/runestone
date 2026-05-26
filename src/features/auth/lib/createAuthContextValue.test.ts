@@ -30,6 +30,8 @@ const createAuthSnapshot = ({
 	context: {
 		profile,
 		errorMessage,
+		isUsernameEntryRequested: false,
+		isUsernameEntryDeferred: false,
 	},
 	matches: (status: string) => matchedStates.includes(status),
 });
@@ -38,6 +40,8 @@ describe("createAuthContextValue", () => {
 	it("builds authenticated context state with ready label", () => {
 		const handleUsernameFormSubmit = vi.fn();
 		const handleSessionBootstrapRetry = vi.fn();
+		const handleUsernameEntryRequest = vi.fn();
+		const handleUsernameEntryDismiss = vi.fn();
 		const snapshot = createAuthSnapshot({
 			value: AUTH_STATUS.AUTHENTICATED,
 			profile: TEST_USER_PROFILE,
@@ -50,6 +54,8 @@ describe("createAuthContextValue", () => {
 			suggestedUsername: "Rune_AshBearAAAA",
 			handleUsernameFormSubmit,
 			handleSessionBootstrapRetry,
+			handleUsernameEntryRequest,
+			handleUsernameEntryDismiss,
 		});
 
 		expect(authContextValue.authStatus).toBe(AUTH_STATUS.AUTHENTICATED);
@@ -66,6 +72,12 @@ describe("createAuthContextValue", () => {
 		expect(authContextValue.handleSessionBootstrapRetry).toBe(
 			handleSessionBootstrapRetry,
 		);
+		expect(authContextValue.handleUsernameEntryRequest).toBe(
+			handleUsernameEntryRequest,
+		);
+		expect(authContextValue.handleUsernameEntryDismiss).toBe(
+			handleUsernameEntryDismiss,
+		);
 	});
 
 	it("opens username modal for requires-username and submitting states", () => {
@@ -79,6 +91,8 @@ describe("createAuthContextValue", () => {
 			suggestedUsername: "Rune_AshBearAAAA",
 			handleUsernameFormSubmit: vi.fn(),
 			handleSessionBootstrapRetry: vi.fn(),
+			handleUsernameEntryRequest: vi.fn(),
+			handleUsernameEntryDismiss: vi.fn(),
 		});
 
 		expect(requiresUsernameContext.isUsernameModalOpen).toBe(true);
@@ -95,9 +109,65 @@ describe("createAuthContextValue", () => {
 			suggestedUsername: "Rune_AshBearAAAA",
 			handleUsernameFormSubmit: vi.fn(),
 			handleSessionBootstrapRetry: vi.fn(),
+			handleUsernameEntryRequest: vi.fn(),
+			handleUsernameEntryDismiss: vi.fn(),
 		});
 
 		expect(submittingContext.isUsernameSubmitting).toBe(true);
 		expect(submittingContext.isUsernameModalOpen).toBe(true);
+	});
+
+	it("opens username modal when entry is requested during session checking", () => {
+		const authContextValue = createAuthContextValue({
+			snapshot: {
+				...createAuthSnapshot({
+					value: AUTH_STATUS.CHECKING_SESSION,
+					profile: null,
+					errorMessage: null,
+					matchedStates: [AUTH_STATUS.CHECKING_SESSION],
+				}),
+				context: {
+					profile: null,
+					errorMessage: null,
+					isUsernameEntryRequested: true,
+					isUsernameEntryDeferred: false,
+				},
+			},
+			suggestedUsername: "Rune_AshBearAAAA",
+			handleUsernameFormSubmit: vi.fn(),
+			handleSessionBootstrapRetry: vi.fn(),
+			handleUsernameEntryRequest: vi.fn(),
+			handleUsernameEntryDismiss: vi.fn(),
+		});
+
+		expect(authContextValue.isCheckingSession).toBe(true);
+		expect(authContextValue.isUsernameModalOpen).toBe(true);
+	});
+
+	it("keeps the username modal closed when entry is deferred", () => {
+		const authContextValue = createAuthContextValue({
+			snapshot: {
+				...createAuthSnapshot({
+					value: AUTH_STATUS.REQUIRES_USERNAME,
+					profile: null,
+					errorMessage: null,
+					matchedStates: [AUTH_STATUS.REQUIRES_USERNAME],
+				}),
+				context: {
+					profile: null,
+					errorMessage: null,
+					isUsernameEntryRequested: false,
+					isUsernameEntryDeferred: true,
+				},
+			},
+			suggestedUsername: "Rune_AshBearAAAA",
+			handleUsernameFormSubmit: vi.fn(),
+			handleSessionBootstrapRetry: vi.fn(),
+			handleUsernameEntryRequest: vi.fn(),
+			handleUsernameEntryDismiss: vi.fn(),
+		});
+
+		expect(authContextValue.isUsernameModalOpen).toBe(false);
+		expect(authContextValue.isAuthenticated).toBe(false);
 	});
 });

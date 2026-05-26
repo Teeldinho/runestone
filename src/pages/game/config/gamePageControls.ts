@@ -6,6 +6,9 @@ export const GAME_PAGE_CONTROLS = {
 		UNMUTE_ARIA_LABEL: "Unmute audio",
 		UNMUTE_TOOLTIP_LABEL: "Unmute audio",
 	},
+	NAVIGATION: {
+		HOME_ARIA_LABEL: "Return to landing page",
+	},
 	LEADERBOARD: {
 		BUTTON_LABEL: "Rankings",
 		ARIA_LABEL: "Open Leaderboard",
