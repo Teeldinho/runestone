@@ -1,20 +1,26 @@
 import { Link } from "@tanstack/react-router";
 import { Trophy, Volume2, VolumeX } from "lucide-react";
 
-import { GAME_PAGE_CONTROLS } from "@/pages/game/config";
+import {
+	GAME_PAGE_CONTROLS,
+	GAME_PAGE_DESKTOP_HEADER_TEST_IDS,
+} from "@/pages/game/config";
 import { useGamePageDesktopHeaderModel } from "@/pages/game/model";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui";
 import { LeaderboardSheet } from "@/widgets/leaderboard-panel";
 import { MARKETING_ROUTES } from "@/widgets/marketing-shell";
-
 import { GamePageDesktopSettingsAction } from "./GamePageDesktopSettingsAction";
+import { GamePageHomeAction } from "./GamePageHomeAction";
 
 export function GamePageDesktopHeader() {
 	const { currentRoomLabel, handleAudioMuteToggle, isAudioMuted } =
 		useGamePageDesktopHeaderModel();
 
 	return (
-		<header className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-panel-border px-4 py-2">
+		<header
+			data-testid={GAME_PAGE_DESKTOP_HEADER_TEST_IDS.ROOT}
+			className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-panel-border px-4 py-2"
+		>
 			<div className="flex items-center gap-3">
 				<Link
 					to={MARKETING_ROUTES.HOME}
@@ -26,7 +32,10 @@ export function GamePageDesktopHeader() {
 				<span className="rune-text">Floor I</span>
 			</div>
 
-			<div className="flex items-center gap-2 sm:gap-4">
+			<div
+				data-testid={GAME_PAGE_DESKTOP_HEADER_TEST_IDS.ACTIONS}
+				className="flex items-center gap-2 sm:gap-4"
+			>
 				<span className="flex shrink-0 items-center gap-2 whitespace-nowrap">
 					<span className="rune-text">Room:</span>
 					<span className="rune-value text-panel-title">
@@ -80,6 +89,8 @@ export function GamePageDesktopHeader() {
 				</Tooltip>
 
 				<GamePageDesktopSettingsAction />
+
+				<GamePageHomeAction />
 			</div>
 		</header>
 	);
