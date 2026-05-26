@@ -81,9 +81,9 @@ describe("HomePage", () => {
 			.getByRole("heading", { name: HOME_COPY.FEATURES_HEADING })
 			.closest("section");
 		expect(teachingSection).not.toBeNull();
-		const firstTeachingCard = within(teachingSection as HTMLElement).getAllByRole(
-			"listitem",
-		)[0];
+		const firstTeachingCard = within(
+			teachingSection as HTMLElement,
+		).getAllByRole("listitem")[0];
 		expect(firstTeachingCard?.className).toContain("lg:col-span-2");
 		expect(screen.queryByText(HOME_COPY.RUNTIME_HEADING)).toBeNull();
 	});

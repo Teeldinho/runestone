@@ -39,7 +39,9 @@ export type HomeTeachingFeatureViewModel = {
 	id: string;
 	Icon: LucideIcon;
 	iconClassName: string;
+	isFeatured: boolean;
 	isSealed: boolean;
+	className: string;
 	title: string;
 };
 
@@ -108,10 +110,13 @@ export const createHomePageViewModel = ({
 		features: HOME_TEACHING_FEATURES.map((feature) => {
 			const Icon = resolveHomeTeachingIcon(feature.iconKey);
 			return {
+				className:
+					feature.isFeatured === true ? "h-full lg:col-span-2" : "h-full",
 				description: feature.description,
 				id: feature.id,
 				Icon,
 				iconClassName: HOME_TEACHING_TONE_CLASS_NAMES[feature.tone],
+				isFeatured: feature.isFeatured === true,
 				isSealed: feature.tone === HOME_TEACHING_TONES.SEALED,
 				title: feature.title,
 			};
