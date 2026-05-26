@@ -26,7 +26,7 @@ export function HomeTeachingSection({
 
 			<ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 				{features.map((feature) => (
-					<li key={feature.id} className="h-full">
+					<li key={feature.id} className={feature.className}>
 						<HomeTeachingItem feature={feature} />
 					</li>
 				))}

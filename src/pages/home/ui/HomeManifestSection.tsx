@@ -47,8 +47,8 @@ export function HomeManifestSection({
 							aria-hidden="true"
 							className="absolute inset-0 bg-gradient-to-br from-background/70 via-background/45 to-background/20"
 						/>
-						<div className="relative z-10 flex h-full items-center">
-							<ol className="grid gap-4 sm:grid-cols-2">
+						<div className="relative z-10 flex h-full items-center justify-center">
+							<ol className="grid w-full max-w-2xl gap-4 sm:grid-cols-2">
 								{nodes.map((node) => (
 									<HomeManifestNode key={node.id} node={node} />
 								))}

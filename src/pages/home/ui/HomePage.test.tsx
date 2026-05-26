@@ -1,6 +1,12 @@
 // @vitest-environment happy-dom
 
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	within,
+} from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -71,6 +77,14 @@ describe("HomePage", () => {
 		expect(screen.getByText("States become rooms")).not.toBeNull();
 		expect(screen.getByText("Actors stay isolated")).not.toBeNull();
 		expect(screen.getByText("What the dungeon teaches")).not.toBeNull();
+		const teachingSection = screen
+			.getByRole("heading", { name: HOME_COPY.FEATURES_HEADING })
+			.closest("section");
+		expect(teachingSection).not.toBeNull();
+		const firstTeachingCard = within(
+			teachingSection as HTMLElement,
+		).getAllByRole("listitem")[0];
+		expect(firstTeachingCard?.className).toContain("lg:col-span-2");
 		expect(screen.queryByText(HOME_COPY.RUNTIME_HEADING)).toBeNull();
 	});
 
