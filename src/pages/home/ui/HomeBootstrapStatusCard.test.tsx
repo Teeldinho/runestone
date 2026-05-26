@@ -74,5 +74,12 @@ describe("HomeBootstrapStatusCard", () => {
 		expect(
 			screen.getByText(HOME_STATUS_COPY.AUTHENTICATED.badge),
 		).not.toBeNull();
+
+		const authenticatedDetailRow = screen
+			.getByText(HOME_STATUS_COPY.AUTHENTICATED.detail)
+			.closest("div");
+
+		expect(authenticatedDetailRow?.className).toContain("justify-center");
+		expect(authenticatedDetailRow?.className).toContain("text-center");
 	});
 });

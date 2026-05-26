@@ -18,7 +18,7 @@ export function HomeBootstrapAuthenticatedStatusCard({
 			icon={<ShieldCheck className="size-4" />}
 			title={HOME_STATUS_COPY.AUTHENTICATED.title}
 		>
-			<div className="flex flex-wrap items-center gap-2 text-xs leading-5 text-muted-foreground">
+			<div className="flex flex-wrap items-center justify-center gap-2 text-center text-xs leading-5 text-muted-foreground">
 				{readyStatusLabel ? (
 					<span className="inline-flex items-center gap-1.5 rounded-full border border-panel-border/80 px-2 py-1">
 						<CheckCircle2 className="size-3.5 text-dungeon-gold" />

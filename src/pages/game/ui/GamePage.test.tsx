@@ -468,6 +468,11 @@ describe("GamePage", () => {
 				name: "RUNESTONE",
 			}),
 		).not.toBeNull();
+		expect(
+			within(screen.getByRole("banner")).getByRole("link", {
+				name: GAME_PAGE_CONTROLS.NAVIGATION.HOME_ARIA_LABEL,
+			}),
+		).not.toBeNull();
 
 		expect(
 			screen.getByRole("button", {

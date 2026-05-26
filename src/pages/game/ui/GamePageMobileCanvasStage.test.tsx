@@ -4,6 +4,10 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { CAMERA_MODES } from "@/features/camera-system";
+import {
+	GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES,
+	GAME_PAGE_MOBILE_OVERLAY_TEST_IDS,
+} from "@/pages/game/config";
 
 const INPUT_STATE_KEYS = {
 	READY: "ready",
@@ -13,14 +17,25 @@ const INPUT_STATE_KEYS = {
 	RUN_TOGGLE_OFF: "runToggleOff",
 } as const;
 
+const MOBILE_STAGE_TEST_IDS = {
+	ACTION_PANEL: "game-page-mobile-action-panel",
+	CAMERA_CONTROL_ZONE: "camera-control-zone",
+	GAME_CANVAS: "game-canvas",
+	MOBILE_ACTION_BUTTON_ZONE: "mobile-action-button-zone",
+	TOP_BAR: "game-page-mobile-top-bar",
+	TOUCH_JOYSTICK_ZONE: "touch-joystick-zone",
+} as const;
+
 let mockCameraMode: (typeof CAMERA_MODES)[keyof typeof CAMERA_MODES] =
 	CAMERA_MODES.FREE_ORBITAL;
 let mockIsInputBlocked = false;
+let mockTouchPromptsVisible = false;
 
 afterEach(() => {
 	cleanup();
 	mockCameraMode = CAMERA_MODES.FREE_ORBITAL;
 	mockIsInputBlocked = false;
+	mockTouchPromptsVisible = false;
 });
 
 vi.mock("@/pages/game/model", () => ({
@@ -66,81 +81,161 @@ vi.mock("@/pages/game/model", () => ({
 vi.mock("@/features/input-orchestrator", () => ({
 	MobileActionButtonZone: ({ isRunEnabled }: { isRunEnabled: boolean }) => (
 		<div
-			data-testid="mobile-action-button-zone"
+			data-testid={MOBILE_STAGE_TEST_IDS.MOBILE_ACTION_BUTTON_ZONE}
 			data-run-enabled={String(isRunEnabled)}
 		/>
 	),
 }));
 
 vi.mock("@/features/touch-input", () => ({
-	CameraControlZone: () => <div data-testid="camera-control-zone" />,
-	TouchJoystickZone: () => <div data-testid="touch-joystick-zone" />,
+	CameraControlZone: () => (
+		<div data-testid={MOBILE_STAGE_TEST_IDS.CAMERA_CONTROL_ZONE} />
+	),
+	TouchJoystickZone: () => (
+		<div data-testid={MOBILE_STAGE_TEST_IDS.TOUCH_JOYSTICK_ZONE} />
+	),
 }));
 
 vi.mock("@/widgets/game-canvas", () => ({
-	GameCanvas: () => <div data-testid="game-canvas" />,
+	GameCanvas: () => <div data-testid={MOBILE_STAGE_TEST_IDS.GAME_CANVAS} />,
 }));
 
 vi.mock("./GamePageMobileActionPanel", () => ({
 	GamePageMobileActionPanel: () => (
-		<div data-testid="game-page-mobile-action-panel" />
+		<div
+			data-testid={MOBILE_STAGE_TEST_IDS.ACTION_PANEL}
+			data-touch-prompts-visible={String(mockTouchPromptsVisible)}
+		/>
 	),
 }));
 
 vi.mock("./GamePageMobileTopBar", () => ({
-	GamePageMobileTopBar: () => <div data-testid="game-page-mobile-top-bar" />,
+	GamePageMobileTopBar: () => (
+		<div data-testid={MOBILE_STAGE_TEST_IDS.TOP_BAR} />
+	),
 }));
 
 import { GamePageMobileCanvasStage } from "./GamePageMobileCanvasStage";
 
 describe("GamePageMobileCanvasStage", () => {
-	it("renders the mobile controls as siblings of the camera control zone", () => {
+	it("renders the mobile controls as sibling columns in the overlay row", () => {
 		mockCameraMode = CAMERA_MODES.FREE_ORBITAL;
 
 		render(<GamePageMobileCanvasStage />);
-		const mobileActionButtonZone = screen.getByTestId(
-			"mobile-action-button-zone",
+		const overlayRow = screen.getByTestId(
+			GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ROOT,
 		);
-		const actionPanel = screen.getByTestId("game-page-mobile-action-panel");
+		const mobileActionButtonZone = screen.getByTestId(
+			MOBILE_STAGE_TEST_IDS.MOBILE_ACTION_BUTTON_ZONE,
+		);
+		const actionPanel = screen.getByTestId(MOBILE_STAGE_TEST_IDS.ACTION_PANEL);
+		const runJumpAnchor = screen.getByTestId(
+			GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.RUN_JUMP_ANCHOR,
+		);
+		const actionPanelAnchor = screen.getByTestId(
+			GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ACTION_PANEL_ANCHOR,
+		);
 
-		expect(screen.getByTestId("game-canvas")).toBeTruthy();
-		expect(screen.getByTestId("camera-control-zone")).toBeTruthy();
-		expect(screen.getByTestId("touch-joystick-zone")).toBeTruthy();
+		expect(screen.getByTestId(MOBILE_STAGE_TEST_IDS.GAME_CANVAS)).toBeTruthy();
+		expect(
+			screen.getByTestId(MOBILE_STAGE_TEST_IDS.CAMERA_CONTROL_ZONE),
+		).toBeTruthy();
+		expect(
+			screen.getByTestId(MOBILE_STAGE_TEST_IDS.TOUCH_JOYSTICK_ZONE),
+		).toBeTruthy();
 		expect(mobileActionButtonZone).toBeTruthy();
 		expect(actionPanel).toBeTruthy();
-		expect(screen.getByTestId("game-page-mobile-top-bar")).toBeTruthy();
+		expect(screen.getByTestId(MOBILE_STAGE_TEST_IDS.TOP_BAR)).toBeTruthy();
 		expect(mobileActionButtonZone.getAttribute("data-run-enabled")).toBe(
 			"false",
 		);
+		expect(overlayRow.className).toBe(
+			GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.ROOT,
+		);
+		expect(runJumpAnchor.className).toBe(
+			GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.RUN_JUMP_ANCHOR,
+		);
+		expect(actionPanelAnchor.className).toBe(
+			GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.ACTION_PANEL_ANCHOR,
+		);
+		expect(runJumpAnchor.parentElement).toBe(overlayRow);
+		expect(actionPanelAnchor.parentElement).toBe(overlayRow);
+		expect(
+			screen
+				.getByTestId(MOBILE_STAGE_TEST_IDS.TOUCH_JOYSTICK_ZONE)
+				.closest(
+					`[data-testid="${MOBILE_STAGE_TEST_IDS.CAMERA_CONTROL_ZONE}"]`,
+				),
+		).toBeNull();
+		expect(
+			mobileActionButtonZone.closest(
+				`[data-testid="${MOBILE_STAGE_TEST_IDS.CAMERA_CONTROL_ZONE}"]`,
+			),
+		).toBeNull();
+		expect(
+			actionPanel.closest(
+				`[data-testid="${MOBILE_STAGE_TEST_IDS.CAMERA_CONTROL_ZONE}"]`,
+			),
+		).toBeNull();
+		expect(
+			screen
+				.getByTestId(MOBILE_STAGE_TEST_IDS.TOP_BAR)
+				.closest(
+					`[data-testid="${MOBILE_STAGE_TEST_IDS.CAMERA_CONTROL_ZONE}"]`,
+				),
+		).toBeNull();
+		expect(runJumpAnchor.className.includes("absolute")).toBe(false);
+		expect(actionPanelAnchor.className.includes("absolute")).toBe(false);
+	});
+
+	it("keeps the overlay row stable when touch prompts toggle", () => {
+		const { rerender } = render(<GamePageMobileCanvasStage />);
+		const overlayRow = screen.getByTestId(
+			GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ROOT,
+		);
+		const runJumpAnchor = screen.getByTestId(
+			GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.RUN_JUMP_ANCHOR,
+		);
+		const actionPanelAnchor = screen.getByTestId(
+			GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ACTION_PANEL_ANCHOR,
+		);
+		const actionPanel = screen.getByTestId(MOBILE_STAGE_TEST_IDS.ACTION_PANEL);
+		const initialOverlayRowClassName = overlayRow.className;
+		const initialRunJumpAnchorClassName = runJumpAnchor.className;
+		const initialActionPanelAnchorClassName = actionPanelAnchor.className;
+
+		expect(actionPanel.getAttribute("data-touch-prompts-visible")).toBe(
+			"false",
+		);
+
+		mockTouchPromptsVisible = true;
+
+		rerender(<GamePageMobileCanvasStage />);
 
 		expect(
 			screen
-				.getByTestId("touch-joystick-zone")
-				.closest('[data-testid="camera-control-zone"]'),
-		).toBeNull();
+				.getByTestId(MOBILE_STAGE_TEST_IDS.ACTION_PANEL)
+				.getAttribute("data-touch-prompts-visible"),
+		).toBe("true");
 		expect(
-			mobileActionButtonZone.closest('[data-testid="camera-control-zone"]'),
-		).toBeNull();
+			screen.getByTestId(GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.RUN_JUMP_ANCHOR)
+				.parentElement,
+		).toBe(screen.getByTestId(GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ROOT));
 		expect(
-			actionPanel.closest('[data-testid="camera-control-zone"]'),
-		).toBeNull();
+			screen.getByTestId(GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ACTION_PANEL_ANCHOR)
+				.parentElement,
+		).toBe(screen.getByTestId(GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ROOT));
 		expect(
-			screen
-				.getByTestId("game-page-mobile-top-bar")
-				.closest('[data-testid="camera-control-zone"]'),
-		).toBeNull();
-		expect(mobileActionButtonZone.parentElement).toBe(
-			actionPanel.parentElement,
-		);
+			screen.getByTestId(GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ROOT).className,
+		).toBe(initialOverlayRowClassName);
 		expect(
-			mobileActionButtonZone.parentElement?.classList.contains("absolute"),
-		).toBe(true);
+			screen.getByTestId(GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.RUN_JUMP_ANCHOR)
+				.className,
+		).toBe(initialRunJumpAnchorClassName);
 		expect(
-			mobileActionButtonZone.parentElement?.classList.contains("right-4"),
-		).toBe(true);
-		expect(
-			mobileActionButtonZone.parentElement?.classList.contains("bottom-4"),
-		).toBe(true);
+			screen.getByTestId(GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ACTION_PANEL_ANCHOR)
+				.className,
+		).toBe(initialActionPanelAnchorClassName);
 	});
 
 	it("keeps the camera surface mounted in first-person mode", () => {
@@ -148,7 +243,9 @@ describe("GamePageMobileCanvasStage", () => {
 
 		render(<GamePageMobileCanvasStage />);
 
-		expect(screen.getByTestId("camera-control-zone")).toBeTruthy();
+		expect(
+			screen.getByTestId(MOBILE_STAGE_TEST_IDS.CAMERA_CONTROL_ZONE),
+		).toBeTruthy();
 	});
 
 	it("hides the mobile gameplay controls in portrait mode", () => {
@@ -156,12 +253,29 @@ describe("GamePageMobileCanvasStage", () => {
 
 		render(<GamePageMobileCanvasStage />);
 
-		expect(screen.getByTestId("game-canvas")).toBeTruthy();
-		expect(screen.queryByTestId("camera-control-zone")).toBeNull();
-		expect(screen.queryByTestId("touch-joystick-zone")).toBeNull();
-		expect(screen.queryByTestId("mobile-action-button-zone")).toBeNull();
-		expect(screen.queryByTestId("game-page-mobile-action-panel")).toBeNull();
-		expect(screen.queryByTestId("game-page-mobile-top-bar")).toBeNull();
+		expect(screen.getByTestId(MOBILE_STAGE_TEST_IDS.GAME_CANVAS)).toBeTruthy();
+		expect(
+			screen.queryByTestId(MOBILE_STAGE_TEST_IDS.CAMERA_CONTROL_ZONE),
+		).toBeNull();
+		expect(
+			screen.queryByTestId(MOBILE_STAGE_TEST_IDS.TOUCH_JOYSTICK_ZONE),
+		).toBeNull();
+		expect(
+			screen.queryByTestId(MOBILE_STAGE_TEST_IDS.MOBILE_ACTION_BUTTON_ZONE),
+		).toBeNull();
+		expect(screen.queryByTestId(MOBILE_STAGE_TEST_IDS.ACTION_PANEL)).toBeNull();
+		expect(screen.queryByTestId(MOBILE_STAGE_TEST_IDS.TOP_BAR)).toBeNull();
+		expect(
+			screen.queryByTestId(GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.RUN_JUMP_ANCHOR),
+		).toBeNull();
+		expect(
+			screen.queryByTestId(
+				GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ACTION_PANEL_ANCHOR,
+			),
+		).toBeNull();
+		expect(
+			screen.queryByTestId(GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ROOT),
+		).toBeNull();
 	});
 
 	it("suppresses the mobile gameplay context menu", () => {

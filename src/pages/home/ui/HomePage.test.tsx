@@ -86,6 +86,13 @@ describe("HomePage", () => {
 		).getAllByRole("listitem")[0];
 		expect(firstTeachingCard?.className).toContain("lg:col-span-2");
 		expect(screen.queryByText(HOME_COPY.RUNTIME_HEADING)).toBeNull();
+
+		const mobileOrientationNotice = screen
+			.getByText(HOME_COPY.MOBILE_ORIENTATION_NOTICE)
+			.closest("div");
+
+		expect(mobileOrientationNotice?.className).toContain("text-center");
+		expect(mobileOrientationNotice?.className).toContain("sm:hidden");
 	});
 
 	it("requests username entry before authentication", () => {
