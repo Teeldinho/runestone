@@ -4,6 +4,7 @@ export {
 	MARKETING_ROUTES,
 	type MarketingNavigationItemId,
 } from "./config";
+export { useMarketingLayoutRoute } from "./model";
 export {
 	MarketingNavigationSheet,
 	MarketingPageFrame,
