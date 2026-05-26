@@ -1,16 +1,10 @@
-import { ChevronsUp, Footprints, Gamepad2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@/shared/lib";
 
-const TUTORIAL_MOBILE_SHORTCUT_ICONS = {
-	ChevronsUp,
-	Footprints,
-	Gamepad2,
-} as const;
-
 type TutorialControlRowData = {
 	label: string;
-	mobileIcon?: keyof typeof TUTORIAL_MOBILE_SHORTCUT_ICONS;
+	mobileIcon?: LucideIcon | null;
 	mobileLabel?: string;
 	shortcuts: readonly string[];
 };
@@ -20,11 +14,8 @@ type TutorialControlRowProps = {
 };
 
 export function TutorialControlRow({ row }: TutorialControlRowProps) {
-	const mobileIcon = row.mobileIcon;
-	const hasMobileIcon = mobileIcon != null;
-	const MobileShortcutIcon = mobileIcon
-		? TUTORIAL_MOBILE_SHORTCUT_ICONS[mobileIcon]
-		: null;
+	const MobileShortcutIcon = row.mobileIcon;
+	const hasMobileIcon = MobileShortcutIcon != null;
 
 	return (
 		<li className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-3">

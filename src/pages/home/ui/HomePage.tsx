@@ -1,5 +1,4 @@
-import { useAuthContext } from "@/features/auth";
-
+import { useHomePage } from "../model";
 import { HomeHeroSection } from "./HomeHeroSection";
 import { HomeManifestSection } from "./HomeManifestSection";
 import { HomeTeachingSection } from "./HomeTeachingSection";
@@ -7,30 +6,21 @@ import { HomeTranslationRail } from "./HomeTranslationRail";
 
 export function HomePage() {
 	const {
-		authStatus,
-		errorMessage,
-		handleSessionBootstrapRetry,
-		handleUsernameEntryRequest,
-		isAuthenticated,
-		readyStatusLabel,
-	} = useAuthContext();
+		heroProps,
+		manifestSectionProps,
+		teachingSectionProps,
+		translationRailItems,
+	} = useHomePage();
 
 	return (
 		<>
-			<HomeHeroSection
-				authStatus={authStatus}
-				errorMessage={errorMessage}
-				isAuthenticated={isAuthenticated}
-				onEntryRequest={handleUsernameEntryRequest}
-				onRetry={handleSessionBootstrapRetry}
-				readyStatusLabel={readyStatusLabel}
-			/>
+			<HomeHeroSection {...heroProps} />
 
-			<HomeManifestSection />
+			<HomeManifestSection {...manifestSectionProps} />
 
-			<HomeTranslationRail />
+			<HomeTranslationRail items={translationRailItems} />
 
-			<HomeTeachingSection />
+			<HomeTeachingSection {...teachingSectionProps} />
 		</>
 	);
 }

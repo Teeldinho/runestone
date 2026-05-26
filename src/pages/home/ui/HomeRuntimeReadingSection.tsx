@@ -23,7 +23,7 @@ export function HomeRuntimeReadingSection() {
 
 			<ul className="grid gap-3 sm:grid-cols-3">
 				{HOME_RUNTIME_PANELS.map((panel) => (
-					<li key={panel.label}>
+					<li key={panel.title}>
 						<div
 							className={cn(
 								MARKETING_LAYOUT_CLASS_NAMES.SUBTLE_PANEL,
@@ -33,10 +33,10 @@ export function HomeRuntimeReadingSection() {
 							<div className="h-px w-10 rounded-full bg-dungeon-gold/40" />
 							<div className="space-y-1">
 								<h3 className="text-sm font-semibold text-panel-title">
-									{panel.label}
+									{panel.title}
 								</h3>
 								<p className="text-sm leading-6 text-panel-body">
-									{panel.detail}
+									{panel.description}
 								</p>
 							</div>
 						</div>

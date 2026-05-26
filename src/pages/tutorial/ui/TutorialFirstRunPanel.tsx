@@ -2,12 +2,17 @@ import { cn } from "@/shared/lib";
 import { Badge } from "@/shared/ui";
 
 import {
-	TUTORIAL_FIRST_RUN_COPY,
-	TUTORIAL_FIRST_RUN_STEPS,
 	TUTORIAL_FIRST_RUN_TONE_CLASS_NAMES,
+	TUTORIAL_FIRST_RUN_TONES,
 } from "../config";
+import type { TutorialPageViewModel } from "../lib";
 
-export function TutorialFirstRunPanel() {
+type TutorialFirstRunPanelProps = TutorialPageViewModel["firstRunSectionProps"];
+
+export function TutorialFirstRunPanel({
+	heading,
+	steps,
+}: TutorialFirstRunPanelProps) {
 	return (
 		<section aria-labelledby="first-run-heading" className="space-y-6">
 			<div className="flex items-center gap-4">
@@ -15,13 +20,13 @@ export function TutorialFirstRunPanel() {
 					id="first-run-heading"
 					className="text-2xl font-semibold text-foreground sm:text-3xl"
 				>
-					{TUTORIAL_FIRST_RUN_COPY.SECTION_HEADING}
+					{heading}
 				</h2>
 				<div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
 			</div>
 
 			<ol className="grid gap-4">
-				{TUTORIAL_FIRST_RUN_STEPS.map((step, index) => (
+				{steps.map((step, index) => (
 					<li
 						key={step.label}
 						className="grid grid-cols-[auto_minmax(0,1fr)] gap-4"
@@ -37,7 +42,7 @@ export function TutorialFirstRunPanel() {
 							>
 								{String(index + 1).padStart(2, "0")}
 							</div>
-							{index < TUTORIAL_FIRST_RUN_STEPS.length - 1 ? (
+							{index < steps.length - 1 ? (
 								<div className="mt-2 h-full w-px flex-1 bg-border/80" />
 							) : null}
 						</div>
@@ -56,13 +61,11 @@ export function TutorialFirstRunPanel() {
 											className={cn(
 												"rounded-sm border bg-background/40 px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em]",
 												TUTORIAL_FIRST_RUN_TONE_CLASS_NAMES[token.tone],
-												token.tone === "accent"
-													? "border-dungeon-gold/30"
-													: token.tone === "sealed"
-														? "border-dungeon-rune-sealed/30"
-														: token.tone === "success"
-															? "border-success/30"
-															: "border-dungeon-gold/30",
+												token.tone === TUTORIAL_FIRST_RUN_TONES.SEALED
+													? "border-dungeon-rune-sealed/30"
+													: token.tone === TUTORIAL_FIRST_RUN_TONES.SUCCESS
+														? "border-success/30"
+														: "border-dungeon-gold/30",
 											)}
 										>
 											{token.label}

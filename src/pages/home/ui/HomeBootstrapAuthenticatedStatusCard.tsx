@@ -1,5 +1,7 @@
 import { CheckCircle2, ShieldCheck } from "lucide-react";
+
 import { HOME_STATUS_COPY } from "../config";
+
 import { HomeBootstrapStatusShell } from "./HomeBootstrapStatusShell";
 
 type HomeBootstrapAuthenticatedStatusCardProps = {

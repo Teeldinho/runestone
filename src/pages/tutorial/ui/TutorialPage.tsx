@@ -1,21 +1,19 @@
-import { useAuthContext } from "@/features/auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui";
 
 import { TUTORIAL_TAB_IDS, TUTORIAL_TABS } from "../config";
+import { useTutorialPage } from "../model";
 
 import { TutorialControlsPanel } from "./TutorialControlsPanel";
 import { TutorialFirstRunPanel } from "./TutorialFirstRunPanel";
 import { TutorialHero } from "./TutorialHero";
 
 export function TutorialPage() {
-	const { handleUsernameEntryRequest, isAuthenticated } = useAuthContext();
+	const { controlsSectionProps, firstRunSectionProps, heroProps } =
+		useTutorialPage();
 
 	return (
 		<>
-			<TutorialHero
-				isAuthenticated={isAuthenticated}
-				onEntryRequest={handleUsernameEntryRequest}
-			/>
+			<TutorialHero {...heroProps} />
 
 			<Tabs defaultValue={TUTORIAL_TAB_IDS.CONTROLS} className="gap-8">
 				<TabsList className="!w-full !justify-start !gap-8 !rounded-none !border-0 !border-b !border-border/60 !bg-transparent !px-0 !pb-0 !pt-0">
@@ -31,11 +29,11 @@ export function TutorialPage() {
 				</TabsList>
 
 				<TabsContent value={TUTORIAL_TAB_IDS.CONTROLS}>
-					<TutorialControlsPanel />
+					<TutorialControlsPanel {...controlsSectionProps} />
 				</TabsContent>
 
 				<TabsContent value={TUTORIAL_TAB_IDS.FIRST_RUN}>
-					<TutorialFirstRunPanel />
+					<TutorialFirstRunPanel {...firstRunSectionProps} />
 				</TabsContent>
 			</Tabs>
 		</>

@@ -1,6 +1,6 @@
 export const MARKETING_LAYOUT_CLASS_NAMES = {
 	PAGE_FRAME:
-		"mx-auto flex w-full max-w-7xl flex-col gap-9 px-4 py-8 sm:gap-11 sm:px-6 sm:py-10 lg:gap-12 lg:px-8 lg:py-12",
+		"mx-auto flex w-full max-w-7xl flex-col gap-12 px-4 py-10 sm:gap-14 sm:px-6 sm:py-14 lg:gap-16 lg:px-8 lg:py-16",
 	CONTENT_WIDTH: "max-w-7xl",
 	SHELL_BACKGROUND:
 		"pointer-events-none absolute inset-0 overflow-hidden bg-background",
@@ -12,9 +12,9 @@ export const MARKETING_LAYOUT_CLASS_NAMES = {
 		"absolute inset-0 bg-[url('/marketing/hex-grid.svg')] bg-[size:120px_104px] opacity-[0.08]",
 	SHELL_EDGE_FADE:
 		"absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background/82 to-transparent",
-	SECTION_GAP: "space-y-5",
-	SPLIT_GRID: "grid gap-5 lg:grid-cols-[1.1fr_0.9fr]",
-	CARD_GRID: "grid gap-4 sm:grid-cols-2 xl:grid-cols-3",
+	SECTION_GAP: "space-y-6 sm:space-y-8",
+	SPLIT_GRID: "grid gap-6 lg:grid-cols-[1.1fr_0.9fr]",
+	CARD_GRID: "grid gap-5 sm:grid-cols-2 xl:grid-cols-3",
 	CARD_SURFACE: "rounded-lg border border-border bg-card/80 shadow-none ring-0",
 	CARD_CONTENT: "p-5 sm:p-6",
 	SUBTLE_PANEL: "rounded-lg border border-border bg-card/70 shadow-none ring-0",
@@ -26,14 +26,14 @@ export const MARKETING_LAYOUT_CLASS_NAMES = {
 	LIGHT_ROW_INTERACTIVE:
 		"rounded-lg border border-border bg-card/70 transition-colors hover:border-dungeon-gold/40 hover:bg-dungeon-gold/5",
 	TIMELINE_LIST:
-		"relative grid gap-3 rounded-xl border border-border bg-card/50 p-4 sm:p-5",
+		"relative grid gap-4 rounded-xl border border-border bg-card/50 p-4 sm:p-5",
 	TIMELINE_ITEM:
 		"relative grid grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-lg border border-border bg-card/80 px-4 py-4 sm:gap-4 sm:px-5",
 	TIMELINE_RAIL: "flex flex-col items-center pt-1",
 	TIMELINE_NODE:
 		"flex size-8 items-center justify-center rounded-full border border-dungeon-gold/45 bg-dungeon-gold/10 text-[0.7rem] font-bold text-dungeon-gold",
 	MAPPING_RAIL:
-		"grid gap-3 rounded-xl border border-border bg-card/50 p-4 sm:p-5",
+		"grid gap-4 rounded-xl border border-border bg-card/50 p-4 sm:p-5",
 	MAPPING_ROW:
 		"grid gap-4 rounded-lg border border-border bg-card/80 p-4 sm:grid-cols-[minmax(0,0.75fr)_auto_minmax(0,1fr)] sm:items-center sm:p-5",
 } as const;

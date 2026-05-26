@@ -1,3 +1,11 @@
+import {
+	ArrowRightLeft,
+	DoorOpen,
+	Lock,
+	MousePointerClick,
+	Package,
+	Workflow,
+} from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
 
 import { createConceptsPageViewModel } from "./createConceptsPageViewModel";
@@ -12,13 +20,17 @@ describe("createConceptsPageViewModel", () => {
 		});
 
 		expect(viewModel.ctaProps.isAuthenticated).toBe(true);
-		expect(viewModel.ctaProps.onEntryRequest).toBe(
-			handleUsernameEntryRequest,
+		expect(viewModel.ctaProps.onEntryRequest).toBe(handleUsernameEntryRequest);
+		expect(viewModel.mappingSectionProps.sections[0]?.icon).toBe(DoorOpen);
+		expect(viewModel.mappingSectionProps.sections[1]?.icon).toBe(
+			ArrowRightLeft,
 		);
-		expect(viewModel.mappingSectionProps.sections[0]?.icon.name).toBe(
-			"DoorOpen",
+		expect(viewModel.mappingSectionProps.sections[2]?.icon).toBe(
+			MousePointerClick,
 		);
-		expect(viewModel.mappingSectionProps.sections[3]?.icon.name).toBe("Lock");
+		expect(viewModel.mappingSectionProps.sections[3]?.icon).toBe(Lock);
+		expect(viewModel.mappingSectionProps.sections[4]?.icon).toBe(Package);
+		expect(viewModel.mappingSectionProps.sections[5]?.icon).toBe(Workflow);
 		expect(viewModel.mappingSectionProps.sections[3]?.titleClassName).toBe(
 			"text-dungeon-rune-sealed",
 		);

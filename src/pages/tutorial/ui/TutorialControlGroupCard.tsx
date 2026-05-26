@@ -3,17 +3,13 @@ import { Keyboard, Zap } from "lucide-react";
 import { cn } from "@/shared/lib";
 import { Card, CardContent } from "@/shared/ui";
 
-import type { TUTORIAL_CONTROL_GROUPS } from "../config";
+import { TUTORIAL_CONTROL_TONES } from "../config";
+import type { TutorialControlGroupViewModel } from "../lib";
 
-import {
-	TutorialControlRow,
-	type TutorialControlRowData,
-} from "./TutorialControlRow";
-
-type TutorialControlGroup = (typeof TUTORIAL_CONTROL_GROUPS)[number];
+import { TutorialControlRow } from "./TutorialControlRow";
 
 type TutorialControlGroupCardProps = {
-	group: TutorialControlGroup;
+	group: TutorialControlGroupViewModel;
 };
 
 export function TutorialControlGroupCard({
@@ -29,7 +25,7 @@ export function TutorialControlGroupCard({
 							"border-dungeon-gold/30 bg-dungeon-gold/10 text-dungeon-gold",
 						)}
 					>
-						{group.tone === "accent" ? (
+						{group.tone === TUTORIAL_CONTROL_TONES.ACCENT ? (
 							<Zap className="size-4" />
 						) : (
 							<Keyboard className="size-4" />
@@ -47,10 +43,7 @@ export function TutorialControlGroupCard({
 
 				<ul className="divide-y divide-border/70">
 					{group.rows.map((row) => (
-						<TutorialControlRow
-							key={row.label}
-							row={row as TutorialControlRowData}
-						/>
+						<TutorialControlRow key={row.label} row={row} />
 					))}
 				</ul>
 			</CardContent>

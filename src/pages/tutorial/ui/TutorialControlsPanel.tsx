@@ -1,9 +1,17 @@
-import { TUTORIAL_CONTROL_GROUPS, TUTORIAL_CONTROLS_COPY } from "../config";
+import type { TutorialPageViewModel } from "../lib";
 
 import { TutorialCameraModesCard } from "./TutorialCameraModesCard";
 import { TutorialControlGroupCard } from "./TutorialControlGroupCard";
 
-export function TutorialControlsPanel() {
+type TutorialControlsPanelProps = TutorialPageViewModel["controlsSectionProps"];
+
+export function TutorialControlsPanel({
+	cameraHeading,
+	cameraModes,
+	controlGroups,
+	description,
+	heading,
+}: TutorialControlsPanelProps) {
 	return (
 		<section
 			aria-labelledby="controls-heading"
@@ -14,21 +22,24 @@ export function TutorialControlsPanel() {
 					id="controls-heading"
 					className="text-2xl font-semibold tracking-tight text-panel-title sm:text-3xl"
 				>
-					{TUTORIAL_CONTROLS_COPY.SECTION_HEADING}
+					{heading}
 				</h2>
 				<p className="max-w-sm text-sm leading-6 text-panel-body sm:text-base">
-					{TUTORIAL_CONTROLS_COPY.SECTION_DESCRIPTION}
+					{description}
 				</p>
 			</div>
 
 			<div className="space-y-4">
 				<div className="grid gap-4 lg:grid-cols-2">
-					{TUTORIAL_CONTROL_GROUPS.map((group) => (
+					{controlGroups.map((group) => (
 						<TutorialControlGroupCard key={group.heading} group={group} />
 					))}
 				</div>
 
-				<TutorialCameraModesCard />
+				<TutorialCameraModesCard
+					cameraHeading={cameraHeading}
+					cameraModes={cameraModes}
+				/>
 			</div>
 		</section>
 	);

@@ -1,22 +1,18 @@
-import { useAuthContext } from "@/features/auth";
-
+import { useConceptsPage } from "../model";
 import { ConceptsCtaSection } from "./ConceptsCtaSection";
 import { ConceptsHero } from "./ConceptsHero";
 import { ConceptsMappingSection } from "./ConceptsMappingSection";
 
 export function ConceptsPage() {
-	const { handleUsernameEntryRequest, isAuthenticated } = useAuthContext();
+	const { ctaProps, mappingSectionProps } = useConceptsPage();
 
 	return (
 		<>
 			<ConceptsHero />
 
-			<ConceptsMappingSection />
+			<ConceptsMappingSection {...mappingSectionProps} />
 
-			<ConceptsCtaSection
-				isAuthenticated={isAuthenticated}
-				onEntryRequest={handleUsernameEntryRequest}
-			/>
+			<ConceptsCtaSection {...ctaProps} />
 		</>
 	);
 }

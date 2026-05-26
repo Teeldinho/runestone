@@ -3,9 +3,17 @@ import { Camera } from "lucide-react";
 import { cn } from "@/shared/lib";
 import { Card, CardContent } from "@/shared/ui";
 
-import { TUTORIAL_CAMERA_MODES, TUTORIAL_CONTROLS_COPY } from "../config";
+import type { TutorialPageViewModel } from "../lib";
 
-export function TutorialCameraModesCard() {
+type TutorialCameraModesCardProps = {
+	cameraHeading: TutorialPageViewModel["controlsSectionProps"]["cameraHeading"];
+	cameraModes: TutorialPageViewModel["controlsSectionProps"]["cameraModes"];
+};
+
+export function TutorialCameraModesCard({
+	cameraHeading,
+	cameraModes,
+}: TutorialCameraModesCardProps) {
 	return (
 		<Card className="rounded-lg border-border bg-card p-0 shadow-none ring-0">
 			<CardContent className="space-y-4 p-5 sm:p-6">
@@ -14,12 +22,12 @@ export function TutorialCameraModesCard() {
 						<Camera className="size-4" />
 					</div>
 					<h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-panel-title">
-						{TUTORIAL_CONTROLS_COPY.CAMERA_HEADING}
+						{cameraHeading}
 					</h3>
 				</div>
 
 				<ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-					{TUTORIAL_CAMERA_MODES.map((mode) => (
+					{cameraModes.map((mode) => (
 						<li
 							key={mode.label}
 							className="rounded-md border border-border bg-background/35 p-4"

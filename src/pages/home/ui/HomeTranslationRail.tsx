@@ -3,13 +3,14 @@ import { ArrowRight } from "lucide-react";
 import { cn } from "@/shared/lib";
 import { MARKETING_LAYOUT_CLASS_NAMES } from "@/widgets/marketing-shell";
 
-import {
-	HOME_TRANSLATION_ARROW_CLASS_NAME,
-	HOME_TRANSLATION_RAIL,
-	HOME_TRANSLATION_TONE_CLASS_NAMES,
-} from "../config";
+import { HOME_TRANSLATION_ARROW_CLASS_NAME } from "../config";
+import type { HomeTranslationItemViewModel } from "../lib";
 
-export function HomeTranslationRail() {
+type HomeTranslationRailProps = {
+	items: readonly HomeTranslationItemViewModel[];
+};
+
+export function HomeTranslationRail({ items }: HomeTranslationRailProps) {
 	return (
 		<ul
 			aria-label="Concept translations"
@@ -18,13 +19,13 @@ export function HomeTranslationRail() {
 				"lg:grid lg:grid-cols-5 lg:items-stretch lg:gap-0 lg:overflow-hidden",
 			)}
 		>
-			{HOME_TRANSLATION_RAIL.map((item, index) => (
+			{items.map((item) => (
 				<li
 					key={item.label}
 					className={cn(
 						"flex items-center gap-2 whitespace-nowrap",
 						"lg:justify-center lg:border-r lg:border-border/70 lg:px-3",
-						index === HOME_TRANSLATION_RAIL.length - 1 ? "lg:border-r-0" : "",
+						item.isLast ? "lg:border-r-0" : "",
 					)}
 				>
 					<span className="rounded-sm border border-border bg-background/45 px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-panel-body">
@@ -37,7 +38,7 @@ export function HomeTranslationRail() {
 					<span
 						className={cn(
 							"text-sm font-semibold sm:text-base",
-							HOME_TRANSLATION_TONE_CLASS_NAMES[item.tone],
+							item.toneClassName,
 						)}
 					>
 						{item.target}
