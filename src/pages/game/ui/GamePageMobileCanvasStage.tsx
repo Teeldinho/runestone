@@ -1,6 +1,10 @@
 import { MobileActionButtonZone } from "@/features/input-orchestrator";
 import { CameraControlZone, TouchJoystickZone } from "@/features/touch-input";
 import {
+	GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES,
+	GAME_PAGE_MOBILE_OVERLAY_TEST_IDS,
+} from "@/pages/game/config";
+import {
 	useGamePageCameraElements,
 	useGamePageInputContext,
 	useGamePageMobileCanvasStageModel,
@@ -42,8 +46,12 @@ export function GamePageMobileCanvasStage() {
 
 					<CameraControlZone zoneRef={cameraElements.cameraControlRef} />
 
-					<div className="pointer-events-none absolute bottom-4 left-4 z-30">
-						<div className="pointer-events-auto">
+					<div className={GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.JOYSTICK_ANCHOR}>
+						<div
+							className={
+								GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.JOYSTICK_INTERACTIVE_SURFACE
+							}
+						>
 							<TouchJoystickZone
 								onMoveVelocity={input.touchMovement.handleMoveVelocity}
 								onStopVelocity={input.touchMovement.handleStopVelocity}
@@ -51,13 +59,36 @@ export function GamePageMobileCanvasStage() {
 						</div>
 					</div>
 
-					<div className="pointer-events-none absolute right-4 bottom-4 z-30 flex items-end gap-2">
-						<MobileActionButtonZone
-							isRunEnabled={input.isRunToggled}
-							sendInput={input.sendInput}
-						/>
+					<div
+						data-testid={GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ROOT}
+						className={GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.ROOT}
+					>
+						<div
+							data-testid={GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.RUN_JUMP_ANCHOR}
+							className={GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.RUN_JUMP_ANCHOR}
+						>
+							<div
+								className={
+									GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.RUN_JUMP_INTERACTIVE_SURFACE
+								}
+							>
+								<MobileActionButtonZone
+									isRunEnabled={input.isRunToggled}
+									sendInput={input.sendInput}
+								/>
+							</div>
+						</div>
 
-						<GamePageMobileActionPanel />
+						<div
+							data-testid={
+								GAME_PAGE_MOBILE_OVERLAY_TEST_IDS.ACTION_PANEL_ANCHOR
+							}
+							className={
+								GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.ACTION_PANEL_ANCHOR
+							}
+						>
+							<GamePageMobileActionPanel />
+						</div>
 					</div>
 				</>
 			) : null}

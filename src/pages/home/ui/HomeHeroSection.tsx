@@ -72,7 +72,7 @@ export function HomeHeroSection({
 					readyStatusLabel={readyStatusLabel}
 				/>
 
-				<div className="rounded-lg border border-dungeon-gold/35 bg-dungeon-gold/10 p-4 text-left sm:hidden">
+				<div className="rounded-lg border border-dungeon-gold/35 bg-dungeon-gold/10 p-4 text-center sm:hidden">
 					<p className="text-sm leading-6 text-panel-body">
 						{HOME_COPY.MOBILE_ORIENTATION_NOTICE}
 					</p>
