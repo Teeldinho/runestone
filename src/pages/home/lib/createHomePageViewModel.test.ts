@@ -27,6 +27,9 @@ describe("createHomePageViewModel", () => {
 		expect(viewModel.heroProps.readyStatusLabel).toBe("Rune_AshBearAAAA");
 		expect(viewModel.manifestSectionProps.nodes[0]?.indexLabel).toBe("1");
 		expect(viewModel.manifestSectionProps.nodes.at(-1)?.isLast).toBe(true);
+		expect(viewModel.teachingSectionProps.features[0]).toMatchObject({
+			isFeatured: true,
+		});
 		expect(viewModel.teachingSectionProps.features[0]?.Icon).toBe(DoorOpen);
 		expect(viewModel.translationRailItems.at(-1)?.isLast).toBe(true);
 	});
