@@ -11,6 +11,8 @@ type AuthSnapshotLike = {
 	context: {
 		profile: UserProfile | null;
 		errorMessage: string | null;
+		isUsernameEntryRequested: boolean;
+		isUsernameEntryDeferred: boolean;
 	};
 	matches: (status: AuthStatusValue) => boolean;
 };
@@ -20,6 +22,8 @@ type CreateAuthContextValueInput = {
 	suggestedUsername: string;
 	handleSessionBootstrapRetry: AuthContextValue["handleSessionBootstrapRetry"];
 	handleUsernameFormSubmit: AuthContextValue["handleUsernameFormSubmit"];
+	handleUsernameEntryRequest: AuthContextValue["handleUsernameEntryRequest"];
+	handleUsernameEntryDismiss: AuthContextValue["handleUsernameEntryDismiss"];
 };
 
 const createAuthContextValue = ({
@@ -27,6 +31,8 @@ const createAuthContextValue = ({
 	suggestedUsername,
 	handleSessionBootstrapRetry,
 	handleUsernameFormSubmit,
+	handleUsernameEntryRequest,
+	handleUsernameEntryDismiss,
 }: CreateAuthContextValueInput): AuthContextValue => {
 	const isCheckingSession = snapshot.matches(AUTH_STATUS.CHECKING_SESSION);
 	const isAuthenticated = snapshot.matches(AUTH_STATUS.AUTHENTICATED);
@@ -41,7 +47,12 @@ const createAuthContextValue = ({
 		isCheckingSession,
 		isAuthenticated,
 		isUsernameModalOpen:
-			snapshot.matches(AUTH_STATUS.REQUIRES_USERNAME) || isUsernameSubmitting,
+			(snapshot.matches(AUTH_STATUS.CHECKING_SESSION) &&
+				snapshot.context.isUsernameEntryRequested &&
+				!snapshot.context.isUsernameEntryDeferred) ||
+			(snapshot.matches(AUTH_STATUS.REQUIRES_USERNAME) &&
+				!snapshot.context.isUsernameEntryDeferred) ||
+			isUsernameSubmitting,
 		isUsernameSubmitting,
 		readyStatusLabel: snapshot.context.profile
 			? formatUserDisplayTag(
@@ -50,6 +61,8 @@ const createAuthContextValue = ({
 				)
 			: null,
 		suggestedUsername,
+		handleUsernameEntryRequest,
+		handleUsernameEntryDismiss,
 		handleSessionBootstrapRetry,
 		handleUsernameFormSubmit,
 	};

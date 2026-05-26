@@ -1,7 +1,10 @@
 import {
+	Button,
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
+	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@/shared/ui";
@@ -15,6 +18,7 @@ type UsernameModalProps = {
 	isOpen: boolean;
 	isSubmitting: boolean;
 	suggestedUsername: string;
+	onKeepReading: () => void;
 	onSubmit: (input: UsernameFormInput) => Promise<void>;
 };
 
@@ -23,6 +27,7 @@ export function UsernameModal({
 	isOpen,
 	isSubmitting,
 	suggestedUsername,
+	onKeepReading,
 	onSubmit,
 }: UsernameModalProps) {
 	return (
@@ -43,6 +48,20 @@ export function UsernameModal({
 					suggestedUsername={suggestedUsername}
 					onSubmit={onSubmit}
 				/>
+
+				<DialogFooter className="mt-1">
+					<DialogClose asChild>
+						<Button
+							type="button"
+							variant="dungeon-outline"
+							className="w-full"
+							disabled={isSubmitting}
+							onClick={onKeepReading}
+						>
+							{AUTH_COPY.MODAL_KEEP_READING_LABEL}
+						</Button>
+					</DialogClose>
+				</DialogFooter>
 			</DialogContent>
 		</Dialog>
 	);

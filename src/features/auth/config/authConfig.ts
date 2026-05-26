@@ -29,6 +29,7 @@ export const AUTH_COPY = {
 	MODAL_TITLE: "Enter the dungeon",
 	MODAL_DESCRIPTION:
 		"Use the suggested name or edit it before saving your progress and leaderboard entry.",
+	MODAL_KEEP_READING_LABEL: "Keep reading",
 	USERNAME_LABEL: "Name",
 	USERNAME_PLACEHOLDER: "Your name",
 	USERNAME_SUBMIT_LABEL: "Enter the dungeon",

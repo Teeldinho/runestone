@@ -211,7 +211,7 @@ Once a commit is triggered, the Lefthook orchestrator executes four mandatory ch
 * **Biome Static Analysis**: Audits and formats code in milliseconds to enforce strict formatting guidelines and prevent styling anti-patterns.
 * **Steiger FSD Architectural Bounds**: Validates Feature-Sliced Design layers (`app -> pages -> widgets -> features -> entities -> shared`), blocking illegal circular dependencies and ensuring clean vertical slice separation.
 * **Segment Purity Validator**: Enforces a strict separation of concerns, ensuring static data remain isolated in `config/` folders while functional utilities are placed exclusively in `lib/` modules.
-* **Vitest Coverage Suite**: Automatically runs our 900+ unit and integration tests on every integration attempt to prevent structural regressions.
+* **Vitest Coverage Suite**: Automatically runs our 1,000+ unit and integration tests on every integration attempt to prevent structural regressions.
 
 ### Spec-Driven Development (SDD)
 Before any subsystem is implemented, a comprehensive technical blueprint is created. This specification details exact scope boundaries, architectural constraints, edge cases, and expected acceptance metrics, guiding implementing agents and maintaining code integrity.

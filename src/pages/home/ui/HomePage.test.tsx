@@ -1,6 +1,12 @@
 // @vitest-environment happy-dom
 
-import { cleanup, render, screen } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	within,
+} from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -37,144 +43,102 @@ beforeEach(() => {
 	mockUseAuthContext.mockReset();
 });
 
+const createAuthContext = (isAuthenticated: boolean) => ({
+	authStatus: isAuthenticated
+		? AUTH_STATUS.AUTHENTICATED
+		: AUTH_STATUS.REQUIRES_USERNAME,
+	errorMessage: null,
+	handleSessionBootstrapRetry: vi.fn(),
+	handleUsernameEntryRequest: vi.fn(),
+	handleUsernameEntryDismiss: vi.fn(),
+	handleUsernameFormSubmit: vi.fn(),
+	isAuthenticated,
+	isCheckingSession: false,
+	isUsernameModalOpen: false,
+	isUsernameSubmitting: false,
+	readyStatusLabel: isAuthenticated ? "Rune_AshBearAAAA" : null,
+	suggestedUsername: "Rune_AshBearAAAA",
+});
+
 describe("HomePage", () => {
-	it.each([
-		{
-			isCheckingSession: true,
-			label: "auth checking",
-			authStatus: AUTH_STATUS.CHECKING_SESSION,
-			statusHeading: HOME_STATUS_COPY.CHECKING_SESSION.title,
-		},
-		{
-			isCheckingSession: false,
-			label: "unauthenticated",
-			authStatus: AUTH_STATUS.REQUIRES_USERNAME,
-			statusHeading: HOME_STATUS_COPY.REQUIRES_USERNAME.title,
-		},
-		{
-			isCheckingSession: false,
-			label: "bootstrap failure",
-			authStatus: AUTH_STATUS.BOOTSTRAP_FAILED,
-			statusHeading: HOME_STATUS_COPY.BOOTSTRAP_FAILED.title,
-		},
-	])("keeps dungeon entry disabled while $label", ({
-		authStatus,
-		isCheckingSession,
-		statusHeading,
-	}) => {
-		mockUseAuthContext.mockReturnValue({
-			authStatus,
-			errorMessage: null,
-			handleUsernameFormSubmit: vi.fn(),
-			handleSessionBootstrapRetry: vi.fn(),
-			isAuthenticated: false,
-			isCheckingSession,
-			isUsernameModalOpen: false,
-			isUsernameSubmitting: false,
-			readyStatusLabel: null,
-			suggestedUsername: "Rune_AshBearAAAA",
-		});
+	it("renders the redesigned landing copy and concept sections", () => {
+		mockUseAuthContext.mockReturnValue(createAuthContext(false));
 
 		render(<HomePage />);
 
-		const dungeonEntryButton = screen.getByRole("button", {
-			name: HOME_COPY.CTA_LABEL,
-		});
+		expect(
+			screen.getByRole("heading", { name: HOME_COPY.HEADING }),
+		).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.SUBTITLE)).not.toBeNull();
+		expect(screen.getByText("Node Inspector")).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.FEATURES_HEADING)).not.toBeNull();
+		expect(screen.getByText("State")).not.toBeNull();
+		expect(screen.getByText("Room")).not.toBeNull();
+		expect(screen.getByText("States become rooms")).not.toBeNull();
+		expect(screen.getByText("Actors stay isolated")).not.toBeNull();
+		expect(screen.getByText("What the dungeon teaches")).not.toBeNull();
+		const teachingSection = screen
+			.getByRole("heading", { name: HOME_COPY.FEATURES_HEADING })
+			.closest("section");
+		expect(teachingSection).not.toBeNull();
+		const firstTeachingCard = within(
+			teachingSection as HTMLElement,
+		).getAllByRole("listitem")[0];
+		expect(firstTeachingCard?.className).toContain("lg:col-span-2");
+		expect(screen.queryByText(HOME_COPY.RUNTIME_HEADING)).toBeNull();
+	});
 
-		expect((dungeonEntryButton as HTMLButtonElement).disabled).toBe(true);
-		expect(dungeonEntryButton.getAttribute("data-variant")).toBe("default");
+	it("requests username entry before authentication", () => {
+		const authContext = createAuthContext(false);
+
+		mockUseAuthContext.mockReturnValue(authContext);
+
+		render(<HomePage />);
+
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: HOME_COPY.CTA_LABEL,
+			}),
+		);
+
+		expect(authContext.handleUsernameEntryRequest).toHaveBeenCalledOnce();
 		expect(
 			screen.getByRole("link", {
 				name: HOME_COPY.TUTORIAL_LABEL,
 			}),
 		).not.toBeNull();
-		expect(
-			screen
-				.getByRole("link", {
-					name: HOME_COPY.TUTORIAL_LABEL,
-				})
-				.getAttribute("data-variant"),
-		).toBe("outline");
-		expect(screen.getByText(HOME_COPY.SUBTITLE)).not.toBeNull();
-		expect(screen.getByText(HOME_COPY.SESSION_NOTE)).not.toBeNull();
-		expect(screen.getByText(statusHeading)).not.toBeNull();
-
-		const main = screen.getByRole("main");
-
-		expect(main.className).toContain("h-dvh");
-		expect(main.className).toContain("overflow-y-auto");
-		expect(main.className).toContain("overscroll-contain");
 	});
 
-	it("shows the dungeon entry CTA after authentication", () => {
-		mockUseAuthContext.mockReturnValue({
-			authStatus: AUTH_STATUS.AUTHENTICATED,
-			errorMessage: null,
-			handleUsernameFormSubmit: vi.fn(),
-			handleSessionBootstrapRetry: vi.fn(),
-			isAuthenticated: true,
-			isCheckingSession: false,
-			isUsernameModalOpen: false,
-			isUsernameSubmitting: false,
-			readyStatusLabel: "rune-scribe#42",
-			suggestedUsername: "Rune_AshBearAAAA",
-		});
+	it("shows dungeon entry links after authentication", () => {
+		mockUseAuthContext.mockReturnValue(createAuthContext(true));
 
 		render(<HomePage />);
 
 		expect(
-			screen.getByRole("link", {
+			screen.getAllByRole("link", {
 				name: HOME_COPY.CTA_LABEL,
-			}),
-		).not.toBeNull();
-		expect(
-			screen
-				.getByRole("link", {
-					name: HOME_COPY.CTA_LABEL,
-				})
-				.getAttribute("data-variant"),
-		).toBe("default");
-		expect(
-			screen
-				.getByRole("link", {
-					name: HOME_COPY.TUTORIAL_LABEL,
-				})
-				.getAttribute("data-variant"),
-		).toBe("outline");
-		expect(screen.getByText(HOME_COPY.BADGE)).not.toBeNull();
-		expect(screen.getByText(HOME_COPY.SESSION_NOTE)).not.toBeNull();
-		expect(screen.getByText(HOME_COPY.FEATURES_HEADING)).not.toBeNull();
+			}).length,
+		).toBeGreaterThan(0);
 	});
 
 	it("shows a retry action when bootstrap fails", () => {
 		const handleSessionBootstrapRetry = vi.fn();
 
 		mockUseAuthContext.mockReturnValue({
+			...createAuthContext(false),
 			authStatus: AUTH_STATUS.BOOTSTRAP_FAILED,
-			authenticatedProfile: null,
 			errorMessage: "Convex unreachable",
-			handleUsernameFormSubmit: vi.fn(),
 			handleSessionBootstrapRetry,
-			isAuthenticated: false,
-			isCheckingSession: false,
-			isUsernameModalOpen: false,
-			isUsernameSubmitting: false,
-			readyStatusLabel: null,
-			suggestedUsername: "Rune_AshBearAAAA",
 		});
 
 		render(<HomePage />);
 
-		expect(
-			screen.getByRole("button", {
-				name: HOME_STATUS_COPY.BOOTSTRAP_FAILED.actionLabel,
-			}),
-		).not.toBeNull();
 		screen
 			.getByRole("button", {
 				name: HOME_STATUS_COPY.BOOTSTRAP_FAILED.actionLabel,
 			})
 			.click();
+
 		expect(handleSessionBootstrapRetry).toHaveBeenCalledOnce();
 	});
 });

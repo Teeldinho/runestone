@@ -330,6 +330,21 @@ vi.mock("@/pages/game/model", () => {
 	};
 });
 
+vi.mock("@tanstack/react-router", () => ({
+	Link: ({
+		children,
+		to,
+		...props
+	}: {
+		children: React.ReactNode;
+		to: string;
+	}) => (
+		<a href={to} {...props}>
+			{children}
+		</a>
+	),
+}));
+
 vi.mock("@/features/settings", () => ({
 	useSettingsForm: vi.fn(() => ({
 		postprocessingEnabled: true,
@@ -448,6 +463,11 @@ describe("GamePage", () => {
 			GAME_PAGE_CONTROLS.LEADERBOARD.ARIA_LABEL,
 			GAME_PAGE_CONTROLS.SETTINGS.ARIA_LABEL,
 		]);
+		expect(
+			within(screen.getByRole("banner")).getByRole("link", {
+				name: "RUNESTONE",
+			}),
+		).not.toBeNull();
 
 		expect(
 			screen.getByRole("button", {
@@ -481,6 +501,11 @@ describe("GamePage", () => {
 		);
 
 		expect(screen.getByTestId("touch-joystick-widget")).not.toBeNull();
+		expect(
+			screen.getByRole("link", {
+				name: GAME_PAGE_CONTROLS.NAVIGATION.HOME_ARIA_LABEL,
+			}),
+		).not.toBeNull();
 		expect(
 			screen.getByRole("button", {
 				name: "Enter Library",

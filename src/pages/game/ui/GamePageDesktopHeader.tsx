@@ -1,9 +1,11 @@
+import { Link } from "@tanstack/react-router";
 import { Trophy, Volume2, VolumeX } from "lucide-react";
 
 import { GAME_PAGE_CONTROLS } from "@/pages/game/config";
 import { useGamePageDesktopHeaderModel } from "@/pages/game/model";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui";
 import { LeaderboardSheet } from "@/widgets/leaderboard-panel";
+import { MARKETING_ROUTES } from "@/widgets/marketing-shell";
 
 import { GamePageDesktopSettingsAction } from "./GamePageDesktopSettingsAction";
 
@@ -14,9 +16,12 @@ export function GamePageDesktopHeader() {
 	return (
 		<header className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-panel-border px-4 py-2">
 			<div className="flex items-center gap-3">
-				<span className="text-lg font-bold uppercase tracking-[0.2em] text-dungeon-gold">
+				<Link
+					to={MARKETING_ROUTES.HOME}
+					className="text-lg font-bold uppercase tracking-[0.2em] text-dungeon-gold transition-opacity hover:opacity-80"
+				>
 					RUNESTONE
-				</span>
+				</Link>
 				<span className="rune-text">·</span>
 				<span className="rune-text">Floor I</span>
 			</div>
