@@ -1,0 +1,15 @@
+id: no-config-runtime-constructs
+language: TypeScript
+severity: warning
+message: "Config files must contain static data only; move runtime constructs to lib or model."
+files:
+  - src/**/config/**/*.ts
+  - convex/**/config/**/*.ts
+rule:
+  any:
+    - pattern: new Map($$$ARGS)
+    - pattern: new Set($$$ARGS)
+    - pattern: new Date($$$ARGS)
+    - pattern: new RegExp($$$ARGS)
+    - pattern: Object.$METHOD($$$ARGS)
+    - pattern: import.meta.env

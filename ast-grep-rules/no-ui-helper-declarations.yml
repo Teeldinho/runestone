@@ -1,0 +1,16 @@
+id: no-ui-helper-declarations
+language: Tsx
+severity: warning
+message: "UI files are render-only; move helper functions to model or lib."
+files:
+  - src/**/ui/**/*.tsx
+ignores:
+  - src/**/*.test.tsx
+rule:
+  any:
+    - pattern: function $NAME($$$ARGS) { $$$BODY }
+    - pattern: const $NAME = ($$$ARGS) => { $$$BODY }
+    - pattern: const $NAME = ($$$ARGS) => $BODY
+constraints:
+  NAME:
+    regex: ^(?:[a-tv-z]|u[a-rt-z]|us[a-df-z]|use[a-z0-9_]).*
