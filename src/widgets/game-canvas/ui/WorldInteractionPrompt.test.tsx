@@ -23,7 +23,7 @@ vi.mock("@/features/responsive-layout", () => ({
 	useResponsiveGameLayout: () => mockUseResponsiveGameLayout(),
 }));
 
-vi.mock("../lib", () => ({
+vi.mock("../lib/getWorldInteractionPromptPosition", () => ({
 	getWorldAttackPromptPosition: () => [0, 0, 0] as const,
 	getWorldInteractionPromptPosition: () => [0, 0, 0] as const,
 }));

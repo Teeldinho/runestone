@@ -10,14 +10,14 @@ import {
 } from "@/features/dungeon-navigation";
 import type { ResponsiveGameLayout } from "@/features/responsive-layout";
 import { useResponsiveGameLayout } from "@/features/responsive-layout";
-import * as lib from "../lib";
+import * as worldInteractionPromptPosition from "../lib/getWorldInteractionPromptPosition";
 import { useWorldInteractionPrompt } from "./useWorldInteractionPrompt";
 
 vi.mock("@/features/responsive-layout", () => ({
 	useResponsiveGameLayout: vi.fn(),
 }));
 
-vi.mock("../lib", () => ({
+vi.mock("../lib/getWorldInteractionPromptPosition", () => ({
 	getWorldInteractionPromptPosition: vi.fn(),
 	getWorldAttackPromptPosition: vi.fn(),
 }));
@@ -62,9 +62,9 @@ describe("useWorldInteractionPrompt", () => {
 
 	it("returns desktop interaction configurations when available", () => {
 		const mockInteractPos: [number, number, number] = [1, 2, 3];
-		vi.mocked(lib.getWorldInteractionPromptPosition).mockReturnValue(
-			mockInteractPos,
-		);
+		vi.mocked(
+			worldInteractionPromptPosition.getWorldInteractionPromptPosition,
+		).mockReturnValue(mockInteractPos);
 
 		const interactionCandidates: InteractionCandidatesViewModel = {
 			hasInteract: true,
@@ -102,7 +102,9 @@ describe("useWorldInteractionPrompt", () => {
 		} satisfies ResponsiveGameLayout);
 
 		const mockAttackPos: [number, number, number] = [4, 5, 6];
-		vi.mocked(lib.getWorldAttackPromptPosition).mockReturnValue(mockAttackPos);
+		vi.mocked(
+			worldInteractionPromptPosition.getWorldAttackPromptPosition,
+		).mockReturnValue(mockAttackPos);
 
 		const interactionCandidates: InteractionCandidatesViewModel = {
 			hasInteract: false,
@@ -138,8 +140,12 @@ describe("useWorldInteractionPrompt", () => {
 			attackPosition: [10, 0, 10],
 		};
 
-		vi.mocked(lib.getWorldInteractionPromptPosition).mockReturnValue([1, 2, 3]);
-		vi.mocked(lib.getWorldAttackPromptPosition).mockReturnValue([4, 5, 6]);
+		vi.mocked(
+			worldInteractionPromptPosition.getWorldInteractionPromptPosition,
+		).mockReturnValue([1, 2, 3]);
+		vi.mocked(
+			worldInteractionPromptPosition.getWorldAttackPromptPosition,
+		).mockReturnValue([4, 5, 6]);
 
 		const { result, rerender } = renderHook(() =>
 			useWorldInteractionPrompt({

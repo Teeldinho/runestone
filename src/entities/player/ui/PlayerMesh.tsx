@@ -10,6 +10,7 @@ import { useEffect, useMemo, useRef } from "react";
 import type * as THREE from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import type { Vector3Tuple } from "@/shared/lib";
+import { preloadGltfAssets } from "@/shared/lib";
 
 import {
 	PLAYER_ANIMATION_PATHS,
@@ -19,9 +20,11 @@ import {
 import { usePlayerCameraFollowPositionSync } from "../model/usePlayerCameraFollowPositionSync";
 import { usePlayerMeshViewModel } from "../model/usePlayerMeshViewModel";
 
-useGLTF.preload(PLAYER_GLTF_CONFIG.CHARACTER.PATH);
-useGLTF.preload(PLAYER_ANIMATION_PATHS.MOVEMENT_BASIC);
-useGLTF.preload(PLAYER_ANIMATION_PATHS.GENERAL);
+preloadGltfAssets(useGLTF, [
+	PLAYER_GLTF_CONFIG.CHARACTER.PATH,
+	PLAYER_ANIMATION_PATHS.MOVEMENT_BASIC,
+	PLAYER_ANIMATION_PATHS.GENERAL,
+]);
 
 type PlayerMeshProps = {
 	initialPosition?: Vector3Tuple;

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AUDIO_PATHS } from "../config";
 
@@ -9,6 +9,13 @@ import {
 	startBackgroundMusicLoop,
 	stopBackgroundMusicLoop,
 } from "./musicManager";
+
+const AUDIO_CONTEXT_STATE_LOG = "[audio] Tone.js context state:";
+const AUDIO_CONTEXT_STATE_AFTER_START_LOG =
+	"[audio] Tone.js context state after start:";
+const TONE_CONTEXT_STATE = "suspended";
+
+let consoleLogSpy: ReturnType<typeof vi.spyOn>;
 
 const {
 	mockPlayerLoad,
@@ -41,6 +48,10 @@ const {
 		},
 	};
 
+	const tonePlayer = vi.fn(function MockTonePlayer() {
+		return playerInstance;
+	});
+
 	return {
 		mockPlayerLoad: playerLoad,
 		mockToneStart: vi.fn(),
@@ -52,7 +63,7 @@ const {
 		mockPlayerDispose: playerDispose,
 		mockPlayerInstance: playerInstance,
 		mockGainToDb: gainToDb,
-		mockTonePlayer: vi.fn(() => playerInstance),
+		mockTonePlayer: tonePlayer,
 	};
 });
 
@@ -61,7 +72,7 @@ vi.mock("tone", () => ({
 	start: mockToneStart,
 	Player: mockTonePlayer,
 	getContext: vi.fn(() => ({
-		state: "suspended",
+		state: TONE_CONTEXT_STATE,
 	})),
 	Transport: {
 		start: mockTransportStart,
@@ -74,8 +85,15 @@ describe("musicManager", () => {
 	beforeEach(() => {
 		disposeMusicManager();
 		vi.clearAllMocks();
+		consoleLogSpy = vi
+			.spyOn(console, "log")
+			.mockImplementation(() => undefined);
 		mockToneStart.mockResolvedValue(undefined);
 		mockPlayerLoad.mockResolvedValue(undefined);
+	});
+
+	afterEach(() => {
+		consoleLogSpy.mockRestore();
 	});
 
 	it("starts looping background music through Tone transport", async () => {
@@ -87,6 +105,14 @@ describe("musicManager", () => {
 		expect(mockTransportStart).toHaveBeenCalledTimes(1);
 		expect(mockPlayerStart).toHaveBeenCalledTimes(1);
 		expect(mockPlayerInstance.volume.value).toBeCloseTo(mockGainToDb(0.55));
+		expect(consoleLogSpy).toHaveBeenCalledWith(
+			AUDIO_CONTEXT_STATE_LOG,
+			TONE_CONTEXT_STATE,
+		);
+		expect(consoleLogSpy).toHaveBeenCalledWith(
+			AUDIO_CONTEXT_STATE_AFTER_START_LOG,
+			TONE_CONTEXT_STATE,
+		);
 	});
 
 	it("runs start as a single in-flight operation", async () => {

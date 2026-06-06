@@ -3,8 +3,7 @@ import type { RapierRigidBody } from "@react-three/rapier";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
-
-import { getPlayerPosition } from "@/shared/lib";
+import { getPlayerPosition, preloadGltfAssets } from "@/shared/lib";
 
 import {
 	ENEMY_ANIMATION_PATHS,
@@ -19,10 +18,12 @@ import {
 	useEnemyPhysicsLoop,
 } from "../model";
 
-useGLTF.preload(ENEMY_GLTF_CONFIG.CHARACTER.PATH);
-useGLTF.preload(ENEMY_ANIMATION_PATHS.MOVEMENT_BASIC);
-useGLTF.preload(ENEMY_ANIMATION_PATHS.GENERAL);
-useGLTF.preload(ENEMY_ANIMATION_PATHS.COMBAT_MELEE);
+preloadGltfAssets(useGLTF, [
+	ENEMY_GLTF_CONFIG.CHARACTER.PATH,
+	ENEMY_ANIMATION_PATHS.MOVEMENT_BASIC,
+	ENEMY_ANIMATION_PATHS.GENERAL,
+	ENEMY_ANIMATION_PATHS.COMBAT_MELEE,
+]);
 
 type EnemyMeshProps = {
 	settings: EnemyMeshSettings;
