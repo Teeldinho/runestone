@@ -1,6 +1,7 @@
 import { shallowEqual } from "@xstate/react";
 import { useMemo, useSyncExternalStore } from "react";
 
+import { EMPTY_INTERACTION_CANDIDATES } from "../config";
 import {
 	createInteractionCandidatesRuntime,
 	type InteractionCandidatesViewModel,
@@ -21,7 +22,11 @@ export const useInteractionCandidates = (): InteractionCandidatesViewModel => {
 		[context],
 	);
 
-	return useSyncExternalStore(api.subscribe, api.getSnapshot);
+	return useSyncExternalStore(
+		api.subscribe,
+		api.getSnapshot,
+		() => EMPTY_INTERACTION_CANDIDATES,
+	);
 };
 
 export type { InteractionCandidatesViewModel };
