@@ -1,6 +1,8 @@
 # Structural Lint
 
-This directory contains deterministic structural checks that complement Biome and Steiger.
+The active ast-grep config is the repository root `sgconfig.yml`.
+
+The `tools/structural-lint/` directory contains rule implementations, tests, docs, and supporting structural scripts. These deterministic checks complement Biome and Steiger.
 
 ## Tool Boundaries
 
@@ -8,6 +10,8 @@ This directory contains deterministic structural checks that complement Biome an
 - Steiger: FSD layer/slice/public API boundaries.
 - ast-grep: AST-level convention checks.
 - Node scripts: filesystem/path checks that are not AST problems.
+
+Filesystem topology and public API existence checks are path/graph checks, not AST checks. They live under `tools/structural-lint/scripts/` so structure enforcement remains grouped with the rest of structural linting.
 
 ## Rules
 
@@ -25,5 +29,6 @@ Exceptions must be narrow, named, documented, implemented in tooling config wher
 ## Do Not
 
 - Do not replace Steiger with ast-grep.
+- Do not use structural-lint as a reason to weaken Steiger.
 - Do not add broad fragile rules without tests.
 - Do not weaken rules to pass a feature.

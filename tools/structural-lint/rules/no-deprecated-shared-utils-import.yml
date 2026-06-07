@@ -1,6 +1,6 @@
 id: no-deprecated-shared-utils-import
 language: TypeScript
-severity: warning
+severity: error
 message: "The '@/shared/lib/utils' shim is deprecated; import from '@/shared/lib/cn' or the shared lib public API."
 rule:
   any:

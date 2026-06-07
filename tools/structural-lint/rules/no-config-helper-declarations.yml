@@ -1,6 +1,6 @@
 id: no-config-helper-declarations
 language: TypeScript
-severity: warning
+severity: error
 message: "Config files must be static-only; move helper functions to lib or model."
 files:
   - src/**/config/**/*.ts

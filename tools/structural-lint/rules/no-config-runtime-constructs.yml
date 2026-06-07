@@ -1,6 +1,6 @@
 id: no-config-runtime-constructs
 language: TypeScript
-severity: warning
+severity: error
 message: "Config files must contain static data only; move runtime constructs to lib or model."
 files:
   - src/**/config/**/*.ts

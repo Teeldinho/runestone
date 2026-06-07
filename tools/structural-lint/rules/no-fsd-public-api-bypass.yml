@@ -1,6 +1,6 @@
 id: no-fsd-public-api-bypass
 language: TypeScript
-severity: warning
+severity: error
 message: "Import FSD slices through their public index.ts API instead of internal segment files."
 rule:
   any:

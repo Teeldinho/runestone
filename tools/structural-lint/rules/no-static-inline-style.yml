@@ -1,6 +1,6 @@
 id: no-static-inline-style
 language: Tsx
-severity: warning
+severity: error
 message: "Avoid static inline style props in UI components; use Tailwind className for non-runtime values."
 files:
   - src/**/ui/**/*.tsx

@@ -1,0 +1,4 @@
+ruleDirs:
+  - tools/structural-lint/rules
+testConfigs:
+  - testDir: tools/structural-lint/rule-tests

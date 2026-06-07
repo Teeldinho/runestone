@@ -3,11 +3,7 @@
 import { constants } from "node:fs";
 import { access, readdir } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
-const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
-const PROJECT_ROOT = path.resolve(SCRIPT_DIR, "../../..");
-const SRC_DIR = path.join(PROJECT_ROOT, "src");
 const LAYERS_WITH_SLICES = new Set([
 	"pages",
 	"widgets",
@@ -17,6 +13,20 @@ const LAYERS_WITH_SLICES = new Set([
 const SHARED_LAYER = "shared";
 const SEGMENTS = new Set(["ui", "model", "lib", "api", "config"]);
 const SOURCE_EXTENSIONS = new Set([".ts", ".tsx"]);
+
+const parseArgs = (argv) => {
+	const args = { repo: process.cwd() };
+
+	for (let index = 0; index < argv.length; index += 1) {
+		const current = argv[index];
+		if (current === "--repo" && argv[index + 1]) {
+			args.repo = path.resolve(argv[index + 1]);
+			index += 1;
+		}
+	}
+
+	return args;
+};
 
 const exists = async (targetPath) => {
 	try {
@@ -54,8 +64,8 @@ const collectSliceDirectories = async (layerPath) => {
 		.map((entry) => path.join(layerPath, entry.name));
 };
 
-const toRelativePath = (filePath) =>
-	path.relative(PROJECT_ROOT, filePath).split(path.sep).join("/");
+const toRelativePath = (repoRoot, filePath) =>
+	path.relative(repoRoot, filePath).split(path.sep).join("/");
 
 const checkSegmentSubfolders = (relativePath) => {
 	const parts = relativePath.split("/");
@@ -73,18 +83,20 @@ const checkSegmentSubfolders = (relativePath) => {
 };
 
 const run = async () => {
+	const { repo: repoRoot } = parseArgs(process.argv.slice(2));
+	const srcDir = path.join(repoRoot, "src");
 	const violations = [];
 
-	if (!(await exists(SRC_DIR))) {
+	if (!(await exists(srcDir))) {
 		console.info(
 			"[lint:structure] No src directory found; skipping FSD path checks.",
 		);
 		return;
 	}
 
-	const files = await collectFiles(SRC_DIR);
+	const files = await collectFiles(srcDir);
 	for (const filePath of files) {
-		const relativePath = toRelativePath(filePath);
+		const relativePath = toRelativePath(repoRoot, filePath);
 		if (checkSegmentSubfolders(relativePath)) {
 			violations.push(
 				`${relativePath} [fsd-segment-paths] FSD segment folders must stay flat; move files directly under ui/model/lib/api/config.`,
@@ -93,7 +105,7 @@ const run = async () => {
 	}
 
 	for (const layer of LAYERS_WITH_SLICES) {
-		const layerPath = path.join(SRC_DIR, layer);
+		const layerPath = path.join(srcDir, layer);
 		if (!(await exists(layerPath))) {
 			continue;
 		}
@@ -102,7 +114,7 @@ const run = async () => {
 			const publicApiPath = path.join(slicePath, "index.ts");
 			if (!(await exists(publicApiPath))) {
 				violations.push(
-					`${toRelativePath(slicePath)} [fsd-public-api] FSD slices must expose an index.ts public API.`,
+					`${toRelativePath(repoRoot, slicePath)} [fsd-public-api] FSD slices must expose an index.ts public API.`,
 				);
 			}
 		}

@@ -1,6 +1,6 @@
 id: no-ui-helper-declarations
 language: Tsx
-severity: warning
+severity: error
 message: "UI files are render-only; move helper functions to model or lib."
 files:
   - src/**/ui/**/*.tsx
