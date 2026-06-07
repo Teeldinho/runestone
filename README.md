@@ -294,7 +294,7 @@ npm run typecheck     # Validate TypeScript static analysis
 npm run lint          # Run Biome code quality audit
 npm run lint:fix      # Automatically fix Biome formatting and lint issues
 npm run lint:fsd      # Verify Feature-Sliced Design bounds (Steiger)
-npm run lint:purity   # Validate segment logical boundaries
+npm run lint:structure # Validate structural conventions
 npm run test          # Execute Vitest suite
 npm run ci:local      # Execute full local CI quality gates
 ```

@@ -1,7 +1,0 @@
-id: no-deprecated-cn-utils-shim-ts
-valid:
-  - |
-    import { cn } from "@/shared/lib";
-invalid:
-  - |
-    import { cn } from "@/shared/lib/utils";

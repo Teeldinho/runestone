@@ -1,0 +1,12 @@
+id: no-fsd-public-api-bypass
+language: TypeScript
+severity: warning
+message: "Import FSD slices through their public index.ts API instead of internal segment files."
+rule:
+  any:
+    - pattern: import { $$$IMPORTS } from "$PATH"
+    - pattern: import $DEFAULT from "$PATH"
+    - pattern: import * as $NS from "$PATH"
+constraints:
+  PATH:
+    regex: ^@/(?:features|entities|widgets|pages)/[^/]+/(?:ui|model|lib|api|config)/.+

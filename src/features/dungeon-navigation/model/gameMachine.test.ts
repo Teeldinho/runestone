@@ -10,7 +10,7 @@ import {
 	INTERACTION_TYPES,
 	ROOM_IDS,
 } from "@/entities/dungeon";
-import { createGameMachine } from "@/features/dungeon-navigation/model/gameMachine";
+import { createGameMachine } from "./gameMachine";
 
 describe("createGameMachine", () => {
 	it("starts in entrance with default context", () => {

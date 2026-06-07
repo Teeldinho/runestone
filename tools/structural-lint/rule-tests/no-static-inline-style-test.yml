@@ -1,4 +1,4 @@
-id: no-ui-inline-style
+id: no-static-inline-style
 valid:
   - |
     export function ProductCard() { return <div className="rounded" />; }

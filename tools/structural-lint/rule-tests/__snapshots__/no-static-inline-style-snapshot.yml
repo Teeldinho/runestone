@@ -1,0 +1,9 @@
+id: no-static-inline-style
+snapshots:
+  ? |
+    export function ProductCard() { return <div style={{ color: "red" }} />; }
+  : labels:
+    - source: 'style={{ color: "red" }}'
+      style: primary
+      start: 44
+      end: 68

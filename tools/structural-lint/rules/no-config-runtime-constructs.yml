@@ -5,6 +5,9 @@ message: "Config files must contain static data only; move runtime constructs to
 files:
   - src/**/config/**/*.ts
   - convex/**/config/**/*.ts
+ignores:
+  - src/**/*.test.ts
+  - convex/**/*.test.ts
 rule:
   any:
     - pattern: new Map($$$ARGS)

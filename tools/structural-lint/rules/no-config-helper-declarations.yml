@@ -5,6 +5,9 @@ message: "Config files must be static-only; move helper functions to lib or mode
 files:
   - src/**/config/**/*.ts
   - convex/**/config/**/*.ts
+ignores:
+  - src/**/*.test.ts
+  - convex/**/*.test.ts
 rule:
   any:
     - pattern: function $NAME($$$ARGS) { $$$BODY }

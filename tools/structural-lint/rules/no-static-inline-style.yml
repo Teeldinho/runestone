@@ -1,4 +1,4 @@
-id: no-ui-inline-style
+id: no-static-inline-style
 language: Tsx
 severity: warning
 message: "Avoid static inline style props in UI components; use Tailwind className for non-runtime values."

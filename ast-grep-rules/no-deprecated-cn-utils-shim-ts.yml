@@ -1,6 +1,0 @@
-id: no-deprecated-cn-utils-shim-ts
-language: TypeScript
-severity: warning
-message: "The '@/shared/lib/utils' cn shim is deprecated; import cn from '@/shared/lib'."
-rule:
-  pattern: import { $$$IMPORTS } from "@/shared/lib/utils"
