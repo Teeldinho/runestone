@@ -6,11 +6,11 @@ import {
 	type InteractionCandidatesViewModel,
 } from "@/features/dungeon-navigation";
 import { useResponsiveGameLayout } from "@/features/responsive-layout";
+import type { RoomPositionsById } from "../lib/getWorldInteractionPromptPosition";
 import {
 	getWorldAttackPromptPosition,
 	getWorldInteractionPromptPosition,
-} from "../lib";
-import type { RoomPositionsById } from "../lib/getWorldInteractionPromptPosition";
+} from "../lib/getWorldInteractionPromptPosition";
 
 export type WorldInteractionPromptProps = {
 	interactionCandidates: InteractionCandidatesViewModel;

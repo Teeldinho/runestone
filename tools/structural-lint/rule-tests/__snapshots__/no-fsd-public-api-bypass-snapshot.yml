@@ -1,0 +1,23 @@
+id: no-fsd-public-api-bypass
+snapshots:
+  ? |
+    import { Dashboard } from "@/widgets/dashboard/lib/Dashboard";
+  : labels:
+    - source: import { Dashboard } from "@/widgets/dashboard/lib/Dashboard";
+      style: primary
+      start: 0
+      end: 62
+  ? |
+    import { Foo } from "@/features/auth/ui/Foo";
+  : labels:
+    - source: import { Foo } from "@/features/auth/ui/Foo";
+      style: primary
+      start: 0
+      end: 45
+  ? |
+    import { bar } from "@/entities/user/model/bar";
+  : labels:
+    - source: import { bar } from "@/entities/user/model/bar";
+      style: primary
+      start: 0
+      end: 48

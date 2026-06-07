@@ -1,0 +1,15 @@
+id: no-fsd-public-api-bypass
+valid:
+  - |
+    import { AuthCard } from "@/features/auth";
+  - |
+    import { UserAvatar } from "@/entities/user";
+  - |
+    import { cn } from "@/shared/lib/cn";
+invalid:
+  - |
+    import { Foo } from "@/features/auth/ui/Foo";
+  - |
+    import { bar } from "@/entities/user/model/bar";
+  - |
+    import { Dashboard } from "@/widgets/dashboard/lib/Dashboard";

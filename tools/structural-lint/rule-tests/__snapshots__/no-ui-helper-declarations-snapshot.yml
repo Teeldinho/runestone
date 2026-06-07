@@ -1,0 +1,23 @@
+id: no-ui-helper-declarations
+snapshots:
+  ? |
+    const formatLabel = () => "Product";
+  : labels:
+    - source: const formatLabel = () => "Product";
+      style: primary
+      start: 0
+      end: 36
+  ? |
+    const resolveLabel = (value: string) => { return value; };
+  : labels:
+    - source: 'const resolveLabel = (value: string) => { return value; };'
+      style: primary
+      start: 0
+      end: 58
+  ? |
+    function formatLabel() { return "Product"; }
+  : labels:
+    - source: function formatLabel() { return "Product"; }
+      style: primary
+      start: 0
+      end: 44

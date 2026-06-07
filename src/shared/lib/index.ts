@@ -38,6 +38,7 @@ export {
 	setPlayerTeleportTarget,
 	subscribeToPlayerPosition,
 } from "./playerPositionStore";
+export { preloadGltfAssets } from "./preloadGltfAssets";
 export { shouldBlockLookFromPointerTarget } from "./shouldBlockLookFromPointerTarget";
 export type { ResponsiveLayoutState } from "./useResponsiveLayout";
 export { useResponsiveLayout } from "./useResponsiveLayout";

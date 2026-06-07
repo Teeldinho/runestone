@@ -1,0 +1,11 @@
+id: no-static-inline-style
+valid:
+  - |
+    export function ProductCard() { return <div className="rounded" />; }
+  - |
+    export function ProductCard() { return <div style={dynamicStyles} />; }
+  - |
+    export function ProductCard({ offset }) { return <div style={{ transform: `translateX(${offset}px)` }} />; }
+invalid:
+  - |
+    export function ProductCard() { return <div style={{ color: "red" }} />; }

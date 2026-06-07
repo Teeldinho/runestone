@@ -1,0 +1,16 @@
+id: no-config-helper-declarations
+language: TypeScript
+severity: error
+message: "Config files must be static-only; move helper functions to lib or model."
+files:
+  - src/**/config/**/*.ts
+  - convex/**/config/**/*.ts
+ignores:
+  - src/**/*.test.ts
+  - convex/**/*.test.ts
+rule:
+  any:
+    - pattern: function $NAME($$$ARGS) { $$$BODY }
+    - pattern: const $NAME = ($$$ARGS) => { $$$BODY }
+    - pattern: const $NAME = ($$$ARGS) => $BODY
+    - pattern: const $NAME = function($$$ARGS) { $$$BODY }

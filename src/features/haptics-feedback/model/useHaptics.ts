@@ -46,7 +46,7 @@ export const useHaptics = ({
 			}
 
 			lastHapticTriggerAtRef.current = now;
-			void trigger(pattern);
+			void Promise.resolve(trigger(pattern)).catch(() => undefined);
 		},
 		[trigger, hapticsEnabled],
 	);

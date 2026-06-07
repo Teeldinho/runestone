@@ -11,8 +11,8 @@ pre-commit:
       run: npm run lint:fix
     lint:ci:
       run: npm run lint:ci
-    purity:
-      run: npm run lint:purity
+    structure:
+      run: npm run lint:structure
     fsd:
       run: npm run lint:fsd
 

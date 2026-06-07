@@ -4,7 +4,7 @@ import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import {
 	type GamePageMobileSheetTabId,
 	isGamePageMobileSheetTabId,
-} from "@/pages/game/lib/isGamePageMobileSheetTabId";
+} from "../lib/isGamePageMobileSheetTabId";
 
 type GamePageMobileSheetState = {
 	isMobileSheetOpen: boolean;

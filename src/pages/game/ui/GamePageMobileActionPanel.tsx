@@ -8,7 +8,7 @@ import {
 	INPUT_POINTER_DATA_ATTRIBUTES,
 	POINTER_ROLES,
 } from "@/shared/config";
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/shared/lib";
 
 import { GamePageMobileAudioAction } from "./GamePageMobileAudioAction";
 import { GamePageMobileLeaderboardAction } from "./GamePageMobileLeaderboardAction";

@@ -1,0 +1,16 @@
+id: no-deprecated-shared-utils-import
+snapshots:
+  ? |
+    import cn from "@/shared/lib/utils";
+  : labels:
+    - source: import cn from "@/shared/lib/utils";
+      style: primary
+      start: 0
+      end: 36
+  ? |
+    import { cn } from "@/shared/lib/utils";
+  : labels:
+    - source: import { cn } from "@/shared/lib/utils";
+      style: primary
+      start: 0
+      end: 40

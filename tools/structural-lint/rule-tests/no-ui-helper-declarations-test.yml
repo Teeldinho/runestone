@@ -1,0 +1,13 @@
+id: no-ui-helper-declarations
+valid:
+  - |
+    export function ProductCard() { return <div />; }
+  - |
+    export const useProductCard = () => ({ label: "Product" });
+invalid:
+  - |
+    function formatLabel() { return "Product"; }
+  - |
+    const formatLabel = () => "Product";
+  - |
+    const resolveLabel = (value: string) => { return value; };

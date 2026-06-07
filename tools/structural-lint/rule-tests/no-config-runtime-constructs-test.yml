@@ -1,0 +1,13 @@
+id: no-config-runtime-constructs
+valid:
+  - |
+    export const VALUES = ["a", "b"] as const;
+  - |
+    export const MAP = { a: "A", b: "B" } as const;
+invalid:
+  - |
+    export const VALUES = new Set(["a", "b"]);
+  - |
+    export const MAP = Object.fromEntries(entries);
+  - |
+    export const API_URL = import.meta.env.VITE_API_URL;

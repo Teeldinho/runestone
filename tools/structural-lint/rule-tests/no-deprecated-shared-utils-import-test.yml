@@ -1,0 +1,11 @@
+id: no-deprecated-shared-utils-import
+valid:
+  - |
+    import { cn } from "@/shared/lib";
+  - |
+    import { cn } from "@/shared/lib/cn";
+invalid:
+  - |
+    import { cn } from "@/shared/lib/utils";
+  - |
+    import cn from "@/shared/lib/utils";
