@@ -13,6 +13,7 @@ export default defineConfig({
 	test: {
 		environment: "node",
 		passWithNoTests: true,
+		setupFiles: ["./tests/setup/three.ts"],
 		coverage: {
 			provider: "v8",
 			thresholds: {

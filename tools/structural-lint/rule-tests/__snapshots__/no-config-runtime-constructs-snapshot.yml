@@ -1,0 +1,23 @@
+id: no-config-runtime-constructs
+snapshots:
+  ? |
+    export const API_URL = import.meta.env.VITE_API_URL;
+  : labels:
+    - source: import.meta.env
+      style: primary
+      start: 23
+      end: 38
+  ? |
+    export const MAP = Object.fromEntries(entries);
+  : labels:
+    - source: Object.fromEntries(entries)
+      style: primary
+      start: 19
+      end: 46
+  ? |
+    export const VALUES = new Set(["a", "b"]);
+  : labels:
+    - source: new Set(["a", "b"])
+      style: primary
+      start: 22
+      end: 41

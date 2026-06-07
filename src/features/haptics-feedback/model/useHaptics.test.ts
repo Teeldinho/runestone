@@ -88,6 +88,20 @@ describe("useHaptics", () => {
 		expect(mockTrigger).toHaveBeenCalledWith(HAPTIC_PATTERNS.ROOM_ENTER);
 	});
 
+	it("handles rejected haptic triggers without surfacing unhandled promises", async () => {
+		mockTrigger.mockRejectedValueOnce(new Error("haptics unavailable"));
+
+		const { result } = renderHook(() => useHaptics());
+
+		act(() => {
+			result.current.onRoomEnter();
+		});
+
+		await vi.waitFor(() => {
+			expect(mockTrigger).toHaveBeenCalledWith(HAPTIC_PATTERNS.ROOM_ENTER);
+		});
+	});
+
 	it("suppresses haptic triggers when disabled in settings", () => {
 		let hapticsEnabled = true;
 		const { result, rerender } = renderHook(() =>

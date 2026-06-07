@@ -1,0 +1,23 @@
+id: no-config-helper-declarations
+snapshots:
+  ? |
+    export const isValue = (value: string) => value === "a";
+  : labels:
+    - source: 'const isValue = (value: string) => value === "a";'
+      style: primary
+      start: 7
+      end: 56
+  ? |
+    export const isValue = function(value: string) { return value === "a"; };
+  : labels:
+    - source: 'const isValue = function(value: string) { return value === "a"; };'
+      style: primary
+      start: 7
+      end: 73
+  ? |
+    export function isValue(value: string) { return value === "a"; }
+  : labels:
+    - source: 'function isValue(value: string) { return value === "a"; }'
+      style: primary
+      start: 7
+      end: 64

@@ -1,8 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import type { ComponentProps, ReactNode } from "react";
-
-import { deduplicateErrorMessages } from "@/shared/lib";
-import { cn } from "@/shared/lib/utils";
+import { cn, deduplicateErrorMessages } from "@/shared/lib";
 import { Label } from "@/shared/ui/label";
 import { Separator } from "@/shared/ui/separator";
 

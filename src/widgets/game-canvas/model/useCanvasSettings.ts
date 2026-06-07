@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { createCanvasSettingsViewModel } from "../lib";
+import { createCanvasSettingsViewModel } from "../lib/createCanvasSettingsViewModel";
 
 import type { CanvasSettingsViewModel } from "./canvasSettingsTypes";
 

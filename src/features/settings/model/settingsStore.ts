@@ -13,6 +13,7 @@ import {
 type SettingsListener = () => void;
 
 const createDefaultSettings = (): SettingsValues => ({ ...SETTINGS_DEFAULTS });
+const serverSettingsSnapshot = createDefaultSettings();
 
 const clampVolume = (value: number): number =>
 	Math.min(
@@ -138,7 +139,7 @@ const detachStorageListener = (): void => {
 export const getSettingsSnapshot = (): SettingsValues => hydrateSettings();
 
 export const getServerSettingsSnapshot = (): SettingsValues =>
-	createDefaultSettings();
+	serverSettingsSnapshot;
 
 export const subscribeToSettings = (
 	listener: SettingsListener,

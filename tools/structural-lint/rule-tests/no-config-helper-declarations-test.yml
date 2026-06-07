@@ -1,0 +1,13 @@
+id: no-config-helper-declarations
+valid:
+  - |
+    export const VALUES = ["a", "b"] as const;
+  - |
+    export const MAP = { a: "A", b: "B" } as const;
+invalid:
+  - |
+    export function isValue(value: string) { return value === "a"; }
+  - |
+    export const isValue = (value: string) => value === "a";
+  - |
+    export const isValue = function(value: string) { return value === "a"; };
