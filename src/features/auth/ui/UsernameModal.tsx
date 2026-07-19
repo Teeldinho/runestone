@@ -18,6 +18,7 @@ type UsernameModalProps = {
 	isOpen: boolean;
 	isSubmitting: boolean;
 	suggestedUsername: string;
+	onCloseAutoFocus?: (event: Event) => void;
 	onKeepReading: () => void;
 	onSubmit: (input: UsernameFormInput) => Promise<void>;
 };
@@ -27,6 +28,7 @@ export function UsernameModal({
 	isOpen,
 	isSubmitting,
 	suggestedUsername,
+	onCloseAutoFocus,
 	onKeepReading,
 	onSubmit,
 }: UsernameModalProps) {
@@ -34,6 +36,8 @@ export function UsernameModal({
 		<Dialog open={isOpen}>
 			<DialogContent
 				showCloseButton={false}
+				className="rounded-3xl border-panel-border bg-panel/95 shadow-2xl backdrop-blur-xl"
+				onCloseAutoFocus={onCloseAutoFocus}
 				onEscapeKeyDown={(event) => event.preventDefault()}
 				onInteractOutside={(event) => event.preventDefault()}
 			>
@@ -54,7 +58,7 @@ export function UsernameModal({
 						<Button
 							type="button"
 							variant="dungeon-outline"
-							className="w-full"
+							className="min-h-11 w-full"
 							disabled={isSubmitting}
 							onClick={onKeepReading}
 						>

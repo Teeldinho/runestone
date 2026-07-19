@@ -7,13 +7,13 @@ import { resolveMarketingNavigationItemId } from "./resolveMarketingNavigationIt
 describe("resolveMarketingNavigationItemId", () => {
 	it("resolves the guide navigation item for the tutorial route", () => {
 		expect(resolveMarketingNavigationItemId(MARKETING_ROUTES.GUIDE)).toBe(
-			MARKETING_NAVIGATION_ITEM_IDS.GUIDE,
+			MARKETING_NAVIGATION_ITEM_IDS.FIELD_GUIDE,
 		);
 	});
 
 	it("resolves the concepts navigation item for the concepts route", () => {
 		expect(resolveMarketingNavigationItemId(MARKETING_ROUTES.CONCEPTS)).toBe(
-			MARKETING_NAVIGATION_ITEM_IDS.CONCEPTS,
+			MARKETING_NAVIGATION_ITEM_IDS.FIELD_GUIDE,
 		);
 	});
 

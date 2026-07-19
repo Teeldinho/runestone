@@ -1,56 +1,33 @@
 export const HOME_COPY = {
-	BADGE: "Playable architecture",
-	CTA_LABEL: "Enter Dungeon",
+	BADGE: "XState runtime · Floor I",
+	CTA_LABEL: "Enter Floor I",
+	FINAL_CTA_LABEL: "Enter the dungeon",
+	FINAL_HEADING: "Trace the machine from inside.",
+	FINAL_SUBTITLE:
+		"Execute the five-room statechart, inspect every transition, and see guard conditions change with the run context.",
+	FIELD_GUIDE_HEADING: "Machine reference",
+	FIELD_GUIDE_SUBTITLE:
+		"The runtime model and input map for Floor I, kept beside the machine it describes.",
 	FEATURES_HEADING: "What the dungeon teaches",
-	HEADING: "Walk through executable logic.",
+	HEADING: "A statechart, rendered as a dungeon.",
+	HERO_META: "Five rooms · one guarded route · live machine trace",
 	MANIFEST_PATH_HEADING: "Manifest Map",
 	MANIFEST_PATH_SUBTITLE:
 		"Watch the current run resolve into rooms, corridors, guards, and context.",
 	MOBILE_ORIENTATION_NOTICE:
 		"Landscape mode is recommended for gameplay and full logic visualization.",
+	PROOF_HEADING: "Dungeon and machine, synchronized.",
+	PROOF_SUBTITLE:
+		"The 3D floor and its XState runtime execute together. Movement changes state; combat and inventory change context; the inspector records both.",
+	RETRY_LABEL: "Retry entry",
+	RUN_HEADING: "Execution path",
+	RUN_SUBTITLE:
+		"Traverse the machine from Entrance to Exit. The Treasury transition remains blocked until the guardian is defeated and the Treasure Key exists in context.",
 	RUNTIME_HEADING: "Read the system while you play.",
 	RUNTIME_SUBTITLE:
 		"Gameplay, state, and context are shown together so the dungeon can be read as a running statechart.",
 	SUBTITLE:
-		"Runestone turns statecharts into a 3D dungeon: rooms are states, corridors are transitions, and every action is driven by explicit events.",
-	TUTORIAL_LABEL: "Read the Guide",
-} as const;
-
-export const HOME_STATUS_COPY = {
-	CHECKING_SESSION: {
-		badge: "Getting ready",
-		description: "We’re checking your session and loading your profile.",
-		detail: "You can keep reading while the gate is being prepared.",
-		iconLabel: "Loading",
-		title: "Preparing your run",
-	},
-	BOOTSTRAP_FAILED: {
-		badge: "Session unavailable",
-		description: "Try again in a moment.",
-		detail: "The dungeon is still here once the backend is reachable.",
-		actionLabel: "Try again",
-		iconLabel: "Unavailable",
-		title: "We couldn’t load your profile",
-	},
-	REQUIRES_USERNAME: {
-		badge: "Choose a name",
-		description: "This name will be used to save your progress.",
-		detail: "The dungeon stays sealed until your name is set.",
-		iconLabel: "Choose a name",
-		title: "Pick a rune name to begin",
-	},
-	SUBMITTING_USERNAME: {
-		badge: "Saving name",
-		description: "We’re writing your profile now.",
-		detail: "Keep going, the gate will open as soon as it’s ready.",
-		iconLabel: "Summoning",
-		title: "Saving your name...",
-	},
-	AUTHENTICATED: {
-		badge: "Ready",
-		description: "Your profile is ready and you can enter now.",
-		detail: "Use the blue primary button to enter the dungeon.",
-		iconLabel: "Ready",
-		title: "The gate is open",
-	},
+		"Runestone maps states to rooms, transitions to corridors, and guards to locked doors. Execute Floor I while the live inspector exposes the machine beside you.",
+	TRACE_LABEL: "Inspect the runtime",
+	TUTORIAL_LABEL: "Open the field guide",
 } as const;

@@ -40,10 +40,36 @@ export const Route = createRootRoute({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "Runestone",
+				title: "Runestone — A Playable Statechart Dungeon",
+			},
+			{
+				name: "description",
+				content:
+					"Explore a five-room 3D dungeon where rooms are states, corridors are transitions, and locked doors are guards. Watch the live statechart update as you play.",
+			},
+			{
+				property: "og:title",
+				content: "Runestone — A Playable Statechart Dungeon",
+			},
+			{
+				property: "og:description",
+				content:
+					"Walk through executable logic and inspect the statechart that defines the dungeon.",
+			},
+			{
+				property: "og:type",
+				content: "website",
+			},
+			{
+				name: "twitter:card",
+				content: "summary",
 			},
 		],
-		links: [{ rel: "stylesheet", href: appCss }],
+		links: [
+			{ rel: "stylesheet", href: appCss },
+			{ rel: "manifest", href: "/manifest.json" },
+			{ rel: "icon", href: "/runestone-mark.svg", type: "image/svg+xml" },
+		],
 	}),
 	notFoundComponent: NotFoundPage,
 	shellComponent: RootShell,

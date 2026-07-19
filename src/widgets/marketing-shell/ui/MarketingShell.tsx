@@ -22,19 +22,15 @@ export function MarketingShell({
 	const viewModel = useMarketingNavigation(activeNavigationItemId);
 
 	return (
-		<div className="relative min-h-dvh overflow-x-hidden bg-background text-foreground">
+		<div className="marketing-theme relative min-h-dvh overflow-x-clip bg-background text-foreground">
 			<div
 				aria-hidden="true"
 				className={MARKETING_LAYOUT_CLASS_NAMES.SHELL_BACKGROUND}
 			>
-				<div className={MARKETING_LAYOUT_CLASS_NAMES.SHELL_GLOW_PRIMARY} />
-				<div className={MARKETING_LAYOUT_CLASS_NAMES.SHELL_GLOW_ACCENT} />
-				<div className={MARKETING_LAYOUT_CLASS_NAMES.SHELL_GRID} />
-				<div
-					aria-hidden="true"
-					className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_42%,var(--background)_100%)]"
-				/>
-				<div className={MARKETING_LAYOUT_CLASS_NAMES.SHELL_EDGE_FADE} />
+				<div className="absolute -top-32 right-[8%] size-[28rem] rounded-full bg-dungeon-gold/10 blur-3xl" />
+				<div className="absolute top-[32rem] -left-48 size-[32rem] rounded-full bg-dungeon-rune/5 blur-3xl" />
+				<div className="absolute inset-0 bg-[url('/marketing/hex-grid.svg')] bg-[size:120px_104px] opacity-[0.035]" />
+				<div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/25 to-background/80" />
 			</div>
 			<div className="relative flex min-h-dvh flex-col">
 				<MarketingHeader

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-labelledby="title">
+  <title id="title">Runestone</title>
+  <path d="M57 68H34C17.4 68 7 56.6 7 40S17.4 12 34 12h18" fill="none" stroke="#00d7ff" stroke-width="6" stroke-linecap="square"/>
+  <path d="m58 12 15 28-15 28" fill="none" stroke="#f5c451" stroke-width="6" stroke-linejoin="miter"/>
+  <path d="M30 32h16v16H30z" fill="none" stroke="#00d7ff" stroke-width="5"/>
+</svg>

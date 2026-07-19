@@ -12,8 +12,8 @@ export const INTERACTION_LABEL_PARTS = {
 } as const;
 
 export const INTERACTION_KEYS = {
-	INTERACT: "f",
-	ATTACK: "e",
+	INTERACT: "e",
+	ATTACK: "f",
 } as const;
 
 export const INTERACTION_COOLDOWN_MS = {
@@ -45,8 +45,8 @@ export const INTERACTION_PROMPTS = {
 
 export const ATTACK_PROMPT = "Attack";
 
-export const INTERACTION_KEY_LABEL = "F";
-export const ATTACK_KEY_LABEL = "E";
+export const INTERACTION_KEY_LABEL = "E";
+export const ATTACK_KEY_LABEL = "F";
 export const INTERACTION_TOUCH_LABEL = "Tap";
 export const ATTACK_TOUCH_LABEL = "Tap";
 export const MOVEMENT_KEYS_LABEL = "WASD / Arrow keys";

@@ -21,7 +21,7 @@ describe("MarketingShell", () => {
 	it("renders the shared navigation shell once for marketing routes", () => {
 		render(
 			<MarketingShell
-				activeNavigationItemId={MARKETING_NAVIGATION_ITEM_IDS.GUIDE}
+				activeNavigationItemId={MARKETING_NAVIGATION_ITEM_IDS.FIELD_GUIDE}
 				isAuthenticated
 				onEntryRequest={vi.fn()}
 			>
@@ -36,12 +36,12 @@ describe("MarketingShell", () => {
 		).toBeGreaterThan(0);
 		expect(
 			screen.getAllByRole("link", {
-				name: "Guide",
+				name: "How it works",
 			}).length,
 		).toBeGreaterThan(0);
 		expect(
 			screen.getAllByRole("link", {
-				name: "Concepts",
+				name: "Field guide",
 			}).length,
 		).toBeGreaterThan(0);
 		expect(

@@ -1,0 +1,12 @@
+# Runestone
+
+Runestone is a playable statechart explainer for software engineers. It maps a
+five-room 3D dungeon to an executable XState machine and displays the active
+state, transitions, guards, context, and actors while the user plays.
+
+## Primary pages
+
+- [Runestone](https://runestone.teeldinho.com/): Product explanation, concepts,
+  controls, and entry to the run.
+- [Source](https://github.com/Teeldinho/runestone): Implementation and project
+  documentation.

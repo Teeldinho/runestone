@@ -51,6 +51,7 @@ const createAuthContextValue = ({
 				snapshot.context.isUsernameEntryRequested &&
 				!snapshot.context.isUsernameEntryDeferred) ||
 			(snapshot.matches(AUTH_STATUS.REQUIRES_USERNAME) &&
+				snapshot.context.isUsernameEntryRequested &&
 				!snapshot.context.isUsernameEntryDeferred) ||
 			isUsernameSubmitting,
 		isUsernameSubmitting,

@@ -10,19 +10,19 @@ import { createMarketingNavigationViewModel } from "./createMarketingNavigationV
 describe("createMarketingNavigationViewModel", () => {
 	it("marks the active navigation item", () => {
 		const viewModel = createMarketingNavigationViewModel({
-			activeNavigationItemId: MARKETING_NAVIGATION_ITEM_IDS.CONCEPTS,
+			activeNavigationItemId: MARKETING_NAVIGATION_ITEM_IDS.FIELD_GUIDE,
 			footerLinks: MARKETING_FOOTER_LINKS,
 			navigationItems: MARKETING_NAVIGATION_ITEMS,
 		});
 
 		expect(
 			viewModel.navigationItems.find(
-				(item) => item.id === MARKETING_NAVIGATION_ITEM_IDS.CONCEPTS,
+				(item) => item.id === MARKETING_NAVIGATION_ITEM_IDS.FIELD_GUIDE,
 			)?.isActive,
 		).toBe(true);
 		expect(
 			viewModel.navigationItems.find(
-				(item) => item.id === MARKETING_NAVIGATION_ITEM_IDS.GUIDE,
+				(item) => item.id === MARKETING_NAVIGATION_ITEM_IDS.HOW_IT_WORKS,
 			)?.isActive,
 		).toBe(false);
 	});
