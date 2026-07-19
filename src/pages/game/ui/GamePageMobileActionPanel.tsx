@@ -44,7 +44,12 @@ export function GamePageMobileActionPanel() {
 
 			<div
 				data-testid={GAME_PAGE_MOBILE_ACTION_PANEL_TEST_IDS.CONTROL_STACK}
-				className={GAME_PAGE_MOBILE_ACTION_PANEL_CLASS_NAMES.CONTROL_STACK}
+				className={cn(
+					GAME_PAGE_MOBILE_ACTION_PANEL_CLASS_NAMES.CONTROL_STACK,
+					isTabletLayout
+						? GAME_PAGE_MOBILE_ACTION_PANEL_CLASS_NAMES.TABLET_CONTROL_STACK
+						: GAME_PAGE_MOBILE_ACTION_PANEL_CLASS_NAMES.COMPACT_CONTROL_STACK,
+				)}
 			>
 				<GamePageMobileAudioAction audioToggle={viewModel.audioToggle} />
 				<GamePageMobileLeaderboardAction

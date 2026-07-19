@@ -5,7 +5,7 @@ export function GamePageHudPanel() {
 	const viewModel = useGamePageHudPanelModel();
 
 	return (
-		<div className="p-3">
+		<div className="p-3 lg:p-4">
 			<GameHud
 				actions={{
 					actionButtons: viewModel.actionButtons,

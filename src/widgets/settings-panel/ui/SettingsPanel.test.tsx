@@ -68,14 +68,17 @@ describe("SettingsPanel", () => {
 		expect(
 			screen.getByRole("region", { name: SETTINGS_COPY.HAPTICS_SECTION }),
 		).toBeTruthy();
-		expect(
-			screen.getByRole("button", { name: SETTINGS_COPY.RESET_BUTTON }),
-		).toBeTruthy();
+		const resetAction = screen.getByRole("button", {
+			name: SETTINGS_COPY.RESET_BUTTON,
+		});
+		expect(resetAction).toBeTruthy();
+		expect(resetAction.className).toContain("min-h-11");
 
 		const masterVolumeSlider = container.querySelector(
 			`#${SETTINGS_PANEL_IDS.MASTER_VOLUME_CONTROL}`,
 		) as HTMLElement | null;
 		expect(masterVolumeSlider).not.toBeNull();
+		expect(masterVolumeSlider?.className).toContain("min-h-11");
 		expect(
 			container.querySelector(
 				`label[for="${SETTINGS_PANEL_IDS.MASTER_VOLUME_CONTROL}"]`,
@@ -90,6 +93,7 @@ describe("SettingsPanel", () => {
 			`#${SETTINGS_PANEL_IDS.MUSIC_VOLUME_CONTROL}`,
 		) as HTMLElement | null;
 		expect(musicVolumeSlider).not.toBeNull();
+		expect(musicVolumeSlider?.className).toContain("min-h-11");
 		expect(
 			container.querySelector(
 				`label[for="${SETTINGS_PANEL_IDS.MUSIC_VOLUME_CONTROL}"]`,
@@ -100,16 +104,14 @@ describe("SettingsPanel", () => {
 			musicVolumeDescription.id,
 		);
 
-		expect(
-			container.querySelector(
-				`label[for="${SETTINGS_PANEL_IDS.POSTPROCESSING_TOGGLE}"]`,
-			),
-		).not.toBeNull();
-		expect(
-			container.querySelector(
-				`label[for="${SETTINGS_PANEL_IDS.HAPTICS_TOGGLE}"]`,
-			),
-		).not.toBeNull();
+		const postprocessingLabel = container.querySelector(
+			`label[for="${SETTINGS_PANEL_IDS.POSTPROCESSING_TOGGLE}"]`,
+		) as HTMLElement | null;
+		const hapticsLabel = container.querySelector(
+			`label[for="${SETTINGS_PANEL_IDS.HAPTICS_TOGGLE}"]`,
+		) as HTMLElement | null;
+		expect(postprocessingLabel?.className).toContain("min-h-11");
+		expect(hapticsLabel?.className).toContain("min-h-11");
 		expect(
 			screen.getByRole("switch", {
 				name: SETTINGS_COPY.POSTPROCESSING_TOGGLE_LABEL,

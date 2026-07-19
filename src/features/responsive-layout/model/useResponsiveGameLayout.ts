@@ -5,19 +5,50 @@ import {
 	createResponsiveGameLayoutSnapshot,
 	createResponsiveMediaQuerySubscriptions,
 	type ResponsiveGameLayoutSnapshot,
+	readResponsiveMediaQueryMatch,
 	removeResponsiveMediaQuerySubscriptions,
 } from "../lib";
 
 export type ResponsiveGameLayout = ResponsiveGameLayoutSnapshot;
 
 export function useResponsiveGameLayout(): ResponsiveGameLayout {
-	const [isDesktopWidth, setIsDesktopWidth] = useState(false);
-	const [isTabletWidth, setIsTabletWidth] = useState(false);
-	const [isCoarsePointerTabletWidth, setIsCoarsePointerTabletWidth] =
-		useState(false);
-	const [isMobile, setIsMobile] = useState(false);
-	const [isLandscape, setIsLandscape] = useState(true);
-	const [isPortrait, setIsPortrait] = useState(false);
+	const [isDesktopWidth, setIsDesktopWidth] = useState(() =>
+		readResponsiveMediaQueryMatch(
+			RESPONSIVE_LAYOUT_MEDIA_QUERIES.DESKTOP_MIN_WIDTH,
+			false,
+		),
+	);
+	const [isTabletWidth, setIsTabletWidth] = useState(() =>
+		readResponsiveMediaQueryMatch(
+			RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_STANDARD_WIDTH,
+			false,
+		),
+	);
+	const [isCoarsePointerTabletWidth, setIsCoarsePointerTabletWidth] = useState(
+		() =>
+			readResponsiveMediaQueryMatch(
+				RESPONSIVE_LAYOUT_MEDIA_QUERIES.TABLET_COARSE_WIDTH,
+				false,
+			),
+	);
+	const [isMobile, setIsMobile] = useState(() =>
+		readResponsiveMediaQueryMatch(
+			RESPONSIVE_LAYOUT_MEDIA_QUERIES.MOBILE_MAX_WIDTH,
+			false,
+		),
+	);
+	const [isLandscape, setIsLandscape] = useState(() =>
+		readResponsiveMediaQueryMatch(
+			RESPONSIVE_LAYOUT_MEDIA_QUERIES.LANDSCAPE,
+			true,
+		),
+	);
+	const [isPortrait, setIsPortrait] = useState(() =>
+		readResponsiveMediaQueryMatch(
+			RESPONSIVE_LAYOUT_MEDIA_QUERIES.PORTRAIT,
+			false,
+		),
+	);
 
 	useEffect(() => {
 		const subscriptions = createResponsiveMediaQuerySubscriptions([

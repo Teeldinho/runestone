@@ -21,8 +21,11 @@ export function SettingsPanelGraphicsSection({
 					{SETTINGS_COPY.GRAPHICS_SECTION}
 				</FieldLegend>
 
-				<Field orientation="horizontal">
-					<FieldLabel htmlFor={SETTINGS_PANEL_IDS.POSTPROCESSING_TOGGLE}>
+				<Field orientation="horizontal" className="min-h-11">
+					<FieldLabel
+						htmlFor={SETTINGS_PANEL_IDS.POSTPROCESSING_TOGGLE}
+						className="min-h-11 items-center"
+					>
 						{SETTINGS_COPY.POSTPROCESSING_TOGGLE_LABEL}
 					</FieldLabel>
 					<Switch

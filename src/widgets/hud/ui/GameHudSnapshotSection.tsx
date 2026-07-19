@@ -27,7 +27,7 @@ export function GameHudSnapshotSection({
 							{snapshotEntry.displayVariant === HUD_DISPLAY_VARIANTS.BADGE ? (
 								<Badge
 									variant="outline"
-									className="h-auto border-dungeon-gold bg-dungeon-gold-dim px-1.5 py-0.5 font-mono text-[10px] text-accent"
+									className="h-auto border-dungeon-gold bg-dungeon-gold/10 px-1.5 py-0.5 font-mono text-[10px] text-accent"
 								>
 									{snapshotEntry.value}
 								</Badge>

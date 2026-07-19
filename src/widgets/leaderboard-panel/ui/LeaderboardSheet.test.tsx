@@ -1,6 +1,12 @@
 // @vitest-environment happy-dom
 
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	within,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
 	Button,
@@ -47,12 +53,18 @@ describe("LeaderboardSheet", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "Open Leaderboard" }));
 
-		expect(
-			screen.getByRole("dialog", { name: LEADERBOARD_PANEL_COPY.TITLE }),
-		).toBeTruthy();
+		const dialog = screen.getByRole("dialog", {
+			name: LEADERBOARD_PANEL_COPY.TITLE,
+		});
+		const closeAction = within(dialog).getByRole("button", { name: "Close" });
+
+		expect(dialog).toBeTruthy();
+		expect(dialog.className).toContain("safe-area-inset-top");
+		expect(dialog.className).toContain("safe-area-inset-bottom");
+		expect(closeAction.className).toContain("size-11");
 		expect(screen.getByText(LEADERBOARD_PANEL_COPY.STATE.EMPTY)).toBeTruthy();
 
-		fireEvent.click(screen.getByRole("button", { name: "Close" }));
+		fireEvent.click(closeAction);
 
 		expect(screen.queryByRole("dialog")).toBeNull();
 	});

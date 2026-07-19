@@ -13,7 +13,7 @@ export function GamePageMobileTopBar() {
 	return (
 		<div
 			data-testid={GAME_PAGE_MOBILE_TOP_BAR_TEST_IDS.ROOT}
-			className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-3 p-3"
+			className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-3 pt-[max(0.75rem,env(safe-area-inset-top))] pr-[max(0.75rem,env(safe-area-inset-right))] pl-[max(0.75rem,env(safe-area-inset-left))]"
 		>
 			<div
 				data-testid={GAME_PAGE_MOBILE_TOP_BAR_TEST_IDS.LEFT_CLUSTER}
@@ -32,7 +32,7 @@ export function GamePageMobileTopBar() {
 					variant="dungeon-outline"
 					size="default"
 					onClick={viewModel.handleDungeonRunReset}
-					className="pointer-events-auto w-full"
+					className="pointer-events-auto min-h-11 w-full"
 					aria-label="Restart Run"
 				>
 					<RotateCcw className="h-4 w-4" />
@@ -46,7 +46,7 @@ export function GamePageMobileTopBar() {
 			>
 				<div
 					data-testid={GAME_PAGE_MOBILE_TOP_BAR_TEST_IDS.HP_PANEL}
-					className="h-fit w-fit rounded border border-panel-border bg-panel px-3 py-1 shadow-lg backdrop-blur-md"
+					className="flex min-h-11 w-fit items-center rounded-lg border border-dungeon-rune/25 bg-panel/90 px-3 shadow-lg backdrop-blur-md"
 				>
 					<div className="flex items-center gap-2 leading-none">
 						<span className="rune-text text-[10px] leading-none text-dungeon-gold">

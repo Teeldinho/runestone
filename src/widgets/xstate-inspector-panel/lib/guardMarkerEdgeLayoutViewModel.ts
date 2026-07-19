@@ -194,13 +194,24 @@ export const createGuardMarkerEdgeLayoutViewModel = ({
 				INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_GLOBAL_COLLISION_STEP_PX
 			: 0;
 	const globalCollisionOffset = isDesktopLayout
-		? !isHorizontal
-			? desktopGlobalCollisionOffset
-			: 0
+		? desktopGlobalCollisionOffset
 		: mobileTabletGlobalCollisionOffset;
+	const collisionAdjustedMarkerCenter = isHorizontal
+		? {
+				x: labelX + markerXOffset + desktopVerticalCollisionJitter,
+				y: labelY + markerYOffset + globalCollisionOffset,
+			}
+		: {
+				x:
+					labelX +
+					markerXOffset +
+					desktopVerticalCollisionJitter +
+					globalCollisionOffset,
+				y: labelY + markerYOffset,
+			};
 	const clearedMarkerCenter = resolveGuardMarkerNodeClearance({
-		markerCenterX: labelX + markerXOffset + desktopVerticalCollisionJitter,
-		markerCenterY: labelY + markerYOffset,
+		markerCenterX: collisionAdjustedMarkerCenter.x,
+		markerCenterY: collisionAdjustedMarkerCenter.y,
 		sourceX,
 		sourceY,
 		targetX,
@@ -219,15 +230,6 @@ export const createGuardMarkerEdgeLayoutViewModel = ({
 		markerSize,
 		nodeClearanceOffset,
 	});
-	const resolvedMarkerCenter = isHorizontal
-		? {
-				x: clearedMarkerCenter.x,
-				y: clearedMarkerCenter.y + globalCollisionOffset,
-			}
-		: {
-				x: clearedMarkerCenter.x + globalCollisionOffset,
-				y: clearedMarkerCenter.y,
-			};
 
 	const markerArrowPositionOffset =
 		markerSize / 2 +
@@ -300,8 +302,8 @@ export const createGuardMarkerEdgeLayoutViewModel = ({
 		markerButtonStyles: {
 			width: `${hitAreaSize}px`,
 			height: `${hitAreaSize}px`,
-			left: resolvedMarkerCenter.x,
-			top: resolvedMarkerCenter.y,
+			left: clearedMarkerCenter.x,
+			top: clearedMarkerCenter.y,
 			transform: INSPECTOR_GUARD_MARKER_INTERACTION.TRANSLATE_CENTER,
 			zIndex: 20,
 		},

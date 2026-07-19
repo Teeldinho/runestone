@@ -24,6 +24,7 @@ vi.mock("@/features/auth", async () => {
 });
 
 vi.mock("@tanstack/react-router", () => ({
+	ClientOnly: ({ children }: { children: ReactNode }) => children,
 	Link: ({ children, to, ...props }: { children: ReactNode; to: string }) => (
 		<a href={to} {...props}>
 			{children}

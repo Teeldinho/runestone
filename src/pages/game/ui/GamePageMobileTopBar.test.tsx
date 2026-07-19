@@ -54,6 +54,9 @@ describe("GamePageMobileTopBar", () => {
 
 		expect(root.className).toContain("justify-between");
 		expect(root.className).toContain("items-start");
+		expect(root.className).toContain("safe-area-inset-top");
+		expect(root.className).toContain("safe-area-inset-right");
+		expect(root.className).toContain("safe-area-inset-left");
 		expect(leftCluster.parentElement).toBe(root);
 		expect(rightCluster.parentElement).toBe(root);
 		expect(hpPanel.parentElement).toBe(rightCluster);
@@ -61,14 +64,21 @@ describe("GamePageMobileTopBar", () => {
 		expect(rightCluster.firstElementChild).toBe(hpPanel);
 		expect(rightCluster.lastElementChild).toBe(homeAction);
 		expect(homeAction.getAttribute("href")).toBe("/");
-		expect(homeAction.getAttribute("data-size")).toBe("icon-sm");
+		expect(homeAction.getAttribute("data-size")).toBe("icon");
 		expect(homeAction.getAttribute("data-variant")).toBe("dungeon-outline");
+		expect(homeAction.className).toContain("size-11");
+		expect(hpPanel.className).toContain("min-h-11");
 		expect(homeAction.className).not.toContain("w-fit");
 		expect(
 			screen.getByRole("button", {
 				name: "Restart Run",
 			}),
 		).toBeTruthy();
+		expect(
+			screen.getByRole("button", {
+				name: "Restart Run",
+			}).className,
+		).toContain("min-h-11");
 		expect(
 			screen.getByRole("link", {
 				name: GAME_PAGE_CONTROLS.NAVIGATION.HOME_ARIA_LABEL,

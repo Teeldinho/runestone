@@ -15,7 +15,7 @@ export function GamePageDesktopSettingsAction() {
 						size="icon-sm"
 						aria-label={GAME_PAGE_CONTROLS.SETTINGS.ARIA_LABEL}
 					>
-						<Settings2 className="h-4 w-4 text-[var(--dungeon-gold)]" />
+						<Settings2 className="h-4 w-4 text-dungeon-gold" />
 					</Button>
 				</TooltipTrigger>
 			</SettingsSheet>

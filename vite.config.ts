@@ -17,6 +17,11 @@ const config = defineConfig({
 	},
 	plugins: [
 		nitro({
+			compressPublicAssets: {
+				brotli: true,
+				gzip: true,
+			},
+			serveStatic: "node",
 			rollupConfig: {
 				external: [/^@sentry\//],
 			},

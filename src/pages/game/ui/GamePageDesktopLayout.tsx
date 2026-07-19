@@ -7,7 +7,7 @@ export function GamePageDesktopLayout() {
 	return (
 		<main
 			id="main-content"
-			className="flex h-svh w-dvw flex-col overflow-hidden md:h-dvh"
+			className="observatory-backdrop isolate flex h-svh w-dvw flex-col overflow-hidden bg-background text-foreground md:h-dvh"
 		>
 			<GamePageDesktopHeader />
 

@@ -9,7 +9,7 @@ export function SettingsPanelResetAction({
 	onReset,
 }: SettingsPanelResetActionProps) {
 	return (
-		<Button variant="secondary" onClick={onReset}>
+		<Button variant="secondary" onClick={onReset} className="min-h-11">
 			{SETTINGS_COPY.RESET_BUTTON}
 		</Button>
 	);

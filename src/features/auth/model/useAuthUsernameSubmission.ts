@@ -37,9 +37,11 @@ export const useAuthUsernameSubmission = ({
 				return;
 			}
 
-			await router.preloadRoute({
-				to: AUTH_ROUTE_PATHS.GAME,
-			});
+			void router
+				.preloadRoute({
+					to: AUTH_ROUTE_PATHS.GAME,
+				})
+				.catch(() => undefined);
 			await router.navigate({
 				to: AUTH_ROUTE_PATHS.GAME,
 			});

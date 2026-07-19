@@ -453,6 +453,20 @@ describe("GamePage", () => {
 		expect(
 			screen.getByTestId("xstate-inspector-details-widget"),
 		).not.toBeNull();
+		expect(
+			screen.getByRole("complementary", { name: "Statechart graph" }),
+		).not.toBeNull();
+		expect(
+			screen.getByRole("region", { name: "Dungeon viewport" }),
+		).not.toBeNull();
+		expect(
+			screen.getByRole("region", { name: "Selected machine details" }),
+		).not.toBeNull();
+		expect(
+			screen.getByRole("complementary", {
+				name: "Game controls and state",
+			}),
+		).not.toBeNull();
 
 		expect(
 			within(screen.getByRole("banner"))
@@ -536,7 +550,7 @@ describe("GamePage", () => {
 		).not.toBeNull();
 	});
 
-	it("renders rotate-device banner in touch portrait mode", () => {
+	it("renders an accessible rotation dialog in touch portrait mode", () => {
 		vi.mocked(useGamePage).mockReturnValue(
 			createGamePageViewModel({
 				layout: {
@@ -554,7 +568,21 @@ describe("GamePage", () => {
 			</TooltipProvider>,
 		);
 
-		expect(screen.getByText(GAME_PAGE_PORTRAIT_GATE.TITLE)).not.toBeNull();
+		const rotationDialog = screen.getByRole("alertdialog", {
+			name: GAME_PAGE_PORTRAIT_GATE.TITLE,
+		});
+
+		expect(rotationDialog).not.toBeNull();
+		expect(
+			within(rotationDialog).getByText(GAME_PAGE_PORTRAIT_GATE.DESCRIPTION),
+		).not.toBeNull();
+		expect(
+			within(rotationDialog)
+				.getByRole("link", {
+					name: GAME_PAGE_PORTRAIT_GATE.HOME_ACTION_LABEL,
+				})
+				.getAttribute("href"),
+		).toBe("/");
 		expect(screen.getByTestId("game-canvas-widget")).not.toBeNull();
 		expect(screen.queryByTestId("mobile-camera-switcher-widget")).toBeNull();
 		expect(
