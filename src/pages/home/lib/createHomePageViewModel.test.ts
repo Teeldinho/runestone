@@ -1,4 +1,3 @@
-import { DoorOpen } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
 
 import { AUTH_STATUS } from "@/features/auth";
@@ -19,18 +18,13 @@ describe("createHomePageViewModel", () => {
 			readyStatusLabel: "Rune_AshBearAAAA",
 		});
 
-		expect(viewModel.heroProps.authStatus).toBe(AUTH_STATUS.AUTHENTICATED);
-		expect(viewModel.heroProps.errorMessage).toBeNull();
-		expect(viewModel.heroProps.isAuthenticated).toBe(true);
-		expect(viewModel.heroProps.onEntryRequest).toBe(handleUsernameEntryRequest);
-		expect(viewModel.heroProps.onRetry).toBe(handleSessionBootstrapRetry);
-		expect(viewModel.heroProps.readyStatusLabel).toBe("Rune_AshBearAAAA");
-		expect(viewModel.manifestSectionProps.nodes[0]?.indexLabel).toBe("1");
-		expect(viewModel.manifestSectionProps.nodes.at(-1)?.isLast).toBe(true);
-		expect(viewModel.teachingSectionProps.features[0]).toMatchObject({
-			isFeatured: true,
-		});
-		expect(viewModel.teachingSectionProps.features[0]?.Icon).toBe(DoorOpen);
-		expect(viewModel.translationRailItems.at(-1)?.isLast).toBe(true);
+		expect(viewModel.entryProps.authStatus).toBe(AUTH_STATUS.AUTHENTICATED);
+		expect(viewModel.entryProps.errorMessage).toBeNull();
+		expect(viewModel.entryProps.isAuthenticated).toBe(true);
+		expect(viewModel.entryProps.onEntryRequest).toBe(
+			handleUsernameEntryRequest,
+		);
+		expect(viewModel.entryProps.onRetry).toBe(handleSessionBootstrapRetry);
+		expect(viewModel.entryProps.readyStatusLabel).toBe("Rune_AshBearAAAA");
 	});
 });

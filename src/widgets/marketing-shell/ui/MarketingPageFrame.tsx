@@ -14,8 +14,17 @@ export function MarketingPageFrame({
 	className,
 }: MarketingPageFrameProps) {
 	return (
-		<div className={cn(MARKETING_LAYOUT_CLASS_NAMES.PAGE_FRAME, className)}>
-			{children}
+		<div className={MARKETING_LAYOUT_CLASS_NAMES.CONTENT_GUTTER}>
+			<div
+				className={cn(
+					"mx-auto",
+					MARKETING_LAYOUT_CLASS_NAMES.CONTENT_WIDTH,
+					MARKETING_LAYOUT_CLASS_NAMES.PAGE_FRAME,
+					className,
+				)}
+			>
+				{children}
+			</div>
 		</div>
 	);
 }

@@ -1,18 +1,12 @@
 // @vitest-environment happy-dom
 
-import {
-	cleanup,
-	fireEvent,
-	render,
-	screen,
-	within,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AUTH_STATUS } from "@/features/auth";
 
-import { HOME_COPY, HOME_STATUS_COPY } from "../config";
+import { HOME_COPY } from "../config";
 
 import { HomePage } from "./HomePage";
 
@@ -61,7 +55,7 @@ const createAuthContext = (isAuthenticated: boolean) => ({
 });
 
 describe("HomePage", () => {
-	it("renders the redesigned landing copy and concept sections", () => {
+	it("renders the runtime narrative, objective, concepts, and controls", () => {
 		mockUseAuthContext.mockReturnValue(createAuthContext(false));
 
 		render(<HomePage />);
@@ -70,29 +64,27 @@ describe("HomePage", () => {
 			screen.getByRole("heading", { name: HOME_COPY.HEADING }),
 		).not.toBeNull();
 		expect(screen.getByText(HOME_COPY.SUBTITLE)).not.toBeNull();
-		expect(screen.getByText("Node Inspector")).not.toBeNull();
-		expect(screen.getByText(HOME_COPY.FEATURES_HEADING)).not.toBeNull();
-		expect(screen.getByText("State")).not.toBeNull();
+		expect(
+			screen.getByRole("heading", { name: HOME_COPY.PROOF_HEADING }),
+		).not.toBeNull();
+		expect(
+			screen.getByRole("heading", { name: HOME_COPY.RUN_HEADING }),
+		).not.toBeNull();
+		expect(
+			screen.getByRole("heading", { name: HOME_COPY.FIELD_GUIDE_HEADING }),
+		).not.toBeNull();
 		expect(screen.getByText("Room")).not.toBeNull();
-		expect(screen.getByText("States become rooms")).not.toBeNull();
-		expect(screen.getByText("Actors stay isolated")).not.toBeNull();
-		expect(screen.getByText("What the dungeon teaches")).not.toBeNull();
-		const teachingSection = screen
-			.getByRole("heading", { name: HOME_COPY.FEATURES_HEADING })
-			.closest("section");
-		expect(teachingSection).not.toBeNull();
-		const firstTeachingCard = within(
-			teachingSection as HTMLElement,
-		).getAllByRole("listitem")[0];
-		expect(firstTeachingCard?.className).toContain("lg:col-span-2");
-		expect(screen.queryByText(HOME_COPY.RUNTIME_HEADING)).toBeNull();
-
-		const mobileOrientationNotice = screen
-			.getByText(HOME_COPY.MOBILE_ORIENTATION_NOTICE)
-			.closest("div");
-
-		expect(mobileOrientationNotice?.className).toContain("text-center");
-		expect(mobileOrientationNotice?.className).toContain("sm:hidden");
+		expect(screen.getByText("State")).not.toBeNull();
+		expect(screen.getByText("Interact")).not.toBeNull();
+		expect(screen.getByText("Attack")).not.toBeNull();
+		expect(screen.getByText("E")).not.toBeNull();
+		expect(screen.getByText("F")).not.toBeNull();
+		expect(screen.getByText("Left joystick")).not.toBeNull();
+		expect(screen.getByText("Drag the viewport")).not.toBeNull();
+		expect(screen.getByText("Context buttons")).not.toBeNull();
+		expect(screen.getByText("Panels button")).not.toBeNull();
+		expect(screen.getByText(HOME_COPY.HERO_META)).not.toBeNull();
+		expect(screen.queryByText(/no (account|password|sign-in)/i)).toBeNull();
 	});
 
 	it("requests username entry before authentication", () => {
@@ -103,16 +95,14 @@ describe("HomePage", () => {
 		render(<HomePage />);
 
 		fireEvent.click(
-			screen.getByRole("button", {
+			screen.getAllByRole("button", {
 				name: HOME_COPY.CTA_LABEL,
-			}),
+			})[0] as HTMLButtonElement,
 		);
 
 		expect(authContext.handleUsernameEntryRequest).toHaveBeenCalledOnce();
 		expect(
-			screen.getByRole("link", {
-				name: HOME_COPY.TUTORIAL_LABEL,
-			}),
+			screen.getByRole("link", { name: HOME_COPY.TRACE_LABEL }),
 		).not.toBeNull();
 	});
 
@@ -128,7 +118,7 @@ describe("HomePage", () => {
 		).toBeGreaterThan(0);
 	});
 
-	it("shows a retry action when bootstrap fails", () => {
+	it("shows a retry action when entry bootstrap fails", () => {
 		const handleSessionBootstrapRetry = vi.fn();
 
 		mockUseAuthContext.mockReturnValue({
@@ -141,9 +131,9 @@ describe("HomePage", () => {
 		render(<HomePage />);
 
 		screen
-			.getByRole("button", {
-				name: HOME_STATUS_COPY.BOOTSTRAP_FAILED.actionLabel,
-			})
+			.getAllByRole("button", {
+				name: HOME_COPY.RETRY_LABEL,
+			})[0]
 			.click();
 
 		expect(handleSessionBootstrapRetry).toHaveBeenCalledOnce();

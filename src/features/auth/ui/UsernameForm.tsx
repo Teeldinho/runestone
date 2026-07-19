@@ -78,6 +78,7 @@ export function UsernameForm({
 											pattern={USERNAME_PATTERN.source}
 											autoComplete="username"
 											placeholder={AUTH_COPY.USERNAME_PLACEHOLDER}
+											className="min-h-11 rounded-xl"
 											value={field.state.value}
 											onBlur={field.handleBlur}
 											onChange={(event) =>
@@ -116,7 +117,8 @@ export function UsernameForm({
 				{(state) => (
 					<Button
 						type="submit"
-						className="w-full"
+						variant="dungeon-gold"
+						className="min-h-11 w-full"
 						disabled={isSubmitting || !state.canSubmit}
 					>
 						{submitButtonLabel}

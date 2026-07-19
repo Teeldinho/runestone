@@ -15,9 +15,9 @@ export function RunestoneLogo({ variant }: RunestoneLogoProps) {
 	return (
 		<Link
 			to={MARKETING_ROUTES.HOME}
-			className="inline-flex items-center gap-2.5"
-			aria-label={ariaLabel}
+			className="inline-flex min-h-11 items-center gap-2.5"
 		>
+			<span className="sr-only">{ariaLabel}</span>
 			<span
 				aria-hidden="true"
 				className="flex size-8 shrink-0 items-center justify-center"
@@ -29,7 +29,7 @@ export function RunestoneLogo({ variant }: RunestoneLogoProps) {
 					src={runestoneMarkUrl}
 				/>
 			</span>
-			<span className={cn(wordmarkClassName)}>
+			<span aria-hidden="true" className={cn(wordmarkClassName)}>
 				{segments.map((segment) => (
 					<span key={segment.id} className={segment.className}>
 						{segment.label}

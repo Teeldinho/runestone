@@ -26,10 +26,15 @@ export function MarketingHeader({
 	viewModel,
 }: MarketingHeaderProps) {
 	return (
-		<header className="sticky top-0 z-40 border-panel-border/70 border-b bg-background/80 backdrop-blur-xl">
+		<header
+			className={cn(
+				"sticky top-0 z-40 pt-3",
+				MARKETING_LAYOUT_CLASS_NAMES.CONTENT_GUTTER,
+			)}
+		>
 			<div
 				className={cn(
-					"mx-auto flex h-16 w-full items-center justify-between gap-4 px-4 sm:px-6 lg:px-8",
+					"mx-auto flex h-16 w-full items-center justify-between gap-4 rounded-2xl border border-panel-border bg-panel/90 px-4 shadow-xl backdrop-blur-xl sm:px-5",
 					MARKETING_LAYOUT_CLASS_NAMES.CONTENT_WIDTH,
 				)}
 			>
@@ -45,26 +50,31 @@ export function MarketingHeader({
 					className="hidden items-center gap-2 lg:flex"
 				>
 					{viewModel.navigationItems.map((item) => (
-						<Link
+						<a
 							key={item.id}
-							to={item.to}
+							href={item.href}
 							aria-current={item.isActive ? "page" : undefined}
 							className={cn(
-								"rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
+								"inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold transition-colors",
 								item.isActive
-									? "bg-dungeon-gold/10 text-dungeon-gold"
-									: "text-panel-body hover:bg-muted/60 hover:text-panel-title",
+									? "bg-dungeon-rune/10 text-dungeon-rune"
+									: "text-muted-foreground hover:bg-secondary/70 hover:text-foreground",
 							)}
 						>
 							{item.label}
-						</Link>
+						</a>
 					))}
 				</nav>
 
 				<div className="flex items-center gap-2 sm:gap-3">
 					{isAuthenticated ? (
-						<Button asChild size="lg" className="hidden sm:inline-flex">
-							<Link to={MARKETING_ROUTES.GAME}>
+						<Button
+							asChild
+							size="lg"
+							variant="dungeon-gold"
+							className="hidden min-h-11 px-4 sm:inline-flex"
+						>
+							<Link to={MARKETING_ROUTES.GAME} data-entry-trigger>
 								<DoorOpen className="size-4" />
 								{MARKETING_SHELL_COPY.ENTER_DUNGEON_LABEL}
 							</Link>
@@ -72,8 +82,10 @@ export function MarketingHeader({
 					) : (
 						<Button
 							type="button"
+							data-entry-trigger
 							size="lg"
-							className="hidden sm:inline-flex"
+							variant="dungeon-gold"
+							className="hidden min-h-11 px-4 sm:inline-flex"
 							onClick={onEntryRequest}
 						>
 							<DoorOpen className="size-4" />
@@ -82,9 +94,15 @@ export function MarketingHeader({
 					)}
 
 					{isAuthenticated ? (
-						<Button asChild size="icon" className="sm:hidden">
+						<Button
+							asChild
+							size="icon"
+							variant="dungeon-gold"
+							className="size-11 sm:hidden"
+						>
 							<Link
 								to={MARKETING_ROUTES.GAME}
+								data-entry-trigger
 								aria-label={MARKETING_SHELL_COPY.ENTER_DUNGEON_LABEL}
 							>
 								<DoorOpen className="size-4" />
@@ -93,8 +111,10 @@ export function MarketingHeader({
 					) : (
 						<Button
 							type="button"
+							data-entry-trigger
 							size="icon"
-							className="sm:hidden"
+							variant="dungeon-gold"
+							className="size-11 sm:hidden"
 							aria-label={MARKETING_SHELL_COPY.ENTER_DUNGEON_LABEL}
 							onClick={onEntryRequest}
 						>

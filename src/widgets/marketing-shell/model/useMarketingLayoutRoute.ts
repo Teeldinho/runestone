@@ -1,8 +1,8 @@
-import { useLocation, useRouter } from "@tanstack/react-router";
+import { useLocation } from "@tanstack/react-router";
 
 import { type UsernameFormInput, useAuthContext } from "@/features/auth";
 
-import { MARKETING_ROUTES, type MarketingNavigationItemId } from "../config";
+import type { MarketingNavigationItemId } from "../config";
 import { resolveMarketingNavigationItemId } from "../lib";
 
 type MarketingLayoutRouteViewModel = {
@@ -16,6 +16,7 @@ type MarketingLayoutRouteViewModel = {
 		isOpen: boolean;
 		isSubmitting: boolean;
 		suggestedUsername: string;
+		onCloseAutoFocus: (event: Event) => void;
 		onKeepReading: () => void;
 		onSubmit: (input: UsernameFormInput) => Promise<void>;
 	};
@@ -33,7 +34,6 @@ export const useMarketingLayoutRoute = (): MarketingLayoutRouteViewModel => {
 		suggestedUsername,
 	} = useAuthContext();
 	const { pathname } = useLocation();
-	const router = useRouter();
 	const activeNavigationItemId = resolveMarketingNavigationItemId(pathname);
 
 	return {
@@ -47,9 +47,19 @@ export const useMarketingLayoutRoute = (): MarketingLayoutRouteViewModel => {
 			isOpen: isUsernameModalOpen,
 			isSubmitting: isUsernameSubmitting,
 			suggestedUsername,
+			onCloseAutoFocus: (event) => {
+				event.preventDefault();
+				const entryTriggers = document.querySelectorAll<HTMLElement>(
+					"[data-entry-trigger]",
+				);
+				const visibleEntryTrigger = Array.from(entryTriggers).find(
+					(entryTrigger) => entryTrigger.getClientRects().length > 0,
+				);
+
+				(visibleEntryTrigger ?? entryTriggers.item(0))?.focus();
+			},
 			onKeepReading: () => {
 				handleUsernameEntryDismiss();
-				void router.navigate({ to: MARKETING_ROUTES.HOME });
 			},
 			onSubmit: handleUsernameFormSubmit,
 		},

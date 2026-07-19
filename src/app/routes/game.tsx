@@ -5,8 +5,10 @@ import { APP_CONFIG } from "../../../app.config";
 
 import { requirePersistedAuthSession } from "./-requirePersistedAuthSession";
 
-const GamePage = lazy(() =>
-	import("@/pages/game").then((m) => ({ default: m.GamePage })),
+const GameRouteContent = lazy(() =>
+	import("./-GameRouteContent").then((module) => ({
+		default: module.GameRouteContent,
+	})),
 );
 
 export const Route = createFileRoute("/game")({
@@ -18,7 +20,7 @@ export const Route = createFileRoute("/game")({
 function LazyGamePage() {
 	return (
 		<Suspense fallback={null}>
-			<GamePage />
+			<GameRouteContent />
 		</Suspense>
 	);
 }

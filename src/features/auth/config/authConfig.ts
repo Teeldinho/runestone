@@ -26,18 +26,18 @@ export const AUTH_ERROR_MESSAGES = {
 export const AUTH_BOOTSTRAP_TIMEOUT_MS = 10_000;
 
 export const AUTH_COPY = {
-	MODAL_TITLE: "Enter the dungeon",
+	MODAL_TITLE: "Name this run",
 	MODAL_DESCRIPTION:
-		"Use the suggested name or edit it before saving your progress and leaderboard entry.",
-	MODAL_KEEP_READING_LABEL: "Keep reading",
-	USERNAME_LABEL: "Name",
-	USERNAME_PLACEHOLDER: "Your name",
-	USERNAME_SUBMIT_LABEL: "Enter the dungeon",
-	USERNAME_SUBMITTING_LABEL: "Opening the gate...",
+		"This name is stored in this browser and attached to completed runs on the leaderboard.",
+	MODAL_KEEP_READING_LABEL: "Return to the machine reference",
+	USERNAME_LABEL: "Run name",
+	USERNAME_PLACEHOLDER: "Display name",
+	USERNAME_SUBMIT_LABEL: "Enter Floor I",
+	USERNAME_SUBMITTING_LABEL: "Opening Floor I...",
 	USERNAME_HELP_TEXT:
 		"A suggested name is ready. 3-20 letters, numbers, or underscores.",
 	USERNAME_VALIDATION_ERROR: "Use 3-20 letters, numbers, or underscores.",
-	READY_STATUS_PREFIX: "Signed in as",
+	READY_STATUS_PREFIX: "Playing as",
 } as const;
 
 export const AUTH_ROUTE_PATHS = {

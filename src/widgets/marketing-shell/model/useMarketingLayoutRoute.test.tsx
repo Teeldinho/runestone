@@ -1,12 +1,11 @@
 // @vitest-environment happy-dom
 
-import { renderHook } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, renderHook } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { AUTH_STATUS } from "@/features/auth";
 
 const mockUseAuthContext = vi.hoisted(() => vi.fn());
-const mockNavigate = vi.hoisted(() => vi.fn());
 const mockUseLocation = vi.hoisted(() => vi.fn());
 
 vi.mock("@/features/auth", async () => {
@@ -21,9 +20,6 @@ vi.mock("@/features/auth", async () => {
 
 vi.mock("@tanstack/react-router", () => ({
 	useLocation: mockUseLocation,
-	useRouter: () => ({
-		navigate: mockNavigate,
-	}),
 }));
 
 import { MARKETING_NAVIGATION_ITEM_IDS, MARKETING_ROUTES } from "../config";
@@ -45,6 +41,11 @@ const createAuthContext = () => ({
 	authStatus: AUTH_STATUS.REQUIRES_USERNAME,
 });
 
+afterEach(() => {
+	cleanup();
+	document.body.replaceChildren();
+});
+
 describe("useMarketingLayoutRoute", () => {
 	it("resolves the active navigation item and keeps the modal flow routed through the hook", () => {
 		const authContext = createAuthContext();
@@ -55,7 +56,7 @@ describe("useMarketingLayoutRoute", () => {
 		const { result } = renderHook(() => useMarketingLayoutRoute());
 
 		expect(result.current.shellProps.activeNavigationItemId).toBe(
-			MARKETING_NAVIGATION_ITEM_IDS.CONCEPTS,
+			MARKETING_NAVIGATION_ITEM_IDS.FIELD_GUIDE,
 		);
 		expect(result.current.shellProps.isAuthenticated).toBe(false);
 		expect(result.current.shellProps.onEntryRequest).toBe(
@@ -70,11 +71,24 @@ describe("useMarketingLayoutRoute", () => {
 			authContext.handleUsernameFormSubmit,
 		);
 
+		const hiddenEntryTrigger = document.createElement("button");
+		hiddenEntryTrigger.dataset.entryTrigger = "true";
+		hiddenEntryTrigger.getClientRects = () => [] as unknown as DOMRectList;
+		const visibleEntryTrigger = document.createElement("button");
+		visibleEntryTrigger.dataset.entryTrigger = "true";
+		visibleEntryTrigger.getClientRects = () => [{}] as unknown as DOMRectList;
+		document.body.append(hiddenEntryTrigger, visibleEntryTrigger);
+		const closeEvent = new Event("close", { cancelable: true });
+
+		result.current.usernameModalProps.onCloseAutoFocus(closeEvent);
+
+		expect(closeEvent.defaultPrevented).toBe(true);
+		expect(document.activeElement).toBe(visibleEntryTrigger);
+
 		result.current.shellProps.onEntryRequest();
 		result.current.usernameModalProps.onKeepReading();
 
 		expect(authContext.handleUsernameEntryRequest).toHaveBeenCalledOnce();
 		expect(authContext.handleUsernameEntryDismiss).toHaveBeenCalledOnce();
-		expect(mockNavigate).toHaveBeenCalledWith({ to: MARKETING_ROUTES.HOME });
 	});
 });
