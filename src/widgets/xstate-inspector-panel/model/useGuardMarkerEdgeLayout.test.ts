@@ -48,6 +48,27 @@ describe("useGuardMarkerEdgeLayout", () => {
 		vi.restoreAllMocks();
 	});
 
+	it("keeps guard marker hit areas touch-accessible", () => {
+		setResponsiveLayoutMock({ isDesktopLayout: false, isLandscape: true });
+
+		const { result } = renderHook(() =>
+			useGuardMarkerEdgeLayout({
+				...TEST_MARKER_LAYOUT_INPUT,
+				sourceX: 40,
+				sourceY: 140,
+				targetX: 360,
+				targetY: 140,
+			}),
+		);
+
+		expect(
+			Number.parseFloat(String(result.current.markerButtonStyles.width)),
+		).toBeGreaterThanOrEqual(44);
+		expect(
+			Number.parseFloat(String(result.current.markerButtonStyles.height)),
+		).toBeGreaterThanOrEqual(44);
+	});
+
 	it("staggers vertical desktop guard markers across the x axis and shows vertical arrows", () => {
 		setResponsiveLayoutMock({ isDesktopLayout: true, isLandscape: true });
 
@@ -275,6 +296,37 @@ describe("useGuardMarkerEdgeLayout", () => {
 
 		expect(firstResult.current.markerButtonStyles.left).not.toBe(
 			secondResult.current.markerButtonStyles.left,
+		);
+	});
+
+	it("applies desktop collision spacing to horizontal marker groups", () => {
+		setResponsiveLayoutMock({ isDesktopLayout: true, isLandscape: true });
+
+		const { result: firstResult } = renderHook(() =>
+			useGuardMarkerEdgeLayout({
+				...TEST_MARKER_LAYOUT_INPUT,
+				sourceX: 40,
+				sourceY: 140,
+				targetX: 360,
+				targetY: 140,
+				collisionOrder: 0,
+				collisionGroupSize: 2,
+			}),
+		);
+		const { result: secondResult } = renderHook(() =>
+			useGuardMarkerEdgeLayout({
+				...TEST_MARKER_LAYOUT_INPUT,
+				sourceX: 40,
+				sourceY: 140,
+				targetX: 360,
+				targetY: 140,
+				collisionOrder: 1,
+				collisionGroupSize: 2,
+			}),
+		);
+
+		expect(firstResult.current.markerButtonStyles.top).not.toBe(
+			secondResult.current.markerButtonStyles.top,
 		);
 	});
 

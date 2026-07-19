@@ -63,14 +63,18 @@ describe("GamePageDesktopHeader", () => {
 		expect(homeAction.parentElement).toBe(actions);
 		expect(actions.lastElementChild).toBe(homeAction);
 		expect(homeAction.getAttribute("href")).toBe("/");
-		expect(homeAction.getAttribute("data-size")).toBe("icon-sm");
+		expect(homeAction.getAttribute("data-size")).toBe("icon");
 		expect(homeAction.getAttribute("data-variant")).toBe("dungeon-outline");
+		expect(homeAction.className).toContain("size-11");
 		expect(homeAction.className).not.toContain("w-fit");
 		expect(
 			within(root).getByRole("link", {
 				name: "RUNESTONE",
 			}),
 		).toBeTruthy();
+		expect(within(root).getByText("Floor I / Live Run")).toBeTruthy();
+		expect(within(root).getByText("Dungeon Observatory")).toBeTruthy();
+		expect(within(root).getByText("Active room")).toBeTruthy();
 		expect(
 			within(actions).getByRole("button", {
 				name: GAME_PAGE_CONTROLS.AUDIO.MUTE_ARIA_LABEL,

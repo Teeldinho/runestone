@@ -59,6 +59,8 @@ describe("MobileActionButtonZone", () => {
 		expect(runButton.className).toBe(
 			MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.BUTTON,
 		);
+		expect(runButton.className).toContain("size-11");
+		expect(runButton.className).not.toMatch(/h-12|w-12/);
 		expect(zoneRoot.className).toBe(
 			MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES.ROOT,
 		);

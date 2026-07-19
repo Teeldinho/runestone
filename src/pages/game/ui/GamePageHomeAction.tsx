@@ -14,7 +14,8 @@ export function GamePageHomeAction() {
 			asChild
 			data-testid={GAME_PAGE_HOME_ACTION_TEST_IDS.ROOT}
 			variant="dungeon-outline"
-			size="icon-sm"
+			size="icon"
+			className="size-11"
 			aria-label={GAME_PAGE_CONTROLS.NAVIGATION.HOME_ARIA_LABEL}
 		>
 			<Link to={MARKETING_ROUTES.HOME}>

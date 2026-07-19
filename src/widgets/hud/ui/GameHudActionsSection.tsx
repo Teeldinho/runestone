@@ -25,7 +25,7 @@ export function GameHudActionsSection({
 						onClick={actionButton.handleDungeonActionTrigger}
 						disabled={actionButton.isDisabled}
 						variant="dungeon-outline"
-						className="w-full"
+						className="min-h-11 w-full"
 					>
 						{actionButton.label}
 					</Button>
@@ -38,6 +38,7 @@ export function GameHudActionsSection({
 					onClick={handleDungeonRunReset}
 					variant="dungeon-destructive"
 					size="dungeon-sm"
+					className="min-h-11"
 				>
 					{HUD_COPY.ACTIONS.RESET_BUTTON}
 				</Button>

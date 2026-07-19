@@ -17,6 +17,7 @@ const inspectorEdgeTypes = {
 
 type XStateInspectorPanelFlowProps = {
 	hasSelectedSection: boolean;
+	minZoom?: number;
 	reactFlowDefaults: typeof INSPECTOR_REACT_FLOW_DEFAULTS;
 	selectedFlowFitViewPadding: number;
 	selectedSection: InspectorMachineSectionViewModel | null;
@@ -25,6 +26,7 @@ type XStateInspectorPanelFlowProps = {
 
 export function XStateInspectorPanelFlow({
 	hasSelectedSection,
+	minZoom,
 	reactFlowDefaults,
 	selectedFlowFitViewPadding,
 	selectedSection,
@@ -51,7 +53,7 @@ export function XStateInspectorPanelFlow({
 				padding: selectedFlowFitViewPadding,
 			}}
 			maxZoom={reactFlowDefaults.MAX_ZOOM}
-			minZoom={reactFlowDefaults.MIN_ZOOM}
+			minZoom={minZoom ?? reactFlowDefaults.MIN_ZOOM}
 			nodeOrigin={reactFlowDefaults.NODE_ORIGIN}
 			nodes={selectedSection.flowNodes}
 			nodesConnectable={false}
@@ -63,7 +65,11 @@ export function XStateInspectorPanelFlow({
 				size={INSPECTOR_FLOW_BACKGROUND.SIZE_PX}
 				color="var(--panel-border)"
 			/>
-			<Controls position="bottom-right" showInteractive={false} />
+			<Controls
+				className="[&>button]:!size-11"
+				position="bottom-right"
+				showInteractive={false}
+			/>
 		</ReactFlow>
 	);
 }

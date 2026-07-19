@@ -7,14 +7,14 @@ export const HUD_DISPLAY_VARIANTS = {
 
 export const HUD_COPY = {
 	ACTIONS: {
-		TITLE: "Actions",
-		RESET_BUTTON: "Reset Run",
+		TITLE: "Machine Inputs",
+		RESET_BUTTON: "Restart Run",
 	},
 	DISCOVERED_ROOMS: {
-		TITLE: "Discovered Rooms",
+		TITLE: "Explored Rooms",
 	},
 	MACHINE_SNAPSHOT: {
-		TITLE: "Machine Snapshot",
+		TITLE: "Run Telemetry",
 	},
 	SNAPSHOT_LABELS: {
 		CURRENT_ROOM: "Current Room",
@@ -39,7 +39,7 @@ export const HUD_HEALTH = {
 } as const;
 
 export const HUD_LABELS = {
-	VITALITY: "VITALITY",
+	VITALITY: "Vitality",
 } as const;
 
 export const HUD_MACHINE_SNAPSHOT = {

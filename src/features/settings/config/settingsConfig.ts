@@ -19,7 +19,7 @@ export const SETTINGS_STORAGE_KEYS = {
 
 export const SETTINGS_COPY = {
 	PAGE_TITLE: "Settings",
-	PAGE_DESCRIPTION: "Adjust audio levels and haptic feedback.",
+	PAGE_DESCRIPTION: "Tune audio, rendering, and haptic feedback for your run.",
 	AUDIO_SECTION: "Audio",
 	HAPTICS_SECTION: "Haptics",
 	MASTER_VOLUME_LABEL: "Master Volume",

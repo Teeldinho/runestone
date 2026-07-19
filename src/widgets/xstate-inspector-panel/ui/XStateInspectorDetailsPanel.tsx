@@ -23,12 +23,15 @@ export function XStateInspectorDetailsPanel({
 			aria-labelledby={INSPECTOR_DETAILS_PANEL_IDS.ROOT}
 			className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden"
 		>
-			<header className="flex flex-wrap items-center justify-between gap-2 border-b border-panel-border/50 px-4 py-2">
+			<header className="flex flex-wrap items-center justify-between gap-2 border-panel-border/60 border-b bg-background/25 px-4 py-2.5">
 				<h2 id={INSPECTOR_DETAILS_PANEL_IDS.ROOT} className="rune-text">
 					{INSPECTOR_COPY.DETAILS_PANEL_TITLE}
 				</h2>
 				{inspectorPanel.hasSelectedSection && inspectorPanel.selectedSection ? (
-					<Badge variant="outline" className="text-[10px]">
+					<Badge
+						variant="outline"
+						className="border-dungeon-rune/40 bg-dungeon-rune/10 font-mono text-[10px] text-panel-title"
+					>
 						{inspectorPanel.selectedSection.label}
 					</Badge>
 				) : null}

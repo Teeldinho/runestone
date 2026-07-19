@@ -21,6 +21,7 @@ import {
 	INSPECTOR_GUARD_MARKER_INTERACTION,
 } from "../config";
 
+import { createGuardMarkerEdgeLayoutViewModel } from "./guardMarkerEdgeLayoutViewModel";
 import {
 	mapGraphEdgesToFlowEdges,
 	mapGraphNodesToFlowNodes,
@@ -325,5 +326,108 @@ describe("reactFlowGraphMappers", () => {
 		expect(
 			new Set(collisionMarkers.map((marker) => marker.collisionOrder)),
 		).toEqual(new Set([0, 1]));
+	});
+
+	it("keeps compound marker collision slots aligned with render order", () => {
+		const compoundGuardKeys = [
+			FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+			FLOOR_ONE_GUARD_KEYS.TREASURY_CAN_BE_ENTERED,
+			FLOOR_ONE_GUARD_KEYS.CAN_PICK_UP_TREASURE_KEY,
+		];
+		const [flowEdge] = mapGraphEdgesToFlowEdges(
+			[
+				{
+					eventType: DUNGEON_EVENTS.ENTER_GUARD_ROOM,
+					guard: compoundGuardKeys.join(
+						STATE_VISUALIZER_GRAPH_SYNTAX.GUARD_DELIMITER,
+					),
+					id: TEST_GRAPH_EDGE_IDS.ENTRANCE_TO_GUARD_ROOM,
+					source: ROOM_IDS.ENTRANCE,
+					target: ROOM_IDS.GUARD_ROOM,
+				},
+			],
+			GRAPH_NODES,
+		);
+		const guardMarkers = flowEdge?.data?.guardMarkers ?? [];
+		const markerTopPositions = guardMarkers.map((guardMarker, markerIndex) => {
+			const layout = createGuardMarkerEdgeLayoutViewModel({
+				labelX: 250,
+				labelY: 200,
+				markerColor: guardMarker.color,
+				markerCount: guardMarkers.length,
+				markerIndex,
+				markerLaneOffset: 0,
+				directionIndicatorMode: guardMarker.directionIndicatorMode,
+				sourceX: 100,
+				sourceY: 200,
+				targetX: 400,
+				targetY: 200,
+				collisionOrder: guardMarker.collisionOrder,
+				collisionGroupSize: guardMarker.collisionGroupSize,
+				isDesktopLayout: true,
+				isLandscape: true,
+			});
+
+			return Number(layout.markerButtonStyles.top);
+		});
+
+		expect(guardMarkers.map((marker) => marker.guardKey)).toEqual(
+			compoundGuardKeys,
+		);
+		expect(guardMarkers.map((marker) => marker.collisionOrder)).toEqual([
+			0, 1, 2,
+		]);
+		for (const [markerIndex, markerTop] of markerTopPositions.entries()) {
+			for (const nextMarkerTop of markerTopPositions.slice(markerIndex + 1)) {
+				expect(Math.abs(markerTop - nextMarkerTop)).toBeGreaterThanOrEqual(
+					INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_HIT_AREA_PX,
+				);
+			}
+		}
+	});
+
+	it("keeps reverse lanes in the same collision bucket", () => {
+		const collisionNodes: PositionedMachineGraphNode[] = [
+			{
+				id: ROOM_IDS.ENTRANCE,
+				isActive: true,
+				kind: STATE_VISUALIZER_NODE_KINDS.STATE,
+				label: ROOM_LABELS[ROOM_IDS.ENTRANCE],
+				position: { x: 120, y: 100 },
+			},
+			{
+				id: ROOM_IDS.GUARD_ROOM,
+				isActive: false,
+				kind: STATE_VISUALIZER_NODE_KINDS.STATE,
+				label: ROOM_LABELS[ROOM_IDS.GUARD_ROOM],
+				position: { x: 120, y: 300 },
+			},
+		];
+		const flowEdges = mapGraphEdgesToFlowEdges(
+			[
+				{
+					eventType: DUNGEON_EVENTS.ENTER_GUARD_ROOM,
+					guard: FLOOR_ONE_GUARD_KEYS.IS_NEAR_INTERACTABLE,
+					id: `${TEST_GRAPH_EDGE_IDS.ENTRANCE_TO_GUARD_ROOM}:forward`,
+					source: ROOM_IDS.ENTRANCE,
+					target: ROOM_IDS.GUARD_ROOM,
+				},
+				{
+					eventType: DUNGEON_EVENTS.RETURN_TO_ENTRANCE,
+					guard: FLOOR_ONE_GUARD_KEYS.TREASURY_CAN_BE_ENTERED,
+					id: `${TEST_GRAPH_EDGE_IDS.ENTRANCE_TO_GUARD_ROOM}:reverse`,
+					source: ROOM_IDS.GUARD_ROOM,
+					target: ROOM_IDS.ENTRANCE,
+				},
+			],
+			collisionNodes,
+		);
+		const collisionGroupSizes = flowEdges.flatMap((flowEdge) =>
+			(flowEdge.data?.guardMarkers ?? []).map(
+				(marker) => marker.collisionGroupSize,
+			),
+		);
+
+		expect(collisionGroupSizes).toEqual([2, 2]);
 	});
 });

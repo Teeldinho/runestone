@@ -192,7 +192,6 @@ const getGuardMarkerCollisionBucketKey = (
 	flowEdge: InspectorFlowEdge,
 	nodePositionById: Map<string, { x: number; y: number }>,
 ): string | null => {
-	const flowEdgeData = flowEdge.data as InspectorFlowEdgeData;
 	const sourcePosition = nodePositionById.get(flowEdge.source);
 	const targetPosition = nodePositionById.get(flowEdge.target);
 
@@ -205,16 +204,10 @@ const getGuardMarkerCollisionBucketKey = (
 	const isHorizontal = deltaX > deltaY;
 	const midpointX = (sourcePosition.x + targetPosition.x) / 2;
 	const midpointY = (sourcePosition.y + targetPosition.y) / 2;
-	const laneAdjustedX = isHorizontal
-		? midpointX
-		: midpointX + flowEdgeData.markerLaneOffset;
-	const laneAdjustedY = isHorizontal
-		? midpointY + flowEdgeData.markerLaneOffset
-		: midpointY;
 	const collisionBucketSize =
 		INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_GLOBAL_COLLISION_BUCKET_PX;
-	const bucketX = Math.round(laneAdjustedX / collisionBucketSize);
-	const bucketY = Math.round(laneAdjustedY / collisionBucketSize);
+	const bucketX = Math.round(midpointX / collisionBucketSize);
+	const bucketY = Math.round(midpointY / collisionBucketSize);
 
 	return `${isHorizontal ? "h" : "v"}:${bucketX}:${bucketY}`;
 };
@@ -258,10 +251,10 @@ const applyGuardMarkerCollisionGroups = (
 	>();
 
 	for (const markerIds of markerIdsByCollisionBucket.values()) {
-		const sortedMarkerIds = [...new Set(markerIds)].sort();
-		const markerGroupSize = sortedMarkerIds.length;
+		const orderedMarkerIds = [...new Set(markerIds)];
+		const markerGroupSize = orderedMarkerIds.length;
 
-		sortedMarkerIds.forEach((markerId, markerIndex) => {
+		orderedMarkerIds.forEach((markerId, markerIndex) => {
 			collisionMetaByMarkerId.set(markerId, {
 				order: markerIndex,
 				size: markerGroupSize,

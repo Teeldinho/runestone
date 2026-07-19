@@ -67,11 +67,15 @@ describe("GamePageMobileSheetContent", () => {
 		expect(drawerContent.className).toContain(
 			`h-[${GAME_PAGE_MOBILE_SHEET.HEIGHT_DVH}dvh]`,
 		);
+		expect(drawerContent.className).toContain("safe-area-inset-bottom");
 		expect(header.className).toContain("flex");
 		expect(header.className).toContain("justify-between");
 		expect(header.className).not.toContain("grid");
 		expect(screen.getByTestId("mobile-statechart-tab")).toBeTruthy();
 		expect(screen.getByTestId("mobile-hud-tab")).toBeTruthy();
+		for (const tab of screen.getAllByRole("tab")) {
+			expect(tab.className).toContain("min-h-11");
+		}
 	});
 
 	it("keeps the stacked drawer header on tablets", () => {

@@ -1,3 +1,4 @@
+import { cn } from "@/shared/lib";
 import { Badge } from "@/shared/ui";
 import { INSPECTOR_COPY, INSPECTOR_DETAILS_PANEL_IDS } from "../config";
 import type { InspectorMachineSectionViewModel } from "../lib";
@@ -20,7 +21,12 @@ export function XStateInspectorDetailsPanelStatesSection({
 				{section.stateDetails.map((stateDetail) => (
 					<li
 						key={stateDetail.id}
-						className={`flex items-center justify-between rounded-md px-2 py-1.5 text-xs ${stateDetail.isActive ? "bg-[color-mix(in_srgb,var(--primary)_9%,transparent)]" : "bg-background"}`}
+						className={cn(
+							"flex items-center justify-between rounded-md border px-2 py-1.5 text-xs",
+							stateDetail.isActive
+								? "border-dungeon-rune/30 bg-dungeon-rune/10"
+								: "border-transparent bg-background/75",
+						)}
 					>
 						<span className="min-w-0 break-words">{stateDetail.label}</span>
 						{stateDetail.isActive ? (

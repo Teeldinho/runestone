@@ -1,6 +1,6 @@
 export const MOBILE_ACTION_BUTTON_LAYOUT_CLASS_NAMES = {
 	ROOT: "pointer-events-auto flex flex-col gap-2 touch-none select-none",
-	BUTTON: "h-12 w-12 rounded-full p-0 shadow-lg backdrop-blur-md",
+	BUTTON: "size-11 rounded-full p-0 shadow-lg backdrop-blur-md",
 	ICON: "h-5 w-5",
 } as const;
 

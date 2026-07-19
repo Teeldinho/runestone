@@ -21,7 +21,7 @@ export function GamePageMobileSheetContent() {
 		<DrawerContent
 			className={cn(
 				viewModel.drawerContentHeightClassName,
-				"max-w-full overflow-hidden border-panel-border/60 bg-panel/95",
+				"max-w-full overflow-hidden rounded-t-2xl border-dungeon-rune/20 bg-panel/95 pb-[env(safe-area-inset-bottom)] shadow-2xl backdrop-blur-xl",
 			)}
 			aria-label="Game bottom sheet panels"
 		>
@@ -43,17 +43,17 @@ export function GamePageMobileSheetContent() {
 					onValueChange={viewModel.handleMobileSheetTabChange}
 					className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden"
 				>
-					<TabsList className="grid h-auto w-full min-w-0 grid-cols-2 gap-2 border-0 bg-transparent p-0">
+					<TabsList className="grid h-auto w-full min-w-0 grid-cols-2 gap-2 border border-panel-border/60 bg-background/35 p-1">
 						<TabsTrigger
 							value={GAME_PAGE_MOBILE_SHEET.TAB_IDS.STATECHART}
-							className="h-8 min-w-0 truncate border border-panel-border/45 bg-panel/45 data-[state=active]:bg-panel"
+							className="min-h-11 min-w-0 truncate border border-panel-border/60 bg-panel/55 data-[state=active]:border-dungeon-rune/40 data-[state=active]:bg-dungeon-rune/10 data-[state=active]:text-panel-title"
 						>
 							{GAME_PAGE_MOBILE_SHEET.TAB_LABELS.STATECHART}
 						</TabsTrigger>
 
 						<TabsTrigger
 							value={GAME_PAGE_MOBILE_SHEET.TAB_IDS.HUD}
-							className="h-8 min-w-0 truncate border border-panel-border/45 bg-panel/45 data-[state=active]:bg-panel"
+							className="min-h-11 min-w-0 truncate border border-panel-border/60 bg-panel/55 data-[state=active]:border-dungeon-rune/40 data-[state=active]:bg-dungeon-rune/10 data-[state=active]:text-panel-title"
 						>
 							{GAME_PAGE_MOBILE_SHEET.TAB_LABELS.HUD}
 						</TabsTrigger>
