@@ -1,6 +1,5 @@
 import { useGLTF } from "@react-three/drei";
 import type * as THREE from "three";
-import { preloadGltfAssets } from "@/shared/lib";
 
 import { CORRIDOR_GLTF_CONFIG } from "../config";
 
@@ -10,14 +9,6 @@ type CorridorMeshScenes = {
 	wallScene: THREE.Group;
 	wallVariationScene: THREE.Group;
 };
-
-preloadGltfAssets(useGLTF, [
-	CORRIDOR_GLTF_CONFIG.WALL.PATH,
-	CORRIDOR_GLTF_CONFIG.WALL_CRACKED.PATH,
-	CORRIDOR_GLTF_CONFIG.WALL_SHELVES.PATH,
-	CORRIDOR_GLTF_CONFIG.FLOOR_TILE.PATH,
-	CORRIDOR_GLTF_CONFIG.TORCH.PATH,
-]);
 
 export const useCorridorMeshScenes = (
 	corridorId: string,

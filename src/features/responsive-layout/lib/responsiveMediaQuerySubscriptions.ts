@@ -8,6 +8,17 @@ type ResponsiveMediaQuerySubscription = {
 	listener: (event: MediaQueryListEvent) => void;
 };
 
+export const readResponsiveMediaQueryMatch = (
+	query: string,
+	fallback: boolean,
+): boolean => {
+	if (typeof window === "undefined") {
+		return fallback;
+	}
+
+	return window.matchMedia(query).matches;
+};
+
 export const createResponsiveMediaQuerySubscriptions = (
 	entries: readonly ResponsiveMediaQueryEntry[],
 ): ResponsiveMediaQuerySubscription[] => {

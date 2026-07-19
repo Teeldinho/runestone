@@ -72,6 +72,8 @@ describe("useAuthUsernameSubmission", () => {
 		mockGetAuthClientStorage.mockReturnValue(memoryStorage);
 		mockCreateUserMutation.mockResolvedValue(TEST_USER_PROFILE);
 		mockSubmitAuthUsername.mockResolvedValue(TEST_USER_PROFILE);
+		mockPreloadRoute.mockResolvedValue(undefined);
+		mockNavigate.mockResolvedValue(undefined);
 	});
 
 	it("submits usernames through the shared orchestration helper", async () => {
@@ -119,5 +121,33 @@ describe("useAuthUsernameSubmission", () => {
 
 		expect(mockPreloadRoute).not.toHaveBeenCalled();
 		expect(mockNavigate).not.toHaveBeenCalled();
+	});
+
+	it("does not wait for the game runtime preload before navigating", async () => {
+		let resolvePreload: (() => void) | undefined;
+		mockPreloadRoute.mockReturnValueOnce(
+			new Promise<void>((resolve) => {
+				resolvePreload = resolve;
+			}),
+		);
+		mockNavigate.mockResolvedValueOnce(undefined);
+		const { result } = renderHook(() =>
+			useAuthUsernameSubmission({
+				sendAuthEvent: vi.fn(),
+				sessionUuid: "existing-session-uuid",
+			}),
+		);
+
+		const submission = result.current.handleUsernameFormSubmit({
+			username: "runestone_hero",
+		});
+		await vi.waitFor(() => {
+			expect(mockNavigate).toHaveBeenCalledWith({
+				to: AUTH_ROUTE_PATHS.GAME,
+			});
+		});
+
+		resolvePreload?.();
+		await submission;
 	});
 });

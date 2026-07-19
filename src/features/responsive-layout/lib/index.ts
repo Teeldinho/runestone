@@ -7,5 +7,6 @@ export {
 	createResponsiveMediaQuerySubscriptions,
 	type ResponsiveMediaQueryEntry,
 	type ResponsiveMediaQuerySubscription,
+	readResponsiveMediaQueryMatch,
 	removeResponsiveMediaQuerySubscriptions,
 } from "./responsiveMediaQuerySubscriptions";

@@ -3,7 +3,6 @@ import { useMemo } from "react";
 
 import { ROOM_CONFIG } from "@/shared/config";
 import type { Vector3Tuple } from "@/shared/lib";
-import { preloadGltfAssets } from "@/shared/lib";
 
 import { ROOM_GLTF_CONFIG } from "../config";
 import {
@@ -30,15 +29,6 @@ type RoomMeshProps = {
 	treasuryConfig: RoomTreasuryConfig;
 	showGrid?: boolean;
 };
-
-preloadGltfAssets(useGLTF, [
-	ROOM_GLTF_CONFIG.FLOOR_TILE.PATH,
-	ROOM_GLTF_CONFIG.WALL.PATH,
-	ROOM_GLTF_CONFIG.WALL_DOORWAY.PATH,
-	ROOM_GLTF_CONFIG.COLUMN.PATH,
-	ROOM_GLTF_CONFIG.TORCH.PATH,
-	ROOM_GLTF_CONFIG.CHEST.PATH,
-]);
 
 export function RoomMesh({
 	position,
