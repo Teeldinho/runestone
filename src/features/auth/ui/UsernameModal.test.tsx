@@ -30,6 +30,7 @@ describe("UsernameModal", () => {
 				name: AUTH_COPY.USERNAME_SUBMIT_LABEL,
 			}),
 		).not.toBeNull();
+		expect(screen.queryByText(/no (account|password|sign-in)/i)).toBeNull();
 
 		fireEvent.click(
 			screen.getByRole("button", {

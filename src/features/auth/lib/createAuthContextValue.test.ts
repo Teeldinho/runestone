@@ -80,7 +80,7 @@ describe("createAuthContextValue", () => {
 		);
 	});
 
-	it("opens username modal for requires-username and submitting states", () => {
+	it("keeps username entry closed until it is explicitly requested", () => {
 		const requiresUsernameContext = createAuthContextValue({
 			snapshot: createAuthSnapshot({
 				value: AUTH_STATUS.REQUIRES_USERNAME,
@@ -95,9 +95,33 @@ describe("createAuthContextValue", () => {
 			handleUsernameEntryDismiss: vi.fn(),
 		});
 
-		expect(requiresUsernameContext.isUsernameModalOpen).toBe(true);
+		expect(requiresUsernameContext.isUsernameModalOpen).toBe(false);
 		expect(requiresUsernameContext.readyStatusLabel).toBeNull();
 		expect(requiresUsernameContext.errorMessage).toBe("Missing username");
+
+		const requestedContext = createAuthContextValue({
+			snapshot: {
+				...createAuthSnapshot({
+					value: AUTH_STATUS.REQUIRES_USERNAME,
+					profile: null,
+					errorMessage: null,
+					matchedStates: [AUTH_STATUS.REQUIRES_USERNAME],
+				}),
+				context: {
+					profile: null,
+					errorMessage: null,
+					isUsernameEntryRequested: true,
+					isUsernameEntryDeferred: false,
+				},
+			},
+			suggestedUsername: "Rune_AshBearAAAA",
+			handleUsernameFormSubmit: vi.fn(),
+			handleSessionBootstrapRetry: vi.fn(),
+			handleUsernameEntryRequest: vi.fn(),
+			handleUsernameEntryDismiss: vi.fn(),
+		});
+
+		expect(requestedContext.isUsernameModalOpen).toBe(true);
 
 		const submittingContext = createAuthContextValue({
 			snapshot: createAuthSnapshot({

@@ -33,7 +33,7 @@ afterEach(() => {
 
 const renderSheet = (isAuthenticated: boolean, onEntryRequest = vi.fn()) => {
 	const viewModel = createMarketingNavigationViewModel({
-		activeNavigationItemId: MARKETING_NAVIGATION_ITEM_IDS.GUIDE,
+		activeNavigationItemId: MARKETING_NAVIGATION_ITEM_IDS.FIELD_GUIDE,
 		footerLinks: MARKETING_FOOTER_LINKS,
 		navigationItems: MARKETING_NAVIGATION_ITEMS,
 	});
@@ -72,8 +72,12 @@ describe("MarketingNavigationSheet", () => {
 				MARKETING_SHELL_COPY.NAVIGATION_SHEET_DESCRIPTION,
 			),
 		).toBeTruthy();
-		expect(dialogQueries.getByRole("link", { name: "Guide" })).toBeTruthy();
-		expect(dialogQueries.getByRole("link", { name: "Concepts" })).toBeTruthy();
+		expect(
+			dialogQueries.getByRole("link", { name: "How it works" }),
+		).toBeTruthy();
+		expect(
+			dialogQueries.getByRole("link", { name: "Field guide" }),
+		).toBeTruthy();
 		expect(dialogQueries.getByRole("link", { name: "GitHub" })).toBeTruthy();
 		expect(dialogQueries.queryByText("Repo")).toBeNull();
 		expect(

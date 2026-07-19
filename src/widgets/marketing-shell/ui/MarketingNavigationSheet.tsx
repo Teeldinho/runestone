@@ -21,6 +21,7 @@ import {
 	RUNESTONE_LOGO_VARIANTS,
 } from "../config";
 import type { MarketingNavigationViewModel } from "../lib";
+import { useMarketingNavigationSheet } from "../model";
 import { RunestoneLogo } from "./RunestoneLogo";
 
 type MarketingNavigationSheetProps = {
@@ -34,6 +35,8 @@ export function MarketingNavigationSheet({
 	onEntryRequest,
 	viewModel,
 }: MarketingNavigationSheetProps) {
+	const { handleAnchorNavigation } = useMarketingNavigationSheet();
+
 	return (
 		<Sheet>
 			<SheetTrigger asChild>
@@ -42,7 +45,7 @@ export function MarketingNavigationSheet({
 					variant="dungeon-outline"
 					size="icon"
 					aria-label={MARKETING_SHELL_COPY.OPEN_NAVIGATION_LABEL}
-					className="lg:hidden"
+					className="size-11 lg:hidden"
 				>
 					<Menu className="size-4" />
 				</Button>
@@ -50,7 +53,7 @@ export function MarketingNavigationSheet({
 
 			<SheetContent
 				side="left"
-				className="flex h-dvh w-screen max-w-none flex-col gap-0 overflow-hidden border-panel-border bg-panel p-0 data-[side=left]:w-screen data-[side=left]:max-w-none data-[side=left]:sm:max-w-none"
+				className="marketing-theme flex h-dvh w-screen max-w-none flex-col gap-0 overflow-hidden border-panel-border bg-background p-0 text-foreground data-[side=left]:w-screen data-[side=left]:max-w-none data-[side=left]:sm:max-w-none"
 			>
 				<div className="mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col px-4 py-4 sm:px-6">
 					<div className="flex items-start justify-between gap-4">
@@ -66,7 +69,7 @@ export function MarketingNavigationSheet({
 						</SheetDescription>
 					</SheetHeader>
 
-					<Separator className="my-4 bg-panel-border/70" />
+					<Separator className="my-4 bg-panel-border" />
 
 					<div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain pb-4 pr-1">
 						<nav aria-label="Mobile navigation" className="flex-1">
@@ -74,18 +77,19 @@ export function MarketingNavigationSheet({
 								{viewModel.navigationItems.map((item) => (
 									<li key={item.id}>
 										<SheetClose asChild>
-											<Link
-												to={item.to}
+											<a
+												href={item.href}
 												aria-current={item.isActive ? "page" : undefined}
+												onClick={handleAnchorNavigation}
 												className={cn(
-													"flex items-center justify-between rounded-lg px-3 py-3 text-sm font-semibold transition-colors",
+													"flex min-h-11 items-center justify-between rounded-lg px-3 py-3 text-sm font-semibold transition-colors",
 													item.isActive
-														? "bg-dungeon-gold/10 text-dungeon-gold ring-1 ring-dungeon-gold/25"
-														: "text-panel-body hover:bg-background/45 hover:text-panel-title",
+														? "bg-dungeon-rune/10 text-dungeon-rune"
+														: "text-muted-foreground hover:bg-secondary/70 hover:text-foreground",
 												)}
 											>
 												{item.label}
-											</Link>
+											</a>
 										</SheetClose>
 									</li>
 								))}
@@ -96,7 +100,7 @@ export function MarketingNavigationSheet({
 											href={MARKETING_ROUTES.GITHUB_REPOSITORY}
 											target="_blank"
 											rel="noreferrer"
-											className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold text-panel-body transition-colors hover:bg-background/45 hover:text-panel-title"
+											className="flex min-h-11 items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-foreground"
 										>
 											<Github className="size-4" />
 											{MARKETING_SHELL_COPY.GITHUB_LABEL}
@@ -109,8 +113,12 @@ export function MarketingNavigationSheet({
 						<SheetFooter className="mt-5 p-0">
 							{isAuthenticated ? (
 								<SheetClose asChild>
-									<Button asChild className="w-full">
-										<Link to={MARKETING_ROUTES.GAME}>
+									<Button
+										asChild
+										variant="dungeon-gold"
+										className="min-h-11 w-full"
+									>
+										<Link to={MARKETING_ROUTES.GAME} data-entry-trigger>
 											<DoorOpen className="size-4" />
 											{MARKETING_SHELL_COPY.ENTER_DUNGEON_LABEL}
 										</Link>
@@ -120,7 +128,9 @@ export function MarketingNavigationSheet({
 								<SheetClose asChild>
 									<Button
 										type="button"
-										className="w-full"
+										data-entry-trigger
+										variant="dungeon-gold"
+										className="min-h-11 w-full"
 										onClick={onEntryRequest}
 									>
 										<DoorOpen className="size-4" />

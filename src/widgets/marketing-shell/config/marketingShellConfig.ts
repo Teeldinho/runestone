@@ -1,6 +1,6 @@
 export const MARKETING_NAVIGATION_ITEM_IDS = {
-	GUIDE: "guide",
-	CONCEPTS: "concepts",
+	HOW_IT_WORKS: "how-it-works",
+	FIELD_GUIDE: "field-guide",
 } as const;
 
 export type MarketingNavigationItemId =
@@ -20,42 +20,48 @@ export const MARKETING_SHELL_COPY = {
 	BRAND_STONE_SEGMENT: "STONE",
 	COMPACT_BRAND_RUNE_SEGMENT: "R",
 	COMPACT_BRAND_STONE_SEGMENT: "S",
-	ENTER_DUNGEON_LABEL: "Enter Dungeon",
+	ENTER_DUNGEON_LABEL: "Enter Floor I",
 	NAVIGATION_SHEET_TITLE: "Runestone",
-	NAVIGATION_SHEET_DESCRIPTION: "Navigate the playable architecture guide.",
+	NAVIGATION_SHEET_DESCRIPTION:
+		"Inspect Floor I, the running machine, and its controls.",
 	FOOTER_COPYRIGHT: "© 2026 Runestone",
-	FOOTER_TAGLINE: "Playable architecture",
+	FOOTER_TAGLINE: "Executable logic, made physical",
 	GITHUB_LABEL: "GitHub",
 	OPEN_NAVIGATION_LABEL: "Open navigation",
 } as const;
 
 export const MARKETING_NAVIGATION_ITEMS = [
 	{
-		id: MARKETING_NAVIGATION_ITEM_IDS.GUIDE,
-		label: "Guide",
-		to: MARKETING_ROUTES.GUIDE,
+		id: MARKETING_NAVIGATION_ITEM_IDS.HOW_IT_WORKS,
+		label: "How it works",
+		href: "/#how-it-works",
 	},
 	{
-		id: MARKETING_NAVIGATION_ITEM_IDS.CONCEPTS,
-		label: "Concepts",
-		to: MARKETING_ROUTES.CONCEPTS,
+		id: MARKETING_NAVIGATION_ITEM_IDS.FIELD_GUIDE,
+		label: "Field guide",
+		href: "/#machine",
 	},
 ] as const;
 
 export const MARKETING_FOOTER_LINKS = [
 	{
-		label: "Guide",
-		to: MARKETING_ROUTES.GUIDE,
-		type: "internal",
+		label: "How it works",
+		href: "/#how-it-works",
+		type: "anchor",
 	},
 	{
-		label: "Concepts",
-		to: MARKETING_ROUTES.CONCEPTS,
-		type: "internal",
+		label: "The machine",
+		href: "/#machine",
+		type: "anchor",
+	},
+	{
+		label: "Controls",
+		href: "/#controls",
+		type: "anchor",
 	},
 	{
 		label: "GitHub",
-		to: MARKETING_ROUTES.GITHUB_REPOSITORY,
+		href: MARKETING_ROUTES.GITHUB_REPOSITORY,
 		type: "external",
 	},
 ] as const;

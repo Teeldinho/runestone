@@ -1,29 +1,14 @@
+export { HOME_COPY } from "./homeCopy";
 export {
-	HOME_COPY,
-	HOME_STATUS_COPY,
-} from "./homeCopy";
-export {
-	HOME_MANIFEST_FOCUS_ITEM,
-	HOME_MANIFEST_NODES,
-	HOME_MANIFEST_TONE_CLASS_NAMES,
-	HOME_MANIFEST_TONES,
-	type HomeManifestTone,
-} from "./homeManifestConfig";
-export { HOME_RUNTIME_PANELS } from "./homeRuntimeConfig";
-export {
-	HOME_TEACHING_FEATURES,
-	HOME_TEACHING_TONE_CLASS_NAMES,
-	HOME_TEACHING_TONES,
-	type HomeTeachingTone,
-} from "./homeTeachingConfig";
-export {
-	HOME_TEACHING_ICON_KEYS,
-	type HomeTeachingIconKey,
-} from "./homeTeachingIconConfig";
-export {
-	HOME_TRANSLATION_ARROW_CLASS_NAME,
-	HOME_TRANSLATION_RAIL,
-	HOME_TRANSLATION_TONE_CLASS_NAMES,
-	HOME_TRANSLATION_TONES,
-	type HomeTranslationTone,
-} from "./homeTranslationConfig";
+	HOME_CAMERA_MODES,
+	HOME_CONCEPT_MAPPINGS,
+	HOME_CONTROL_GROUPS,
+	HOME_FIELD_GUIDE_VALUES,
+	HOME_RUN_STEPS,
+	HOME_RUNTIME_ROOMS,
+	HOME_SECTION_IDS,
+	HOME_SYSTEM_VIEWS,
+	HOME_TOUCH_CAMERA_MODES,
+	HOME_TOUCH_CONTROL_GROUPS,
+	type HomeFieldGuideValue,
+} from "./homeExperienceConfig";

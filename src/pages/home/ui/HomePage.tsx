@@ -1,26 +1,20 @@
 import { useHomePage } from "../model";
+import { HomeFieldGuideSection } from "./HomeFieldGuideSection";
+import { HomeFinalSection } from "./HomeFinalSection";
 import { HomeHeroSection } from "./HomeHeroSection";
-import { HomeManifestSection } from "./HomeManifestSection";
-import { HomeTeachingSection } from "./HomeTeachingSection";
-import { HomeTranslationRail } from "./HomeTranslationRail";
+import { HomeProofSection } from "./HomeProofSection";
+import { HomeRunSection } from "./HomeRunSection";
 
 export function HomePage() {
-	const {
-		heroProps,
-		manifestSectionProps,
-		teachingSectionProps,
-		translationRailItems,
-	} = useHomePage();
+	const { entryProps } = useHomePage();
 
 	return (
 		<>
-			<HomeHeroSection {...heroProps} />
-
-			<HomeManifestSection {...manifestSectionProps} />
-
-			<HomeTranslationRail items={translationRailItems} />
-
-			<HomeTeachingSection {...teachingSectionProps} />
+			<HomeHeroSection entryProps={entryProps} />
+			<HomeProofSection />
+			<HomeRunSection />
+			<HomeFieldGuideSection />
+			<HomeFinalSection entryProps={entryProps} />
 		</>
 	);
 }
