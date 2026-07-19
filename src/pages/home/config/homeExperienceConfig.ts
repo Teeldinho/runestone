@@ -9,6 +9,15 @@ export const HOME_FIELD_GUIDE_VALUES = {
 	CONTROLS: "controls",
 } as const;
 
+export const HOME_ENTRY_ACTION_CLASS_NAMES = {
+	ROOT: "relative min-h-17 w-full space-y-2 sm:w-auto",
+	BUTTON: "min-h-11 w-full px-5 sm:w-auto",
+	STATUS:
+		"absolute bottom-0 left-0 h-4 font-mono text-xs whitespace-nowrap text-muted-foreground",
+	STATUS_SKELETON:
+		"absolute bottom-0 left-0 h-4 w-32 motion-reduce:animate-none",
+} as const;
+
 export type HomeFieldGuideValue =
 	(typeof HOME_FIELD_GUIDE_VALUES)[keyof typeof HOME_FIELD_GUIDE_VALUES];
 

@@ -23,7 +23,7 @@ export function GameHud({ actions, playerStats, snapshot }: GameHudProps) {
 	});
 
 	return (
-		<div className="flex flex-col gap-6">
+		<div className="flex flex-col gap-3 [&>section]:rounded-xl [&>section]:border [&>section]:border-panel-border/60 [&>section]:bg-background/45 [&>section]:p-3 [&>section]:shadow-sm">
 			<GameHudVitalsSection healthBar={gameHudViewModel.healthBar} />
 			<GameHudSnapshotSection
 				sidebarSnapshotEntries={gameHudViewModel.sidebarSnapshotEntries}

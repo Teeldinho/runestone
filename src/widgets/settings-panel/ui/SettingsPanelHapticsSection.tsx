@@ -21,8 +21,11 @@ export function SettingsPanelHapticsSection({
 					{SETTINGS_COPY.HAPTICS_SECTION}
 				</FieldLegend>
 
-				<Field orientation="horizontal">
-					<FieldLabel htmlFor={SETTINGS_PANEL_IDS.HAPTICS_TOGGLE}>
+				<Field orientation="horizontal" className="min-h-11">
+					<FieldLabel
+						htmlFor={SETTINGS_PANEL_IDS.HAPTICS_TOGGLE}
+						className="min-h-11 items-center"
+					>
 						{SETTINGS_COPY.HAPTICS_TOGGLE_LABEL}
 					</FieldLabel>
 					<Switch

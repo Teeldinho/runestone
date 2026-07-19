@@ -91,11 +91,15 @@ describe("SettingsSheet", () => {
 			name: SETTINGS_COPY.PAGE_TITLE,
 		});
 		const dialogQueries = within(dialog);
+		const closeAction = dialogQueries.getByRole("button", { name: "Close" });
 		const sheetHeader = dialogQueries
 			.getByText(SETTINGS_COPY.PAGE_TITLE)
 			.closest('[data-slot="sheet-header"]');
 
 		expect(sheetHeader?.className).not.toContain("sr-only");
+		expect(dialog.className).toContain("safe-area-inset-top");
+		expect(dialog.className).toContain("safe-area-inset-bottom");
+		expect(closeAction.className).toContain("size-11");
 		expect(
 			dialogQueries.getByText(SETTINGS_COPY.PAGE_DESCRIPTION),
 		).toBeTruthy();
@@ -127,7 +131,7 @@ describe("SettingsSheet", () => {
 			dialog.querySelector(`label[for="${SETTINGS_PANEL_IDS.HAPTICS_TOGGLE}"]`),
 		).not.toBeNull();
 
-		fireEvent.click(screen.getByRole("button", { name: "Close" }));
+		fireEvent.click(closeAction);
 
 		expect(screen.queryByRole("dialog")).toBeNull();
 	});

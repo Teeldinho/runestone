@@ -24,10 +24,10 @@ export function LeaderboardSheet({ children }: LeaderboardSheetProps) {
 			<SheetTrigger asChild>{children}</SheetTrigger>
 			<SheetContent
 				side="right"
-				className="w-full flex flex-col border-panel-border bg-panel shadow-xl backdrop-blur sm:w-[45rem] sm:max-w-2xl data-[side=right]:sm:max-w-2xl"
+				className="flex w-full flex-col border-panel-border/70 bg-panel/95 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] shadow-2xl backdrop-blur-xl sm:w-[45rem] sm:max-w-2xl data-[side=right]:sm:max-w-2xl"
 			>
-				<SheetHeader className="space-y-2 pb-4">
-					<SheetTitle className="text-3xl font-semibold text-panel-title">
+				<SheetHeader className="space-y-2 border-panel-border/60 border-b bg-background/20 pr-16 pb-4">
+					<SheetTitle className="text-xl font-semibold tracking-tight text-panel-title">
 						{LEADERBOARD_PANEL_COPY.TITLE}
 					</SheetTitle>
 					<SheetDescription className="text-base text-panel-body">

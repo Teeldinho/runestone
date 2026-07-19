@@ -2,6 +2,7 @@ import { Layers } from "lucide-react";
 
 import { GAME_PAGE_MOBILE_SHEET } from "@/pages/game/config";
 import type { GamePageMobileActionPanelModel } from "@/pages/game/model";
+import { cn } from "@/shared/lib";
 import {
 	Button,
 	DrawerTrigger,
@@ -26,7 +27,10 @@ export function GamePageMobileSheetAction({
 					<Button
 						variant={isMobileSheetOpen ? "dungeon-gold" : "dungeon-outline"}
 						size={isTabletLayout ? "default" : "icon"}
-						className={`pointer-events-auto ${isTabletLayout ? "w-full" : "h-9 w-9 p-0"}`}
+						className={cn(
+							"pointer-events-auto min-h-11",
+							isTabletLayout ? "w-full" : "size-11 p-0",
+						)}
 						aria-label={`Open ${GAME_PAGE_MOBILE_SHEET.OPEN_BUTTON_LABEL}`}
 					>
 						<Layers className="h-4 w-4" />

@@ -1,12 +1,18 @@
 import { Link } from "@tanstack/react-router";
-import { Trophy, Volume2, VolumeX } from "lucide-react";
+import { Activity, Trophy, Volume2, VolumeX } from "lucide-react";
 
 import {
 	GAME_PAGE_CONTROLS,
 	GAME_PAGE_DESKTOP_HEADER_TEST_IDS,
 } from "@/pages/game/config";
 import { useGamePageDesktopHeaderModel } from "@/pages/game/model";
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui";
+import {
+	Badge,
+	Button,
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/shared/ui";
 import { LeaderboardSheet } from "@/widgets/leaderboard-panel";
 import { MARKETING_ROUTES } from "@/widgets/marketing-shell";
 import { GamePageDesktopSettingsAction } from "./GamePageDesktopSettingsAction";
@@ -19,29 +25,40 @@ export function GamePageDesktopHeader() {
 	return (
 		<header
 			data-testid={GAME_PAGE_DESKTOP_HEADER_TEST_IDS.ROOT}
-			className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-panel-border px-4 py-2"
+			className="relative z-20 flex min-h-14 shrink-0 flex-wrap items-center justify-between gap-3 border-panel-border/70 border-b bg-panel/95 px-4 py-2 shadow-lg shadow-background/40"
 		>
-			<div className="flex items-center gap-3">
+			<div className="flex min-w-0 items-center gap-3">
 				<Link
 					to={MARKETING_ROUTES.HOME}
-					className="text-lg font-bold uppercase tracking-[0.2em] text-dungeon-gold transition-opacity hover:opacity-80"
+					className="text-lg font-bold tracking-[0.2em] text-dungeon-gold uppercase transition-colors hover:text-dungeon-torch"
 				>
 					RUNESTONE
 				</Link>
-				<span className="rune-text">·</span>
-				<span className="rune-text">Floor I</span>
+				<span aria-hidden="true" className="h-5 w-px bg-panel-border" />
+				<div className="min-w-0">
+					<p className="rune-text truncate text-panel-title">
+						Floor I / Live Run
+					</p>
+					<p className="hidden text-[10px] text-muted-foreground xl:block">
+						Dungeon Observatory
+					</p>
+				</div>
 			</div>
 
 			<div
 				data-testid={GAME_PAGE_DESKTOP_HEADER_TEST_IDS.ACTIONS}
-				className="flex items-center gap-2 sm:gap-4"
+				className="flex items-center gap-2"
 			>
-				<span className="flex shrink-0 items-center gap-2 whitespace-nowrap">
-					<span className="rune-text">Room:</span>
+				<Badge
+					variant="outline"
+					className="hidden h-8 gap-2 border-dungeon-rune/30 bg-dungeon-rune/8 px-3 text-panel-title lg:flex"
+				>
+					<Activity aria-hidden="true" className="size-3.5 text-dungeon-rune" />
+					<span className="rune-text text-muted-foreground">Active room</span>
 					<span className="rune-value text-panel-title">
 						{currentRoomLabel}
 					</span>
-				</span>
+				</Badge>
 
 				<Tooltip>
 					<TooltipTrigger asChild>
@@ -59,7 +76,7 @@ export function GamePageDesktopHeader() {
 							{isAudioMuted ? (
 								<VolumeX className="h-4 w-4" />
 							) : (
-								<Volume2 className="h-4 w-4 text-[var(--dungeon-gold)]" />
+								<Volume2 className="h-4 w-4 text-dungeon-gold" />
 							)}
 						</Button>
 					</TooltipTrigger>
@@ -79,7 +96,7 @@ export function GamePageDesktopHeader() {
 								size="icon-sm"
 								aria-label={GAME_PAGE_CONTROLS.LEADERBOARD.ARIA_LABEL}
 							>
-								<Trophy className="h-4 w-4 text-[var(--dungeon-gold)]" />
+								<Trophy className="h-4 w-4 text-dungeon-gold" />
 							</Button>
 						</TooltipTrigger>
 					</LeaderboardSheet>

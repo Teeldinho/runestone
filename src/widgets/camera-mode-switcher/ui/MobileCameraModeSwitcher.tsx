@@ -26,8 +26,9 @@ export function MobileCameraModeSwitcher({
 					variant={button.isActive ? "dungeon-gold" : "dungeon-outline"}
 					size="sm"
 					aria-pressed={button.isActive}
+					aria-label={button.label}
 					onClick={button.handleCameraModeSwitch}
-					className="h-7 min-w-[2.25rem] px-1.5 py-0.5 text-[10px]"
+					className="size-11 p-0 font-mono text-xs"
 				>
 					{CAMERA_MODE_ICON_LABELS[button.mode]}
 				</Button>

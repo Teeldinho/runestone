@@ -26,7 +26,10 @@ export function GamePageMobileStatechartTab() {
 									: "h-[30rem] min-h-[24rem]",
 							)}
 						>
-							<XStateInspectorPanel sections={viewModel.graphSections} />
+							<XStateInspectorPanel
+								minZoom={GAME_PAGE_MOBILE_SHEET.STATECHART_MIN_ZOOM}
+								sections={viewModel.graphSections}
+							/>
 						</CardContent>
 					</Card>
 

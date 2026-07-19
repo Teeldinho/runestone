@@ -152,6 +152,16 @@ describe("GamePageMobileCanvasStage", () => {
 		expect(overlayRow.className).toBe(
 			GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.ROOT,
 		);
+		expect(overlayRow.className).toContain("safe-area-inset-right");
+		expect(overlayRow.className).toContain("safe-area-inset-bottom");
+		expect(
+			screen.getByTestId(MOBILE_STAGE_TEST_IDS.TOUCH_JOYSTICK_ZONE)
+				.parentElement?.parentElement?.className,
+		).toBe(GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.JOYSTICK_ANCHOR);
+		expect(
+			screen.getByTestId(MOBILE_STAGE_TEST_IDS.TOUCH_JOYSTICK_ZONE)
+				.parentElement?.parentElement?.className,
+		).toContain("safe-area-inset-left");
 		expect(runJumpAnchor.className).toBe(
 			GAME_PAGE_MOBILE_OVERLAY_CLASS_NAMES.RUN_JUMP_ANCHOR,
 		);

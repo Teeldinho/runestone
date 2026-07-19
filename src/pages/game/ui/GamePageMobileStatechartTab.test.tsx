@@ -42,7 +42,9 @@ vi.mock("@/shared/ui", () => ({
 
 vi.mock("@/widgets/xstate-inspector-panel", () => ({
 	XStateInspectorDetailsPanel: () => <div data-testid="inspector-details" />,
-	XStateInspectorPanel: () => <div data-testid="inspector-panel" />,
+	XStateInspectorPanel: ({ minZoom }: { minZoom?: number }) => (
+		<div data-testid="inspector-panel" data-min-zoom={minZoom} />
+	),
 }));
 
 import { GamePageMobileStatechartTab } from "./GamePageMobileStatechartTab";
@@ -68,6 +70,9 @@ describe("GamePageMobileStatechartTab", () => {
 		expect(cards[0].className).toContain("min-h-[24rem]");
 		expect(cards[1].className).toContain("h-[22rem]");
 		expect(cards[1].className).toContain("min-h-[16rem]");
+		expect(
+			screen.getByTestId("inspector-panel").getAttribute("data-min-zoom"),
+		).toBe("1");
 	});
 
 	it("keeps the tablet card heights", () => {

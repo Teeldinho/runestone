@@ -1,15 +1,10 @@
-import { useGLTF } from "@react-three/drei";
 import type { RapierRigidBody } from "@react-three/rapier";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import type { RefObject } from "react";
 import { useRef } from "react";
-import { getPlayerPosition, preloadGltfAssets } from "@/shared/lib";
+import { getPlayerPosition } from "@/shared/lib";
 
-import {
-	ENEMY_ANIMATION_PATHS,
-	ENEMY_ENTITY_CONFIG,
-	ENEMY_GLTF_CONFIG,
-} from "../config";
+import { ENEMY_ENTITY_CONFIG, ENEMY_GLTF_CONFIG } from "../config";
 import type { EnemyMeshActions, EnemyMeshSettings } from "../model";
 import {
 	useEnemyGltfResources,
@@ -17,13 +12,6 @@ import {
 	useEnemyMovement,
 	useEnemyPhysicsLoop,
 } from "../model";
-
-preloadGltfAssets(useGLTF, [
-	ENEMY_GLTF_CONFIG.CHARACTER.PATH,
-	ENEMY_ANIMATION_PATHS.MOVEMENT_BASIC,
-	ENEMY_ANIMATION_PATHS.GENERAL,
-	ENEMY_ANIMATION_PATHS.COMBAT_MELEE,
-]);
 
 type EnemyMeshProps = {
 	settings: EnemyMeshSettings;

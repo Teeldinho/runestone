@@ -7,7 +7,7 @@ import { ROOM_IDS } from "@/entities/dungeon";
 import { CAMERA_MODES } from "@/features/camera-system";
 import { GAME_FRAME_PRIORITIES } from "@/shared/config";
 
-import { GameCanvas } from "./GameCanvas";
+import { GameCanvasRuntime } from "./GameCanvasRuntime";
 
 const mockSceneEnvironment = vi.fn((_props: unknown) => (
 	<div data-testid="scene-environment" />
@@ -146,7 +146,7 @@ vi.mock("./WorldInteractionRuntime", () => ({
 	WorldInteractionRuntime: () => mockWorldInteractionRuntime(),
 }));
 
-describe("GameCanvas", () => {
+describe("GameCanvasRuntime", () => {
 	beforeEach(() => {
 		mockCanvas.mockClear();
 		mockHandleSceneReady.mockClear();
@@ -177,7 +177,7 @@ describe("GameCanvas", () => {
 		};
 
 		render(
-			<GameCanvas
+			<GameCanvasRuntime
 				cameraStateSnapshot={cameraStateSnapshot}
 				machineRuntime={machineRuntime}
 				postprocessingEnabled={false}
@@ -206,7 +206,7 @@ describe("GameCanvas", () => {
 		};
 
 		render(
-			<GameCanvas
+			<GameCanvasRuntime
 				cameraStateSnapshot={cameraStateSnapshot}
 				machineRuntime={machineRuntime}
 				postprocessingEnabled={false}
@@ -251,7 +251,7 @@ describe("GameCanvas", () => {
 		};
 
 		render(
-			<GameCanvas
+			<GameCanvasRuntime
 				cameraStateSnapshot={cameraStateSnapshot}
 				machineRuntime={machineRuntime}
 				postprocessingEnabled={false}

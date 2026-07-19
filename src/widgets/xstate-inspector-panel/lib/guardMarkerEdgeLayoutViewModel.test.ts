@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { MACHINE_GRAPH_LAYOUT } from "@/features/state-visualizer";
+
 import {
 	INSPECTOR_FLOW_EDGE_LAYOUT,
 	INSPECTOR_GUARD_MARKER_INTERACTION,
@@ -43,5 +45,67 @@ describe("createGuardMarkerEdgeLayoutViewModel", () => {
 			INSPECTOR_GUARD_MARKER_INTERACTION.DIRECTION_ARROW_BY_AXIS.VERTICAL.POS,
 		);
 		expect(result.hasDirectionIndicators).toBe(true);
+	});
+
+	it("keeps reverse collision slots at least one hit area apart", () => {
+		const firstResult = createGuardMarkerEdgeLayoutViewModel({
+			...TEST_LAYOUT_INPUT,
+			labelX: 67,
+			markerCount: 1,
+			markerLaneOffset: 0,
+			collisionOrder: 1,
+			collisionGroupSize: 2,
+			isDesktopLayout: true,
+			isLandscape: true,
+		});
+		const secondResult = createGuardMarkerEdgeLayoutViewModel({
+			...TEST_LAYOUT_INPUT,
+			labelX: 94,
+			markerCount: 1,
+			markerLaneOffset: 0,
+			collisionOrder: 0,
+			collisionGroupSize: 2,
+			isDesktopLayout: true,
+			isLandscape: true,
+		});
+		const markerDistance = Math.abs(
+			Number(firstResult.markerButtonStyles.left) -
+				Number(secondResult.markerButtonStyles.left),
+		);
+
+		expect(markerDistance).toBeGreaterThanOrEqual(
+			INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_HIT_AREA_PX,
+		);
+	});
+
+	it("rechecks node clearance after applying collision spacing", () => {
+		const nearbyNodePosition = { x: 220, y: 174 };
+		const result = createGuardMarkerEdgeLayoutViewModel({
+			...TEST_LAYOUT_INPUT,
+			labelX: 100,
+			markerCount: 1,
+			markerLaneOffset: 0,
+			collisionOrder: 1,
+			collisionGroupSize: 2,
+			nearbyNodePositions: [nearbyNodePosition],
+			isDesktopLayout: true,
+			isLandscape: true,
+		});
+		const markerCenterX = Number(result.markerButtonStyles.left);
+		const markerCenterY = Number(result.markerButtonStyles.top);
+		const markerHalfSize = INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_SIZE_PX / 2;
+		const expandedHalfWidth =
+			MACHINE_GRAPH_LAYOUT.NODE_WIDTH / 2 +
+			markerHalfSize +
+			INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_NODE_CLEARANCE_OFFSET_PX;
+		const expandedHalfHeight =
+			MACHINE_GRAPH_LAYOUT.NODE_HEIGHT / 2 +
+			markerHalfSize +
+			INSPECTOR_FLOW_EDGE_LAYOUT.GUARD_MARKER_NODE_CLEARANCE_OFFSET_PX;
+		const overlapsNode =
+			Math.abs(markerCenterX - nearbyNodePosition.x) < expandedHalfWidth &&
+			Math.abs(markerCenterY - nearbyNodePosition.y) < expandedHalfHeight;
+
+		expect(overlapsNode).toBe(false);
 	});
 });

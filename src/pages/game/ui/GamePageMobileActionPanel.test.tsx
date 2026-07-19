@@ -67,8 +67,16 @@ vi.mock("@/shared/ui", () => ({
 	Badge: ({ className }: { className?: string }) => (
 		<span data-testid="badge" className={className} />
 	),
-	Button: ({ children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) => (
-		<button type="button" {...props}>
+	Button: ({
+		children,
+		size,
+		variant,
+		...props
+	}: ButtonHTMLAttributes<HTMLButtonElement> & {
+		size?: string;
+		variant?: string;
+	}) => (
+		<button type="button" data-size={size} data-variant={variant} {...props}>
 			{children}
 		</button>
 	),
@@ -121,8 +129,11 @@ describe("GamePageMobileActionPanel", () => {
 		expect(promptSlot.className).toBe(
 			GAME_PAGE_MOBILE_ACTION_PANEL_CLASS_NAMES.PROMPT_SLOT,
 		);
-		expect(controlStack.className).toBe(
+		expect(controlStack.className).toContain(
 			GAME_PAGE_MOBILE_ACTION_PANEL_CLASS_NAMES.CONTROL_STACK,
+		);
+		expect(controlStack.className).toContain(
+			GAME_PAGE_MOBILE_ACTION_PANEL_CLASS_NAMES.TABLET_CONTROL_STACK,
 		);
 		expect(touchActionPanel.parentElement).toBe(promptSlot);
 		expect(touchActionPanel.className).toBe(
@@ -138,6 +149,9 @@ describe("GamePageMobileActionPanel", () => {
 		expect(screen.getByText("Rankings")).toBeTruthy();
 		expect(screen.getByText("Panels")).toBeTruthy();
 		expect(screen.getByText("Settings")).toBeTruthy();
+		for (const button of view.getAllByRole("button")) {
+			expect(button.className).toContain("min-h-11");
+		}
 		expect(panelRoot.getAttribute("data-input-blocks-look")).toBe("true");
 	});
 
@@ -155,6 +169,9 @@ describe("GamePageMobileActionPanel", () => {
 		const touchActionPanel = view.getByTestId(
 			GAME_PAGE_MOBILE_TOUCH_ACTION_PANEL_TEST_IDS.ROOT,
 		);
+		const controlStack = view.getByTestId(
+			GAME_PAGE_MOBILE_ACTION_PANEL_TEST_IDS.CONTROL_STACK,
+		);
 
 		expect(panelRoot.className).toContain(
 			GAME_PAGE_MOBILE_ACTION_PANEL_CLASS_NAMES.COMPACT_WIDTH,
@@ -166,6 +183,9 @@ describe("GamePageMobileActionPanel", () => {
 			GAME_PAGE_MOBILE_ACTION_PANEL_CLASS_NAMES.PROMPT_SLOT,
 		);
 		expect(touchActionPanel.parentElement).toBe(promptSlot);
+		expect(controlStack.className).toContain(
+			GAME_PAGE_MOBILE_ACTION_PANEL_CLASS_NAMES.COMPACT_CONTROL_STACK,
+		);
 		expect(view.getByRole("button", { name: "Attack" })).toBeTruthy();
 		expect(view.getByRole("button", { name: "Open Door" })).toBeTruthy();
 		expect(view.getByRole("button", { name: "Mute audio" })).toBeTruthy();
@@ -176,6 +196,9 @@ describe("GamePageMobileActionPanel", () => {
 		expect(view.queryByText("Rankings")).toBeNull();
 		expect(view.queryByText("Panels")).toBeNull();
 		expect(view.queryByText("Settings")).toBeNull();
+		for (const button of view.getAllByRole("button")) {
+			expect(button.className).toMatch(/min-h-11|size-11/);
+		}
 	});
 
 	it("keeps the prompt slot from changing the panel width when prompts toggle", () => {

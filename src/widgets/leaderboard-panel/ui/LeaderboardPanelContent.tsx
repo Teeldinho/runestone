@@ -45,12 +45,12 @@ export function LeaderboardPanelContent({
 			) : null}
 
 			{hasEntries ? (
-				<div className="overflow-hidden rounded-xl border border-border/70">
+				<div className="overflow-hidden rounded-xl border border-panel-border/70 bg-background/35 shadow-inner">
 					<Table className="w-full text-left text-sm">
 						<TableCaption className="sr-only">
 							{LEADERBOARD_PANEL_COPY.TABLE.CAPTION}
 						</TableCaption>
-						<TableHeader className="bg-muted/30 text-muted-foreground">
+						<TableHeader className="bg-dungeon-rune/5 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
 							<TableRow>
 								<TableHead className="px-3 py-2 font-medium">
 									{LEADERBOARD_PANEL_COPY.TABLE.HEADERS.RANK}
@@ -73,18 +73,18 @@ export function LeaderboardPanelContent({
 							{entries.map((entry) => (
 								<TableRow
 									key={entry.rowId}
-									className="border-t border-border/60"
+									className="border-panel-border/50 border-t hover:bg-dungeon-rune/5"
 								>
-									<TableCell className="px-3 py-2 font-semibold text-panel-title">
+									<TableCell className="px-3 py-2 font-mono font-semibold text-dungeon-gold">
 										{entry.rankLabel}
 									</TableCell>
-									<TableCell className="px-3 py-2 text-foreground">
+									<TableCell className="px-3 py-2 font-mono text-foreground tabular-nums">
 										{entry.playerLabel}
 									</TableCell>
-									<TableCell className="px-3 py-2 text-foreground">
+									<TableCell className="px-3 py-2 font-mono text-foreground tabular-nums">
 										{entry.scoreLabel}
 									</TableCell>
-									<TableCell className="px-3 py-2 text-foreground">
+									<TableCell className="px-3 py-2 font-mono text-foreground tabular-nums">
 										{entry.runTimeLabel}
 									</TableCell>
 									<TableCell className="px-3 py-2 text-foreground">

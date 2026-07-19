@@ -1,26 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { lazy, Suspense } from "react";
 
 import { APP_CONFIG } from "../../../app.config";
 
+import { GameRouteContent } from "./-GameRouteContent";
+import { GameRoutePendingShell } from "./-GameRoutePendingShell";
 import { requirePersistedAuthSession } from "./-requirePersistedAuthSession";
-
-const GameRouteContent = lazy(() =>
-	import("./-GameRouteContent").then((module) => ({
-		default: module.GameRouteContent,
-	})),
-);
 
 export const Route = createFileRoute("/game")({
 	ssr: APP_CONFIG.SSR,
 	beforeLoad: requirePersistedAuthSession,
-	component: LazyGamePage,
+	component: GameRouteContent,
+	pendingComponent: GameRoutePendingShell,
+	pendingMs: 0,
+	pendingMinMs: 0,
 });
-
-function LazyGamePage() {
-	return (
-		<Suspense fallback={null}>
-			<GameRouteContent />
-		</Suspense>
-	);
-}
